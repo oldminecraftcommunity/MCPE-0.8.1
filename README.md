@@ -31,7 +31,6 @@ the output should be `minecraftpe/build/minecraftpe08decomp`
 ## Some additional info:
 * JSON library that was probably used by Mojang: https://chromium.googlesource.com/external/jsoncpp/+/6921bf1feef6f1fb83935ae3943f07753488311d/jsoncpp
 * RakNet: https://github.com/facebookarchive/RakNet (possibly modifed by mojang in 0.1.x)
-* CSHA1: https://www.dominik-reichl.de/projects/csha1/download/CSHA1-2.1-Source.zip
 * GZIP stuff - zlib 1.2.3, based on https://zlib.net/zpipe.c
 * https://github.com/nothings/stb/
 * GLM - commit before https://github.com/g-truc/glm/commit/2b747cbbadfd3af39b443e88902f1c98bd231083 and -DGLM_FORCE_RADIANS <?>
