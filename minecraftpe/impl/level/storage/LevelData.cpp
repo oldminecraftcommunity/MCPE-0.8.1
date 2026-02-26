@@ -6,12 +6,10 @@
 #include <utils.h>
 
 LevelData::LevelData(struct CompoundTag* a2) {
-	this->sizeOnDisk = 0; //TODO doesnt seem to exist in mcpe
 	this->playerTag = 0;
 	this->getTagData(a2);
 }
 LevelData::LevelData(const LevelData& a2) {
-	this->sizeOnDisk = 0; //TODO doesnt seem to exist in mcpe
 	this->playerData = a2.playerData;
 	this->field_2C = a2.field_2C;
 	this->field_30 = a2.field_30;
@@ -39,7 +37,6 @@ LevelData::LevelData(const LevelData& a2) {
 	this->setPlayerTag(a2.playerTag);
 }
 LevelData::LevelData(const struct LevelSettings& settings, const std::string& a3, int32_t a4) {
-	this->sizeOnDisk = 0; //TODO doesnt seem to exist in mcpe
 	int32_t v9;	 // r3
 	int32_t v10; // r3
 
@@ -68,7 +65,6 @@ LevelData::LevelData(const struct LevelSettings& settings, const std::string& a3
 	this->stopTime = v10;
 }
 LevelData::LevelData(void) {
-	this->sizeOnDisk = 0; //TODO doesnt seem to exist in mcpe
 	this->playerData.x = 0.0;
 	this->playerData.y = 0.0;
 	this->playerData.z = 0.0;

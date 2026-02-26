@@ -76,6 +76,5 @@ GoalSelector::~GoalSelector() {
 		if(goal->field_8) {
 			if(goal->goal) delete goal->goal;
 		}
-		delete goal;
 	}
 }

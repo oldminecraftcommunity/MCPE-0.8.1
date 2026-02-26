@@ -23,7 +23,6 @@
 
 LocalServerListItemElement::LocalServerListItemElement(Minecraft* a2, ExternalServer a3, bool_t editing, PlayScreen* a5)
 	: GuiElement(1, 1, 0, 0, 24, 24) {
-	this->field_24 = this->field_28 = 0; //XXX doesnt seem to be in mcpe
 	this->field_2C = 0;
 	this->field_30 = 0;
 	this->deleteElementButton = 0;
@@ -54,7 +53,6 @@ LocalServerListItemElement::LocalServerListItemElement(Minecraft* a2, ExternalSe
 }
 LocalServerListItemElement::LocalServerListItemElement(Minecraft* a2, const LevelSummary& a3, bool_t a4)
 	: GuiElement(1, 1, 0, 0, 24, 24) {
-	this->field_24 = this->field_28 = 0; //XXX doesnt seem to be in mcpe
 	this->field_2C = 0;
 	this->field_30 = 0;
 	this->deleteElementButton = 0;
@@ -89,7 +87,6 @@ LocalServerListItemElement::LocalServerListItemElement(Minecraft* a2, const Leve
 }
 LocalServerListItemElement::LocalServerListItemElement(const PingedCompatibleServer& a2)
 	: GuiElement(1, 1, 0, 0, 24, 24) {
-	this->field_24 = this->field_28 = 0; //XXX doesnt seem to be in mcpe
 	this->field_2C = 0;
 	this->field_30 = 0;
 	this->deleteElementButton = 0;

@@ -18,7 +18,7 @@ void ItemDiffer::getDiff(const std::vector<const ItemInstance*>& a2, std::vector
 		len = this->len;
 	}
 	for(int32_t i = 0; i < len; ++i) {
-		if(!ItemInstance::matchesNulls(&this->items[i], a2[i])) {
+		if(ItemInstance::matchesNulls(&this->items[i], a2[i])) {
 			a3.emplace_back(i);
 		}
 	}

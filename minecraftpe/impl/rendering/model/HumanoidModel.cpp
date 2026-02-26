@@ -77,6 +77,7 @@ void HumanoidModel::renderHorrible(float a2, float a3, float a4, float a5, float
 	this->rightLegModel.renderHorrible(a7);
 	this->leftLegModel.renderHorrible(a7);
 }
+#include <fh_frameanimod.hpp>
 void HumanoidModel::setupAnim(float a2, float a3, float a4, float a5, float a6, float a7) {
 	float v10;		 // s19
 	float v11;		 // s16
@@ -184,5 +185,54 @@ void HumanoidModel::setupAnim(float a2, float a3, float a4, float a5, float a6, 
 		this->leftArmModel.zRotAngle = 0.0 - v25;
 		this->rightArmModel.xRotAngle = v30 + v28;
 		this->leftArmModel.xRotAngle = v30 - v28;
+	}
+
+	this->headModel.zRotAngle = 0;
+	this->bodyModel.zRotAngle = 0;
+	this->bodyModel.zRotAngle = 0;
+	this->leftLegModel.zRotAngle = 0;
+	this->rightLegModel.zRotAngle = 0;
+	if(selectedAnimation) {
+		Frame* f = &selectedAnimation->frames[animstate.frame];
+		if(animstate.resetArms) {
+			this->rightArmModel.zRotAngle = this->rightArmModel.xRotAngle = 0;
+			this->leftArmModel.zRotAngle = this->leftArmModel.xRotAngle = 0;
+		}
+
+		for(auto&& bp: f->data) {
+			float v = bp.second;
+			if(animstate.interpol && (animstate.frame + 1) < selectedAnimation->frames.size()) {
+				Frame* next = &selectedAnimation->frames[(animstate.frame + 1)];
+				if(next->data.find(bp.first) != next->data.end()) {
+					float nv = next->data[bp.first];
+					v = v + (nv - v) * (f->duration == 0 ? 0 : (((float)animstate.ticks + animtime) / f->duration));
+				}
+			}
+
+			if(bp.first == HEAD_X) this->headModel.xRotAngle = v;
+			if(bp.first == HEAD_Y) this->headModel.yRotAngle = v;
+			if(bp.first == HEAD_Z) this->headModel.zRotAngle = v;
+
+			if(bp.first == BODY_X) this->bodyModel.xRotAngle = v;
+			if(bp.first == BODY_Y) this->bodyModel.yRotAngle = v;
+			if(bp.first == BODY_Z) this->bodyModel.zRotAngle = v;
+
+			if(bp.first == RIGHTARM_X) this->rightArmModel.xRotAngle = v;
+			if(bp.first == RIGHTARM_Y) this->rightArmModel.yRotAngle = v;
+			if(bp.first == RIGHTARM_Z) this->rightArmModel.zRotAngle = v;
+
+			if(bp.first == LEFTARM_X) this->leftArmModel.xRotAngle = v;
+			if(bp.first == LEFTARM_Y) this->leftArmModel.yRotAngle = v;
+			if(bp.first == LEFTARM_Z) this->leftArmModel.zRotAngle = v;
+
+
+			if(bp.first == RIGHTLEG_X) this->rightLegModel.xRotAngle = v;
+			if(bp.first == RIGHTLEG_Y) this->rightLegModel.yRotAngle = v;
+			if(bp.first == RIGHTLEG_Z) this->rightLegModel.zRotAngle = v;
+
+			if(bp.first == LEFTLEG_X) this->leftLegModel.xRotAngle = v;
+			if(bp.first == LEFTLEG_Y) this->leftLegModel.yRotAngle = v;
+			if(bp.first == LEFTLEG_Z) this->leftLegModel.zRotAngle = v;
+		}
 	}
 }

@@ -150,8 +150,8 @@ void ExternalFileLevelStorage::savePendingUnsavedChunks(int32_t a2) {
 	for(int v5 = 0; ++v5 <= v2;) {
 		if(this->field_2C.empty()) break;
 		UnsavedLevelChunk* ulv = &this->field_2C.front();
-		this->save(this->level, ulv->chunk); //TODO check
 		this->field_2C.pop_front();
+		this->save(this->level, ulv->chunk); //TODO check
 	}
 }
 bool_t ExternalFileLevelStorage::writeLevelData(const std::string& a1, LevelData& a2, const std::vector<Player*>* a3) {
@@ -384,7 +384,7 @@ LevelChunk* ExternalFileLevelStorage::load(Level* a2, int32_t a3, int32_t a4) {
 			} else {
 				v15 = 0;
 			}
-			bool v17 = 0;
+			bool v17;
 			for(int i = 0; i != 0x8000; ++i) {
 				int v19 = v10->tiles[i];
 				int valid = Tile::transformToValidBlockId(v19);

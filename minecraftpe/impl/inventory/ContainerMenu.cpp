@@ -9,7 +9,7 @@ ContainerMenu::ContainerMenu(Container* a2, int32_t a3)
 }
 
 ContainerMenu::~ContainerMenu() {
-	this->container->stopOpen();
+	this->container->startOpen();
 }
 std::vector<ItemInstance> ContainerMenu::getItems() {
 	std::vector<ItemInstance> result;

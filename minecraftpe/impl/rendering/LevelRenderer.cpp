@@ -32,7 +32,6 @@
 
 LevelRenderer::LevelRenderer(Minecraft* minecraft, std::shared_ptr<TextureAtlas> a3)
 	: field_164(Color4::BLACK) {
-	this->field_160 = this->field_15C = 0; //XXX doesnt seem to be in mcpe
 	this->field_14 = 0.0;
 	this->field_1C = 0;
 	this->field_8 = -9999.0;

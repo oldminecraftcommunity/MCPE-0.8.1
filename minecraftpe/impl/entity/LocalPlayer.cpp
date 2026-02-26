@@ -251,9 +251,27 @@ void LocalPlayer::move(float a2, float a3, float a4) {
 		}
 	}
 }
+#include <fh_frameanimod.hpp>
+
 char_t _D6E065B0 = 0;
 void LocalPlayer::tick() {
 	Player::tick();
+
+	if(animstate.active) {
+		animstate.ticks += 1;
+		Frame* f = &selectedAnimation->frames[animstate.frame];
+
+		if(animstate.ticks > f->duration) {
+			animstate.ticks = 0;
+			++animstate.frame;
+		}
+		if(animstate.frame >= selectedAnimation->frames.size()) {
+			animstate.active = 0;
+			selectedAnimation = 0;
+
+		}
+	}
+
 	if(this->isJumping && this->isRiding()) {
 		this->ride(0);
 		SetEntityLinkPacket v24(0, this->entityId, this->ridingAt ? this->ridingAt->entityId : 0);

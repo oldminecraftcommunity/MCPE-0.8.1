@@ -96,7 +96,6 @@ bool_t ChestScreen::handleAddItem(FillingContainer* a2, FillingContainer* a3, in
 		v13 = 1;
 	}
 	ItemInstance v34(*v7);
-	v34.count = v13;
 	ItemDiffer idiff(this->getItems(v10));
 	a3->add(&v34);
 	bool v28 = v34.count != v13;
@@ -107,7 +106,6 @@ bool_t ChestScreen::handleAddItem(FillingContainer* a2, FillingContainer* a3, in
 		idiff.getDiff(vec2, vec);
 		ScrollingPane::GridItem v36;
 		v12->getGridItemFor_slow(a4, v36);
-
 		for(int v15 = 0; v15 < vec.size(); ++v15) {
 			FlyingItem v39;
 			v39.field_18 = getTimeS();
@@ -256,7 +254,6 @@ void ChestScreen::render(int32_t a2, int32_t a3, float a4) {
 	Tesselator::instance.begin(0);
 	Tesselator::instance.voidBeginAndEndCalls(1);
 	this->minecraft->gui.setScissorRect(this->field_140);
-
 	for(int32_t v9 = 0; v9 < this->field_190.size(); ++v9) {
 		FlyingItem* v11 = &this->field_190[v9];
 		float v12 = timeS - v11->field_18;
@@ -348,7 +345,6 @@ bool_t ChestScreen::addItem(const Touch::InventoryPane* a2, int32_t a3) {
 			return this->handleAddItem(0, this->minecraft->player->inventory, a3);
 		}
 	}
-	return 0;
 }
 bool_t ChestScreen::isAllowed(int32_t) {
 	return 1;
@@ -358,7 +354,7 @@ std::vector<const ItemInstance*> ChestScreen::getItems(const Touch::InventoryPan
 		for(int32_t i = 9;; ++i) {
 			if(i >= this->minecraft->player->inventory->getContainerSize()) break;
 			//TODO check
-			this->field_150[i-9] = this->minecraft->player->inventory->getItem(i);
+			this->field_150[i] = this->minecraft->player->inventory->getItem(i);
 		}
 		return std::vector<const ItemInstance*>(this->field_150);
 	} else {

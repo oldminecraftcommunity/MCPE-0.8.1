@@ -254,7 +254,6 @@ void ChestTileEntity::tick() {
 		level = this->level;
 		level->playSound(v7 + 0.5, v8 + 0.5, v9 + 0.5, "random.chestopen", 0.5, (float)(level->random.nextFloat() * 0.1) + 0.9);
 	}
-
 	v12 = this->field_8C;
 	if(!v12) {
 		if(this->field_84 <= 0.0) {

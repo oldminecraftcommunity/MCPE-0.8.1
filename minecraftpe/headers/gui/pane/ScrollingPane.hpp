@@ -50,7 +50,7 @@ struct ScrollingPane: GuiComponent
 	int32_t field_178, field_17C, field_180, field_184;
 	int32_t field_188, field_18C, field_190, field_194;
 	int32_t field_198, field_19C, field_1A0;
-	int8_t* field_1A4;
+	char_t* field_1A4;
 	int32_t field_1A8;
 	ScrollBar verticalScrollbar, field_1C4;
 	int32_t field_1DC, field_1E0, field_1E4, field_1E8;

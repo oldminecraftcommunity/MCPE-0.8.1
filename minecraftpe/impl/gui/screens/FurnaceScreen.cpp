@@ -239,7 +239,8 @@ void FurnaceScreen::setupInventoryPane() {
 	this->field_218->setSize((float)this->field_1BC.width + 2.0, (float)this->field_1BC.height + 2.0);
 }
 void FurnaceScreen::takeAndClearSlot(int32_t a2) {
-	ItemInstance v10(*this->tileEntity->getItem(a2));
+	ItemInstance* v4 = this->tileEntity->getItem(a2);
+	ItemInstance v10(*v4);
 	ItemInstance v11;
 	this->tileEntity->setItem(a2, &v11);
 	if(this->minecraft->level->isClientMaybe) {
@@ -247,7 +248,7 @@ void FurnaceScreen::takeAndClearSlot(int32_t a2) {
 		this->minecraft->rakNetInstance->send(v12);
 	}
 	int32_t esc = this->minecraft->player->inventory->getEmptySlotsCount();
-	if(!this->minecraft->player->inventory->add(&v10)) {
+	if(!this->minecraft->player->inventory->add(v4)) {
 		this->minecraft->player->drop(&v10, 0);
 	}
 	int32_t esc2 = this->minecraft->player->inventory->getEmptySlotsCount();

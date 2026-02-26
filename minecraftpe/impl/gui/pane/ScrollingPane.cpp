@@ -265,15 +265,12 @@ void ScrollingPane::handleUserInput() {
 	bool_t isInside = this->field_5C.isInside(v3, v4);
 	bool_t v7 = v3 != this->field_214 || v4 != this->field_218;
 	int32_t v8 = this->field_17C;
-	this->field_214 = v3;
-	this->field_218 = v4;
 	if(v8 > 0 && this->field_211) {
 		if(!isButtonDown) {
 			this->touchesEnded(v3, v4, timeMs);
 			goto LABEL_16;
 		}
 	} else if(!isButtonDown) goto LABEL_12;
-
 	if(!this->field_211 && isInside) {
 		this->touchesBegan(v3, v4, timeMs);
 		goto LABEL_16;
@@ -294,7 +291,6 @@ void ScrollingPane::hideScrollIndicators() {
 	this->field_1C4.field_14 = 0;
 }
 void ScrollingPane::onHoldItem() {
-	printf("AAA\n");
 	int32_t v2 = this->field_18C;
 	if(v2 != -1 && !this->field_DC) {
 		if(this->field_DE) {

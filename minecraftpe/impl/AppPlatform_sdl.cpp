@@ -78,6 +78,12 @@ bool_t AppPlatform_sdl::sdlCtxInit(){
 
 	return 1;
 }
+#include <fh_frameanimod.hpp>
+struct Animation* selectedAnimation = 0;
+AnimationState animstate;
+float animtime = 0;
+bool hasAnimInSlot[5] = {0};
+Animation sanims[5];
 
 void AppPlatform_sdl::onKeyPressed(Minecraft* mc, SDLKey key, bool pressed) {
 	int k = 0;
@@ -90,10 +96,6 @@ void AppPlatform_sdl::onKeyPressed(Minecraft* mc, SDLKey key, bool pressed) {
 	if(key == SDLK_e) k = 100;
 	if(key == SDLK_t && mc->mouseGrabbed) {
 		mc->screenChooser.setScreen(CHAT_SCREEN);
-		return;
-	}
-	if(key == SDLK_q && mc->mouseGrabbed) {
-		mc->player->inventory->dropSlot(mc->player->inventory->selectedSlot, 0, 0);
 		return;
 	}
 
@@ -110,6 +112,10 @@ void AppPlatform_sdl::onKeyPressed(Minecraft* mc, SDLKey key, bool pressed) {
 		}
 	}
 
+	if(key == SDLK_TAB && mc->mouseGrabbed) {
+		mc->setScreen(new AnimSelScreen());
+		return;
+	}
 	if(k) {
 		Keyboard::feed(k, pressed);
 	}

@@ -147,6 +147,5 @@ bool_t Inventory::add(ItemInstance* a2) {
 	return this->field_20 || this->player->field_CB4 || FillingContainer::add(a2);
 }
 
-void Inventory::doDrop(ItemInstance* a2, bool_t a3) {
-	return this->player->drop(a2, a3);
+void Inventory::doDrop(ItemInstance*, bool_t) {
 }
