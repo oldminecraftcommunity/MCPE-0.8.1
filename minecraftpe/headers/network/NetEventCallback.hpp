@@ -1,0 +1,74 @@
+#pragma once
+#include <_types.h>
+#include <RakNetTypes.h>
+
+struct Level;
+struct RestCallTagData;
+struct Player;
+struct NetEventCallback{
+	Player* findPlayer(Level*, const RakNet::RakNetGUID*);
+	Player* findPlayer(Level*, int32_t);
+	Player* findPlayer(Level*, int32_t, const RakNet::RakNetGUID*);
+
+	virtual void levelGenerated(Level*);
+	virtual ~NetEventCallback();
+	virtual void onConnect(const RakNet::RakNetGUID&);
+	virtual void onUnableToConnect(void);
+	virtual void onNewClient(const RakNet::RakNetGUID&);
+	virtual void onDisconnect(const RakNet::RakNetGUID&);
+	virtual bool_t allowIncomingPacketId(const RakNet::RakNetGUID&, int32_t);
+	virtual void handle(const RakNet::RakNetGUID&, struct LoginPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct ReadyPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct LoginStatusPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct SetTimePacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct MessagePacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct StartGamePacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct AddItemEntityPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct AddPaintingPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct TakeItemEntityPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct AddEntityPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct AddMobPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct AddPlayerPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct RemovePlayerPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct RemoveEntityPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct MoveEntityPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct RotateHeadPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct MovePlayerPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct PlaceBlockPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct RemoveBlockPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct UpdateBlockPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct ExplodePacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct LevelEventPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct TileEventPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct EntityEventPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct RequestChunkPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct ChunkDataPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct PlayerEquipmentPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct PlayerArmorEquipmentPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct SetEntityDataPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct SetEntityMotionPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct SetHealthPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct SetEntityLinkPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct SetSpawnPositionPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct InteractPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct UseItemPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct PlayerActionPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct HurtArmorPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct SendInventoryPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct DropItemPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct ContainerOpenPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct ContainerClosePacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct ContainerAckPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct ContainerSetDataPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct ContainerSetSlotPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct ContainerSetContentPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct ChatPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct AdventureSettingsPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct AnimatePacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct EntityDataPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct PlayerInputPacket*);
+	virtual void handle(const RakNet::RakNetGUID&, struct RespawnPacket*);
+	virtual void handle(Level*, const RakNet::RakNetGUID&, struct RespawnPacket*);
+	virtual void onPlayerVerified(const RestCallTagData&);
+	virtual void onPlayerVerifiedFailed(const RestCallTagData&);
+};

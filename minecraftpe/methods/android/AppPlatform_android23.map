@@ -1,0 +1,4 @@
+initWithActivity(ANativeActivity *)
+readAssetFile(std::string const&)
+~AppPlatform_android23()
+~AppPlatform_android23()

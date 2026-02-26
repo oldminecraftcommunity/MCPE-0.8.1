@@ -1,0 +1,193 @@
+#pragma once
+#include <_types.h>
+#include <math/AABB.hpp>
+#include <entity/data/SynchedEntityData.hpp>
+#include <rendering/EntityRendererId.hpp>
+#include <util/Random.hpp>
+#include <util/Color4.hpp>
+
+struct Level;
+struct Material;
+struct CompoundTag;
+struct Player;
+struct EntityPos; //TODO entitypos
+
+
+struct Entity{
+	static std::string RIDING_TAG;
+	static Random sharedRandom;
+	static int32_t entityCounter;
+
+	SynchedEntityData synchedEntityData;
+	float posX;
+	float posY;
+	float posZ;
+	int32_t field_2C;
+	int32_t field_30;
+	int32_t field_34;
+	int32_t entityId;
+	float somethingRelatedToRenderer;
+	Level* level;
+	float prevX;
+	float prevY;
+	float prevZ;
+	float motionX;
+	float motionY;
+	float motionZ;
+	float yaw;
+	float pitch;
+	float prevYaw;
+	float prevPitch;
+	float field_6C;
+	float field_70;
+	float field_74;
+	float field_78;
+	float field_7C;
+	float field_80;
+	Color4 field_84;
+	AABB boundingBox;
+	float ridingHeight;
+	float entityWidth;
+	float entityHeight;
+	float field_B8;
+	float field_BC;
+	float prevPosX;
+	float prevPosY;
+	float prevPosZ;
+	float ySize;
+	float stepHeight;
+	float field_D4;
+	int32_t field_D8;
+	int32_t field_DC;
+	int32_t air;
+	int32_t fire;
+	int32_t field_E8;
+	EntityRendererId entityRenderId;
+	Entity* rider;
+	Entity* ridingAt;
+	float fallDistance;
+	int8_t field_FC;
+	int8_t field_FD;
+	bool_t onGround;
+	bool_t isCollidedHorizontally;
+	int8_t field_100;
+	int8_t field_101;
+	bool_t wasHurt;
+	int8_t field_103;
+	bool_t isDead;
+	bool_t noclip;
+	int8_t field_106;
+	int8_t field_107;
+	int8_t field_108;
+	int8_t field_109;
+	int8_t field_10A;
+	int8_t field_10B;
+	int32_t field_10C;
+	bool_t field_110;
+	int8_t field_111;
+	int8_t field_112;
+	bool_t field_113;
+	int32_t field_114;
+	bool_t maybeIsInWeb;
+	bool_t isInReverse;
+	int8_t field_116;
+	int8_t field_117;
+
+	Entity(Level*);
+	void _init();
+	void checkTileCollisions();
+	float distanceTo(Entity*);
+	float distanceTo(float, float, float);
+	float distanceToSqr(Entity*);
+	float distanceToSqr(float, float, float);
+	Vec3 getRandomPointInAABB(struct Random&);
+	int32_t hashCode();
+	bool_t isRiding();
+	bool_t operator==(Entity&);
+	bool_t saveAsMount(CompoundTag*);
+	void setOnFire(int32_t);
+	float setupLighting(bool_t, float);
+
+	virtual ~Entity();
+	virtual void reset();
+	virtual void setLevel(Level*);
+	virtual void remove();
+	virtual void setPos(float, float, float);
+	virtual void move(float, float, float);
+	virtual void moveTo(float, float, float, float, float);
+	virtual void moveRelative(float, float, float);
+	virtual void lerpTo(float, float, float, float, float, int32_t);
+	virtual void lerpMotion(float, float, float);
+	virtual void turn(float, float);
+	virtual void interpolateTurn(float, float);
+	virtual void tick();
+	virtual void baseTick();
+	virtual void rideTick();
+	virtual void positionRider(bool_t);
+	virtual float getRidingHeight();
+	virtual float getRideHeight();
+	virtual void ride(Entity*);
+	virtual bool_t intersects(float, float, float, float, float, float);
+	virtual bool_t isFree(float, float, float, float);
+	virtual bool_t isFree(float, float, float);
+	virtual bool_t isInWall();
+	virtual bool_t isInWater();
+	virtual bool_t isInLava();
+	virtual bool_t isUnderLiquid(const Material*);
+	virtual float getShadowRadius();
+	virtual void makeStuckInWeb();
+	virtual float getHeadHeight();
+	virtual float getShadowHeightOffs();
+	virtual bool_t isSkyLit();
+	virtual float getBrightness(float);
+	virtual bool_t interactPreventDefault();
+	virtual bool_t interactWithPlayer(Player*);
+	virtual void playerTouch(Player*);
+	virtual void push(Entity*);
+	virtual void push(float, float, float);
+	virtual bool_t isPickable();
+	virtual bool_t isPushable();
+	virtual bool_t isShootable();
+	virtual bool_t isSneaking();
+	virtual bool_t isAlive();
+	virtual bool_t isOnFire();
+	virtual bool_t isPlayer();
+	virtual bool_t isCreativeModeAllowed();
+	virtual bool_t shouldRender(Vec3&);
+	virtual bool_t shouldRenderAtSqrDistance(float);
+	virtual bool_t hurt(Entity*, int32_t);
+	virtual void animateHurt();
+	virtual void handleEntityEvent(int8_t); //char
+	virtual float getPickRadius();
+	virtual Entity* spawnAtLocation(int32_t, int32_t);
+	virtual Entity* spawnAtLocation(int32_t, int32_t, float);
+	virtual Entity* spawnAtLocation(const ItemInstance&, float);
+	virtual void awardKillScore(Entity*, int32_t);
+	virtual void setEquippedSlot(int32_t, int32_t, int32_t);
+	virtual bool_t save(CompoundTag*);
+	virtual void saveWithoutId(CompoundTag*);
+	virtual bool_t load(CompoundTag*);
+	virtual SynchedEntityData* getEntityData() const;
+	//TODO there are 2 getEntityData: _ZNK6 and _ZN6
+	virtual int32_t getEntityTypeId() const = 0;
+	virtual int32_t getCreatureBaseType();
+	virtual EntityRendererId queryEntityRenderer();
+	virtual bool_t isMob();
+	virtual bool_t isItemEntity();
+	virtual bool_t isHangingEntity();
+	virtual int32_t getAuxData();
+	virtual void setRot(float, float);
+	virtual void setSize(float, float);
+	virtual void setPos(EntityPos*);
+	virtual void resetPos(bool_t);
+	virtual void outOfWorld();
+	virtual void checkFallDamage(float, bool_t);
+	virtual void causeFallDamage(float);
+	virtual void markHurt();
+	virtual void burn(int32_t);
+	virtual void lavaHurt();
+	virtual void readAdditionalSaveData(CompoundTag*) = 0;
+	virtual void addAdditonalSaveData(CompoundTag*) = 0; //imagine missing i
+	virtual void playStepSound(int32_t, int32_t, int32_t, int32_t);
+	virtual void checkInsideTiles();
+};

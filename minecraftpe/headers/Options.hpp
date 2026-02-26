@@ -1,0 +1,141 @@
+#pragma once
+#include <_types.h>
+#include <KeyMapping.hpp>
+#include <OptionsFile.hpp>
+
+struct Minecraft;
+
+struct Options{
+	struct Option
+	{
+		int32_t field_0;
+		std::string name;
+		int32_t field_8;
+
+		static Options::Option DIFFICULTY;
+		static Options::Option FANCY_SKIES;
+		static Options::Option LEFT_HANDED;
+		static Options::Option SENSITIVITY;
+		static Options::Option INVERT_MOUSE;
+		static Options::Option THIRD_PERSON;
+		static Options::Option VIEW_BOBBING;
+		static Options::Option SERVER_VISIBLE;
+		static Options::Option LIMIT_FRAMERATE;
+		static Options::Option RENDER_DISTANCE;
+		static Options::Option USE_TOUCHSCREEN;
+		static Options::Option ANIMATE_TEXTURES;
+		static Options::Option USE_TOUCH_JOYPAD;
+		static Options::Option DESTROY_VIBRATION;
+		static Options::Option PIXELS_PER_MILLIMETER;
+		static Options::Option NAME;
+		static Options::Option MUSIC;
+		static Options::Option SOUND;
+		static Options::Option GRAPHICS;
+		static Options::Option HIDE_GUI;
+		static Options::Option GUI_SCALE;
+	};
+
+	float musicVolume;
+	float soundVolume;
+	float sensitity;
+	bool_t invertMouse;
+	char_t field_D;
+	char_t field_E;
+	char_t field_F;
+	int32_t renderDistance;
+	bool_t viewBobbing;
+	bool_t limitFramerate;
+	bool_t graphics;
+	char_t field_17;
+	bool_t leftHanded;
+	bool_t destroyVibration;
+	char_t field_1A;
+	char_t field_1B;
+	KeyMapping keyForward;
+	KeyMapping keyLeft;
+	KeyMapping keyBack;
+	KeyMapping keyRight;
+	KeyMapping keyJump;
+	KeyMapping keyInventory;
+	KeyMapping keyDrop;
+	KeyMapping keyChat;
+	KeyMapping keyFog;
+	KeyMapping keySneak;
+	KeyMapping keyCrafting;
+	KeyMapping keyDestroy;
+	KeyMapping keyUse;
+	KeyMapping keyMenuNext;
+	KeyMapping keyMenuPrevious;
+	KeyMapping keyMenuOk;
+	KeyMapping keyMenuCancel;
+	KeyMapping* keys[16];
+	Minecraft* minecraft;
+	int32_t difficulty;
+	bool_t hideGUI;
+	bool_t thirdPerson;
+	char_t field_EE;
+	char_t enableNoclipMaybe;
+	char_t field_F0;
+	char_t field_F1;
+	char_t field_F2;
+	char_t field_F3;
+	float field_F4;
+	float field_F8;
+	int32_t guiScale;
+	std::string username;
+	bool_t serverVisible;
+	bool_t useJoypad;
+	bool_t useTouchscreen;
+	bool_t fancySkies;
+	bool_t animateTextures;
+	char_t field_109;
+	char_t field_10A;
+	char_t field_10B;
+	int32_t major;
+	int32_t minor;
+	int32_t patch;
+	int32_t beta;
+	float pixelDensity;
+	OptionsFile settingFolderPath;
+	std::vector<const Options::Option*> hiddenOptionsVec;
+	static std::vector<int32_t> DIFFICULTY_LEVELS;
+	static std::vector<int32_t> RENDERDISTANCE_LEVELS;
+
+	//~Options(void); //TODO check is needed by vector destructor
+	void validateVersion(void);
+	void update(void);
+	void toggle(const Options::Option*, int32_t);
+	void setKey(int32_t, int32_t);
+	void setAdditionalHiddenOptions(const std::vector<const Options::Option*>&);
+	void set(const Options::Option*, std::string);
+	void set(const Options::Option*, int32_t);
+	void set(const Options::Option*, float);
+	void save(void);
+	static bool_t readInt(const std::string&, int32_t&);
+	static bool_t readFloat(const std::string&, float&);
+	static bool_t readBool(const std::string&, bool_t&);
+	void notifyOptionUpdate(const Options::Option*, int32_t);
+	void notifyOptionUpdate(const Options::Option*, float);
+	void notifyOptionUpdate(const Options::Option*, bool_t);
+	void load(void);
+	void initDefaultValues(void);
+	void init(Minecraft*, std::string);
+	bool_t hideOption(const Options::Option*);
+	std::vector<int> getValues(const Options::Option*);
+	std::string getStringValue(const Options::Option*);
+	float getProgrssMin(const Options::Option*);
+	float getProgrssMax(const Options::Option*);
+	float getProgressValue(const Options::Option*);
+	std::string getMessage(const Options::Option*);
+	std::string getKeyMessage(int32_t);
+	std::string getKeyDescription(int32_t);
+	int32_t getIntValue(const Options::Option*);
+	std::string getDescription(const Options::Option*, std::string);
+	bool_t getBooleanValue(const Options::Option*);
+	std::string formatDescriptionString(const Options::Option*, const char_t*, const char_t**, int32_t);
+	bool_t canModify(const Options::Option*);
+	void addOptionToSaveOutput(std::vector<std::string>&, std::string, std::string);
+	void addOptionToSaveOutput(std::vector<std::string>&, std::string, int32_t);
+	void addOptionToSaveOutput(std::vector<std::string>&, std::string, float);
+	void addOptionToSaveOutput(std::vector<std::string>&, std::string, bool_t);
+};

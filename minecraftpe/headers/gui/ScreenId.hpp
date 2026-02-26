@@ -1,0 +1,13 @@
+#pragma once
+#include <_types.h>
+
+enum ScreenId{
+	NONE_SCREEN = 0,
+	START_MENU_SCREEN = 1,
+	JOIN_GAME_SCREEN = 2,
+	PAUSE_SCREEN_0 = 3,
+	PAUSE_SCREEN_1 = 4,
+	SELECT_WORLD_SCREEN = 5,
+	INVENTORY_SCREEN = 6,
+	CHAT_SCREEN = 7
+};

@@ -1,0 +1,7 @@
+requestStop(void)
+~AndroidRestCaller()
+~AndroidRestCaller()
+AndroidRestCaller(MCOConnector *,std::string const&)
+getRequestIndex(int,RestCallerObject **)
+onRequestComplete(int,int,std::string const&)
+makeRequest(RestCallerObject *)

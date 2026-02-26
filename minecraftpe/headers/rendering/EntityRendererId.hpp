@@ -1,0 +1,30 @@
+#pragma once
+#include <_types.h>
+
+enum EntityRendererId
+{
+	ER_NONE = 0,
+	UNKNOWN = 1,
+	TNT = 2,
+	HUMANOID = 3,
+	ITEM_ENTITY = 4,
+	TRIPOD_CAMERA = 5,
+	CHICKEN = 6,
+	COW = 7,
+	PIG = 8,
+	SHEEP = 9,
+	ZOMBIE = 11,
+	SKELETON = 12,
+	SPIDER = 13,
+	CREEPER = 14,
+	ARROW = 15,
+	PLAYER = 16,
+	THROWNEGG = 17,
+	THROWNSNOWBALL = 18,
+	PAINTING = 19,
+	FALLINGTILE = 20,
+	MINECART = 21,
+
+
+	LENGTH
+};

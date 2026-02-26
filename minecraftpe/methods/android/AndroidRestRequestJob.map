@@ -1,0 +1,8 @@
+AndroidRestRequestJob(Minecraft *)
+onRequestComplete(int,int,std::string const&)
+isRunning(void)
+stop(void)
+~AndroidRestRequestJob()
+~AndroidRestRequestJob()
+run(void)
+finish(void)

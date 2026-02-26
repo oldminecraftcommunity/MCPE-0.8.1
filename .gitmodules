@@ -1,0 +1,15 @@
+[submodule "stb"]
+	path = stb
+	url = https://github.com/nothings/stb
+[submodule "glm"]
+	path = glm
+	url = https://github.com/g-truc/glm
+[submodule "jsoncpp"]
+	path = jsoncpp
+	url = https://chromium.googlesource.com/external/jsoncpp
+[submodule "utf8proc"]
+	path = utf8proc
+	url = https://github.com/JuliaStrings/utf8proc
+[submodule "RakNet-MCPI"]
+	path = RakNet-MCPI
+	url = https://github.com/MFDGaming/RakNet-MCPI
