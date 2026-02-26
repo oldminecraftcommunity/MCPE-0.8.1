@@ -27,7 +27,6 @@ DiggerItem::~DiggerItem() {
 }
 float DiggerItem::getDestroySpeed(ItemInstance* a2, Tile* a3) {
 	if(a3 && this->field_5C[a3->blockID]) {
-		printf("%f\n", this->efficiencyMultiplier);
 		return this->efficiencyMultiplier;
 	} else {
 		return 1.0;

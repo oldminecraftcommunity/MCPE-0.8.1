@@ -243,7 +243,6 @@ void AppPlatform_sdl::init(){
 							p_codepoint[2] = (char)(0x80 | (c & 0x3f));
 							p_codepoint[3] = '\x00';
 						}
-						Keyboard::feedText(p_codepoint, appPlatform.sdl_event.type == SDL_KEYDOWN);
 						Keyboard::feedText(p_codepoint, 0);
 						break;
 					}

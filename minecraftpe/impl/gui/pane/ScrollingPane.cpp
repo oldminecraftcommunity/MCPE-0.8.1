@@ -294,7 +294,6 @@ void ScrollingPane::hideScrollIndicators() {
 	this->field_1C4.field_14 = 0;
 }
 void ScrollingPane::onHoldItem() {
-	printf("AAA\n");
 	int32_t v2 = this->field_18C;
 	if(v2 != -1 && !this->field_DC) {
 		if(this->field_DE) {
