@@ -3,7 +3,7 @@
 #include <NinecraftApp.hpp>
 #include <main.hpp>
 #include <rendering/Tesselator.hpp>
-#include <stb/stb_image.h>
+#include <stb_image.h>
 #include <rendering/Textures.hpp>
 #include <rendering/Font.hpp>
 #include <utils.h>
