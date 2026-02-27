@@ -62,7 +62,7 @@ Tag* Tag::readNamedTag(IDataInput* input){
 	}
 }
 
-std::string Tag::getTagName(byte id){
+std::string Tag::getTagName(char id){
 	switch(id){
 		case 0: return "TAG_End";
 		case 1: return "TAG_Byte";
@@ -78,7 +78,7 @@ std::string Tag::getTagName(byte id){
 		default: return "UNKNOWN";
 	}
 }
-Tag* Tag::newTag(byte type, const std::string& name){
+Tag* Tag::newTag(char type, const std::string& name){
 	switch(type){
 		case 0: return new EndTag();
 		case 1: return new ByteTag(name, 0);

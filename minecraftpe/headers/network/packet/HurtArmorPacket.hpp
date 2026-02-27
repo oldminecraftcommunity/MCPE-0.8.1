@@ -4,7 +4,7 @@
 
 struct HurtArmorPacket : Packet{
 	int8_t health;
-	byte align1, align2, align3;
+	char align1, align2, align3;
 
 	HurtArmorPacket(int8_t);
 	HurtArmorPacket();

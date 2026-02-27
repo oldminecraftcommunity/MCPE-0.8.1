@@ -4,7 +4,7 @@
 
 struct ContainerClosePacket : Packet{
 UNK	uint8_t field_C;
-	byte align1, align2, align3;
+	char align1, align2, align3;
 	ContainerClosePacket();
 	ContainerClosePacket(uint8_t field_C);
 	virtual ~ContainerClosePacket();

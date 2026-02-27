@@ -3,7 +3,7 @@
 
 struct ObsidianTile : StoneTile{
 	bool_t glowing;
-	byte field_81, field_82, field_83;
+	char field_81, field_82, field_83;
 
 	ObsidianTile(int32_t, const std::string&, bool_t glowing);
 	void poofParticles(Level*, int32_t, int32_t, int32_t);

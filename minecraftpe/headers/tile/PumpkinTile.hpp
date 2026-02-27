@@ -3,7 +3,7 @@
 
 struct PumpkinTile : DirectionalTile{
 	bool_t field_80;
-	byte field_81, field_82, field_83;
+	char field_81, field_82, field_83;
 	TextureUVCoordinateSet field_84, field_9C, field_B4;
 
 	PumpkinTile(int32_t, bool_t);

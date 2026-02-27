@@ -10,7 +10,7 @@ struct PlayerData
 	float fallDistance;
 	int16_t fire, field_26;
 	bool_t onGround;
-	byte align1, align2, align3;
+	char align1, align2, align3;
 	PlayerData(); //inlined
 	/*
 	 * this->playerData.x = 0.0;

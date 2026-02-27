@@ -8,7 +8,7 @@ struct AdventureSettings{
 	int8_t field_3;
 	int8_t allowInteract;
 	int8_t field_5;
-	byte align1, align2;
+	char align1, align2;
 
 	AdventureSettings();
 };

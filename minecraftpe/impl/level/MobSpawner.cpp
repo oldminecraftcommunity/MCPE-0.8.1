@@ -54,7 +54,98 @@ void MobSpawner::makeBabyMob(Mob* a1, float chance) {
 	}
 }
 void MobSpawner::postProcessSpawnMobs(Level* a2, Biome* a3, int32_t a4, int32_t a5, int32_t a6, int32_t a7, Random* a8){
-	printf("MobSpawner::postProcessSpawnMobs - not implemented\n"); //TODO MobSpawner::postProcessSpawnMobs
+	std::vector<Biome::MobSpawnerData> v61 = *a3->getMobs(MobCategory::creature); //TODO check
+	if(!v61.empty()) {
+		while(1) {
+			float v26 = a8->nextFloat();
+			if(v26 >= a3->getCreatureProbability()) {
+				break;
+			}
+
+			int totalrarity = 0;
+			for(auto&& msd: v61) {
+				totalrarity += msd.rarity;
+			}
+
+			int v30 = a2->random.genrand_int32() % totalrarity;
+			Biome::MobSpawnerData* data;
+			for(auto&& i: v61) {
+				v30 -= i.rarity;
+				if(v30 < 0) {
+					data = &i;
+					goto LABEL_15;
+				}
+			}
+			data = 0;
+LABEL_15:
+			int min = data->min;
+			int v33 = data->max + 1 - min;
+			int v60 = min + a8->genrand_int32() % v33;
+			int v58 = a4 + a8->genrand_int32() % a6;
+			int v34 = 0;
+			int v35 = v58;
+			int v59 = a8->genrand_int32() % a7 + a5;
+			int v50 = v59;
+LABEL_34:
+			int v55 = v34;
+			if(v34 < v60) {
+				int v56 = 4;
+				while(1) {
+					int top = a2->getTopSolidBlock(v35, v50);
+					bool v43;
+					if(MobSpawner::isSpawnPositionOk(MobCategory::creature, a2, v35, top, v50)) {
+						Mob* mob = MobFactory::CreateMob(data->mobtype, a2);
+						if(!mob) {
+							if(!--v56) {
+								v34 = v55 + 1;
+								goto LABEL_34;
+							}
+							continue;
+							//goto LABEL_24;
+						}
+
+						mob->moveTo((float)v35 + 0.5, (float)top, (float)v50 + 0.5, a8->nextFloat() * 360.0, 0.0);
+						a2->addEntity(mob);
+						v43 = 1;
+						MobSpawner::finalizeMobSettings(mob, a2, (float)v35 + 0.5, (float)top, (float)v50 + 0.5);
+					}
+					else
+					{
+						v43 = 0;
+					}
+
+					v35 += a8->genrand_int32() % 5u - a8->genrand_int32() % 5;
+					v50 += a8->genrand_int32() % 5u - a8->genrand_int32() % 5;
+					int v44 = a4 + a6;
+					int v45 = a5 + a6;
+					while ( v35 < a4 || v35 >= v44 || v50 < a5 || v50 >= v45 )
+					{
+						int v54 = v45;
+						int v53 = v44;
+						int v46 = v58 + a8->genrand_int32() % 5;
+						v35 = v46 - a8->genrand_int32() % 5;
+						int v47 = v59 + a8->genrand_int32() % 5;
+						int v48 = a8->genrand_int32() % 5;
+						v45 = v54;
+						v44 = v53;
+						v50 = v47 - v48;
+					}
+					if ( v43 )
+					{
+LABEL_33:
+						v34 = v55 + 1;
+						goto LABEL_34;
+					}
+					if ( !--v56 )
+					{
+						goto LABEL_33;
+					}
+				}
+			}
+		}
+	}
+
+
 }
 
 static int _D6E4E9EC;

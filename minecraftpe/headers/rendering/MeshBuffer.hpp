@@ -12,7 +12,7 @@ struct MeshBuffer{
 
 		uint8_t offsets[4];
 		uint8_t stride;
-		byte align, align1, align2; //TODO this struct is not aligned?
+		char align, align1, align2; //TODO this struct is not aligned?
 
 		VertexFormat(void);
 		void bindArrays(void) const;

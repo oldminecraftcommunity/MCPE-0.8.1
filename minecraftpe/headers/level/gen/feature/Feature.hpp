@@ -6,7 +6,7 @@ struct Random;
 
 struct Feature{
 	bool_t update;
-	byte a, b, c;
+	char a, b, c;
 
 	Feature(bool_t);
 	void placeBlock(Level*, int32_t, int32_t, int32_t, int32_t);

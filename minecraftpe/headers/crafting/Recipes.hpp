@@ -24,7 +24,7 @@ struct Recipes
 		Tile* tile;
 		ItemInstance itemInstance;
 		char_t chr;
-		byte field_1D, field_1E, field_1F;
+		char field_1D, field_1E, field_1F;
 
 		Type(const Recipes::Type&);
 		Type(char_t, Item*);

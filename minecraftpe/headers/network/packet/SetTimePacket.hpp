@@ -5,7 +5,7 @@
 struct SetTimePacket : Packet{
 	int32_t timeValue;
 	bool stopTime;
-	byte align, align1, align2;
+	char align, align1, align2;
 	SetTimePacket();
 	SetTimePacket(int32_t tv, bool_t stopTime);
 

@@ -79,6 +79,8 @@ bool_t AppPlatform_sdl::sdlCtxInit(){
 	return 1;
 }
 
+bool fullscreen = 0;
+int lastWidth = 0, lastHeight = 0;
 void AppPlatform_sdl::onKeyPressed(Minecraft* mc, SDLKey key, bool pressed) {
 	int k = 0;
 	if(key == SDLK_w) k = mc->options.keyForward.keyCode;
@@ -86,7 +88,32 @@ void AppPlatform_sdl::onKeyPressed(Minecraft* mc, SDLKey key, bool pressed) {
 	if(key == SDLK_a) k = mc->options.keyLeft.keyCode;
 	if(key == SDLK_d) k = mc->options.keyRight.keyCode;
 	if(key == SDLK_SPACE) k = mc->options.keyJump.keyCode;
-	if(key == SDLK_ESCAPE) k = 255;
+	if(key == SDLK_F11) {
+		if(pressed) {
+			fullscreen = !fullscreen;
+			if(fullscreen) {
+				lastWidth = this->screenWidth;
+				lastHeight = this->screenHeight;
+				this->screenWidth = 0;
+				this->screenHeight = 0;
+				this->sdl_surface = this->setSDLVideoMode();
+				this->screenWidth = SDL_GetVideoInfo()->current_w;
+				this->screenHeight = SDL_GetVideoInfo()->current_h;
+				mc->setSize(this->screenWidth, this->screenHeight);
+			} else {
+				this->screenWidth = lastWidth;
+				this->screenHeight = lastHeight;
+				lastWidth = 0;
+				lastHeight = 0;
+				mc->setSize(this->screenWidth, this->screenHeight);
+			}
+			SDL_WM_ToggleFullScreen(this->sdl_surface);
+		}
+	}
+	if(key == SDLK_ESCAPE) {
+		if(pressed) mc->handleBack(0);
+		return;
+	}
 	if(key == SDLK_e) k = 100;
 	if(key == SDLK_t && mc->mouseGrabbed) {
 		mc->screenChooser.setScreen(CHAT_SCREEN);

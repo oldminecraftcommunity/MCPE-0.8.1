@@ -3,7 +3,7 @@
 
 struct RedStoneOreTile : Tile{
 	bool_t emitLight;
-	byte field_81, field_82, field_83;
+	char field_81, field_82, field_83;
 
 	RedStoneOreTile(int32_t, const std::string&, bool_t);
 

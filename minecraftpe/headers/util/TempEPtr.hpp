@@ -12,7 +12,7 @@ struct TempEPtr : _TickPtr
 	int32_t entityId;
 	Level* level;
 	bool_t locked;
-	byte align[3];
+	char align[3];
 
 	TempEPtr() {
 		this->entity = 0;

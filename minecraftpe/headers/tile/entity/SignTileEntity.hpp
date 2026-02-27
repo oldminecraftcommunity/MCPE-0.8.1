@@ -6,7 +6,7 @@ struct SignTileEntity: TileEntity
 	std::string textLines[4];
 	int32_t field_6C;
 	bool_t editable;
-	byte field_71, field_72, field_73;
+	char field_71, field_72, field_73;
 
 	SignTileEntity();
 	bool_t isEditable();

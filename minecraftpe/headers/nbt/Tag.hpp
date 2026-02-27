@@ -29,6 +29,6 @@ struct Tag{
 
 	static void writeNamedTag(Tag*, IDataOutput*);
 	static Tag* readNamedTag(IDataInput*);
-	static std::string getTagName(byte);
-	static Tag* newTag(byte, const std::string&);
+	static std::string getTagName(char);
+	static Tag* newTag(char, const std::string&);
 };

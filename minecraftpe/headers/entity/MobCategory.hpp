@@ -15,7 +15,7 @@ struct MobCategory{
 	int32_t maxCountInChunkMaybe;
 	Material* material;
 	int8_t field_10;
-	byte a11, a12, a13;
+	char a11, a12, a13;
 
 	MobCategory(int32_t, int32_t, int32_t, int8_t);
 

@@ -9,7 +9,7 @@ struct LookControl
 	Mob* controlledEntity;
 	float yawRotationSpeed, pitchRotationSpeed;
 	bool_t isLooking;
-	byte align[3];
+	char align[3];
 	float lookX, lookY, lookZ;
 
 	LookControl(Mob*);

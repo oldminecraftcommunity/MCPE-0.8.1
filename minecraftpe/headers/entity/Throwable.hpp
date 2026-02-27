@@ -5,7 +5,7 @@ struct Throwable: Entity
 {
 	int32_t shake;
 	bool_t inGround;
-	byte field_11D, field_11E, field_11F;
+	char field_11D, field_11E, field_11F;
 	int32_t auxData;
 	int32_t ticksInGround, ticksInAir;
 	int32_t xTile, yTile, zTile;

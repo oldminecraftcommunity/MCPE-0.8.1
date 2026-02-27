@@ -3,7 +3,7 @@
 
 struct SlabTile : Tile{
 	bool_t isFull;
-	byte field_7D, field_7E, field_7F;
+	char field_7D, field_7E, field_7F;
 
 	SlabTile(int32_t, const std::string&, bool_t, const struct Material*);
 	bool_t isBottomSlab(LevelSource*, int32_t, int32_t, int32_t);

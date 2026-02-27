@@ -14,7 +14,7 @@
 #include <tile/material/Material.hpp>
 #include <utils.h>
 
-RandomLevelSource::RandomLevelSource(struct Level* a2, int32_t a3, int32_t a4, bool_t a5) //long, int, bool
+RandomLevelSource::RandomLevelSource(struct Level* a2, int32_t a3, int32_t a4, bool a5) //long, int, bool
 	: random(a3),
 	octave16noise_1(&this->random, 16)
 	, octave16noise_2(&this->random, 16)

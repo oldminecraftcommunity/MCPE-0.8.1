@@ -4,7 +4,7 @@
 struct ServerLevel: Level
 {
 	bool_t _allPlayersSleeping;
-	byte align[3];
+	char align[3];
 
 	ServerLevel(LevelStorage*, const std::string&, const LevelSettings&, int32_t, Dimension*);
 	bool_t allPlayersSleeping();

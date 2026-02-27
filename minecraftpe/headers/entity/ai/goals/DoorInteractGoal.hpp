@@ -10,7 +10,7 @@ struct DoorInteractGoal: Goal
 	int32_t doorX, doorY, doorZ;
 	Tile* doorTile;
 	bool_t closeToTarget;
-	byte align[3];
+	char align[3];
 	float targetX, targetZ;
 
 	DoorInteractGoal(Mob*);

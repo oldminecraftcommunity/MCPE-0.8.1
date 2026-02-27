@@ -3,7 +3,7 @@
 
 struct NormalDayCycleDimension : Dimension{
 	int8_t field_54;
-	byte align, align2, align3;
+	char align, align2, align3;
 
 
 	virtual ~NormalDayCycleDimension();

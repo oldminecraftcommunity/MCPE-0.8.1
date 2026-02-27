@@ -5,7 +5,7 @@
 struct PlayerInputPacket : Packet{
 	float moveForward, moveStrafe;
 	bool isJumping, isSneaking;
-	byte align, align1;
+	char align, align1;
 	PlayerInputPacket();
 	PlayerInputPacket(float fwd, float stf, bool jmp, bool snk);
 

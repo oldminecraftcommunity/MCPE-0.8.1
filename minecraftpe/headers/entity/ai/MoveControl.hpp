@@ -9,7 +9,7 @@ struct MoveControl
 	float posX, posY, posZ;
 	float speedMultiplier;
 	bool_t _hasWanted;
-	byte align[3];
+	char align[3];
 
 	MoveControl(Mob*);
 	float getSpeed();

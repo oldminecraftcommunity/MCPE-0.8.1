@@ -4,7 +4,7 @@
 struct ThinFenceTile : Tile{
 	TextureUVCoordinateSet field_80;
 	bool_t field_98;
-	byte field_99, field_9A, field_9B;
+	char field_99, field_9A, field_9B;
 
 	ThinFenceTile(int32_t, const std::string&, const std::string&, const struct Material*, bool_t);
 	bool_t attachsTo(int32_t);

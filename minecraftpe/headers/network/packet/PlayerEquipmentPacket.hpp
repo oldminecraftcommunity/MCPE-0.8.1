@@ -6,7 +6,7 @@ struct PlayerEquipmentPacket : Packet{
 	int32_t eid;
 	uint16_t itemID, itemMeta;
 	int8_t slot;
-	byte align, align2, align3;
+	char align, align2, align3;
 	PlayerEquipmentPacket(int32_t eid, uint16_t itemId, uint16_t itemMeta, int8_t slot);
 	PlayerEquipmentPacket();
 	virtual ~PlayerEquipmentPacket();

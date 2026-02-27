@@ -11,7 +11,7 @@ struct UseItemPacket : Packet{
 	int32_t entityID;
 	uint16_t itemId;
 	uint8_t blockMeta;
-	byte align;
+	char align;
 	ItemInstance item;
 	UseItemPacket();
 	UseItemPacket(int32_t eid, int32_t x, int32_t y, int32_t z, int32_t face, int32_t id, int32_t meta);

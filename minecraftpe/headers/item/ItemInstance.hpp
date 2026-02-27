@@ -17,7 +17,7 @@ struct ItemInstance{
 	Item* itemClass;
 	Tile* tileClass;
 	bool_t isValid;
-	byte align, align1, align2;
+	char align, align1, align2;
 
 	ItemInstance(const Item*);
 	ItemInstance(const Item*, int32_t);

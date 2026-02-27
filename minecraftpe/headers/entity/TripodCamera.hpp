@@ -7,7 +7,7 @@ struct TripodCamera: Mob
 	int32_t field_C70;
 	Player* player;
 	bool_t field_C78;
-	byte field_C79, field_C7A, field_C7B;
+	char field_C79, field_C7A, field_C7B;
 
 	TripodCamera(Level*, Player*, float, float, float);
 

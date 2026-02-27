@@ -13,7 +13,7 @@ struct HitResult{
 	Vec3 hitVec;
 	Entity* entity;
 	char_t field_24;
-	byte field_25, field_26, field_27;
+	char field_25, field_26, field_27;
 
 	HitResult(Entity*);
 	HitResult(const HitResult&);

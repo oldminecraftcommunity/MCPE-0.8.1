@@ -5,7 +5,7 @@
 struct PolygonQuad{
 	VertexPT verticies[4];
 	bool_t flipnormal;
-	byte align1, align2, align3;
+	char align1, align2, align3;
 
 	PolygonQuad(); //TODO doesnt exist?
 	PolygonQuad(VertexPT*, VertexPT*, VertexPT*, VertexPT*);

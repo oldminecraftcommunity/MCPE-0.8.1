@@ -22,7 +22,7 @@ struct LevelData{
 	int32_t gameType;
 	int32_t storageVersion;
 	bool_t spawnMobs;
-	byte align1, align2, align3;
+	char align1, align2, align3;
 	int32_t stopTime;
 	int32_t generatorVersion;
 

@@ -3,7 +3,7 @@
 
 struct SignTile : EntityTile{
 	bool_t field_80;
-	byte field_81, field_82, field_83;
+	char field_81, field_82, field_83;
 
 	SignTile(int32_t, bool_t);
 

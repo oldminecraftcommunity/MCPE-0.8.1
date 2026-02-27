@@ -6,7 +6,7 @@
 struct DropItemPacket : Packet{
 	int32_t eid;
 	uint8_t motionType;
-	byte align, align1, align2;
+	char align, align1, align2;
 	ItemInstance itemInstance;
 	DropItemPacket();
 	DropItemPacket(int32_t eid, uint8_t, const ItemInstance& a2);

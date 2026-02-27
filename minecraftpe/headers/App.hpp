@@ -4,9 +4,9 @@
 
 struct App : AppPlatform::Listener{
 
-	byte field_4;
+	char field_4;
 	bool_t wantsToQuit;
-	byte field_2, field_3;
+	char field_2, field_3;
 	AppContext context;
 	int8_t field_18, field_19, field_1A, field_1B;
 	int32_t field_1C, field_20, field_24, field_28, field_2C, field_30, field_34;

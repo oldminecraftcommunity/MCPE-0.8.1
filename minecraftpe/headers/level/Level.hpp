@@ -33,7 +33,7 @@ struct Level : LevelSource{
 	int8_t field_12, field_13;
 	int32_t difficulty;
 	AdventureSettings adventureSettings;
-	byte field_1e, field_1f; //1e, 1f - align
+	char field_1e, field_1f; //1e, 1f - align
 	std::vector<struct Entity*> entities;
 	std::map<int32_t, struct Entity*> eid2entity; //TODO check type
 	std::vector<TileEntity*> tileEntities;

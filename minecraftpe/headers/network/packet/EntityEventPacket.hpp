@@ -5,7 +5,7 @@
 struct EntityEventPacket : Packet{
 	int32_t eid;
 	uint8_t event;
-	byte align1, align2, align3;
+	char align1, align2, align3;
 	EntityEventPacket();
 	EntityEventPacket(int32_t eid, uint8_t event);
 
