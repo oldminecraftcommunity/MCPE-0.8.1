@@ -17,7 +17,7 @@ SkeletonModel::SkeletonModel() : ZombieModel(){
 	this->rightLegModel = ModelPart(0, 16, 64, 32);
 	this->rightLegModel.setModel(this);
 	this->rightLegModel.addBox(-1.0, 0.0, -1.0, 2, 12, 2, 0.0);
-	this->rightLegModel.setPos(2.0, 12.0, 0.0);
+	this->rightLegModel.setPos(-2.0, 12.0, 0.0);
 
 	this->leftLegModel = ModelPart(0, 16, 64, 32);
 	this->leftLegModel.setModel(this);
