@@ -1,5 +1,6 @@
 #pragma once
 #include <_types.h>
+
 #if defined(__WIN32__) or defined(__linux__)
 #include <sound/SoundSystemAL.hpp>
 #define SS_SUPER_CLASS SoundSystemAL
@@ -7,6 +8,7 @@
 #include <sound/SoundSystemSL.hpp>
 #define SS_SUPER_CLASS SoundSystemSL
 #endif
+
 #include <util/Random.hpp>
 #include <sound/SoundRepository.hpp>
 

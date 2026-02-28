@@ -2376,7 +2376,7 @@ void Level::tick() {
 			if(_D6E4DF90 + 1 > 1) {
 				_D6E4DF90 = 0;
 				bool spawnMonsters = this->spawnMonstersMaybe;
-				if(spawnMonsters) spawnMonsters = this->difficulty < 0;
+				if(spawnMonsters) spawnMonsters = this->difficulty > 0;
 				bool spawnAnimals = this->spawnAnimalsMaybe;
 				if(spawnAnimals) spawnAnimals = (this->getTime() % 400) <= 1;
 				MobSpawner::tick(this, spawnMonsters, spawnAnimals);
@@ -2512,10 +2512,11 @@ void Level::tickTiles() {
 
 		for(int32_t i = 0; i < 57; ++i) {
 			ChunkPos* off = &_offsets[i];
-			if((uint32_t)(off->x + posX) <= 0xf) {
+			int xx = (off->x + posX);
+			if((uint32_t)xx <= 0xf) {
 				int32_t zz = off->z + posZ;
 				if(zz >= 0 && zz <= 15) {
-					this->somethingRelatedToChunkPos.insert({posX, posZ});
+					this->somethingRelatedToChunkPos.insert({xx, zz});
 				}
 			}
 		}

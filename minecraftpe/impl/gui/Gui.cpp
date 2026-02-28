@@ -168,6 +168,7 @@ void Gui::addMessage(const std::string& a2, const std::string& a3, int32_t a4) {
 		this->chatMessages.emplace(this->chatMessages.begin(), v13);
 
 		if(!this->minecraftInst->isOnlineClient() && v13.field_8[0] == '/') {
+
 #ifdef WIP
 			std::string v10 = ServerCommandParser::executeCommand(&v13); //TODO check - for some reason references (ServerCommandParser*)this->minecraftInst->field_D30,
 #else
@@ -427,6 +428,7 @@ void Gui::render(float a2, bool_t a3, int32_t a4, int32_t a5) {
 			if(!this->minecraftInst->currentScreen) {
 				this->renderOnSelectItemNameText(v15, font, v16 - 19);
 			}
+
 			//DisableState::~DisableState((DisableState *)&v25);
 		}
 	}

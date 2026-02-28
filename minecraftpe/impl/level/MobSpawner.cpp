@@ -103,7 +103,6 @@ LABEL_34:
 							continue;
 							//goto LABEL_24;
 						}
-
 						mob->moveTo((float)v35 + 0.5, (float)top, (float)v50 + 0.5, a8->nextFloat() * 360.0, 0.0);
 						a2->addEntity(mob);
 						v43 = 1;
@@ -285,6 +284,7 @@ LABEL_54:
 												goto LABEL_28;
 											}
 										} else {
+
 											delete v28;
 										}
 										v38 += v39;

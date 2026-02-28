@@ -1,7 +1,6 @@
 #pragma once
 #include <_types.h>
 #include <sound/SoundSystem.hpp>
-#include <vector>
 
 struct SoundSystemAL: public SoundSystem
 {

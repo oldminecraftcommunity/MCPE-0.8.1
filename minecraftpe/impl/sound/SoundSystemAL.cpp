@@ -48,7 +48,7 @@ void SoundSystemAL::init(void) {
 	}
 	fprintf(stdout, "Device: %s\n", alcGetString(this->device, ALC_DEVICE_SPECIFIER));
 
-	alGetError();
+	_checkErr();
 
 	this->context = alcCreateContext(this->device, NULL);
 	if(!alcMakeContextCurrent(this->context)) {
