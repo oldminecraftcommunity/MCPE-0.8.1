@@ -4,6 +4,7 @@ project(minecraftpe08decomp LANGUAGES CXX)
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/build)
 
 find_package(OpenGL REQUIRED)
+find_package(OpenAL REQUIRED)
 find_package(SDL REQUIRED)
 find_package(ZLIB REQUIRED)
 add_compile_options(-fpermissive -Wno-write-strings -Winfinite-recursion -Werror=return-type -g -DIMTOOLAZYTOFIX16ERRS -DPCTWEAKS)
@@ -109,4 +110,4 @@ add_executable(minecraftpe08decomp ${IMPLCPP} ${HEADC} ${HEADCPP}
 
 target_include_directories(minecraftpe08decomp PUBLIC "headers/")
 target_link_libraries(minecraftpe08decomp)
-target_link_libraries(minecraftpe08decomp PRIVATE ZLIB::ZLIB ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} RakNetLibStatic jsoncpp_lib utf8proc)
+target_link_libraries(minecraftpe08decomp PRIVATE OpenAL::OpenAL ZLIB::ZLIB ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} RakNetLibStatic jsoncpp_lib utf8proc)

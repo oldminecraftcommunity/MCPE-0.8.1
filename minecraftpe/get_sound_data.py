@@ -113,10 +113,14 @@ with open("libminecraftpe.so", "rb") as f:
 content = "#include <pcm_data.h>\n";
 for k, v in lib_sound_data.items():
 	vv = allbytes[v+12:v+16];
+	cc = allbytes[v:v+4];
+	bps = allbytes[v+4:v+8];
 	datalen = vv[0] | (vv[1] << 8) | (vv[2] << 16) | (vv[3] << 24);
-	print("Getting", k, "header:", allbytes[v:v+16], "len:", datalen)
+	channels = cc[0] | (cc[1] << 8) | (cc[2] << 16) | (cc[3] << 24);
+	bpsv = bps[0] | (bps[1] << 8) | (bps[2] << 16) | (bps[3] << 24);
+	print("Getting", k, "header:", allbytes[v:v+16], "len:", bpsv*channels*datalen+16)
 	content += "uint8_t "+k+"[] = {";
-	content += ",".join(list(map(hex, allbytes[v:v+16+datalen*2])))
+	content += ",".join(list(map(hex, allbytes[v:v+16+bpsv*channels*datalen])))
 	content += "};\n"
 
 	#data_length = read_int_from_bytes(bytes, item[1] + 12)

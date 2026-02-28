@@ -1,10 +1,16 @@
 #pragma once
 #include <_types.h>
+#if defined(__WIN32__) or defined(__linux__)
+#include <sound/SoundSystemAL.hpp>
+#define SS_SUPER_CLASS SoundSystemAL
+#else
 #include <sound/SoundSystemSL.hpp>
+#define SS_SUPER_CLASS SoundSystemSL
+#endif
 #include <util/Random.hpp>
 #include <sound/SoundRepository.hpp>
 
-struct SoundEngine : public SoundSystemSL{
+struct SoundEngine : public SS_SUPER_CLASS{
 	struct Options* options;
 	int32_t field_40;
 	Random randomInstance;

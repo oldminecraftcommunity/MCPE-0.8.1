@@ -3,7 +3,7 @@
 ## An attempt to decompile the 0.8.1 libminecraftpe.so
 
 ## Building
-Requires SDL1, opengl, zlib.
+Requires SDL1, opengl, opensl, zlib.
 You must also have original 0.8.1 apk file to extract sounds(won't compile without them) and obtain assets(the compiled file will crash or not work properly without them).
 
 should probably simplify it later
