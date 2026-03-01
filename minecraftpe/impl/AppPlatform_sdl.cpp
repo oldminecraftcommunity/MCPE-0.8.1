@@ -17,6 +17,9 @@
 #else
 
 #endif
+#ifdef __WIN32__
+#include <sound/SoundSystemDirectSound.hpp>
+#endif
 std::string AppPlatform_sdl::getImagePath(const std::string& name, bool_t t){
 	return "assets/images/"+name;
 }
@@ -166,6 +169,9 @@ void AppPlatform_sdl::init(){
 
 	NinecraftApp* mc = new NinecraftApp();
 	this->hasContext = this->sdlCtxInit();
+#ifdef __WIN32__
+	((SoundSystemDirectSound*)mc->soundEngine)->init();
+#endif
 	ctx.platform = this;
 	mc->context = ctx;
 	char curdir[256];
@@ -204,7 +210,9 @@ void AppPlatform_sdl::init(){
 			uint16_t _mx, _my;
 			switch(appPlatform.sdl_event.type) {
 				case SDL_ACTIVEEVENT:
-					if(appPlatform.sdl_event.active.state == SDL_APPINPUTFOCUS) {
+					//wine sends 6 when focus is received for some reason
+					//(and 2(SDL_APPINPUTFOCUS) when lost)
+					if(appPlatform.sdl_event.active.state == 6 || appPlatform.sdl_event.active.state == SDL_APPINPUTFOCUS) {
 						windowActive = appPlatform.sdl_event.active.gain;
 						if(!windowActive && !mc->currentScreen) {
 							mc->pauseGame(1);

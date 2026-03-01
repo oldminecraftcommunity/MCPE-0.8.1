@@ -1,3 +1,4 @@
+#if defined(__linux__)
 #include <sound/SoundSystemAL.hpp>
 #include <AL/al.h>
 #include <AL/alc.h>
@@ -114,7 +115,7 @@ void SoundSystemAL::playAt(const struct SoundDesc& a2, float a3, float a4, float
 			ALint state;
 			alGetSourcei(this->sources[i], AL_SOURCE_STATE, &state);
 			if(state != AL_PLAYING) {
-				alSourcef(this->sources[i], AL_PITCH, a7);
+				alSourcef(this->sources[i], AL_PITCH, 1); //pitch seems to be always 1
 				alSourcef(this->sources[i], AL_GAIN, a6);
 				alSource3f(this->sources[i], AL_POSITION, 0, 0, 0);
 				alSourcei(this->sources[i], AL_LOOPING, AL_FALSE);
@@ -129,3 +130,4 @@ void SoundSystemAL::playAt(const struct SoundDesc& a2, float a3, float a4, float
 		}
 	}
 }
+#endif

@@ -1,20 +1,19 @@
 #pragma once
-#if defined(__linux__)
+#ifdef __WIN32__
 #include <_types.h>
+#include <dsound.h>
 #include <sound/SoundSystem.hpp>
 
-struct SoundSystemAL: public SoundSystem
+struct SoundSystemDirectSound: public SoundSystem
 {
 	static const int MAX_PLAYED = 4;
 
-	struct ALCdevice* device = 0;
-	struct ALCcontext* context = 0;
+	LPDIRECTSOUNDBUFFER buffers[MAX_PLAYED] = {0};
+	LPDIRECTSOUND8 dsound = 0;
 	int playedCnt = 0;
-	uint32_t buffers[MAX_PLAYED] = {0};
-	uint32_t sources[MAX_PLAYED] = {0};
 
-	SoundSystemAL(void);
-	virtual ~SoundSystemAL();
+	SoundSystemDirectSound(void);
+	virtual ~SoundSystemDirectSound();
 	bool_t checkErr(uint32_t);
 	void destroy(void);
 	void init(void);

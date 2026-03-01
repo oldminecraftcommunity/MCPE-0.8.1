@@ -1,7 +1,9 @@
 #pragma once
 #include <_types.h>
-
-#if defined(__WIN32__) or defined(__linux__)
+#if defined(__WIN32__)
+#include <sound/SoundSystemDirectSound.hpp>
+#define SS_SUPER_CLASS SoundSystemDirectSound
+#elif defined(__linux__)
 #include <sound/SoundSystemAL.hpp>
 #define SS_SUPER_CLASS SoundSystemAL
 #else
