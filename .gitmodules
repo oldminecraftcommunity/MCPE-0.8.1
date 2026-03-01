@@ -10,6 +10,6 @@
 [submodule "utf8proc"]
 	path = utf8proc
 	url = https://github.com/JuliaStrings/utf8proc
-[submodule "RakNet-MCPI"]
-	path = RakNet-MCPI
-	url = https://github.com/MFDGaming/RakNet-MCPI
+[submodule "RakNet"]
+	path = RakNet
+	url = https://github.com/oldminecraftcommunity/RakNet
