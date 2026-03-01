@@ -222,7 +222,7 @@ void ItemInstance::load(CompoundTag* a2) {
 	int16_t id = a2->getShort("id");
 	this->_setItem(id);
 	if(a2->contains("Count", 1)) {
-		this->count = ((ByteTag*)a2->get("Count"))->value;
+		this->count = (uint8_t) ((ByteTag*)a2->get("Count"))->value;
 	} else {
 		this->count = 0;
 	}

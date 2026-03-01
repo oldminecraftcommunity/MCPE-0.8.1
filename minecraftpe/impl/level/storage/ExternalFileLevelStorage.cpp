@@ -491,7 +491,7 @@ void ExternalFileLevelStorage::tick() {
 								goto LABEL_12;
 							}
 						}
-						printf("adding unsaved chunk: %d\n", x + 16 * z);
+
 						this->field_2C.push_back({x + 16 * z, (int32_t)RakNet::GetTimeMS(), chunk});
 LABEL_12:
 						chunk->unsaved = 0;
