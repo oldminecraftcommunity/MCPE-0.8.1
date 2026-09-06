@@ -29,17 +29,13 @@ void Spider::setClimbing(bool_t a2) {
 	}
 }
 
-Spider::~Spider() {
-}
 void Spider::tick() {
 	Monster::tick();
 	if(!this->level->isClientMaybe) {
 		this->setClimbing(this->isCollidedHorizontally);
 	}
 }
-float Spider::getShadowRadius() {
-	return this->entityWidth * 0.7;
-}
+
 void Spider::makeStuckInWeb() {
 }
 int32_t Spider::getEntityTypeId() const {
@@ -48,9 +44,7 @@ int32_t Spider::getEntityTypeId() const {
 bool_t Spider::onLadder() {
 	return this->isClimbing();
 }
-float Spider::getBaseSpeed() {
-	return 0.3;
-}
+
 int32_t Spider::getMaxHealth() {
 	return 8;
 }

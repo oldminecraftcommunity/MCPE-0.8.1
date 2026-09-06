@@ -137,9 +137,7 @@ void Util::stringSplit(const std::string& s, int32_t a2, const float* a3, std::f
 	int32_t v11 = 0;
 	int32_t v10 = -1;
 	int v4 = 0;
-	for(int i = 0; i >= -128; --i)
-		printf("uwu nya %d=>%f\n", i, a3[-i]);
-	;
+
 	for(; v4 < (int)s.size(); ++v4) { /*this int cast is very needed so it compiles into blt and not bcc*/
 		//wont this result in some bad things happening if v4 is negative?
 		//x86 build seems to do this </3 - changing to unsigned results in broken text splitting for unicode chars(funny that text splitting on android armv7 version and x86 version running through ninecraft is different - mcpe my beloved)

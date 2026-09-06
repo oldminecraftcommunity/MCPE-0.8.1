@@ -11,13 +11,17 @@ struct Spider: Monster
 	int32_t makeStepSound();
 	void setClimbing(bool_t);
 
-	virtual ~Spider();
+	virtual ~Spider(){}
 	virtual void tick();
-	virtual float getShadowRadius();
+	virtual float getShadowRadius() {
+		return this->entityWidth * 0.7;
+	}
 	virtual void makeStuckInWeb();
 	virtual int32_t getEntityTypeId() const;
 	virtual bool_t onLadder();
-	virtual float getBaseSpeed();
+	virtual float getBaseSpeed() {
+		return 0.3;
+	}
 	virtual int32_t getMaxHealth();
 	virtual void aiStep();
 	virtual int32_t getDeathLoot();

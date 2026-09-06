@@ -5,6 +5,6 @@ struct Spinner: GuiElement
 {
 	Spinner();
 
-	virtual ~Spinner();
+	virtual ~Spinner(){}
 	virtual void render(struct Minecraft*, int32_t, int32_t);
 };
