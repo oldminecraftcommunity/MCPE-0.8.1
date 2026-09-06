@@ -191,20 +191,20 @@ void Font::drawTransformed(const std::string& s, float x, float y, int32_t col, 
 	this->draw(s, 0, 0, col);
 	glPopMatrix();
 }
-void Font::drawWordWrap(const std::string& a2, float a3, float a4, float a5, int32_t color, bool_t shadow, bool_t a8) {
+void Font::drawWordWrap(const std::string& a2, float x, float y, float wrapAfter, int32_t color, bool_t shadow, bool_t a8) {
 	int32_t v13 = 0;
-	Util::stringSplit(a2, (int32_t)a5, this->charLength, [&a8, &a3, &shadow, this, &a4, &color, &v13](const std::string& ss, float f) {
+	Util::stringSplit(a2, (int32_t)wrapAfter, this->charLength, [&a8, &x, &shadow, this, &y, &color, &v13](const std::string& ss, float f) {
 		if(ss.size()) {
 			if(a8) {
-				a3 = a3 + (float)(f * 0.5);
+				x = x + (float)(f * 0.5f);
 			}
 			if(shadow) {
-				this->drawShadow(ss, a3, a4, color);
+				this->drawShadow(ss, x, y, color);
 			} else {
-				this->draw(ss, a3, a4, color);
+				this->draw(ss, x, y, color);
 			}
 		}
-		a4 = a4 + this->field_C;
+		y += this->field_C;
 		v13 += this->field_C;
 	});
 }

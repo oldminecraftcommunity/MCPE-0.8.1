@@ -132,13 +132,21 @@ std::string Util::toLower(const std::string& s){
 	std::transform(cp.begin(), cp.end(), cp.begin(), tolower);
 	return cp;
 }
-void Util::stringSplit(const std::string& a1, int32_t a2, const float* a3, std::function<void(const std::string&, float)> onSplit) {
+void Util::stringSplit(const std::string& s, int32_t a2, const float* a3, std::function<void(const std::string&, float)> onSplit) {
 	float v5 = 0;
-	int32_t v10 = -1;
 	int32_t v11 = 0;
+	int32_t v10 = -1;
 	int v4 = 0;
-	for(v4 = 0; v4 < a1.size(); ++v4) {
-		int32_t v12 = (uint8_t)a1[v4];
+	for(int i = 0; i >= -128; --i)
+		printf("uwu nya %d=>%f\n", i, a3[-i]);
+	;
+	for(; v4 < (int)s.size(); ++v4) { /*this int cast is very needed so it compiles into blt and not bcc*/
+		//wont this result in some bad things happening if v4 is negative?
+		//x86 build seems to do this </3 - changing to unsigned results in broken text splitting for unicode chars(funny that text splitting on android armv7 version and x86 version running through ninecraft is different - mcpe my beloved)
+		//were so lucky <3
+		//int32_t charWidths[256];
+		//float charLength[256];
+		int32_t v12 = (char)s[v4];
 		v5 += a3[v12];
 
 		if(v12 == ' ') {
@@ -147,44 +155,44 @@ void Util::stringSplit(const std::string& a1, int32_t a2, const float* a3, std::
 			v10 = v4;
 		}
 
-		if((int)v5 > a2) {
+		if((int)v5 <= a2) { //dont change order or else gcc compiles it differently =<
+			if(v12 != '\n') continue;
+		}else{
 			if(v12 != '\n') {
 				if(v10 >= 0) v4 = v10;
 				else --v4;
 
-				std::string v15 = a1.substr(v11, v4 - v11 + 1);
-				onSplit(v15, v5);
+				onSplit(s.substr(v11, v4 - v11 + 1), v5);
 
 				v11 = v4 + 1;
 				v10 = -1;
 				v5 = 0;
 				continue;
 			}
-		}else if ( v12 != '\n' ){
-			continue;
 		}
-		std::string v15 = a1.substr(v11, v4 - v11);
-		onSplit(v15, 0);
+
+		onSplit(s.substr(v11, v4 - v11), 0);
 		v11 = v4 + 1;
 		v10 = -1;
 		v5 = 0;
 	}
-	std::string v15 = a1.substr(v11, v4 - v11);
-	onSplit(v15, v5);
+	onSplit(s.substr(v11, v4 - v11), v5);
 }
 
-std::string Util::toString(int32_t i){
-	std::string s = "";
+std::string Util::toString(int i){
+	std::string s;
 	if(i < 0) {
-		i = -1;
+		i = -i;
 		s += '-';
 	}
+
 	uint32_t v4 = 1000000000;
 	int32_t v5 = 10;
+
 	while(!(i/v4)){
 		i %= v4;
 		--v5;
-		v4/= 10;
+		v4 /= 10;
 		if(!v5){
 			v4 = 0;
 			break;
@@ -199,7 +207,9 @@ std::string Util::toString(int32_t i){
 	return s;
 
 }
-
+std::string Util::toString(float i) {
+	return Util::toString((int)i);
+}
 
 std::string Util::stringTrim(const std::string& a2, const std::string& a3, bool_t a4, bool_t a5) {
 	int32_t v8 = a2.length();

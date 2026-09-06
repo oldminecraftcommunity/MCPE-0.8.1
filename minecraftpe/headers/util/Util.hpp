@@ -17,11 +17,11 @@ struct Util{
 	static int32_t utf8len(const std::string&);
 	static std::string utf8substring(const std::string&, int32_t start, int32_t end);
 	static std::string simpleFormat(const std::string&, std::vector<std::string>);
-	static std::string toString(int32_t);
+	static std::string toString(int);
 	static std::string toString(float);
 	static std::string toLower(std::string const&);
 	//TODO	static			compareNoCase		(std::string,std::string)
-	static void stringSplit(const std::string&, int32_t, const float*, std::function<void(const std::string&, float)>);
+	static void stringSplit(const std::string& s, int32_t, const float*, std::function<void(const std::string&, float)>);
 	static std::string stringTrim(const std::string&, const std::string&, bool_t, bool_t);
 	static std::string stringTrim(const std::string&);
 };

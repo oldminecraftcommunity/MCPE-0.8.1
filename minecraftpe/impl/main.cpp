@@ -3,7 +3,6 @@
 #include <cpputils.hpp>
 #include <sys/time.h>
 #include <util/Random.hpp>
-#include <stdio.h>
 #include <math/Mth.hpp>
 #include <App.hpp>
 #include <AppPlatform_sdl.hpp>
