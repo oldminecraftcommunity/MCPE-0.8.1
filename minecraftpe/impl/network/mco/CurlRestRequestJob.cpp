@@ -66,7 +66,6 @@ void CurlRestRequestJob::run() {
 	this->trySetStatus(JS_STARTED);
 
 	CURL* curl = curl_easy_init();
-	printf("curl... %p\n", curl);
 	if(!curl) {
 		printf("curl_easy_init returned 0\n");
 		return;
@@ -95,8 +94,13 @@ void CurlRestRequestJob::run() {
 		case RRT_PUT:
 			curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
 			if(this->body != "") {
+				printf("%s: set readdata to %s\n", v10.c_str(), this->body.c_str());
+
 				list = curl_slist_append(list, "Content-Type: application/json");
 				curl_easy_setopt(curl, CURLOPT_READDATA, this->body.c_str());
+			} else {
+				curl_easy_setopt(curl, CURLOPT_READDATA, "");
+				curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, 0);
 			}
 
 			break;

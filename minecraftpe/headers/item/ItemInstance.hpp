@@ -16,8 +16,7 @@ struct ItemInstance{
 	int32_t metadata;
 	Item* itemClass;
 	Tile* tileClass;
-	bool_t isValid;
-	char align, align1, align2;
+	bool isValid;
 
 	ItemInstance(const Item*);
 	ItemInstance(const Item*, int32_t);
@@ -70,7 +69,7 @@ struct ItemInstance{
 	bool_t sameItem(ItemInstance* a2) const {
 		if (!a2) return 0;
 
-		return this->itemClass == a2->itemClass && this->itemClass != 0;
+		return this->itemClass == a2->itemClass && this->itemClass;
 	}
 	bool_t sameItemAndAux(ItemInstance*) const;
 	void save(CompoundTag*);

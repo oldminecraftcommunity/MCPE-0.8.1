@@ -13,7 +13,6 @@
 #include <string.h>
 #include <errno.h>
 
-//not used in 0.8.1, pain to implement
 std::string CommandServer::Ok = "\n", CommandServer::Fail = "Fail\n";
 CommandServer::CommandServer(Minecraft* a2) :
 	initialized(0), _socket(0), minecraft(a2), checkpoint(0),
@@ -62,15 +61,73 @@ void CommandServer::_updateAccept(){
 		this->connected.back().time = this->minecraft->level->getTime();
 	}
 }
+static std::string _CommandServer_success;
+static char _updateClient_buf[2];
 bool CommandServer::_updateClient(ConnectedClient& client){
 	int v3 = 33;
+	std::string v20;
+skip_return:
 	while(--v3){
+		if(client.field_4.size()) {
+			memcpy(_updateClient_buf, client.field_4.c_str(), client.field_4.size());
+			client.field_4.clear();
+		}
+		bool iret;
+		char v19;
+		int recvs = 1023;
+start_loop:
+		while(1) {
+			int v8 = recv(client.sock, &v19, 1, 0);
+			int err;
+			if(v8 == 1) {
+				_updateClient_buf[0] = v19;
+				_updateClient_buf[1] = 0;
+				if(v19 == '\n') {
+					std::string v21 = this->parse(client, v20);
+					if(_CommandServer_success != v21) {
+						const char* str = v21.c_str();
+						int toSend = v21.size();
+						while(toSend) {
+							int sent = send(client.sock, str, toSend, 0);
+							if(sent <= 0) {
+								int err2 = _errno();
+								if(err2 != 4) {
+									if(err2 == 11) break;
+									return 0;
+								}
+								sent = 0;
+							}
+							toSend -= sent;
+							str += sent;
+						}
+					}
+					goto skip_return;
+				}
+				goto skip_error;
+			} else if(v8 == 0) {
+				iret = 1;
+				break;
+			} else if(v8 != -1) {
+				iret = 0;
+				break;
+			}
 
+			err = _errno();
+			if(err != 4) {
+				iret = err != 11;
+				break;
+			}
+skip_error:
+			if(--recvs == 0) {
+				iret = 0;
+				break;
+			}
+		}
+		client.field_4 = _updateClient_buf;
+		return !iret;
 	}
-	printf("CommandServer::_updateClient - not implemented\n");
-	//TODO implement
 
-	return 0;
+	return 1;
 }
 void CommandServer::_updateClients(){
 	int v2 = this->connected.size() - 1;
@@ -121,8 +178,7 @@ std::string CommandServer::handleEventPollMessage(ConnectedClient& client, const
 	if(std::operator==(event, "events.clear")) {
 		int time = this->minecraft->level->getTime();
 		client.time = time;
-		//returns some empty string?
-		return Tag::NullString; //not exactly Tag::NullString, but the offset is very close~ - check later?
+		return _CommandServer_success;
 	}
 	if(!std::operator==(event, "events.block.hits")) {
 		return CommandServer::Fail;
@@ -164,7 +220,7 @@ std::string CommandServer::handleSetSetting(const std::string& a2, int32_t a3) {
 		updateAdventureSettingFlag(this->minecraft, AdventureSettingsPacket::Flags::AS_ALLOW_INTERACT, v5);
 	}
 	//the original method might be slightly different?
-	return Tag::NullString; //not exactly Tag::NullString, but the offset is very close~ - check later?
+	return _CommandServer_success; //TODO - figure out what is the actual return here - seems to reference some thing close to Tag::NullString
 }
 bool CommandServer::init(int16_t a2) {
 	this->_close();
@@ -195,10 +251,12 @@ std::string CommandServer::parse(ConnectedClient&, const std::string&) {
 	//TODO implement
 	return CommandServer::Fail;
 }
+int commandServerTick;
 void CommandServer::tick() {
 	if(this->initialized) {
 		this->_updateAccept();
 		this->_updateClients();
+		++commandServerTick;
 		if(this->minecraft->viewEntity == this->camera) {
 			this->minecraft->viewEntity->tick();
 		}

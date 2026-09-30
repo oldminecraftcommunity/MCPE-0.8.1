@@ -63,12 +63,12 @@ void BuyButton::render(Minecraft* mc, int32_t x, int32_t y){
 
 		if(this->image.field_24){
 			if(td){
-				float width = td->width;
+				float width = td->image.width;
 				float v23 = (v13+v14) + v17;
 				int32_t v24 = this->image.field_18;
 				float v25 = (float)this->image.field_14/width;
 				float v26 = (float)(this->image.field_14 + this->image.field_1C) / width;
-				float height = (float) td->height;
+				float height = (float) td->image.height;
 				float v28 = (float)(v24 + this->image.field_20) / height;
 				float v29 = (float)((float)v15 + (float)v16) + v18;
 				float v30 = v29 - v20;

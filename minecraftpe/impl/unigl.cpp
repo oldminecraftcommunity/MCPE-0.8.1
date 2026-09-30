@@ -38,9 +38,16 @@ void gluPerspective(GLfloat fovy, GLfloat aspect, GLfloat zNear, GLfloat zFar) {
 
 void glInit() { //unused empty func from 0.8.1
 }
-int anGenBuffers(int, unsigned int*) { //unused but exists in 0.8.1, used in 0.7.2
-	DEBUGMSG("anGenBuffer - not implemented\n");
-	return 0;
+
+static int _buffers = 1;
+int anGenBuffers(int a1, unsigned int* a2) { //unused but exists in 0.8.1, used in 0.7.2
+	int v2 = _buffers;
+	for(int v3 = 0; v3 < a1; ++v3) {
+		a2[v3] = _buffers + 1;
+	}
+	if(a1 < 0) _buffers = v2;
+	else _buffers = v2 + a1;
+	return _buffers;
 }
 
 

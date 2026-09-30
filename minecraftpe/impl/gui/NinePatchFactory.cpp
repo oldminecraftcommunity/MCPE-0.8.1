@@ -9,8 +9,8 @@ NinePatchFactory::NinePatchFactory(Textures* tex, const std::string& data){
 	this->width = this->height = 1;
 	TextureData* td = this->textures->loadAndGetTextureData(data);
 	if(td){
-		this->width = td->width;
-		this->height = td->height;
+		this->width = td->image.width;
+		this->height = td->image.height;
 	}
 }
 

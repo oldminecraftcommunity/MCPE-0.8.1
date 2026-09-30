@@ -61,14 +61,14 @@ void StartMenuScreen::render(int32_t a2, int32_t a3, float a4) {
 	td = this->minecraft->texturesPtr->loadAndGetTextureData("gui/title.png");
 	if(td) {
 		this->minecraft->texturesPtr->loadAndBindTexture("gui/title.png");
-		width = (float)td->width;
-		v12 = (float)this->width * 0.5;
-		v13 = width * 0.5;
-		if(v12 <= (float)(width * 0.5)) {
-			v13 = (float)this->width * 0.5;
+		width = (float)td->image.width;
+		v12 = (float)this->width * 0.5f;
+		v13 = width * 0.5f;
+		if(v12 <= (float)(width * 0.5f)) {
+			v13 = (float)this->width * 0.5f;
 		}
 		v14 = (float)(v13 + v13) / width;
-		height = (float)td->height;
+		height = (float)td->image.height;
 		glColor4f(1.0, 1.0, 1.0, 1.0);
 		Tesselator::instance.begin(4);
 		v16 = v12 - v13;

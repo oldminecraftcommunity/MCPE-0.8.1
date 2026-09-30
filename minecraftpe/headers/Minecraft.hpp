@@ -27,7 +27,7 @@ struct Minecraft : App{
 	struct GameMode* gameMode;
 	std::shared_ptr<struct MojangConnector> mojangConnector;
 	struct Textures* texturesPtr;
-	int8_t field_190, field_191, field_192, field_193;
+	bool animatedTextureTicked;
 	ScreenChooser screenChooser;
 	struct Font* font;
 	int8_t field_19C, field_19D, field_19E, field_19F;
@@ -45,7 +45,7 @@ struct Minecraft : App{
 	CThread* prepareLevelThread;
 	Screen* currentScreen;
 	std::shared_ptr<Screen> field_C7C;
-	int8_t mouseGrabbed, field_C81, field_C82, field_C83;
+	bool mouseGrabbed;
 	float field_C84;
 	float field_C88;
 	float field_C8C;
@@ -58,19 +58,21 @@ struct Minecraft : App{
 	Timer timer;
 	bool field_CF4, levelGenerated, field_CF6, field_CF7;
 	struct LevelStorageSource* levelStorageSource;
-	int8_t field_CFC, powerVR, field_CFE, field_CFF;
+	bool levelSelected, powerVR;
+	int8_t field_CFE, field_CFF;
 	std::string field_D00;
 	int32_t progressMessageIndex;
-	int32_t field_D08;
+	int32_t field_D08; //buildActionDelay?
 	int32_t field_D0C;
 	int32_t field_D10;
 	int8_t field_D14, field_D15, field_D16, field_D17;
 	struct Screen* field_D18;
 	int32_t license;
-	bool_t supportsNonTouchScreen;
-	bool_t isCreative;
-	int8_t field_D22, field_D23, field_D24;
-	int8_t field_D25, field_D26, field_D27;
+	bool supportsNonTouchScreen;
+	bool isCreative;
+	bool _leaveGame;
+	int8_t field_D23;
+	int8_t field_D24, field_D25, field_D26, field_D27;
 	struct PerfRenderer* perfRenderer;
 	struct CommandServer* commandServer;
 	struct CMutex* cmutex;

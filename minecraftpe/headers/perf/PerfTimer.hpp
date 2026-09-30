@@ -10,33 +10,27 @@ struct PerfTimer
 	{
 		float field_0;
 		float field_4;
-		std::string field_8;
+		std::string sectionName;
 
-		ResultField(PerfTimer::ResultField&& a2) {
-			this->field_0 = a2.field_0;
-			this->field_8 = a2.field_8;
-			a2.field_8 = "";
-		}
-		ResultField(const PerfTimer::ResultField& a2) {
-			this->field_0 = a2.field_0;
-			this->field_4 = a2.field_4;
-			this->field_8 = a2.field_8;
-		}
+		ResultField(PerfTimer::ResultField&& a2) = default;
+		ResultField(const PerfTimer::ResultField& a2) = default;
+		ResultField(const std::string& c, float a, float b) : field_0(a), field_4(b), sectionName(c){
 
+		}
 		int32_t getColor() const {
-			return (Util::hashCode(this->field_8) & 0xAAAAAA) + 4473924;
+			return (Util::hashCode(this->sectionName) & 0xAAAAAA) + 4473924;
 		}
 		bool_t operator <(const PerfTimer::ResultField& a2) const {
 			if (this->field_0 == a2.field_0) {
-				return this->field_8.compare(a2.field_8);
+				return this->sectionName.compare(a2.sectionName);
 			}
 			return this->field_0 > a2.field_0;
 		}
 
-		PerfTimer::ResultField& operator =(PerfTimer::ResultField&& a2) {
+		PerfTimer::ResultField& operator=(PerfTimer::ResultField&& a2) {
 			this->field_0 = a2.field_0;
 			this->field_4 = a2.field_4;
-			this->field_8 = a2.field_8;
+			this->sectionName = a2.sectionName;
 			return *this;
 		}
 		~ResultField() {

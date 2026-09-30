@@ -9,19 +9,8 @@ struct TextureAtlasTextureItem{
 	TextureUVCoordinateSet uvCoords;
 	std::vector<TextureUVCoordinateSet> uv;
 	int32_t uvCount;
-	TextureAtlasTextureItem(const TextureAtlasTextureItem& a2) {
-		this->name = a2.name;
-		this->uvCoords = a2.uvCoords;
-		this->uv = a2.uv; //TODO check
-		this->uvCount = a2.uvCount;
-	}
-	TextureAtlasTextureItem(TextureAtlasTextureItem&& a2)
-		: uv(a2.uv) {
-		this->name = a2.name;
-		a2.name = "";
-		this->uvCoords = a2.uvCoords;
-		this->uvCount = a2.uvCount;
-	}
+	TextureAtlasTextureItem(const TextureAtlasTextureItem& a2) = default;
+	TextureAtlasTextureItem(TextureAtlasTextureItem&& a2) = default;
 	TextureAtlasTextureItem(const std::string&, const TextureUVCoordinateSet&, const std::vector<TextureUVCoordinateSet>&);
 	TextureAtlasTextureItem(void);
 	void getName(void) const;

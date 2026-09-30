@@ -163,8 +163,8 @@ void TileEntity::setData(int32_t a2) {
 }
 void TileEntity::setId(int32_t a1, const std::string& a2) {
 	if(TileEntity::idClassMap.find(a2) == TileEntity::idClassMap.end()) {
-		TileEntity::idClassMap.insert({a2, a1});
-		TileEntity::classIdMap.insert({a1, a2});
+		TileEntity::idClassMap.insert(std::pair<std::string, int32_t>(a2, a1));
+		TileEntity::classIdMap.insert(std::pair<int32_t, std::string>(a1, a2));
 	}
 }
 void TileEntity::setupLighting(bool_t a2, float a3) {

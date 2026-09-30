@@ -91,32 +91,22 @@ void Level::_syncTime(long a2) { //long
 }
 
 bool_t Level::addEntity(struct Entity* e) {
-	Entity* ent;	   // r1
-	int32_t v4;		   // r8
-	int32_t v5;		   // r7
-	LevelChunk* chunk; // r0
-	Entity* v12;	   // r1
-	Entity* a2;		   // [sp+4h] [bp-34h] BYREF
-
-	a2 = e;
-	ent = this->getEntity(e->entityId);
+	Entity* ent = this->getEntity(e->entityId);
 	if(ent) {
 		this->removeEntity(ent);
 	}
-	v4 = Mth::floor(a2->posX * 0.0625);
-	v5 = Mth::floor(a2->posZ * 0.0625);
-	if(a2->isPlayer()) {
-		auto&& player = std::find(this->playersMaybe.begin(), this->playersMaybe.end(), a2);
+	int v4 = Mth::floor(e->posX * 0.0625);
+	int v5 = Mth::floor(e->posZ * 0.0625);
+	if(e->isPlayer()) {
+		auto&& player = std::find(this->playersMaybe.begin(), this->playersMaybe.end(), e);
 		if(player == this->playersMaybe.end()) {
-			this->playersMaybe.emplace_back((Player*) a2);
+			this->playersMaybe.emplace_back((Player*) e);
 		}
 	}
-	chunk = this->getChunk(v4, v5);
-	chunk->addEntity(a2);
-	this->entities.push_back(a2);
-	this->eid2entity.insert(std::pair<int, Entity*>(a2->entityId, a2));
-	v12 = a2;
-	this->entityAdded(v12);
+	this->getChunk(v4, v5)->addEntity(e);
+	this->entities.push_back(e);
+	this->eid2entity.insert(std::pair<int, Entity*>(e->entityId, e));
+	this->entityAdded(e);
 	return 1;
 }
 void Level::addListener(struct LevelListener* ll) {
@@ -655,7 +645,7 @@ int32_t Level::countInstanceOfType(int32_t a2) {
 }
 void Level::dispatchEntityData(struct Entity* a2) {
 	if(!this->isClientMaybe) {
-		this->eid2entity2.insert({a2->entityId, a2});
+		this->eid2entity2.insert(std::pair<int,Entity*>(a2->entityId, a2));
 	}
 }
 void Level::entityAdded(struct Entity* a2) {

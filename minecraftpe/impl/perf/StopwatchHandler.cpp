@@ -20,7 +20,7 @@ Stopwatch* StopwatchHandler::get(const std::string& a2) {
 		return p->second;
 	}
 	Stopwatch* pp = new Stopwatch();
-	this->field_0.insert({a2, pp});
+	this->field_0.insert(std::pair<std::string, Stopwatch*>(a2, pp));
 	return pp;
 }
 void StopwatchHandler::print() {

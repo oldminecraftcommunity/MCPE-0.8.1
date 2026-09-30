@@ -81,11 +81,11 @@ struct TextureTesselator
 				if(texYMin >= texYMax) {
 					break;
 				}
-				width = this->textureData->width;
+				width = this->textureData->image.width;
 				textureData = this->textureData;
 				v9 = (texXMin % width + width) % width;
-				v10 = (texYMin % textureData->height + textureData->height) % textureData->height;
-				v11 = (uint8_t*)&textureData->pixels[4 * v9 + 4 * width * v10];
+				v10 = (texYMin % textureData->image.height + textureData->image.height) % textureData->image.height;
+				v11 = (uint8_t*)&textureData->image.pixels[4 * v9 + 4 * width * v10];
 				if(v11[3] > 9u && texXMin != texYMax) {
 					this->_addLighting(Vec3::NEG_UNIT_Y, v11, v9, v10);
 					Tesselator::instance.vertex(v4 + 1.0, 0.0, v6);
@@ -121,9 +121,9 @@ LABEL_24:
 					goto LABEL_24;
 				}
 				v18 = this->textureData;
-				v19 = (v24 % v18->width + v18->width) % v18->width;
-				v20 = (texYMin % v18->height + v18->height) % v18->height;
-				v21 = (uint8_t*)&v18->pixels[4 * v19 + 4 * v18->width * v20];
+				v19 = (v24 % v18->image.width + v18->image.width) % v18->image.width;
+				v20 = (texYMin % v18->image.height + v18->image.height) % v18->image.height;
+				v21 = (uint8_t*)&v18->image.pixels[4 * v19 + 4 * v18->image.width * v20];
 				if(v21[3] > 9u) {
 					break;
 				}
@@ -165,9 +165,9 @@ LABEL_38:
 			v29 = (const uint8_t*)v39;
 			while(v26 < this->texYMax) {
 				v30 = this->textureData;
-				v31 = (v26 % v30->height + v30->height) % v30->height;
-				v32 = (v24 % v30->width + v30->width) % v30->width;
-				v33 = (uint8_t*)&v30->pixels[4 * v32 + 4 * v30->width * v31];
+				v31 = (v26 % v30->image.height + v30->image.height) % v30->image.height;
+				v32 = (v24 % v30->image.width + v30->image.width) % v30->image.width;
+				v33 = (uint8_t*)&v30->image.pixels[4 * v32 + 4 * v30->image.width * v31];
 				v34 = v33[3] <= 9u;
 				if(v34 != v28) {
 					if(v33[3] <= 9u) {
@@ -231,7 +231,7 @@ LABEL_38:
 			} else {
 				--a4;
 			}
-			Tesselator::instance.tex((float)((float)a4 + 0.5) / (float)this->textureData->width, (float)((float)v8 + 0.5) / (float)this->textureData->height);
+			Tesselator::instance.tex((float)((float)a4 + 0.5) / (float)this->textureData->image.width, (float)((float)v8 + 0.5) / (float)this->textureData->image.height);
 		}
 	}
 

@@ -567,7 +567,7 @@ void AppPlatform_sdl::init(){
 #endif
 }
 LoginInformation AppPlatform_sdl::getLoginInformation(void) {
-	//return LoginInformation();
+	return LoginInformation();
 	LoginInformation ret;
 	ret.accessToken = "cliff";
 	ret.clientId = "my_beloved";

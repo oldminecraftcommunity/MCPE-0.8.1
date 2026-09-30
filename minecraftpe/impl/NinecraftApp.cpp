@@ -214,7 +214,7 @@ void NinecraftApp::init(void){
 	Minecraft::init();
 
 	this->levelStorageSource = new ExternalFileLevelStorageSource(this->dataPathMaybe, this->field_CC4);
-	this->field_CFC = 0;
+	this->levelSelected = 0;
 	this->texturesPtr = new Textures(&this->options, this->platform());
 	this->texturesPtr->addDynamicTexture(new FireTexture());
 	this->texturesPtr->addDynamicTexture(new WaterTexture(*NinecraftApp::_terrainTextureAtlas->getTextureItem("still_water")->getUV(0)));
@@ -222,7 +222,7 @@ void NinecraftApp::init(void){
 	this->texturesPtr->addDynamicTexture(new LavaTexture());
 	this->texturesPtr->addDynamicTexture(new LavaSideTexture(*NinecraftApp::_terrainTextureAtlas->getTextureItem("flowing_lava")->getUV(0)));
 	this->gui.texturesLoaded(this->texturesPtr);
-	this->field_190 = 0;
+	this->animatedTextureTicked = 0;
 	this->levelRenderer = new LevelRenderer(this, std::shared_ptr<TextureAtlas>(NinecraftApp::_terrainTextureAtlas));
 	this->gameRenderer = new GameRenderer(this);
 	this->particleEngine = new ParticleEngine(this->level, this->texturesPtr);

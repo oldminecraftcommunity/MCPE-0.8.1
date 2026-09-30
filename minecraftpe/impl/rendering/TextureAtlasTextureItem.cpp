@@ -17,7 +17,7 @@ TextureAtlasTextureItem::TextureAtlasTextureItem(const std::string& a2, const Te
 	this->uvCoords = a3;
 	this->uv.push_back(this->uvCoords);
 
-	for(auto&& pp: a4) {
+	for(auto pp: a4) {
 		this->uv.push_back(pp);
 	}
 	this->uvCount = this->uv.size();

@@ -33,12 +33,12 @@ struct CactusTile : Tile{
 		return &this->field_B0;
 	}
 	virtual AABB* getAABB(Level* level, int32_t x, int32_t y, int32_t z) {
-		this->aabb.minX = x + 0.0625;
+		this->aabb.minX = x + 0.0625f;
 		this->aabb.minY = y;
-		this->aabb.minZ = z + 0.0625;
-		this->aabb.maxX = (x + 1) - 0.0625;
-		this->aabb.maxY = (y + 1) - 0.0625;
-		this->aabb.maxZ = (z + 1) - 0.0625;
+		this->aabb.minZ = z + 0.0625f;
+		this->aabb.maxX = (x + 1) - 0.0625f;
+		this->aabb.maxY = (y + 1) - 0.0625f;
+		this->aabb.maxZ = (z + 1) - 0.0625f;
 		return &this->aabb;
 	}
 	virtual AABB getTileAABB(Level* level, int32_t x, int32_t y, int32_t z) {

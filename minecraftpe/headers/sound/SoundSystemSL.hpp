@@ -1,6 +1,5 @@
 #pragma once
 #ifdef ANDROID
-#include <_types.h>
 #include <sound/SoundSystem.hpp>
 #include <math/Vec3.hpp>
 #include <list>

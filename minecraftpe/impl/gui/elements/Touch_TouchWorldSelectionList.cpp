@@ -29,7 +29,7 @@ void Touch::TouchWorldSelectionList::commit(void) {
 	for(int i = 0; i < this->items.size(); ++i) {
 		std::stringstream v13;
 		v13 << this->items[i].field_4 << "/preview.png";
-		this->field_90.emplace_back("gui/default_world.png");
+		this->field_90.push_back("gui/default_world.png");
 		std::vector<std::string> v12;
 		v12.push_back(this->items[i].field_4);
 		v12.push_back(this->minecraft->platform()->getDateString(this->items[i].field_8));
@@ -39,7 +39,7 @@ void Touch::TouchWorldSelectionList::commit(void) {
 		if(gamemode == 0) v8 = "Survival";
 		else if(gamemode == 1) v8 = "Creative";
 		else v8 = "Undefined";
-		v12.emplace_back(v8);
+		v12.push_back(v8);
 		this->levelsInfoMaybe.push_back(v12);
 		this->selectedItem = 0;
 	}

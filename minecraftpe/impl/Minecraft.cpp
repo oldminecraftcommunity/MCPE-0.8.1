@@ -118,7 +118,7 @@ Minecraft::Minecraft()
 	this->field_CF4 = 0;
 	this->levelGenerated = 1;
 	this->license = -2;
-	this->field_CFC = 0;
+	this->levelSelected = 0;
 	this->powerVR = 0;
 	this->field_D00 = "";
 	this->progressMessageIndex = 0;
@@ -129,7 +129,7 @@ Minecraft::Minecraft()
 	this->field_D15 = 0;
 	this->field_D18 = 0;
 	this->supportsNonTouchScreen = 0;
-	this->field_D22 = 0;
+	this->_leaveGame = 0;
 	this->perfRenderer = 0;
 	this->commandServer = 0;
 	this->field_D34 = 0;
@@ -263,29 +263,18 @@ void Minecraft::grabMouse(void) {
 	}
 }
 void Minecraft::handleBuildAction(struct BuildActionIntention* a2) {
-	int field_D0C;		// r3
-	int hitType;		// r5
-	int entityId;		// r6
-	int v7;				// r5
 	int v9;				// r7
 	int v10;			// r6
 	int v11;			// r5
 	int v12;			// r10
-	Tile* v13;			// r9
-	ItemInstance* v14;	// r9
 	int v15;			// r6
-	uint8_t v16;		// r0
+	bool v16;		// r0
 	int v17;			// r10
 	int v18;			// r7
-	ItemInstance* sel;	// r5
-	GameMode* gameMode; // r0
 
-	field_D0C = this->field_D0C;
-	if(field_D0C > 0) {
-		this->field_D0C = field_D0C - 1;
-	}
+	if(this->field_D0C > 0) this->field_D0C -= 1;
 	if(!this->player->isUsingItem()) {
-		hitType = this->selectedObject.hitType;
+		int hitType = this->selectedObject.hitType;
 		if(hitType == 2) {
 			if(a2->isRemove()) {
 				if(!this->gameMode->isCreativeType()) {
@@ -298,9 +287,7 @@ void Minecraft::handleBuildAction(struct BuildActionIntention* a2) {
 		if(hitType == 1) {
 			if((a2->field_0 & 8) != 0) {
 				this->player->swing();
-				entityId = this->player->entityId;
-				v7 = this->selectedObject.entity->entityId;
-				InteractPacket v23(entityId, v7, 2);
+				InteractPacket v23(this->player->entityId, this->selectedObject.entity->entityId, 2);
 				this->rakNetInstance->send(v23);
 				this->gameMode->attack(this->player, this->selectedObject.entity);
 				goto LABEL_27;
@@ -311,7 +298,7 @@ void Minecraft::handleBuildAction(struct BuildActionIntention* a2) {
 			v16 = this->selectedObject.entity->interactPreventDefault();
 			v17 = this->player->entityId;
 			v18 = this->selectedObject.entity->entityId;
-			v15 = v16 ^ 1;
+			v15 = !v16;
 			InteractPacket v23_(v17, v18, 1);
 			this->rakNetInstance->send(v23_);
 			this->gameMode->interact((Player*)this->player, (Entity*)this->selectedObject.entity);
@@ -324,12 +311,11 @@ LABEL_26:
 		if(hitType) {
 LABEL_27:
 			if((a2->field_0 & 0x10) != 0 && !this->field_D0C) {
-				sel = this->player->inventory->getSelected();
+				ItemInstance* sel = this->player->inventory->getSelected();
 				if(sel) {
 					if(!this->player->isUsingItem()) {
-						gameMode = this->gameMode;
 						this->field_D0C = 8;
-						if(gameMode->useItem((Player*)this->player, this->level, sel)) {
+						if(this->gameMode->useItem((Player*)this->player, this->level, sel)) {
 							this->gameRenderer->itemInHandRenderer->itemUsed();
 						}
 						if(sel->count <= 0) {
@@ -344,9 +330,9 @@ LABEL_27:
 		v10 = this->selectedObject.y;
 		v11 = this->selectedObject.z;
 		v12 = this->selectedObject.field_10;
-		v13 = Tile::tiles[this->level->getTile(v9, v10, v11)];
+		Tile* v13 = Tile::tiles[this->level->getTile(v9, v10, v11)];
 		if(!a2->isRemove()) {
-			v14 = this->player->inventory->getSelected();
+			ItemInstance* v14 = this->player->inventory->getSelected();
 			if(this->gameMode->useItemOn((Player*)this->player, this->level, v14, v9, v10, v11, v12, this->selectedObject.hitVec)) {
 				v15 = 0;
 				this->player->swing();
@@ -540,7 +526,7 @@ LABEL_7:
 		}
 		this->player = 0;
 		this->viewEntity = 0;
-		this->field_CFC = 0;
+		this->levelSelected = 0;
 		if ( a3 )
 		{
 			if ( a2 )
@@ -569,7 +555,7 @@ void Minecraft::lockForControl(void) {
 void Minecraft::onAppResumed(void) {
 	this->texturesPtr->clear(0);
 	glBufferPool.trim();
-	this->field_190 = 0;
+	this->animatedTextureTicked = 0;
 }
 void Minecraft::onAppSuspended(void) {
 	this->texturesPtr->clear(0);
@@ -773,7 +759,7 @@ void Minecraft::selectLevel(const std::string& a2, const std::string& a3, const 
 	this->level = new ServerLevel(v7, a3, a4, 0, 0);
 	this->setLevel(this->level, "Generating level", 0);
 	this->setIsCreativeMode(this->level->getLevelData()->getGameType() == 1);
-	this->field_CFC = 1;
+	this->levelSelected = 1;
 }
 void Minecraft::setIsCreativeMode(bool_t a2) {
 	if(this->gameMode) {
@@ -789,7 +775,7 @@ LABEL_8:
 	}
 }
 void Minecraft::setLeaveGame(void) {
-	this->field_D22 = 1;
+	this->_leaveGame = 1;
 }
 void Minecraft::setLevel(struct Level* level, const std::string& a3, struct LocalPlayer* a4) {
 	LocalPlayer* player; // r1
@@ -817,7 +803,7 @@ void Minecraft::setLevel(struct Level* level, const std::string& a3, struct Loca
 		this->player = 0;
 	}
 	this->field_C54 = 0;
-	this->field_CFC = 1;
+	this->levelSelected = 1;
 }
 void Minecraft::setScreen(Screen* screen) {
 	Mouse::reset();
@@ -861,28 +847,24 @@ void Minecraft::setSize(int32_t a2, int32_t a3) {
 		ppm = 10;
 	}
 
-	float gscale;
 	if(this->width >= 1000) {
-		if(ppm <= 15) gscale = 4;
-		else gscale = 6;
+		if(ppm <= 15) Gui::GuiScale = 4;
+		else Gui::GuiScale = 6;
 	} else if(this->width >= 800) {
-		gscale = 3;
+		Gui::GuiScale = 3;
 	} else if(this->width >= 400) {
-		gscale = 2;
+		Gui::GuiScale = 2;
 	} else {
 		Gui::GuiScale = 1;
-		goto CALCULATE_INVERSE;
 	}
-	Gui::GuiScale = gscale;
-CALCULATE_INVERSE:
-	Gui::InvGuiScale = 1.0 / Gui::GuiScale;
+
+	Gui::InvGuiScale = 1.0f / Gui::GuiScale;
 	if(this->platform()) {
 		float pv = this->options.getProgressValue(&Options::Option::PIXELS_PER_MILLIMETER);
 		this->field_C84 = pv;
-		this->field_C88 = 1.0 / pv;
-		float v13 = pv * Gui::InvGuiScale;
+		this->field_C88 = 1.0f / pv;
 		this->field_C8C = pv * Gui::InvGuiScale;
-		this->field_C90 = 1.0 / v13;
+		this->field_C90 = 1.0f / this->field_C8C;
 	}
 	Config v18 = createConfig(this);
 	this->gui.onConfigChanged(v18);
@@ -978,14 +960,12 @@ void Minecraft::teardown(void) {
 	EntityRenderDispatcher::destroy();
 }
 void Minecraft::tick(int32_t a2, int32_t a3) {
-	int32_t field_D08;
 
-	if(this->field_D22) {
-		this->field_D22 = 0;
+	if(this->_leaveGame) {
+		this->_leaveGame = 0;
 		this->leaveGame(0, 0);
 	}
-	field_D08 = this->field_D08;
-	if(field_D08 > 0) this->field_D08 = field_D08 - 1;
+	if(this->field_D08 > 0) this->field_D08 -= 1;
 
 	if(!this->currentScreen) {
 		if(this->player) {
@@ -1060,9 +1040,9 @@ void Minecraft::tick(int32_t a2, int32_t a3) {
 
 		if(this->options.animateTextures) {
 			if(a2 == a3) this->texturesPtr->tick(1);
-		} else if(!this->field_190) {
+		} else if(!this->animatedTextureTicked) {
 			int32_t maxTextureTicks = 40;
-			this->field_190 = 1;
+			this->animatedTextureTicked = 1;
 			do {
 				this->texturesPtr->tick(0);
 				--maxTextureTicks;

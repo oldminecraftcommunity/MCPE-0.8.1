@@ -75,10 +75,10 @@ void ImageWithBackground::render(struct Minecraft* mc, int32_t x, int32_t y){
 					TextureData* td = mc->texturesPtr->loadAndGetTextureData(this->image.field_0);
 					if(td){
 						int32_t v25 = this->image.field_18;
-						float v26 = td->width;
+						float v26 = td->image.width;
 						float v27 = (float)this->image.field_14/v26;
 						float v28 = (float)(this->image.field_14+this->image.field_1C)/v26;
-						float v29 = td->height;
+						float v29 = td->image.height;
 						float v30 = v27+0.001;
 						float v31 = v17-v23;
 						float v32 = v28-0.001;

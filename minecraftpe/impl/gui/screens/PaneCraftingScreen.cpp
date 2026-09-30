@@ -205,7 +205,7 @@ void PaneCraftingScreen::recheckRecipes() {
 				}
 			}
 			CItem::ReqItem v34(*v14, count);
-			v9->field_28.emplace_back(v34); //TODO check
+			v9->field_28.push_back(v34); //TODO needs to be inlined
 
 			if(v9->field_34) {
 				v9->field_34 = v34.field_14 >= v34.item.count;

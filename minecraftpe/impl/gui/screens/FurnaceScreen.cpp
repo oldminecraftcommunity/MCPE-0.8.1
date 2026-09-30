@@ -209,11 +209,13 @@ void FurnaceScreen::recheckRecipes() {
 				ItemInstance* v5 = this->minecraft->player->inventory->getItem(i);
 				if(v5) {
 					if(FurnaceTileEntity::isFuel(*v5)) {
-						this->field_1CC.push_back(new CItem(*v5, 0, ""));
+						CItem* citem = new CItem(*v5, 0, "");
+						this->field_1CC.push_back(citem);
 					}
 					int32_t id = v5->getId();
 					if(instance->isFurnaceItem(id)) {
-						this->field_1D8.push_back(new CItem(*v5, 0, ""));
+						CItem* citem = new CItem(*v5, 0, "");
+						this->field_1D8.push_back(citem);
 					}
 				}
 			}

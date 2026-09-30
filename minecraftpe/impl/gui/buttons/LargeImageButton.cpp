@@ -67,7 +67,7 @@ void LargeImageButton::render(struct Minecraft* mc, int32_t x, int32_t y){
 						if(active) v25 = this->image.field_1C;
 						else v25 = 0;
 
-						float width = td->width;
+						float width = td->image.width;
 						int32_t v27 = v24+v25;
 						int32_t v28 = this->image.field_1C;
 						float v29 = (float)v27/width;
@@ -75,7 +75,7 @@ void LargeImageButton::render(struct Minecraft* mc, int32_t x, int32_t y){
 						if(active) v28 *= 2;
 						int32_t v30 = this->image.field_18;
 						float v31 = (float)(v24+v28) / width;
-						float height = td->height;
+						float height = td->image.height;
 						float v33 = (float)(v30 + this->image.field_20)/height;
 						float v34 = v17-v22;
 

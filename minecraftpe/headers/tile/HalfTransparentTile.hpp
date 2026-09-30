@@ -3,11 +3,10 @@
 #include <level/LevelSource.hpp>
 
 struct HalfTransparentTile : Tile{
-	bool_t field_80;
+	bool field_80;
 
 	HalfTransparentTile(int32_t id, const std::string& s, Material* m)
-		: Tile(id, s, m) {
-		this->field_80 = 0;
+		: Tile(id, s, m), field_80(0) {
 	}
 	virtual ~HalfTransparentTile(){}
 	virtual bool_t shouldRenderFace(LevelSource* level, int32_t x, int32_t y, int32_t z, int32_t side) {

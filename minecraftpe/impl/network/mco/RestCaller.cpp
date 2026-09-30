@@ -1,16 +1,25 @@
 #include <network/mco/RestCaller.hpp>
 #include <util/CMutex.hpp>
 #include <network/mco/RestCallerObject.hpp>
+#include <util/Common.hpp>
 
 #ifdef ANDROID
 #include <android/AndroidRestCaller.hpp>
 #endif
 
-RestCaller::RestCaller(MCOConnector* a2, const std::string& a3) {
-	printf("RestCaller::RestCaller - not implemented\n");
+RestCaller::RestCaller(MCOConnector* a2, const std::string& a3)
+	: field_8(a3)
+	, connector(a2) {
+	this->mutex = new CMutex();
 }
-void RestCaller::addToCookieData(std::string&, const std::string&, const std::string&) {
-	printf("RestCaller::addToCookieData - not implemented\n");
+void RestCaller::addToCookieData(std::string& a2, const std::string& a3, const std::string& a4) {
+	if(a4 != "") {
+		if(a2.size()) a2 += ' ';
+		a2 += a3;
+		a2 += '=';
+		a2 += a4;
+		a2 += ';';
+	}
 }
 void RestCaller::call(RestCallerType type, RestCallerInterup inter, const char_t* a4, const char_t* a5, void (MCOConnector::*a6)(int32_t, std::string, const RestCallTagData&), void (MCOConnector::*a7)(bool_t, bool_t, int32_t, std::string, const RestCallTagData&), const RestCallTagData& a8, int32_t a9) {
 	this->makeRequest(new RestCallerObject(type, inter, this, a4, a5, a6, a7, a8, a9));
@@ -29,8 +38,14 @@ void RestCaller::get(RestCallerInterup a2, const char_t* a3, void (MCOConnector:
 	this->call(RCT_GET, a2, a3, 0, a4, a5, a6, a7);
 }
 std::string RestCaller::getCookieData() {
-	printf("RestCaller::getCookieData - not implemented\n");
-	return "";
+	std::string ret;
+	ret.reserve(512);
+
+	this->addToCookieData(ret, "sid", this->sid);
+	this->addToCookieData(ret, "user", this->user);
+	this->addToCookieData(ret, "gameversion", Common::getGameVersionStringNet());
+	this->addToCookieData(ret, "key", this->key);
+	return ret;
 }
 void RestCaller::globalCleanUp(){
 }

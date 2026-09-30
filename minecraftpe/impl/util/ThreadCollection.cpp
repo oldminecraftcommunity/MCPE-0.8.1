@@ -9,7 +9,7 @@ static int sub_D66E4980() {
 #else
 	int v0; // r0
 	v0 = sysconf(97);
-	return v0 & ~(v0 >> 31);
+	return v0 < 0 ? 0 : v0;
 #endif
 }
 ThreadCollection::ThreadCollection(uint32_t maxthreads) {

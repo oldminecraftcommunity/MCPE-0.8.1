@@ -18,8 +18,8 @@ bool contextWasLost;
 #include <unigl.hpp>
 #include <string.h>
 #include <android/AndroidRestRequestJob.hpp>
+#include <network/mco/MojangConnector.hpp>
 #include <RakNetTypes.h>
-
 
 std::string nativeUtf8Input;
 AppPlatform_android23 appPlatform;
@@ -193,7 +193,20 @@ JNIEXPORT void JNICALL Java_com_mojang_minecraftpe_MainActivity_nativeBackSpaceP
 	Keyboard::feed(8, 0);
 }
 JNIEXPORT void JNICALL Java_com_mojang_minecraftpe_MainActivity_nativeLoginData(JNIEnv* env, jobject dis, jstring a, jstring b, jstring c, jstring d){
-    __android_log_write(ANDROID_LOG_ERROR, "MCPE081DECOMP", "Java_com_mojang_minecraftpe_MainActivity_nativeLoginData - not implemented");
+	LoginInformation v21;
+	const char* tok = env->GetStringUTFChars(a, 0);
+	v21.accessToken = tok ? tok : "";
+	env->ReleaseStringUTFChars(a, tok);
+	const char* cid = env->GetStringUTFChars(b, 0);
+	v21.clientId = cid ? cid : "";
+	env->ReleaseStringUTFChars(b, cid);
+	const char* prof = env->GetStringUTFChars(c, 0);
+	v21.profileId = prof ? prof : "";
+	env->ReleaseStringUTFChars(c, prof);
+	const char* name = env->GetStringUTFChars(d, 0);
+	v21.profileName = name ? name : "";
+	env->ReleaseStringUTFChars(d, name);
+	ninecraftApp->mojangConnector->setLoginInformation(v21);
 }
 JNIEXPORT void JNICALL Java_com_mojang_minecraftpe_MainActivity_nativeRegisterThis(JNIEnv* env, jobject dis){
 	pthread_self();
@@ -237,14 +250,14 @@ JNIEXPORT void JNICALL Java_com_mojang_minecraftpe_MainActivity_nativeUnregister
 }
 JNIEXPORT void JNICALL Java_com_mojang_minecraftpe_MainActivity_nativeWebRequestCompleted(JNIEnv* env, jobject dis, jint a2, AndroidRestRequestJob* a3, jint a4, jstring a5){
 	printf("Entering native web req %d, %lld, %d\n", a2, a3, a4);
-    __android_log_write(ANDROID_LOG_ERROR, "MCPE081DECOMP", "Java_com_mojang_minecraftpe_MainActivity_nativeWebRequestCompleted - not implemented");
     const char* s = env->GetStringUTFChars(a5, 0);
     std::string v10(!s ? "" : s);
     env->ReleaseStringUTFChars(a5, s);
     a3->onRequestComplete(a2, a4, v10);
     puts("native done!");
 }
-static RakNet::SystemAddress _some_unknown_and_possibly_unused_field;
+//i suppose it is not needed - there are a lot of RakNet::SystemAddress constructors everywhere, maybe it is defined in header?
+//static RakNet::SystemAddress _some_unknown_and_possibly_unused_field;
 
 }
 #endif

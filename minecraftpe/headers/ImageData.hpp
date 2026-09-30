@@ -1,6 +1,5 @@
 #pragma once
 #include <_types.h>
-#include <vector>
 
 struct ImageData{
 	int32_t width;
@@ -9,12 +8,13 @@ struct ImageData{
 UNK	int32_t field_C;
 UNK	int32_t field_10;
 	int32_t lod;
-UNK uint8_t field_18;
-UNK char field_19;
-UNK char field_1A;
-UNK char field_1B;
-	uint32_t glTexId;
-	std::vector<ImageData> images;
 
-	//TODO should have some kind of constructor?
+	ImageData()
+		: width(0)
+		, height(0)
+		, pixels(0)
+		, field_C(0)
+		, field_10(0)
+		, lod(0) {
+	}
 };

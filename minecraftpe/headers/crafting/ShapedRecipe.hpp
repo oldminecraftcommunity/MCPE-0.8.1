@@ -20,40 +20,23 @@ struct ShapedRecipe: Recipe
 		}
 	}
 	bool_t matches(CraftingContainer* a2, int32_t a3, int32_t a4, bool_t a5) {
-		int32_t v7; // r4
-		int32_t v8; // r8
-		int32_t width; // r2
-		int32_t v10; // r3
-		int32_t v11; // r3
-		ItemInstance* v13; // r3
-		ItemInstance* item; // r6
-		int32_t i; // r7
-		int32_t v23; // r5
-		int32_t auxValue; // [sp+4h] [bp-4Ch]
-		int32_t v25; // [sp+Ch] [bp-44h]
-		ItemInstance v26; // [sp+14h] [bp-3Ch] BYREF
-		v7 = -a3;
-		v8 = 0;
-		v25 = -a4;
-		do {
-			v23 = v25;
-			for (i = 0; i != 3; ++i) {
+		int v7 = -a3;
+		for(int x = 0; x != 3; ++x){
+			int v23 = -a4;
+			for (int y = 0; y != 3; ++y) {
 				ItemInstance v26;
 				if (v7 >= 0 && v23 >= 0) {
-					width = this->width;
+					int width = this->width;
 					if (v7 < width && v23 < this->height) {
-						v10 = width * v23;
+						int v10 = width * v23;
 						if (a5) {
-							v11 = width - v7 + v10;
-							v13 = &this->field_24[v11 - 1];
-							v26 = *v13;
+							v26 = this->field_24[width - v7 + v10 - 1];
 						} else {
-							v13 = &this->field_24[v7 + v10];
-							v26 = *v13;
+							v26 = this->field_24[v7 + v10];
 						}
 					}
 				}
-				item = a2->getItem(v8, i);
+				ItemInstance* item = a2->getItem(x, y);
 				if (item || !v26.isNull()) {
 					if ((item == 0) != v26.isNull()) {
 						return 0;
@@ -62,7 +45,7 @@ struct ShapedRecipe: Recipe
 						return 0;
 					}
 					if (v26.getAuxValue() != -1) {
-						auxValue = v26.getAuxValue();
+						int auxValue = v26.getAuxValue();
 						if (auxValue != item->getAuxValue()) {
 							return 0;
 						}
@@ -70,9 +53,9 @@ struct ShapedRecipe: Recipe
 				}
 				++v23;
 			}
-			++v8;
 			++v7;
-		} while (v8 != 3);
+		}
+
 		return 1;
 	}
 

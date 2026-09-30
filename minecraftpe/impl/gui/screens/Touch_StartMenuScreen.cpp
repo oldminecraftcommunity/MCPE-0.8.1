@@ -429,10 +429,10 @@ void Touch::StartMenuScreen::init(){
 	IntRectangle v8, v12;
 	ImageDef v13;
 	//v13.field_0 = 120; wat *(_QWORD *)&v13.field_0 = 120i64;
-	v12.width = 0x00000008; //XXX *(_QWORD *)&v12.width = 0x4300000008i64;
-	v12.height = 0x43;
-	v13.field_8 = 0x00000008; //XXX *(_QWORD *)&v13.field_8 = 0x4300000008i64;
-	v13.width = 0x43;
+	v12.width = 8;
+	v12.height = 67; //:scream:
+	v13.field_8 = 8;
+	v13.width = 67;
 	v12.minX = 112;
 	v12.minY = 0;
 	v8.minX = 0x78;
@@ -462,12 +462,12 @@ void Touch::StartMenuScreen::init(){
 	this->settingsButtonMaybe->width = 32;
 	this->settingsButtonMaybe->height = 32;
 	this->settingsButtonMaybe->setupPositions();
-	this->buttons.emplace_back(&this->playButton);
-	this->buttons.emplace_back(&this->playOnRealmsButton);
-	this->buttons.emplace_back(this->settingsButtonMaybe);
-	this->field_2C.emplace_back(&this->playButton);
-	this->field_2C.emplace_back(&this->playOnRealmsButton);
-	this->field_2C.emplace_back(this->settingsButtonMaybe);
+	this->buttons.push_back(&this->playButton);
+	this->buttons.push_back(&this->playOnRealmsButton);
+	this->buttons.push_back(this->settingsButtonMaybe);
+	this->field_2C.push_back(&this->playButton);
+	this->field_2C.push_back(&this->playOnRealmsButton);
+	this->field_2C.push_back(this->settingsButtonMaybe);
 	this->field_138 = "\x0fMojang AB";
 	this->field_13C = Common::getGameVersionString();
 	this->playOnRealmsButton.active = 0;
@@ -479,8 +479,8 @@ void Touch::StartMenuScreen::setupPositions(){
 	if(data){
 		this->minecraft->texturesPtr->loadAndBindTexture("gui/title.png");
 		int32_t width = this->width;
-		float v8 = data->width;
-		int32_t td_height = data->height;
+		float v8 = data->image.width;
+		int32_t td_height = data->image.height;
 		this->field_144 = 12;
 		float v10 = v8*0.5;
 		if(width*0.5 <= v8*0.5){

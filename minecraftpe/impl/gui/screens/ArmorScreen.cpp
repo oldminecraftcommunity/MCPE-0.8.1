@@ -260,8 +260,8 @@ void ArmorScreen::init() {
 	this->backButton.width = 38;
 	this->backButton.height = 18;
 	this->backButton.init(this->minecraft);
-	this->buttons.emplace_back(&this->header);
-	this->buttons.emplace_back(&this->backButton);
+	this->buttons.push_back(&this->header);
+	this->buttons.push_back(&this->backButton);
 	this->field_178[0] = &this->field_B8;
 	this->field_178[1] = &this->field_E8;
 	this->field_178[2] = &this->field_118;

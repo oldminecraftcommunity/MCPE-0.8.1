@@ -13,7 +13,13 @@
 static unsigned int _d65c6fb8(unsigned int a1){
 	return (a1 & 0xFF00FF00) | (a1 << 16) & 0xFF0000 | ((a1 >> 16) & 0xff);
 }
-
+static bool _stringAssign(JNIEnv* env, jstring a2, std::string& ret){
+	const char* str = env->GetStringUTFChars(a2, 0);
+	if(str) ret = str;
+	env->ReleaseStringUTFChars(a2, str);
+	if(str) return 1;
+	return 0;
+}
 struct ANativeActivity;
 struct AppPlatform_android : AppPlatform{
 	jobject mainActivityRef;
@@ -322,8 +328,23 @@ struct AppPlatform_android : AppPlatform{
 		return v2;
 	}
 	virtual std::vector<std::string> getUserInput(void) {
-		static char buf[1023];
-		printf("AppPlatform_android::getUserInput - not implemented\n"); //TODO
+		static char buf[1024];
+		if(this->initialized && this->_jniGetUserInputString != 0){
+			JVMAttacher v15(this->jvm);
+			jobjectArray v9 = (jobjectArray) v15.env->CallObjectMethod(this->mainActivityRef, this->_jniGetUserInputString);
+			jsize arrayLen = v15.env->GetArrayLength(v9);
+			std::vector<std::string> v16;
+			for(jsize v8 = 0; v8 < arrayLen; ++v8){
+				jstring v12 = (jstring) v15.env->GetObjectArrayElement(v9, v8);
+				v15.env->GetStringLength(v12);
+				const char* str = v15.env->GetStringUTFChars(v12, 0);
+				strncpy(buf, str, sizeof(buf)-1);
+				buf[1023] = 0;
+				v15.env->ReleaseStringUTFChars(v12, str);
+				v16.push_back(buf);
+			}
+			return v16;
+		}
 		return {};
 	}
 	virtual std::string getDateString(int32_t a2) {
@@ -502,8 +523,17 @@ struct AppPlatform_android : AppPlatform{
 			}
 		}
 	}
+
 	virtual LoginInformation getLoginInformation(void) {
-		printf("AppPlatform_android::getLoginInformation - not implemented\n"); //TODO
+		if(this->initialized && this->_jniGetAccessToken && this->_jniGetClientID && this->_jniGetProfileID && this->_jniGetProfileName){
+			JVMAttacher v16(this->jvm);
+			LoginInformation v17;
+			_stringAssign(v16.env, (jstring) v16.env->CallObjectMethod(this->mainActivityRef, this->_jniGetAccessToken), v17.accessToken);
+			_stringAssign(v16.env, (jstring) v16.env->CallObjectMethod(this->mainActivityRef, this->_jniGetClientID), v17.clientId);
+			_stringAssign(v16.env, (jstring) v16.env->CallObjectMethod(this->mainActivityRef, this->_jniGetProfileID), v17.profileId);
+			_stringAssign(v16.env, (jstring) v16.env->CallObjectMethod(this->mainActivityRef, this->_jniGetProfileName), v17.profileName);
+			return v17;
+		}
 		return LoginInformation();
 	}
 	virtual void setLoginInformation(const LoginInformation& a2) {

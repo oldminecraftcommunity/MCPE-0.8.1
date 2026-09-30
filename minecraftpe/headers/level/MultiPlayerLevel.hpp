@@ -40,7 +40,7 @@ struct MultiPlayerLevel: Level
 		if (!this->addEntity(ent)) {
 			this->field_BDC.insert(ent);
 		}
-		this->field_BAC.insert( { eid, ent });
+		this->field_BAC.insert(std::pair<int,Entity*>(eid, ent));
 	}
 
 	MultiPlayerLevel(LevelStorage* a2, const std::string& a3, const LevelSettings& a4, bool a5, int a6, Dimension* a7) :

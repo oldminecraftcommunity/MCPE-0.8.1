@@ -300,9 +300,9 @@ void ExternalFileLevelStorage::loadEntities(Level* a2, LevelChunk* a3) {
 							Entity* v16 = e;
 							if(e) {
 								a2->addEntity(e);
-								CompoundTag* v11 = v10;
+								const CompoundTag* v11 = v10;
 								//TODO check complex mountables
-								for(auto&& i = v10->value.find(Entity::RIDING_TAG); i != v11->value.end(); i = v11->value.find(Entity::RIDING_TAG)) {
+								for(auto&& i = v11->value.find(Entity::RIDING_TAG); i != v11->value.end(); i = v11->value.find(Entity::RIDING_TAG)) {
 									CompoundTag* comp = v11->getCompound(Entity::RIDING_TAG);
 									Entity* v14 = EntityFactory::loadEntity(comp, a2);
 									if(v14) {

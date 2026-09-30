@@ -56,9 +56,32 @@ std::shared_ptr<PackedScrollContainer> PlayScreen::buildJoinRealmsScreen(bool_t 
 		}
 		v33 = this->field_204;
 	}
-
-	//TODO
-	printf("PlayScreen::buildJoinRealmsScreen - not implemented\n");
+	std::shared_ptr<GuiElementContainer> v34(new GuiElementContainer(0, 1, 0, 0, 24, 24));
+	std::shared_ptr<Label> v35(new Label("Waiting for Minecraft Realms", this->minecraft, 0xffffff, 0, 0, 0, 1));
+	std::shared_ptr<Label> v36(new Label(this->field_C4, this->minecraft, 0xFFAAAAAA, 0, 0, 0, 1));
+	std::shared_ptr<Spinner> v37(new Spinner());
+	this->field_B4 = new Touch::TButton(6, a2 ? "OK" : "Cancel", 0);
+	this->buttons.push_back(this->field_B4);
+	this->field_B4->init(this->minecraft);
+	v34->width = this->field_214->width;
+	v34->height = this->field_214->height;
+	this->field_B4->setupPositions();
+	v35->setupPositions();
+	v36->setupPositions();
+	v35->posX = (this->field_214->width - v35->width) / 2;
+	v36->posX = (this->field_214->width - v36->width) / 2;
+	v37->posX = this->field_214->width / 2;
+	this->field_B4->posX = (this->field_214->width - this->field_B4->width) / 2;
+	int v22 = (this->field_B4->height + 38);
+	v35->posY = (this->field_214->height - v22);
+	v36->posY = v37->posY = v22 / 2 + 19;
+	this->field_B4->posY = v22 / 2 + 38;
+	v34->addChild(v35);
+	v34->addChild(std::shared_ptr<GuiElement>(this->field_B4));
+	//v34->addChild(a2 ? std::shared_ptr<GuiElement>(v36)) : std::shared_ptr<GuiElement>(v37));
+	v33->clearAll();
+	v33->addChild(v34);
+	this->buttons.push_back(this->field_B4);
 	return v33;
 }
 std::shared_ptr<GuiElement> PlayScreen::buildLocalServerList() {
@@ -161,7 +184,7 @@ void PlayScreen::joinMCOServer(MCOServerListItem a2) {
 		safeStopAndRemove(this->field_AC);
 		this->field_CC = a2;
 		this->field_AC = RestRequestJob::CreateJob(RRT_POST, this->minecraft->mojangConnector->getMCOService(), this->minecraft);
-		this->field_AC->setMethod("/server/%/join", a2.field_0);
+		this->field_AC->setMethod("/server/%/join", a2.serverId);
 		MCOServerListItem v11 = this->field_CC;
 		Minecraft* minecraft = this->minecraft;
 		RestRequestJob::launchRequest(
@@ -170,19 +193,18 @@ void PlayScreen::joinMCOServer(MCOServerListItem a2) {
 			/*TODO this thing is bigger by 8 bytes(0x50 => 0x58) - one field after this and one after v11(this->minecraft)*/
 			[this, v11, minecraft](int32_t a2, const std::string& a3, const RestCallTagData& a4, std::shared_ptr<RestRequestJob> a5) {
 				uint16_t port;
-				std::string v12, v13;
-				this->minecraft->mojangConnector->getMCOParser()->parseJoinWorld(a3, v12, port, v13);
-				std::string v14 = Base64::base64Decode(v13);
+				std::string ip, key;
+				this->minecraft->mojangConnector->getMCOParser()->parseJoinWorld(a3, ip, port, key);
+				std::string v14 = Base64::base64Decode(key);
 				MojangConnector* con = minecraft->mojangConnector.get();
-				std::string v15 = con->getEncryptedJoinDataString(v11.field_0, con->getLoginInformation()->profileName, v14);
+				std::string v15 = con->getEncryptedJoinDataString(v11.serverId, con->getLoginInformation()->profileName, v14);
 				safeStopAndRemove(this->field_AC);
 				this->field_C4 = a3;
 				minecraft->mojangConnector->setPayload(v15);
-				minecraft->connectToMCOServer(v11.worldName, v12, port);
-				DEBUGMSG("MC: %p\n", minecraft);
+				DEBUGMSG("Set encrypted payload to %s\n", v15.c_str());
+				minecraft->connectToMCOServer(v11.worldName, ip, port);
 				minecraft->setScreen(new ProgressScreen());
-				DEBUGMSG("MC2: %p\n", minecraft);
-				std::string v19 = Util::simpleFormat("{\"%\": \"%\", \"%\": \"%\", \"%\": \"%\"}", ParameterStringify::stringify("server_type", "Realms", "game_type", v11.gamemodeName, "world_name", this->field_CC.worldName));
+				std::string v19 = Util::simpleFormat("{\"%\": \"%\", \"%\": \"%\", \"%\": \"%\"}", ParameterStringify::stringify("server_type", "Realms", "game_type", v11.gamemodeName, "world_name", this->field_CC.serverId));
 				minecraft->platform()->statsTrackData("start_game", v19);
 			},
 			[this](bool_t, bool_t, int32_t a4, const std::string& a5, const RestCallTagData& a6, std::shared_ptr<RestRequestJob> a7) {
@@ -226,27 +248,27 @@ void PlayScreen::setMainPanel(PlayScreenPanel a2) {
 		case PlayScreenPanel::MESSAGE:
 			this->field_1EC = this->buildMessageScreen();
 			this->field_214 = this->field_1EC;
-			this->elements.emplace_back(this->field_1EC.get());
+			this->elements.push_back(this->field_1EC.get());
 			break;
 		case PlayScreenPanel::LOCAL_SERVER_LIST:
 			this->field_1F4 = this->buildLocalServerList();
 			this->field_214 = this->field_1F4;
-			this->elements.emplace_back(this->field_1F4.get());
+			this->elements.push_back(this->field_1F4.get());
 			break;
 		case PlayScreenPanel::MCO_SERVER_LIST:
 			this->field_1FC = this->buildMCOServerList();
 			this->field_214 = this->field_1FC;
-			this->elements.emplace_back(this->field_1FC.get());
+			this->elements.push_back(this->field_1FC.get());
 			break;
 		case PlayScreenPanel::JOIN_REALMS_0:
 			this->field_204 = this->buildJoinRealmsScreen(0);
 			this->field_214 = this->field_204;
-			this->elements.emplace_back(this->field_204.get());
+			this->elements.push_back(this->field_204.get());
 			break;
 		case PlayScreenPanel::JOIN_REALMS_1:
 			this->field_20C = this->buildJoinRealmsScreen(1);
 			this->field_214 = this->field_20C;
-			this->elements.emplace_back(this->field_20C.get());
+			this->elements.push_back(this->field_20C.get());
 			break;
 		default:
 			break;

@@ -19,8 +19,7 @@ struct CompoundTag : public Tag{
 	CompoundTag(const std::string& name) : Tag(name){
 
 	}
-	CompoundTag(const CompoundTag& tag) : Tag(tag.getName()){
-		this->value = tag.value;
+	CompoundTag(const CompoundTag& tag) : Tag(tag.getName()), value(tag.value){
 	}
 	CompoundTag(void) : CompoundTag(""){}
 
@@ -41,7 +40,7 @@ struct CompoundTag : public Tag{
 			const std::string& name = it->first;
 			Tag* tag = it->second->copy();
 			tag->setName(name);
-			cp->value[name] = tag;
+			cp->value.insert(std::pair<std::string,Tag *>(name, tag));
 		}
 		return cp;
 	}
@@ -94,7 +93,7 @@ struct CompoundTag : public Tag{
 				delete tag;
 				return;
 			}
-			this->value[tag->getName()] = tag;
+			this->value.insert(std::pair<std::string,Tag *>(tag->getName(), tag));
 		}
 	}
 	virtual void print(const std::string&, PrintStream&) const {

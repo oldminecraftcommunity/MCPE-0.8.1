@@ -31,7 +31,7 @@ MCOInviteListItemElement::MCOInviteListItemElement(std::string a2, ManageMCOServ
 	this->field_40 = new ImageButton(0, "");
 	this->field_40->setImageDef(v10, 1);
 	this->field_40->setActiveAndVisibility(0, 0);
-} //TODO might have aother parameter?
+}
 void MCOInviteListItemElement::onFriendSearchCompleted(const std::string& a2) {
 	if(!this->friendSearchCompleted) {
 		this->field_3C = a2;

@@ -97,11 +97,11 @@ void Touch::IngameBlockSelectionScreen::init() {
 	v12 = this->field_190;
 	this->field_18C = v11;
 	this->field_188 = (v11 - 1) / v12 + 1;
-	this->buttons.emplace_back(&this->selectBlocksHeader);
-	this->buttons.emplace_back(&this->backButton);
+	this->buttons.push_back(&this->selectBlocksHeader);
+	this->buttons.push_back(&this->backButton);
 	if(!this->minecraft->isCreativeMode()) {
-		this->buttons.emplace_back(&this->craftButton);
-		this->buttons.emplace_back(&this->armorButton);
+		this->buttons.push_back(&this->craftButton);
+		this->buttons.push_back(&this->armorButton);
 	}
 }
 void Touch::IngameBlockSelectionScreen::setupPositions() {

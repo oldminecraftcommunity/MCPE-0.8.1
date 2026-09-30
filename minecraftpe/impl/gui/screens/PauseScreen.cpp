@@ -74,8 +74,8 @@ void PauseScreen::init() {
 	this->buttons.push_back(this->backToGameButton);
 	this->buttons.push_back(this->optionsButton);
 	this->buttons.push_back(this->quitToTitleButton);
-	this->elements.emplace_back(this->field_74);
-	this->elements.emplace_back(this->gameMenuLabel);
+	this->elements.push_back(this->field_74);
+	this->elements.push_back(this->gameMenuLabel);
 	if(this->minecraft->rakNetInstance) {
 		this->minecraft->rakNetInstance->isServer();
 	}

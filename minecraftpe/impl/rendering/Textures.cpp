@@ -65,7 +65,7 @@ int32_t Textures::assignTexture(const std::string& s, TextureData& d, bool_t b){
 	}
 
 	glTexParameteri(GL_TEXTURE_2D, 0x2800u, v8);
-	this->_loadTexImage(d);
+	this->_loadTexImage(d.image);
 	if(d.images.begin() != d.images.end()){
 		if(AppPlatform::TEXTURE_MAX_LEVEL){
 			glTexParameteri(GL_TEXTURE_2D, AppPlatform::TEXTURE_MAX_LEVEL, 4);
@@ -77,8 +77,9 @@ int32_t Textures::assignTexture(const std::string& s, TextureData& d, bool_t b){
 
 		 glTexParameteri(GL_TEXTURE_2D, 0x2801u, 9986);
 	}
+	this->textures[s] = d;
 
-	TextureData& td = this->textures[s];
+	/*TextureData& td = this->textures[s];
 	td.width = d.width;
 	td.height = d.height;
 	td.pixels = d.pixels;
@@ -87,7 +88,7 @@ int32_t Textures::assignTexture(const std::string& s, TextureData& d, bool_t b){
 	td.lod = d.lod;
 	td.field_18 = d.field_18;
 	td.glTexId = d.glTexId;
-	td.images = d.images;
+	td.images = d.images;*/
 
 	return d.glTexId;
 }
@@ -105,7 +106,7 @@ void Textures::clear(bool_t a2){
 	if(a2){
 		for(auto&& p: this->textures) {
 			if(!p.second.field_18) {
-				free(p.second.pixels);
+				free(p.second.image.pixels);
 			}
 		}
 		this->textures.clear();

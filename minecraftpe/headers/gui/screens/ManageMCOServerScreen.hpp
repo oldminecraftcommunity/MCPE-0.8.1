@@ -22,25 +22,25 @@ struct ManageMCOServerScreen: Screen
 	Touch::THeader* manageServerHeader;
 	Button* backButton;
 	Button* resetButton;
-	OptionButton* field_AC;
+	OptionButton* isOpen;
 	Label* openLabel;
 	Label* serverNameLabel;
 	Label* invitedPeopleLabel;
 	std::shared_ptr<ImageWithBackground> field_BC;
 	TextBox* serverNameTextBox;
 	TextBox* playerNameTextBox;
-	PackedScrollContainer* field_CC;
+	PackedScrollContainer* invitedPlayersList;
 	NinePatchLayer* field_D0;
 	NinePatchLayer* field_D4;
-	Label* field_D8;
-	std::unordered_map<std::string, std::shared_ptr<MCOInviteListItemElement>> field_DC;
+	Label* inviteErrorMessage;
+	std::unordered_map<std::string, std::shared_ptr<MCOInviteListItemElement>> invitedPlayers;
 	int32_t field_F4, field_F8;
 	std::shared_ptr<RestRequestJob> field_FC;
 
 	ManageMCOServerScreen(const MCOServerListItem&);
 	MCOInviteListItemElement* _addInviteElement(const std::string&);
 	void _queryUsernameAndUpdateElement(const std::string&);
-	void _removeInviteElement(const std::string&);
+	bool _removeInviteElement(const std::string&);
 	void closeScreen();
 
 

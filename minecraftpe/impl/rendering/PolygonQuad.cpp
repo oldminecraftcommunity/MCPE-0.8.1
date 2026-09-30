@@ -2,11 +2,6 @@
 #include <rendering/Tesselator.hpp>
 
 PolygonQuad::PolygonQuad(VertexPT* v1, VertexPT* v2, VertexPT* v3, VertexPT* v4){
-	for(int i = 0; i < 4; ++i){
-		this->verticies[i].vec.x = 0;
-		this->verticies[i].vec.y = 0;
-		this->verticies[i].vec.z = 0;
-	}
 	this->flipnormal = 0;
 	this->verticies[0] = *v1;
 	this->verticies[1] = *v2;
@@ -15,64 +10,35 @@ PolygonQuad::PolygonQuad(VertexPT* v1, VertexPT* v2, VertexPT* v3, VertexPT* v4)
 }
 
 PolygonQuad::PolygonQuad(VertexPT* v1, VertexPT* v2, VertexPT* v3, VertexPT* v4, float a, float b, float c, float d){
-
-	for(int i = 0; i < 4; ++i){
-		this->verticies[i].vec.x = 0;
-		this->verticies[i].vec.y = 0;
-		this->verticies[i].vec.z = 0;
-	}
-
 	this->flipnormal = 0;
-
-	{
-		VertexPT vec(*v1, c, b);
-		this->verticies[0] = vec;
-	}
-	{
-		VertexPT vec(*v2, a, b);
-		this->verticies[1] = vec;
-	}
-	{
-		VertexPT vec(*v3, a, d);
-		this->verticies[2] = vec;
-	}
-	{
-		VertexPT vec(*v4, c, d);
-		this->verticies[3] = vec;
-	}
+	//seems like it does this instead of this->verticies[] = VertexPT(...) based on stack size~
+	VertexPT p1(*v1, c, b);
+	this->verticies[0] = p1;
+	VertexPT p2(*v2, a, b);
+	this->verticies[1] = p2;
+	VertexPT p3(*v3, a, d);
+	this->verticies[2] = p3;
+	VertexPT p4(*v4, c, d);
+	this->verticies[3] = p4;
 }
 
 PolygonQuad::PolygonQuad(VertexPT* v1, VertexPT* v2, VertexPT* v3, VertexPT* v4, int32_t a, int32_t b, int32_t c, int32_t d, int32_t texWidth, int32_t texHeight){
-
-	for(int32_t i = 0; i < 4; ++i){
-		this->verticies[i].vec.x = 0;
-		this->verticies[i].vec.y = 0;
-		this->verticies[i].vec.z = 0;
-	}
 	float tw = (float) texWidth, th = (float) texHeight;
 
 	this->flipnormal = 0;
-
-	{
-		VertexPT vec(*v1, (float)c / tw, ((float)b / th) + 0.0f);
-		this->verticies[0] = vec;
-	}
+	VertexPT p1(*v1, (float)c / tw, ((float)b / th) + 0.0f);
+	this->verticies[0] = p1;
 
 	float af = ((float)a / tw) + 0.0f;
-	{
-		VertexPT vec(*v2, af, ((float)b / th) + 0.0f);
-		this->verticies[1] = vec;
-	}
+	VertexPT p2(*v2, af, ((float)b / th) + 0.0f);
+	this->verticies[1] = p2;
 
 	float df = (float)d / th;
-	{
-		VertexPT vec(*v3, af, df);
-		this->verticies[2] = vec;
-	}
-	{
-		VertexPT vec(*v4, (float)c / tw, df);
-		this->verticies[3] = vec;
-	}
+	VertexPT p3(*v3, af, df);
+	this->verticies[2] = p3;
+
+	VertexPT p4(*v4, (float)c / tw, df);
+	this->verticies[3] = p4;
 }
 
 
@@ -81,15 +47,15 @@ void PolygonQuad::flipNormal(void){
 }
 
 void PolygonQuad::mirror(void){
-	//XXX uses loops
-	VertexPT v1 = this->verticies[0], v2 = this->verticies[1], v3 = this->verticies[2], v4 = this->verticies[3];
-	this->verticies[3] = v1;
-	this->verticies[2] = v2;
-	this->verticies[1] = v3;
-	this->verticies[0] = v4;
+	for(int i = 0; i < 2; ++i) {
+		VertexPT sav = this->verticies[i];
+		this->verticies[i] = this->verticies[3 - i];
+		this->verticies[3 - i] = sav;
+	}
 }
 
 void PolygonQuad::render(Tesselator& a2, float a3, int32_t a4){
+	//TODO inlined vec3 math probably
 	float diffX01 = this->verticies[0].vec.x - this->verticies[1].vec.x;
 	float diffY01 = this->verticies[0].vec.y - this->verticies[1].vec.y;
 	float diffZ01 = this->verticies[0].vec.z - this->verticies[1].vec.z;

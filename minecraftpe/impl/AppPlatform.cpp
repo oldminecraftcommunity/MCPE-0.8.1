@@ -68,26 +68,14 @@ void AppPlatform::loadImage(ImageData& image, const std::string& name, bool_t a4
 	}
 }
 TextureData AppPlatform::loadTexture(const std::string& a3, bool_t a4){
+
+	int v5 = 0;
 	TextureData data;
-	int32_t v5;
-
-	v5 = 0;
-	data.width = 0;
-	data.height = 0;
-	data.pixels = 0;
-	data.field_C = 0;
-	data.field_10 = 0;
-	data.lod = 0;
-	data.field_18 = 0;
-	data.glTexId = 0;
-	/*a1->images.vecStartPtr = 0;
-	a1->images.vecEndPtr = 0;
-	a1->images.field_8 = 0;*/
 
 
-	this->loadImage(data, a3, a4);
+	this->loadImage(data.image, a3, a4);
 
-	if(data.pixels){
+	if(data.image.pixels){
 
 		data.field_18 = 0;
 		int v9 = a3.find('.');

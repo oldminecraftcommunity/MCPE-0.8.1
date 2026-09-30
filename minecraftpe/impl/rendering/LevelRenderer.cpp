@@ -67,9 +67,6 @@ LevelRenderer::LevelRenderer(Minecraft* minecraft, std::shared_ptr<TextureAtlas>
 	this->field_88 = 0;
 	this->ticksElapsed = 0;
 	this->textures = minecraft->texturesPtr;
-	this->field_1CC.x = 0.0;
-	this->field_1CC.y = 0.0;
-	this->field_1CC.z = 0.0;
 	this->shadowRed = 0.0;
 	this->shadowGreen = 0.0;
 	this->shadowBlue = 0.0;
@@ -266,40 +263,34 @@ void LevelRenderer::_renderStars(float a2) {
 	}
 }
 void LevelRenderer::_renderSunOrMoon(float a2, bool_t a3) {
-	float sunAngle;	   // r0
-	float v6;		   // s14
-	float v7;		   // r0
-	float v8;		   // s20
-	float v9;		   // s16
-	float v10;		   // s17
-	float v11;		   // r4
-	float v12;		   // s18
-	float v13;		   // s19
-	int32_t moonPhase; // r0
-	int32_t v17;	   // r3
 
-	sunAngle = this->minecraft->level->getSunAngle(a2);
-	v6 = 0.0;
+
+	float sunAngle = this->minecraft->level->getSunAngle(a2);
+	float v6 = 0.0f;
 	if(!a3) {
-		v6 = 180.0;
+		v6 = 180.0f;
 	}
-	v7 = fmodf(v6 + (float)((float)(sunAngle / 6.2832) * 360.0), 360.0);
-	v8 = v7;
-	if(v7 <= 105.0 || v7 >= 255.0) {
+	float v7 = fmodf(v6 + (float)((float)(sunAngle / 6.2832f) * 360.0f), 360.0f);
+	if(v7 <= 105.0f || v7 >= 255.0f) {
+		float v9;		   // s16
+		float v10;		   // s17
+		float v11;		   // r4
+		float v12;		   // s18
+		float v13;		   // s19
 		if(a3) {
-			v9 = 1.0;
-			v10 = 0.0;
-			v11 = 30.0;
-			v12 = 1.0;
-			v13 = 0.0;
+			v9 = 1.0f;
+			v10 = 0.0f;
+			v11 = 30.0f;
+			v12 = 1.0f;
+			v13 = 0.0f;
 		} else {
-			moonPhase = this->level->getMoonPhase();
-			v17 = moonPhase / 4 % 2;
-			v11 = 20.0;
-			v13 = (float)(moonPhase % 4) * 0.25;
-			v10 = (float)v17 * 0.5;
-			v12 = (float)(moonPhase % 4 + 1) * 0.25;
-			v9 = (float)(v17 + 1) * 0.5;
+			int moonPhase = this->level->getMoonPhase();
+			int v17 = moonPhase / 4 % 2;
+			v11 = 20.0f;
+			v13 = (float)(moonPhase % 4) * 0.25f;
+			v10 = (float)v17 * 0.5f;
+			v12 = (float)(moonPhase % 4 + 1) * 0.25f;
+			v9 = (float)(v17 + 1) * 0.5f;
 		}
 		Tesselator::instance.begin(4);
 		Tesselator::instance.vertexUV(-v11, 120.0, -v11, v12, v10);
@@ -313,7 +304,7 @@ void LevelRenderer::_renderSunOrMoon(float a2, bool_t a3) {
 		{
 			BlendFunctionState v18(1u, 1u);
 			glColor4f(1.0, 1.0, 1.0, 1.0);
-			glRotatef(v8, 1.0, 0.0, 0.0);
+			glRotatef(v7, 1.0, 0.0, 0.0);
 			Tesselator::instance.draw(1);
 			//BlendFunctionState::~BlendFunctionState((BlendFunctionState *)v18);
 		}
@@ -409,17 +400,13 @@ std::string LevelRenderer::gatherStats1() {
 	return ss.str();
 }
 void LevelRenderer::generateSky() {
-	int32_t v2; // r4
-	int32_t v3; // s14
-
-	v2 = 0;
+	int32_t v2 = 0;
 	Tesselator::instance.begin(6, 12);
 	Tesselator::instance.vertex(0.0, 128.0, 0.0);
 	do {
-		v3 = v2;
 		Vec3 v4(2000.0, 0, 0);
+		v4.yRot((float)((float)v2 / 10.0f) * 6.2832f);
 		++v2;
-		v4.yRot((float)((float)v3 / 10.0) * 6.2832);
 		Tesselator::instance.vertex(v4.x, 128.0f, v4.z);
 	} while(v2 != 11);
 	this->skyMesh = Tesselator::instance.end();
@@ -728,7 +715,7 @@ void LevelRenderer::renderEntities(Vec3 a2, FrustumCuller* a3, bool_t a4, float 
 			for(auto&& v40: level->tileEntities) {
 				if(a3->isVisible(v40->aabb)) {
 					if(v40->getShadowRadius() != 0.0) {
-						this->field_190.emplace_back(v40);
+						this->field_190.push_back(v40);
 					}
 					TileEntityRenderDispatcher::getInstance()->render(v40, a5);
 				}
@@ -1413,11 +1400,11 @@ void LevelRenderer::takePicture(TripodCamera* a2, Entity* a3) {
 }
 Particle* LevelRenderer::addParticle(ParticleType a2, float x, float y, float z, float a6, float a7, float a8, int32_t a9) {
 	Minecraft* minecraft; // r4
-	Mob* viewEntityMaybe; // r0
+	Mob* ve; // r0
 
 	minecraft = this->minecraft;
-	viewEntityMaybe = minecraft->viewEntity;
-	if((float)((float)((float)((float)(viewEntityMaybe->posY - y) * (float)(viewEntityMaybe->posY - y)) + (float)((float)(viewEntityMaybe->posX - x) * (float)(viewEntityMaybe->posX - x))) + (float)((float)(viewEntityMaybe->posZ - z) * (float)(viewEntityMaybe->posZ - z))) > 256.0) {
+	ve = minecraft->viewEntity;
+	if((ve->posY - y)*(ve->posY - y) + (ve->posX - x)*(ve->posX - x) + (ve->posZ - z)*(ve->posZ - z) > 256.0f) {
 		return 0;
 	} else {
 		return minecraft->particleEngine->instance(a2, x, y, z, a6, a7, a8, a9);
@@ -1426,11 +1413,11 @@ Particle* LevelRenderer::addParticle(ParticleType a2, float x, float y, float z,
 void LevelRenderer::playSound(const std::string& a2, float x, float y, float z, float a6, float a7) {
 	float v12; // s17
 
-	v12 = 16.0;
+	v12 = 16.0f;
 	if(a6 > 1.0) {
-		v12 = a6 * 16.0;
+		v12 = a6 * 16.0f;
 	}
-	if(this->minecraft->viewEntity->distanceToSqr(x, y, z) < (float)(v12 * v12)) {
+	if(this->minecraft->viewEntity->distanceToSqr(x, y, z) < (v12 * v12)) {
 		this->minecraft->soundEngine->play(a2, x, y, z, a6, a7);
 	}
 }

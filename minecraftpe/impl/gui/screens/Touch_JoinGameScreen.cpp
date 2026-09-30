@@ -53,11 +53,11 @@ void Touch::JoinGameScreen::render(int32_t a2, int32_t a3, float a4) {
 }
 void Touch::JoinGameScreen::init() {
 	this->backButton.init(this->minecraft);
-	this->buttons.emplace_back(&this->backButton);
-	this->buttons.emplace_back(&this->field_BC);
+	this->buttons.push_back(&this->backButton);
+	this->buttons.push_back(&this->field_BC);
 	this->minecraft->rakNetInstance->clearServerList();
 	this->field_F0 = new Touch::AvailableGamesList(this->minecraft, this->width, this->height);
-	this->field_2C.emplace_back(&this->backButton);
+	this->field_2C.push_back(&this->backButton);
 }
 void Touch::JoinGameScreen::setupPositions() {
 	int32_t width; // r3
@@ -80,7 +80,48 @@ bool_t Touch::JoinGameScreen::handleBackEvent(bool_t a2) {
 	return 1;
 }
 void Touch::JoinGameScreen::tick() {
-	printf("Touch::JoinGameScreen::tick - not implemented\n"); //TODO Touch::JoinGameScreen::tick, can be created but unused?
+	if(this->isIndexValid(this->field_F0->selectedItem)) {
+		this->buttonClicked(&this->joinGameButton);
+	} else {
+		std::vector<PingedCompatibleServer>* v3 = this->minecraft->rakNetInstance->getServerList();
+		std::vector<PingedCompatibleServer> v14;
+		for(unsigned int v2 = 0; v2 < v3->size(); ++v3) {
+			if(v3->at(v2).field_0.GetLength() != 0) {
+				v14.push_back(v3->at(v2));
+			}
+
+			if(v14.size() == this->field_F0->servers.size()) {
+				for(int v11 = v14.size() - 1; v11 >= 0; --v11) {
+					for(int i = 0; i < v14.size(); ++i) {
+						if(v14[i].field_4 == this->field_F0->servers[v11].field_4) {
+							this->field_F0->servers[v11].field_0 = v14[i].field_0;
+						}
+					}
+				}
+			} else {
+				PingedCompatibleServer v15;
+				bool v7;
+				if(this->isIndexValid(this->field_F0->selectedItem)) {
+					v7 = 1;
+					v15 = this->field_F0->servers[this->field_F0->selectedItem];
+				} else {
+					v7 = 0;
+				}
+				this->field_F0->servers = v14;
+				this->field_F0->selectItem(-1, 0);
+				if(v7) {
+					for(unsigned int j = 0; j < this->field_F0->servers.size(); ++j) {
+						if(this->field_F0->servers[j].field_4 == v15.field_4) {
+							this->field_F0->selectItem(j, 0);
+							break;
+						}
+					}
+				}
+
+			}
+			this->joinGameButton.active = this->isIndexValid(this->field_F0->selectedItem);
+		}
+	}
 }
 bool_t Touch::JoinGameScreen::isInGameScreen() {
 	return 0;

@@ -34,7 +34,7 @@ struct PlayScreen: Screen
 	std::shared_ptr<RestRequestJob> field_9C;
 	std::shared_ptr<RestRequestJob> field_A4;
 	std::shared_ptr<RestRequestJob> field_AC;
-	Button* field_B4;
+	Touch::TButton* field_B4;
 	int32_t field_B8;
 	double field_BC;
 	std::string field_C4;

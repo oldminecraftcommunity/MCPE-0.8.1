@@ -24,16 +24,16 @@ PerfRenderer::PerfRenderer(Minecraft* mc, Font* font){
 void PerfRenderer::debugFpsMeterKeyPress(int32_t n) {
 	std::vector<PerfTimer::ResultField> v9 = PerfTimer::getLog(this->field_8);
 	if(!v9.empty()) {
-		std::string v12(v9[0].field_8);
+		std::string v12(v9[0].sectionName);
 		v9.erase(v9.begin());
 		if(n) {
 			int32_t v6 = n - 1;
 			if(v6 < v9.size()) {
-				if(v9[0].field_8 == "unspecified") {
+				if(v9[0].sectionName == "unspecified") {
 					if(this->field_8.size()) {
 						this->field_8 += ".";
 					}
-					this->field_8 += v9[0].field_8;
+					this->field_8 += v9[0].sectionName;
 				}
 			}
 		} else if(v12.size()) {

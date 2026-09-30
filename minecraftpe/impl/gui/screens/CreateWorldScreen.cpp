@@ -17,6 +17,7 @@
 #include <gui/elements/Label.hpp>
 #include <gui/NinePatchFactory.hpp>
 #include <network/mco/MojangConnector.hpp>
+#include <gui/screens/DisconnectionScreen.hpp>
 
 CreateWorldScreen::CreateWorldScreen(CreateWorldScreenType a2, const MCOServerListItem& a3)
 	: SelectWorldScreen() {
@@ -75,16 +76,22 @@ void CreateWorldScreen::generateMCOGame(bool_t a2) {
 	std::shared_ptr<RestService> v27 = this->minecraft->mojangConnector->getMCOService();
 	if(a2) {
 		this->field_1B8 = RestRequestJob::CreateJob(RRT_PUT, v27, this->minecraft);
-		this->field_1B8->setMethod("/server/%/recreate?type=%&seed=%&name=%", this->field_170.field_0, std::string(gm), this->getSeed(), this->minecraft->mojangConnector->urlEncode(this->getLevelName()));
+		this->field_1B8->setMethod("/server/%/recreate?type=%&seed=%&name=%", this->field_170.serverId, std::string(gm), this->getSeed(), this->minecraft->mojangConnector->urlEncode(this->getLevelName()));
 	}else{
 		this->field_1B8 = RestRequestJob::CreateJob(RRT_POST, v27, this->minecraft);
 		this->field_1B8->setMethod("/server/create?name=%&type=%&seed=%", this->minecraft->mojangConnector->urlEncode(this->getLevelName()), this->getSeed());
 	}
-	//RestRequestJob::launchRequest(this->field_1B8, this->minecraft->mojangConnector->getThreadCollection()
-
-
-	printf("CreateWorldScreen::generateMCOGame - not implemented\n");
-	//TODO
+	RestRequestJob::launchRequest(
+		this->field_1B8,
+		this->minecraft->mojangConnector->getThreadCollection(),
+		[v24, this](int32_t, const std::string&, const RestCallTagData&, std::shared_ptr<RestRequestJob>) {
+			safeStopAndRemove(((CreateWorldScreen*)v24.get())->field_1B8);
+			this->minecraft->setScreen(new PlayScreen(0));
+		},
+		[v24, this](bool, bool, int32_t, const std::string&, const RestCallTagData&, std::shared_ptr<RestRequestJob>) {
+			safeStopAndRemove(((CreateWorldScreen*)v24.get())->field_1B8);
+			this->minecraft->setScreen(new DisconnectionScreen("Found no open server slots."));
+		});
 }
 std::string CreateWorldScreen::getLevelName() {
 	if(*this->field_144->getText() == "") {

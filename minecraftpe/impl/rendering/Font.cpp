@@ -268,18 +268,18 @@ void Font::init(Options*){
 		int32_t v8 = 0;
 		int32_t v9 = this->field_1820.field_1C * v7;
 		while(v8 < v9){
-			int32_t v10 = this->field_1820.field_10 + 8*(v8%v7) + data->width*8*(v8/v7) + this->field_1820.field_14;
+			int32_t v10 = this->field_1820.field_10 + 8*(v8%v7) + data->image.width*8*(v8/v7) + this->field_1820.field_14;
 			int32_t v11 = 7;
 			do{
 				int32_t v12 = 0;
 				int32_t v13 = 8;
 				while(1){
-					bool_t v27 = data->pixels[4*v12 + 4*v11 + 4*v10] == 0;
+					bool_t v27 = data->image.pixels[4*v12 + 4*v11 + 4*v10] == 0;
 					if(!--v13) break;
-					v12 += data->width;
+					v12 += data->image.width;
 					if(!v27) goto SET_CHAR_LENGTH;
 				}
-				if(data->pixels[4*v12 + 4*v11 + 4*v10]) break;
+				if(data->image.pixels[4*v12 + 4*v11 + 4*v10]) break;
 			}while(v11-- != 0);
 			SET_CHAR_LENGTH:
 			if(v8 == ' '){ //' ' == 32

@@ -248,13 +248,9 @@ void RakNetInstance::send(const RakNet::RakNetGUID& a2, Packet* a3) {
 	}
 }
 
-//TODO used instead of field_4 of RakNet::RakPeer
-//which does not seem to exist - mojang modifed raknet?
-static int32_t _RakPeer_field_4 = 0;
-
 bool_t RakNetInstance::isProbablyBroken() {
-	return _RakPeer_field_4 < -100;
+	return this->rakPeerInstance->_isProbablyBroken < -100;
 }
 void RakNetInstance::resetIsBroken() {
-	_RakPeer_field_4 = 0;
+	this->rakPeerInstance->_isProbablyBroken = 0;
 }

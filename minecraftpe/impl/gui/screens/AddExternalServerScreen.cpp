@@ -39,16 +39,16 @@ void AddExternalServerScreen::init() {
 	this->field_9C = std::shared_ptr<Label>(new Label("Add server by IP/Address.", this->minecraft, -1, 0, 0, 0, 1));
 	NinePatchFactory factory(this->minecraft->texturesPtr, "gui/spritesheet.png");
 	this->field_A4 = std::shared_ptr<NinePatchLayer>(factory.createSymmetrical(IntRectangle{34, 43, 14, 14}, 3, 3, 32, 32));
-	this->buttons.emplace_back(this->field_5C.get());
-	this->buttons.emplace_back(this->closeScreenButton.get());
-	this->buttons.emplace_back(this->addServerButton.get());
-	this->elements.emplace_back(this->serverNameLabel.get());
-	this->elements.emplace_back(this->serverNameTextBox.get());
-	this->elements.emplace_back(this->addressLabel.get());
-	this->elements.emplace_back(this->serverAddressTextBox.get());
-	this->elements.emplace_back(this->portLabel.get());
-	this->elements.emplace_back(this->field_94.get());
-	this->elements.emplace_back(this->field_9C.get());
+	this->buttons.push_back(this->field_5C.get());
+	this->buttons.push_back(this->closeScreenButton.get());
+	this->buttons.push_back(this->addServerButton.get());
+	this->elements.push_back(this->serverNameLabel.get());
+	this->elements.push_back(this->serverNameTextBox.get());
+	this->elements.push_back(this->addressLabel.get());
+	this->elements.push_back(this->serverAddressTextBox.get());
+	this->elements.push_back(this->portLabel.get());
+	this->elements.push_back(this->field_94.get());
+	this->elements.push_back(this->field_9C.get());
 }
 void AddExternalServerScreen::setupPositions() {
 	int32_t height; // r0

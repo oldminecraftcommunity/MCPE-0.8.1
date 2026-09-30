@@ -9,13 +9,13 @@ void MCOParser::parseErrorMessage(const std::string& a2, std::string& reason, in
 	error = v8.get("error", Json::Value()).asInt();
 	reason = v8.get("reason", Json::Value()).asString();
 }
-void MCOParser::parseJoinWorld(const std::string& a2, std::string& ip, uint16_t& port, std::string& a5) {
+void MCOParser::parseJoinWorld(const std::string& a2, std::string& ip, uint16_t& port, std::string& key) {
 	Json::Value v9;
 	Json::Reader v12;
 	if(v12.parse(a2, v9, 1)) {
 		ip = v9.get("ip", Json::Value("127.0.0.1")).asString();
 		port = v9.get("port", Json::Value(25675)).asInt();
-		a5 = v9.get("key", Json::Value("")).asString();
+		key = v9.get("key", Json::Value("")).asString();
 	}
 }
 LoginInformation MCOParser::parseMCOAccountValidSessionReturnValue(const std::string& a3) {
@@ -39,7 +39,7 @@ std::shared_ptr<std::unordered_map<long long, MCOServerListItem>> MCOParser::par
 			int v9 = 0;
 			MCOServerListItem v33;
 			Json::Value v30 = v29[v6];
-			v33.field_0 = v30.get("serverId", Json::Value(-1)).asInt64();
+			v33.serverId = v30.get("serverId", Json::Value(-1)).asInt64();
 			v33.worldName = v30.get("name", Json::Value("wrong_name")).asString();
 			v33.open = v30.get("open", Json::Value(0)).asBool();
 			v33.ownerName = v30.get("ownerName", Json::Value("wrong_owner_name")).asString();
@@ -56,7 +56,7 @@ std::shared_ptr<std::unordered_map<long long, MCOServerListItem>> MCOParser::par
 			while(v13 < v32.size()) {
 				v33.invited.insert(v32[v13++].asString());
 			}
-			ret->insert(std::pair<long long, MCOServerListItem>(v33.field_0, v33));
+			ret->insert(std::pair<long long, MCOServerListItem>(v33.serverId, v33));
 			++v6;
 		}
 	}

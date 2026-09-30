@@ -17,7 +17,6 @@ struct CommandServer
 {
 	static std::string Ok, Fail;
 	bool_t initialized;
-	int8_t field_1, field_2, field_3;
 	int32_t _socket;
 	sockaddr_in field_8;
 	Minecraft* minecraft;

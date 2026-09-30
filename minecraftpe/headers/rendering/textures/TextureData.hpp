@@ -1,27 +1,14 @@
 #pragma once
 #include <ImageData.hpp>
+#include <vector>
 
-struct TextureData : ImageData{
-	TextureData(TextureData&& data){
-		this->width = data.width;
-		this->height = data.height;
-		this->pixels = data.pixels;
-		this->field_C = data.field_C;
-		this->field_10 = data.field_10;
-		this->lod = data.lod;
-		this->field_18 = data.field_18;
-		this->glTexId = data.glTexId;
-		this->images = data.images;
-	}
+struct TextureData
+{
+	ImageData image;
+	uint8_t field_18;
+	uint32_t glTexId;
+	std::vector<ImageData> images;
 
-	TextureData(){
-		this->width = 0;
-		this->height = 0;
-		this->pixels = 0;
-		this->field_C = 0;
-		this->field_10 = 0;
-		this->lod = 0;
-		this->field_18 = 0;
-		this->glTexId = 0;
+	TextureData() : image(), field_18(0), glTexId(0), images(){
 	}
 };

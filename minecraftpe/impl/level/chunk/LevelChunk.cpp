@@ -46,7 +46,7 @@ void LevelChunk::addTileEntity(struct TileEntity* a2) {
 	int32_t czw = this->chunkZworld;
 	this->setTileEntity(posX - this->chunkXworld, a2->posY, posZ - czw, a2);
 	if(this->loaded) {
-		this->level->tileEntities.emplace_back(a2);
+		this->level->tileEntities.push_back(a2);
 	}
 }
 void LevelChunk::clearUpdateMap() {

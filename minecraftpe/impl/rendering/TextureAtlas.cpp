@@ -43,8 +43,7 @@ void TextureAtlas::load(struct NinecraftApp* mc){
 				while(v30 != v33){
 					{
 						Json::Value v34(*v30);
-						TextureUVCoordinateSet uv = this->_parseJSON(v34);
-						v29.emplace_back(uv);
+						v29.push_back(this->_parseJSON(v34));
 					}
 					++v30;
 				}

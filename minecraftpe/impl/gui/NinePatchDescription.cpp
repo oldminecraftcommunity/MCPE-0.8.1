@@ -28,7 +28,7 @@ NinePatchDescription NinePatchDescription::createSymmetrical(int32_t a2, int32_t
 }
 
 void NinePatchDescription::transformUVForImage(const TextureData& texture){
-	this->transformUVForImageSize(texture.width, texture.height);
+	this->transformUVForImageSize(texture.image.width, texture.image.height);
 }
 
 void NinePatchDescription::transformUVForImageSize(int32_t w, int32_t h){

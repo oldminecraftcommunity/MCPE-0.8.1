@@ -6,7 +6,7 @@
 
 struct MCOServerListItem
 {
-	long long field_0;
+	long long serverId;
 	std::string worldName;
 	bool_t open;
 	std::string ownerName;
@@ -24,7 +24,7 @@ struct MCOServerListItem
 	}
 
 	MCOServerListItem& operator=(const MCOServerListItem& a2) {
-		this->field_0 = a2.field_0;
+		this->serverId = a2.serverId;
 		this->worldName = a2.worldName;
 		this->open = a2.open;
 		this->ownerName = a2.ownerName;

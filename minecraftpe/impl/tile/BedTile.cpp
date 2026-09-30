@@ -11,6 +11,7 @@ int32_t BedTile::HEAD_DIRECTION_OFFSETS[] = {0, 1, -1, 0, 0, -1, 1, 0};
 
 BedTile::BedTile(int32_t id)
 	: DirectionalTile(id, Material::cloth) {
+	this->_setShape();
 	TextureAtlasTextureItem v35(*this->getTextureItem("bed"));
 	this->field_B0 = *v35.getUV(0);
 	this->field_80 = *v35.getUV(1);

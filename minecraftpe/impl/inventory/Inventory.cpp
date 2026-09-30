@@ -106,7 +106,7 @@ void Inventory::selectSlot(int32_t a2) {
 }
 void Inventory::setupDefault() {
 	if(this->field_20) {
-		this->items.resize(9); //TODO check is this done like this
+		this->items.resize(9);
 		this->items.emplace_back(new ItemInstance(Tile::rock));
 		this->items.emplace_back(new ItemInstance(Tile::stoneBrick));
 		this->items.emplace_back(new ItemInstance(Tile::dirt));

@@ -20,8 +20,7 @@ ImageButton::ImageButton(int32_t a2, const std::string& a3) : Button(a2, a3), co
 	this->yOffset = 16;
 	this->setupDefault();
 }
-ImageButton::ImageButton(int32_t a2, const std::string & a3, const struct ImageDef& a4) : Button(a2, a3), color(Color4::WHITE){
-	this->image = a4;
+ImageButton::ImageButton(int32_t a2, const std::string & a3, const struct ImageDef& a4) : Button(a2, a3), color(Color4::WHITE), image(a4){
 	this->yOffset = 16;
 	this->setupDefault();
 
@@ -71,14 +70,14 @@ void ImageButton::render(struct Minecraft* mc, int32_t x, int32_t y){
 						if(second) v20 = this->image.field_1C;
 						else v20 = 0;
 
-						float width = td->width;
+						float width = td->image.width;
 						int32_t v22 = v19+v20;
 						int32_t v23 = this->image.field_1C;
 						float v24 = (float)v22 / width;
 						if(second) v23 *= 2;
 						int32_t v25 = this->image.field_18;
 						float v26 = (float)(v19 + v23) / width;
-						float height = td->height;
+						float height = td->image.height;
 						float v28 = (float)(v25+this->image.field_20) / height;
 						float v29 = v17-v15;
 						Tesselator::instance.vertexUV(v16-v14, v17-v15, this->zLayer, v24, (float)v25/height);

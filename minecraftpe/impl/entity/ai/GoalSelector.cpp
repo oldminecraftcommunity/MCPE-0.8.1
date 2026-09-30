@@ -10,8 +10,7 @@ GoalSelector::InternalGoal::InternalGoal(int32_t a2, struct Goal* a3, bool_t a4)
 }
 
 void GoalSelector::addGoal(int32_t a2, struct Goal* a3, bool_t a4) {
-	GoalSelector::InternalGoal* g = new GoalSelector::InternalGoal(a2, a3, a4);
-	this->internalGoals.push_back(g);
+	this->internalGoals.push_back(new GoalSelector::InternalGoal(a2, a3, a4));
 }
 bool_t GoalSelector::canCoExist(GoalSelector::InternalGoal* a2, GoalSelector::InternalGoal* a3) {
 	int32_t cfags = a2->goal->getRequiredControlFlags();

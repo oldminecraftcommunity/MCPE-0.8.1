@@ -331,12 +331,12 @@ void LevelData::v1_read(RakNet::BitStream& a2, int32_t a3) {
 	}
 }
 void LevelData::v1_write(RakNet::BitStream& a2) {
-	a2.Write<int32_t>(this->seed); //long
+	a2.Write<long>(this->seed);
 	a2.Write<int32_t>(this->xSpawn);
 	a2.Write<int32_t>(this->ySpawn);
 	a2.Write<int32_t>(this->zSpawn);
-	a2.Write<int32_t>(this->time);		 //long
-	a2.Write<int32_t>(this->sizeOnDisk); //long
+	a2.Write<long>(this->time);
+	a2.Write<long>(this->sizeOnDisk);
 	a2.Write<int32_t>(getEpochTimeS());
 	a2.Write(this->levelName.c_str());
 }

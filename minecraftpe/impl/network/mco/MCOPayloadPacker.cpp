@@ -1,14 +1,28 @@
 #include <network/mco/MCOPayloadPacker.hpp>
-#include <util/Random.hpp>
+#include <input/ControllerData.hpp>
 #include <BitStream.h>
+#include <util/Random.hpp>
 MCOPayloadPacker::MCOPayloadPacker(Random& a2) {
 	this->random = &a2;
 }
-std::string MCOPayloadPacker::readControlPackage(char_t*, uint32_t){
-	printf("MCOPayloadPacker::readControlPackage - not implemented\n");
-	return "";
+ControllerData MCOPayloadPacker::readControlPackage(char* src, uint32_t a4) {
+	ControllerData ret;
+	RakNet::BitStream v10((unsigned char*)src, a4, 1);
+	int v7 = 0;
+	v10.Read(v7);
+	v10.Read(ret.field_0);
+	v10.Read(ret.field_4);
+	char dest[4096];
+	int toRead;
+	std::string unused = "";
+	if(v7 <= 11) toRead = 0;
+	else if(v7 > 4107) toRead = 4096;
+	else toRead = v7 - 12;
+	v10.Read(dest, toRead);
+	ret.field_8 = std::string(dest, toRead);
+	return ret;
 }
-std::string MCOPayloadPacker::writeBitStream(int64_t a3, std::string a4) {
+std::string MCOPayloadPacker::writeBitStream(long long a3, std::string a4) {
 	unsigned int v14 = this->random->genrand_int32();
 	unsigned int v15 = this->random->genrand_int32();
 	unsigned int v16 = this->random->genrand_int32();
@@ -24,7 +38,13 @@ std::string MCOPayloadPacker::writeBitStream(int64_t a3, std::string a4) {
 	v19.Write<unsigned int>(v17);
 	return std::string((const char*) v19.GetData(), v19.GetNumberOfBytesUsed());
 }
-std::string MCOPayloadPacker::writeControllPackage(const ControllerData&){
-	printf("MCOPayloadPacker::writeControllPackage - not implemented\n");
-	return "";
+std::string MCOPayloadPacker::writeControllPackage(const ControllerData& a3) {
+	RakNet::BitStream v15;
+	v15.Write((int)a3.field_8.size());
+	v15.Write((int)a3.field_0);
+	v15.Write(a3.field_4);
+	v15.WriteBits((const unsigned char*)a3.field_8.c_str(), a3.field_8.size() >= 0x1000 ? 32768 : a3.field_8.size() * 8);
+	unsigned int v13 = 0;
+	v15.Write(v13);
+	return std::string((const char*) v15.GetData(), v15.GetNumberOfBytesUsed());
 }

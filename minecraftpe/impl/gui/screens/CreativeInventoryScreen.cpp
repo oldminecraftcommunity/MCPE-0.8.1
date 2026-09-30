@@ -84,7 +84,7 @@ void CreativeInventoryScreen::populateFilteredItems() {
 		} else {
 			f54 = it.itemClass->field_34;
 		}
-		CreativeInventoryScreen::filteredItems[f54-1].emplace_back(it);
+		CreativeInventoryScreen::filteredItems[f54-1].push_back(it);
 	}
 }
 void CreativeInventoryScreen::populateItem(Item* a1, int32_t a2, int32_t a3) {

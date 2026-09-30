@@ -323,25 +323,6 @@ void LocalServerListItemElement::mouseClicked(Minecraft* a2, int32_t a3, int32_t
 	v13->setPressed();
 }
 
-//TODO figure out what was actually used - this is def not correct
-static inline std::string _stringify3(const char* type, const char* gm, std::string worldName) {
-	std::string fmt = "{\"%\": \"%\", \"%\": \"%\", \"%\": \"%\"}";
-	std::vector<std::string> v40;
-	ParameterStringify::stringifyNext(v40, "server_type", type, "game_type", gm, "world_name", worldName);
-	return Util::simpleFormat(fmt, v40);
-}
-static inline std::string _stringify2(const char* type, std::string worldName) {
-	std::string fmt = "{\"%\": \"%\", \"%\": \"%\"}";
-	std::vector<std::string> v40;
-	ParameterStringify::stringifyNext(v40, "server_type", type, "world_name", worldName);
-	return Util::simpleFormat(fmt, v40);
-}
-static inline std::string _stringify1(const char* type) {
-	std::string fmt = "{\"%\": \"%\"}";
-	std::vector<std::string> v40;
-	ParameterStringify::stringifyNext(v40, "server_type", type);
-	return Util::simpleFormat(fmt, v40);
-}
 void LocalServerListItemElement::mouseReleased(Minecraft* a2, int32_t a3, int32_t a4, int32_t a5)
 {
 	if(this->deleteElementButton && this->field_30 == this->deleteElementButton) {
@@ -368,18 +349,17 @@ void LocalServerListItemElement::mouseReleased(Minecraft* a2, int32_t a3, int32_
 		return;
 	}
 
-
-
 	if(this->field_3C || this->server) {
 		if(this->server) {
 			if(a2->platform()->isNetworkEnabled(1)) {
 				PingedCompatibleServer v43;
 				v43.field_4.FromStringExplicitPort(this->server->field_8.c_str(), this->server->field_C, 0);
 				v43.field_0 = RakNet::RakString(this->server->field_4.c_str());
-				a2->joinMultiplayer(PingedCompatibleServer(v43), 0);
+				a2->joinMultiplayer(v43, 0);
 				a2->setScreen(new ProgressScreen());
 
-				a2->platform()->statsTrackData("start_game", _stringify1("External"));
+				std::string v38 = Util::simpleFormat("{\"%\": \"%\"}", ParameterStringify::stringify("server_type", "External"));
+				a2->platform()->statsTrackData("start_game", v38);
 			}else{
 				a2->setScreen(new DisconnectionScreen("You need to be connected through Wifi to play on External servers"));
 			}
@@ -387,13 +367,15 @@ void LocalServerListItemElement::mouseReleased(Minecraft* a2, int32_t a3, int32_
 			a2->joinMultiplayer(*this->field_3C, 0);
 			a2->setScreen(new ProgressScreen());
 
-			a2->platform()->statsTrackData("start_game", _stringify2("LAN", std::string(this->field_3C->field_4.ToString())));
+			std::string v38 = Util::simpleFormat("{\"%\": \"%\", \"%\": \"%\"}", ParameterStringify::stringify("server_type", "LAN", "world_name", std::string(this->field_3C->field_4.ToString())));
+			a2->platform()->statsTrackData("start_game", v38);
 		}
 	}else{
 		a2->selectLevel(this->levelSummary->worldName, this->levelSummary->field_4, LevelSettings{-1, -1});
 		a2->hostMultiplayer(19132);
 		a2->setScreen(new ProgressScreen());
 
-		a2->platform()->statsTrackData("start_game", _stringify3("Local", this->levelSummary->gamemode == 1 ? "creative" : "survival", this->levelSummary->worldName));
+		std::string v38 = Util::simpleFormat("{\"%\": \"%\", \"%\": \"%\", \"%\": \"%\"}", ParameterStringify::stringify("server_type", "Local", "game_type", this->levelSummary->gamemode == 1 ? "creative" : "survival", "world_name", this->levelSummary->worldName));
+		a2->platform()->statsTrackData("start_game", v38);
 	}
 }

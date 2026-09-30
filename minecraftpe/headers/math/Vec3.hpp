@@ -16,7 +16,7 @@ struct Vec3{
 	static Vec3 UNIT_Z;
 	static Vec3 NEG_UNIT_Z;
 
-	Vec3(){}
+	Vec3() : Vec3(0, 0, 0){}
 	Vec3(float x, float y, float z){
 		if(x == 0) x = 0;
 		this->x = x;

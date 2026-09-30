@@ -9,7 +9,7 @@ struct MCOPayloadPacker
 	Random* random;
 
 	MCOPayloadPacker(Random&);
-	std::string readControlPackage(char_t*, uint32_t);
-	std::string writeBitStream(int64_t, std::string);
+	ControllerData readControlPackage(char*, uint32_t);
+	std::string writeBitStream(long long, std::string);
 	std::string writeControllPackage(const ControllerData&);
 };
