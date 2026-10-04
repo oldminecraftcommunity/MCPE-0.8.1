@@ -57,7 +57,7 @@ void ChestTile::onRemove(Level* level, int32_t x, int32_t y, int32_t z) {
 		if(te->type == 2) {
 			te->unpair();
 			n = 0;
-			if(!level->isClientMaybe) {
+			if(!level->isClient) {
 				while(n < v8->getContainerSize()) {
 					v10 = (ItemInstance*)v8->getItem(n);
 					if(v10) {
@@ -94,7 +94,7 @@ void ChestTile::onRemove(Level* level, int32_t x, int32_t y, int32_t z) {
 bool_t ChestTile::use(Level* level, int32_t x, int32_t y, int32_t z, Player* player) {
 	TileEntity* te = level->getTileEntity(x, y, z);
 	if(te->isType(2)) {
-		if(!level->isClientMaybe) {
+		if(!level->isClient) {
 			if(((ChestTileEntity*)te)->canOpen()) {
 				((ChestTileEntity*)te)->openBy(player);
 			}

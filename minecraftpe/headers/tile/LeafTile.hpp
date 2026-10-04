@@ -61,7 +61,7 @@ struct LeafTile : TransparentTile{
 		int32_t v29; // [sp+18h] [bp-40h]
 		int32_t v30; // [sp+1Ch] [bp-3Ch]
 		int32_t data; // [sp+24h] [bp-34h]
-		if (!level->isClientMaybe) {
+		if (!level->isClient) {
 			int data = level->getData(x, y, z);
 			if ((data & 0xC) == 4) {
 				//taken from b1.2_02-20110517
@@ -130,7 +130,7 @@ struct LeafTile : TransparentTile{
 		int32_t yy; // r6
 		int32_t xx; // r5
 		int32_t v13; // [sp+10h] [bp-30h]
-		if (!level->isClientMaybe && level->hasChunksAt(x - 2, y - 2, z - 2, x + 2, y + 2, z + 2)) {
+		if (!level->isClient && level->hasChunksAt(x - 2, y - 2, z - 2, x + 2, y + 2, z + 2)) {
 			for (xx = -1; xx != 2; ++xx) {
 				yy = -1;
 				v13 = xx + x;
@@ -163,7 +163,7 @@ struct LeafTile : TransparentTile{
 		int32_t v12; // r0
 		int32_t v13; // [sp+Ch] [bp-44h]
 		ItemInstance v14; // [sp+14h] [bp-3Ch] BYREF
-		if (!level->isClientMaybe) {
+		if (!level->isClient) {
 			p_random = &level->random;
 			if (!(level->random.genrand_int32() % 0x14)) {
 				v13 = this->getResource(meta, p_random);
@@ -193,7 +193,7 @@ struct LeafTile : TransparentTile{
 	}
 	virtual void playerDestroy(Level* level, Player* player, int32_t x, int32_t y, int32_t z, int32_t a7) {
 		ItemInstance* sel; // r0
-		if (!level->isClientMaybe && (sel = player->inventory->getSelected()) != 0 && Item::shears == sel->itemClass && Item::shears) {
+		if (!level->isClient && (sel = player->inventory->getSelected()) != 0 && Item::shears == sel->itemClass && Item::shears) {
 			this->popResource(level, x, y, z, ItemInstance(Tile::leaves->blockID, 1, a7 & 3));
 		} else {
 			Tile::playerDestroy(level, player, x, y, z, a7);

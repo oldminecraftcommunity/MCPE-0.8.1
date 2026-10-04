@@ -50,7 +50,7 @@ void Skeleton::aiStep() {
 
 	v2 = this->field_C9C + 1;
 	this->field_C9C = v2;
-	if((v2 & 1) != 0 && this->level->isDay() && !this->level->isClientMaybe && this->getBrightness(1.0) > 0.5 && !this->isOnFire()) {
+	if((v2 & 1) != 0 && this->level->isDay() && !this->level->isClient && this->getBrightness(1.0) > 0.5 && !this->isOnFire()) {
 		posX = this->posX;
 		v4 = (int32_t)posX;
 		v5 = posX < (float)(int32_t)posX;

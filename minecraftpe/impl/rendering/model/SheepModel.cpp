@@ -28,6 +28,6 @@ void SheepModel::setupAnim(float a2, float a3, float a4, float a5, float a6, flo
 	this->field_18.xRotAngle = this->headEatAngleScale;
 }
 void SheepModel::prepareMobModel(Mob* a2, float a3, float a4, float a5) {
-	this->field_18.yOffset = (((Sheep*)a2)->getHeadEatPositionScale(a5) * 9.0) + 6.0;
+	this->field_18.yOffset = ((Sheep*)a2)->getHeadEatPositionScale(a5) * 9.0f + 6.0f;
 	this->headEatAngleScale = ((Sheep*)a2)->getHeadEatAngleScale(a5);
 }

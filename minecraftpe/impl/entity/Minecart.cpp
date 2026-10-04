@@ -697,7 +697,7 @@ void Minecart::tick() {
 			this->rider = 0;
 		}
 	}
-	if(!this->level->isClientMaybe) {
+	if(!this->level->isClient) {
 		if(fabsf(this->posX - this->field_144) > 0.1 || fabsf(this->posY - this->field_148) > 0.05 || fabsf(this->posZ - this->field_14C) > 0.1 || fabsf(this->field_150 - this->pitch) > 1.0 || fabsf(this->field_154 - this->yaw) > 1.0) {
 			MoveEntityPacket_PosRot v65(this);
 			this->level->rakNetInstance->send(v65);
@@ -750,7 +750,7 @@ void Minecart::push(Entity* a2) {
 	float v28; // s20
 	float v29; // s17
 
-	if(!this->level->isClientMaybe && a2 != (Minecart*)this->rider) {
+	if(!this->level->isClient && a2 != (Minecart*)this->rider) {
 		if(a2->isMob() && !a2->isPlayer() && !this->getType() && (float)((float)(this->motionZ * this->motionZ) + (float)(this->motionX * this->motionX)) > 0.01 && !this->rider && !a2->ridingAt) {
 			a2->ride(this);
 		}
@@ -828,7 +828,7 @@ bool_t Minecart::hurt(Entity* a2, int32_t a3) {
 	float posZ; // s22w
 	int32_t v20; // r8
 
-	if(!this->level->isClientMaybe && !this->isDead) {
+	if(!this->level->isClient && !this->isDead) {
 		this->setHurtDir(-this->getHurtDir());
 		this->setHurtTime(10);
 		this->markHurt();

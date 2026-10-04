@@ -179,7 +179,7 @@ float Mob::getYHeadRot() {
 	return this->headYaw;
 }
 bool_t Mob::interpolateOnly() {
-	return this->level->isClientMaybe;
+	return this->level->isClient;
 }
 void Mob::pushEntities() {
 	float maxX; // s12
@@ -312,7 +312,7 @@ void Mob::tick() {
 
 	Entity::tick();
 	level = this->level;
-	if(!level->isClientMaybe) {
+	if(!level->isClient) {
 		this->setSharedFlag(0, this->fire > 0);
 	}
 	v3 = this->field_180;
@@ -495,7 +495,7 @@ void Mob::baseTick() {
 			--this->air;
 		}
 		level = this->level;
-		if(!level->isClientMaybe && this->isRiding()) {
+		if(!level->isClient && this->isRiding()) {
 			if(this->ridingAt->isMob()) {
 				this->ride(0);
 			}
@@ -562,7 +562,7 @@ void Mob::baseTick() {
 	this->prevPitch = pitch;
 	this->field_128 = v17;
 	this->prevHeadYaw = this->headYaw;
-	if(!this->level->isClientMaybe) {
+	if(!this->level->isClient) {
 		if(this->field_BEE) {
 			v38 = &this->field_BD0;
 			v39 = &this->field_BD4;
@@ -642,7 +642,7 @@ bool_t Mob::hurt(Entity* a2, int32_t a3) {
 	float v16; // r0
 	float v18; // r0
 
-	isClientMaybe = this->level->isClientMaybe;
+	isClientMaybe = this->level->isClient;
 	if(isClientMaybe) {
 		return 0;
 	}
@@ -820,7 +820,7 @@ void Mob::die(Entity* a2) {
 			a2->awardKillScore(this, v3);
 		}
 	}
-	if(!this->level->isClientMaybe) {
+	if(!this->level->isClient) {
 		if(!this->isBaby()) {
 			this->dropDeathLoot();
 		}

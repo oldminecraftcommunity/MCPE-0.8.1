@@ -39,7 +39,7 @@ struct Minecraft : App{
 	int field_C5C;
 	User* user;
 	struct Level* level;
-	struct LocalPlayer* player;
+	struct LocalPlayer* player; //TODO needs 1 field before this thing somewhere
 	struct IInputHolder *inputHolder;
 	struct Mob* viewEntity;
 	CThread* prepareLevelThread;

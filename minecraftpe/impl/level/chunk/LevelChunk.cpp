@@ -439,7 +439,7 @@ bool_t LevelChunk::setTile(int32_t x, int32_t y, int32_t z, int32_t id) {
 	this->level->updateLight(LightLayer::Sky, worldX, y, worldZ, worldX, y, worldZ);
 	this->level->updateLight(LightLayer::Block, worldX, y, worldZ, worldX, y, worldZ);
 	if(id) {
-		if(!this->level->isClientMaybe) Tile::tiles[id]->onPlace(this->level, worldX, y, worldZ);
+		if(!this->level->isClient) Tile::tiles[id]->onPlace(this->level, worldX, y, worldZ);
 	}
 	this->unsaved = 1;
 	this->updateMap[v21] |= 1 << (y >> 4);
@@ -459,7 +459,7 @@ bool_t LevelChunk::setTileAndData(int32_t x, int32_t y, int32_t z, int32_t id, i
 	this->tiles[v9] = id;
 	if(oldid) {
 		Tile::tiles[oldid]->onRemove(this->level, v18, y, v19);
-		if(this->level->isClientMaybe && oldid != id && Tile::isEntityTile[oldid]) {
+		if(this->level->isClient && oldid != id && Tile::isEntityTile[oldid]) {
 			this->level->removeTileEntity(v18, y, v19);
 		}
 	}
@@ -477,7 +477,7 @@ bool_t LevelChunk::setTileAndData(int32_t x, int32_t y, int32_t z, int32_t id, i
 	this->level->updateLight(LightLayer::Block, v18, y, v19, v18, y, v19);
 	this->lightGaps(x, z);
 	if(id) {
-		if(!this->level->isClientMaybe) {
+		if(!this->level->isClient) {
 			Tile::tiles[id]->onPlace(this->level, v18, y, v19);
 		}
 	}

@@ -31,7 +31,7 @@ struct TreeTile : RotatedPillarTile{
 		int32_t i; // r5
 		int32_t xDecPos; // [sp+10h] [bp-30h]
 
-		if(!level->isClientMaybe && level->hasChunksAt(x - 5, y - 5, z - 5, x + 5, y + 5, z + 5)) {
+		if(!level->isClient && level->hasChunksAt(x - 5, y - 5, z - 5, x + 5, y + 5, z + 5)) {
 			for(i = -4; i != 5; ++i) {
 				yPos = -4;
 				xDecPos = i + x;

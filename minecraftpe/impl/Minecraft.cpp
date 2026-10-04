@@ -164,7 +164,7 @@ void Minecraft::_levelGenerated(void) {
 	this->level->loadPlayer(this->player, 1);
 	v4 = this->player;
 	if(v4) {
-		if(!this->level->isClientMaybe) {
+		if(!this->level->isClient) {
 			v4->resetPos(0);
 		}
 	}
@@ -460,7 +460,7 @@ bool_t Minecraft::isOnline(void) {
 	return this->serverSideNetworkHandler != 0;
 }
 bool_t Minecraft::isOnlineClient(void) {
-	if(this->level) return this->level->isClientMaybe;
+	if(this->level) return this->level->isClient;
 	return 0;
 }
 
@@ -485,7 +485,7 @@ void Minecraft::leaveGame(bool_t a2, bool_t a3) {
 	if(!this->field_CF4 && this->levelGenerated) {
 		this->field_CF4 = field_CF4;
 		if(this->level) {
-			if(this->level->isClientMaybe) {
+			if(this->level->isClient) {
 				if(!a2) {
 					field_CF4 = 0;
 					v7 = 0;
@@ -1003,7 +1003,7 @@ void Minecraft::tick(int32_t a2, int32_t a3) {
 				this->gameRenderer->tick(a2, a3);
 				this->levelRenderer->tick();
 				this->level->difficulty = this->options.difficulty;
-				if(this->level->isClientMaybe) this->level->difficulty = 1;
+				if(this->level->isClient) this->level->difficulty = 1;
 				this->level->tickEntities();
 				this->level->tick();
 				if(this->player) {

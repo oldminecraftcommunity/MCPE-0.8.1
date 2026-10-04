@@ -24,7 +24,7 @@ MojangConnector::MojangConnector(Minecraft* minecraft) {
 	this->serverCreationEnabled = 0;
 	this->serviceEnabled = 0;
 	this->random = std::shared_ptr<Random>(new Random());
-	this->loginInformation = std::make_shared<LoginInformation>(minecraft->platform()->getLoginInformation());
+	this->loginInformation = std::shared_ptr<LoginInformation>(new LoginInformation(minecraft->platform()->getLoginInformation()));
 	this->minecraft = minecraft;
 	this->threadCollection = std::shared_ptr<ThreadCollection>(new ThreadCollection(4));
 	this->mcoParser = std::shared_ptr<MCOParser>(new MCOParser());

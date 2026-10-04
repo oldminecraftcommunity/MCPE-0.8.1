@@ -140,7 +140,7 @@ void BedTile::neighborChanged(Level* level, int32_t a3, int32_t a4, int32_t a5, 
 		if(level->getTile(a3 - off1, a4, a5 - off2) != this->blockID) level->setTile(a3, a4, a5, 0, 3);
 	} else if(level->getTile(a3 + off1, a4, a5 + off2) != this->blockID) {
 		level->setTile(a3, a4, a5, 0, 3);
-		if(!level->isClientMaybe) {
+		if(!level->isClient) {
 			this->popResource(level, a3, a4, a5, ItemInstance(Item::bed));
 		}
 	}
@@ -209,7 +209,7 @@ bool_t BedTile::use(Level* level, int32_t x, int32_t y, int32_t z, Player* playe
 		player->stopSleepInBed(0, 1, 1);
 	} else {
 LABEL_45:
-		if(!level->isClientMaybe) {
+		if(!level->isClient) {
 			v18 = level->getData(x, y, z);
 			if(!BedTile::isHeadPiece(v18)) {
 				v19 = v18 & 3;

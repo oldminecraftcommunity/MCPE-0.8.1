@@ -44,7 +44,7 @@ struct ChunkSource* Dimension::createRandomLevelSource(void) {
 	levelData = this->levelPtr->getLevelData();
 	genVer = levelData->getGeneratorVersion();
 	level = this->levelPtr;
-	if(level->isClientMaybe) {
+	if(level->isClient) {
 		spawnMobs = 0;
 	} else {
 		spawnMobs = level->getLevelData()->getSpawnMobs();

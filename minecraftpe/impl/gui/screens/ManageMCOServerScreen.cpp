@@ -68,14 +68,12 @@ void ManageMCOServerScreen::_queryUsernameAndUpdateElement(const std::string& na
 bool ManageMCOServerScreen::_removeInviteElement(const std::string& name) {
 	std::string v13 = Util::toLower(name);
 	auto&& p = this->item.invited.find(v13);
-	if(p != this->item.invited.end()) {
-		if(v13.size()) {
-			//TODO check
-			this->item.invited.erase(p);
-			this->invitedPlayersList->removeChild(this->invitedPlayers.find(v13)->second);
-			this->invitedPlayersList->setupPositions();
-			return 1;
-		}
+	if(p != this->item.invited.end() && v13.size()) {
+		//TODO check
+		this->item.invited.erase(p);
+		this->invitedPlayersList->removeChild(this->invitedPlayers.find(v13)->second);
+		this->invitedPlayersList->setupPositions();
+		return 1;
 	}
 	return 0; //TODO check
 }

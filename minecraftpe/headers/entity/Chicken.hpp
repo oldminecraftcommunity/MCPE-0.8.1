@@ -3,7 +3,7 @@
 
 struct Chicken: Animal
 {
-	int8_t field_C88, fieldd_C89, field_C8A, field_C8B;
+	int8_t field_C88;
 	float field_C8C, field_C90, field_C94, field_C98, field_C9C;
 	int32_t nextEggCounter;
 

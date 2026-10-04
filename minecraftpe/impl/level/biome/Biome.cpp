@@ -62,10 +62,7 @@ float Biome::getCreatureProbability(void){
 	return 0.08f;
 }
 
-Biome::Biome(void){
-	this->topBlock = Tile::grass->blockID;
-	this->fillerBlock = Tile::dirt->blockID;
-
+Biome::Biome(void) : topBlock(Tile::grass->blockID), fillerBlock(Tile::dirt->blockID){
 	this->leafColor = 0x4EE031;
 	this->temperature = 0.5f;
 	this->downfall = 0.5f;

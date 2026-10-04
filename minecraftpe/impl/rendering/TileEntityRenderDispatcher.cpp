@@ -91,4 +91,11 @@ void TileEntityRenderDispatcher::setLevel(Level* a2) {
 	}
 }
 TileEntityRenderDispatcher::~TileEntityRenderDispatcher() {
+	std::set<TileEntityRenderer*> removed;
+	for(auto&& render: this->renderers) {
+		if(removed.find(render.second) != removed.end()) {
+			removed.insert(render.second);
+			delete render.second;
+		}
+	}
 }

@@ -130,7 +130,7 @@ void FurnaceTile::onRemove(Level* level, int32_t x, int32_t y, int32_t z) {
 
 	if(!FurnaceTile::noDrop) {
 		n = 0;
-		if(!level->isClientMaybe) {
+		if(!level->isClient) {
 			te = (FurnaceTileEntity*)level->getTileEntity(x, y, z);
 			if(te) {
 				while(n < te->getContainerSize()) {
@@ -168,7 +168,7 @@ int32_t FurnaceTile::getResource(int32_t a2, Random* a3) {
 	return Tile::furnace->blockID;
 }
 bool_t FurnaceTile::use(Level* level, int32_t x, int32_t y, int32_t z, Player* player) {
-	if(!level->isClientMaybe) {
+	if(!level->isClient) {
 		TileEntity* te = level->getTileEntity(x, y, z);
 		if(te) {
 			player->openFurnace((FurnaceTileEntity*)te);

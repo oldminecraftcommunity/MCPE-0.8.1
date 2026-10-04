@@ -15,7 +15,7 @@ bool_t MinecartRideable::interactWithPlayer(Player* a2) {
 	}
 
 	if(!this->rider || this->rider == a2) {
-		if(!this->level->isClientMaybe) {
+		if(!this->level->isClient) {
 			a2->ride(this);
 		}
 		return 1;

@@ -15,6 +15,7 @@ struct ThreadCollection;
 
 struct RestRequestJob: Job
 {
+	std::weak_ptr<RestRequestJob> field_8;
 	std::function<void(int32_t, const std::string&, const RestCallTagData&, std::shared_ptr<RestRequestJob>)> onFinish;
 	std::function<void(bool_t, bool_t, int32_t, const std::string&, const RestCallTagData&, std::shared_ptr<RestRequestJob>)> onError;
 	std::string url;

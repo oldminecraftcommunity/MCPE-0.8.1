@@ -16,6 +16,11 @@
 #endif
 #define CHUNK 16384
 
+#ifdef UNDEF_STD_STUFF
+#undef feof
+#undef ferror
+#endif
+
 static void zerr(int ret) {
 	fputs("zpipe: ", stderr);
 	switch(ret) {

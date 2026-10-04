@@ -49,4 +49,13 @@ void AndroidRestCaller::makeRequest(RestCallerObject* a2) {
 	}
 	printf("AndroidRestCaller::makeRequest - not implemented\n");
 }
+
+//top secret mojang functions :scream:
+//imagine leaving this in libminecraftpe.so and increasing its size by less than 1kb </3
+void test_failed(bool a1, bool a2, int a3, std::string a4, RestCallTagData const&) {
+	printf("Failed (%d, %d)! %d, %s\n", a1, a2, a3, a4.c_str());
+}
+void test_successful(int a1,std::string a2,RestCallTagData const&) {
+	printf("Successful! %d, %s\n", a1, a2.c_str());
+}
 #endif

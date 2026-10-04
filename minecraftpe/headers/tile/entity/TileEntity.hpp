@@ -1,9 +1,9 @@
 #pragma once
-#include <_types.h>
-#include <string>
 #include <math/AABB.hpp>
 #include <rendering/tileentity/TileEntityRendererId.hpp>
 #include <map>
+#include <vector>
+#include <string>
 
 struct Packet;
 struct CompoundTag;
@@ -112,3 +112,5 @@ struct TileEntity
 		return 0;
 	}
 };
+
+int partitionTileEntities(const std::vector<TileEntity*>& a1, std::vector<TileEntity*>& a2, std::vector<TileEntity*>& a3);

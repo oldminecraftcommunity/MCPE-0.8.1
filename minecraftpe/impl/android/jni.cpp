@@ -235,8 +235,7 @@ JNIEXPORT void JNICALL Java_com_mojang_minecraftpe_MainActivity_nativeTypeCharac
     const char* utfChars = env-> GetStringUTFChars(s, 0);
 	if(utfChars){
 		nativeUtf8Input = utfChars;
-		std::string v8 = nativeUtf8Input;
-		Keyboard::feedText(v8, 0);
+		Keyboard::feedText(std::string(nativeUtf8Input), 0);
 	}
 	printf("@nativeTypeCharacter: %s\n", nativeUtf8Input.c_str());
 	env->ReleaseStringUTFChars(s, utfChars);

@@ -16,16 +16,15 @@
 #include <gui/NinePatchFactory.hpp>
 
 ArmorScreen::ArmorScreen()
-	: Screen()
-	, backButton(4, "Back", 0)
+	: Screen(),
+	field_7C(90.0f),
+	backButton(4, "Back", 0)
 	, field_B8(0)
 	, field_E8(1)
 	, field_118(2)
 	, field_148(3)
-	, header(5, "Armor") {
-	this->field_64 = "";
-	this->field_7C = 90.0;
-	this->field_1BC = 0;
+	, header(5, "Armor")
+	, inventoryPane(0){
 	this->field_1C0.minX = 0;
 	this->field_1C0.minY = 0;
 	this->field_1C0.width = 1;
@@ -40,10 +39,16 @@ ArmorScreen::ArmorScreen()
 	this->field_1F8 = 0;
 	this->field_1FC = 0;
 }
+
+/**
+ * using this method might result in a bit of undefined behavioUr~
+ * i suppose mojang forgor to write ->itemClass and accidentally casted ItemInstance to ArmorItem </3
+ * pls dont touch it it seems to compile into identical armv7 asm and it is all what matters right now <3
+ * *btw what is right now~?*
+ */
 bool_t ArmorScreen::canMoveToSlot(int32_t a2, const ItemInstance* a3) {
 	if(ItemInstance::isArmorItem(a3)) {
-		ArmorItem* it = (ArmorItem*)a3->itemClass; //TODO uses a3->field_48
-		return it->field_48 == a2;
+		return ((ArmorItem*)a3)->armorSlot == a2;
 	}
 	return 0;
 }
@@ -189,13 +194,9 @@ bool_t ArmorScreen::takeAndClearSlot(int32_t a2) {
 		}
 		this->player->setArmor(a2, 0);
 		int32_t nempty = this->minecraft->player->inventory->getEmptySlotsCount();
-		if(this->performUpdate) {
-			this->performUpdate = 1;
-			return 1;
-		} else {
-			this->performUpdate = nempty != empty;
-			return this->performUpdate;
-		}
+		bool ret = this->performUpdate ? 1 : nempty != empty;
+		this->performUpdate = ret;
+		return this->performUpdate;
 	}
 	return 0;
 }
@@ -210,49 +211,36 @@ void ArmorScreen::updateItems() {
 }
 
 void ArmorScreen::setupInventoryPane() {
-	if(this->field_1BC) delete this->field_1BC;
-	this->field_1BC = new Touch::InventoryPane(this, this->minecraft, this->field_1C0, this->field_1C0.width, 4.0f, this->field_1E0.size(), 32, 4, 1);
-	this->field_1BC->field_248 = 0;
-	this->field_1BC->field_24C = 0;
+	if(this->inventoryPane) delete this->inventoryPane;
+	this->inventoryPane = new Touch::InventoryPane(this, this->minecraft, this->field_1C0, this->field_1C0.width, 4.0f, this->field_1E0.size(), 32, 4, 1);
+	this->inventoryPane->field_248 = 0;
+	this->inventoryPane->field_24C = 0;
 }
 ArmorScreen::~ArmorScreen() {
-	if(this->field_1BC) delete this->field_1BC;
+	if(this->inventoryPane) delete this->inventoryPane;
 	if(this->field_1F0) delete this->field_1F0;
 	if(this->field_1F4) delete this->field_1F4;
 	if(this->field_1F8) delete this->field_1F8;
 	if(this->field_1FC) delete this->field_1FC;
 }
 void ArmorScreen::render(int32_t a2, int32_t a3, float a4) {
-	int32_t v8;			 // r3
-	int32_t v9;			 // r6
-	ItemInstance* armor; // r0
-	BlankButton* v11;	 // r2
-	int32_t v12;		 // r2
-	int32_t posX;		 // [sp+0h] [bp-20h]
-	int32_t posY;		 // [sp+4h] [bp-1Ch]
-
-	Tesselator::instance.addOffset(0.0, 0.0, -500.0);
-	this->field_1F0->draw(Tesselator::instance, 0.0, 0.0);
-	Tesselator::instance.addOffset(0.0, 0.0, 500.0);
+	Tesselator::instance.addOffset(0.0f, 0.0f, -500.0f);
+	this->field_1F0->draw(Tesselator::instance, 0.0f, 0.0f);
+	Tesselator::instance.addOffset(0.0f, 0.0f, 500.0f);
 	Screen::render(a2, a3, a4);
-	v8 = a2;
-	v9 = 0;
-	this->handleRenderPane(this->field_1BC, Tesselator::instance, v8, a3, a4);
+	this->handleRenderPane(this->inventoryPane, Tesselator::instance, a2, a3, a4);
 	Tesselator::instance.colorABGR(-1);
-	glColor4f(1.0, 1.0, 1.0, 1.0);
-	Tesselator::instance.addOffset(0.0, 0.0, -490.0);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	Tesselator::instance.addOffset(0.0f, 0.0f, -490.0f);
 	this->field_1FC->draw(Tesselator::instance, (float)this->field_1D0, (float)this->field_1D4);
-	Tesselator::instance.addOffset(0.0, 0.0, 490.0);
+	Tesselator::instance.addOffset(0.0f, 0.0f, 490.0f);
 	glClear(0x100u);
-	this->renderPlayer((float)(this->field_1D0 + this->field_1D8 / 2), (float)this->height * 0.85);
-	do {
-		armor = this->player->getArmor(v9);
-		v11 = this->field_178[v9];
-		posX = v11->posX;
-		posY = v11->posY;
-		v12 = v9++;
-		this->drawSlotItemAt(Tesselator::instance, v12, armor, posX, posY);
-	} while(v9 != 4);
+	this->renderPlayer((float)(this->field_1D0 + this->field_1D8 / 2), (float)this->height * 0.85f);
+	for(int v9 = 0; v9 != 4; ++v9){
+		ItemInstance* armor = this->player->getArmor(v9);
+		BlankButton* v11 = this->field_178[v9];
+		this->drawSlotItemAt(Tesselator::instance, v9, armor, v11->posX, v11->posY);
+	}
 }
 void ArmorScreen::init() {
 	Screen::init();
@@ -340,8 +328,8 @@ bool_t ArmorScreen::handleBackEvent(bool_t a2) {
 	return 1;
 }
 void ArmorScreen::tick() {
-	if(this->field_1BC) {
-		this->field_1BC->tick();
+	if(this->inventoryPane) {
+		this->inventoryPane->tick();
 	}
 	if(this->performUpdate) {
 		this->updateItems();
@@ -365,12 +353,12 @@ void ArmorScreen::buttonClicked(Button* a2) {
 bool_t ArmorScreen::addItem(const Touch::InventoryPane* a2, int32_t a3) {
 	const ItemInstance* v5 = this->field_1E0[a3];
 	if(ItemInstance::isArmorItem(v5)) {
-		ItemInstance* armor = this->player->getArmor(((ArmorItem*)v5->itemClass)->field_48);
+		ItemInstance* armor = this->player->getArmor(((ArmorItem*)v5->itemClass)->armorSlot);
 		ItemInstance v15;
 		if(ItemInstance::isArmorItem(armor)) {
 			v15 = *armor;
 		}
-		this->player->setArmor(((ArmorItem*)v5->itemClass)->field_48, v5);
+		this->player->setArmor(((ArmorItem*)v5->itemClass)->armorSlot, v5);
 		this->player->inventory->removeItemInstance(v5);
 		this->field_1E0[a3] = 0;
 		if(!v15.isNull() && !this->player->inventory->add(&v15)) {

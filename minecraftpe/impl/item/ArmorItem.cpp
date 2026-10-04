@@ -24,7 +24,7 @@ int32_t ArmorItem::ArmorMaterial::getHealthForSlot(int32_t a2) const {
 
 ArmorItem::ArmorItem(int32_t id, const ArmorItem::ArmorMaterial& m, int32_t a4, int32_t a5)
 	: Item(id) {
-	this->field_48 = a5;
+	this->armorSlot = a5;
 	this->field_50 = a4;
 	this->armorMaterial = &m;
 	this->defenseForSlot = m.getDefenseForSlot(a5);

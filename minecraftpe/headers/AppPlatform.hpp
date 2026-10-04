@@ -1,11 +1,8 @@
 #pragma once
-#include <_types.h>
-#include <string>
-#include <vector>
-#include <map>
-#include <unigl.hpp>
 #include <rendering/textures/TextureData.hpp>
 #include <network/mco/LoginInformation.hpp>
+#include <map>
+#include <unigl.hpp>
 #include <_AssetFile.hpp>
 #include <cpputils.hpp>
 

@@ -15,11 +15,11 @@ struct Keyboard
 	static int32_t _index;
 
 	static void feed(uint8_t a1, int32_t a2) {
-		Keyboard::_inputs.emplace_back(KeyboardAction { a2, a1 });
+		Keyboard::_inputs.push_back(KeyboardAction { a2, a1 });
 		Keyboard::_states[a1] = a2;
 	}
 	static void feedText(const std::string& a2, bool_t a3) {
-		Keyboard::_inputText.emplace_back(KeyboardTextInput { a2, a3 });
+		Keyboard::_inputText.push_back(KeyboardTextInput { a2, a3 });
 	}
 	static void reset() {
 		Keyboard::_inputs.clear();

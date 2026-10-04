@@ -534,7 +534,7 @@ void Tile::popResource(Level* level, int32_t x, int32_t y, int32_t z, const stru
 	float zOffset;	 // s16
 	ItemEntity* v13; // r5
 
-	if(!level->isClientMaybe) {
+	if(!level->isClient) {
 		if(level->levelData.getGameType() != 1) {
 			xOffset = level->random.nextFloat();
 			yOffset = level->random.nextFloat();
@@ -726,7 +726,7 @@ void Tile::spawnResources(Level* a2, int32_t a3, int32_t a4, int32_t a5, int32_t
 	ItemEntity* v19;  // r10
 
 	i = 0;
-	if(!a2->isClientMaybe) {
+	if(!a2->isClient) {
 		p_random = &a2->random;
 		v13 = this->getResourceCount(&a2->random);
 		while(i < v13) {

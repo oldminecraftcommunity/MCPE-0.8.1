@@ -35,12 +35,10 @@ std::shared_ptr<TextureAtlas> NinecraftApp::_itemsTextureAtlas;
 std::shared_ptr<TextureAtlas> NinecraftApp::_terrainTextureAtlas;
 bool NinecraftApp::_hasInitedStatics = 0;
 
-NinecraftApp::NinecraftApp(){
-	this->field_D48___ = 1;
-	this->field_D4C = 0;
-	this->field_D50 = 0;
-	this->field_D64 = 0;
-	//TODO bsd_signal(13);
+NinecraftApp::NinecraftApp() : field_D48___(1), field_D4C(0), field_D50(0){
+#ifdef ANDROID
+	signal(13, (void(*)(int)) 1);
+#endif
 }
 
 std::shared_ptr<TextureAtlas> NinecraftApp::getTextureAtlas(TextureAtlasId atlas){
@@ -131,14 +129,17 @@ void NinecraftApp::onAppResumed(void){
 	Minecraft::onAppResumed();
 }
 void NinecraftApp::update(void){
-	//this->field_D68.lock(); //TODO std::__ndk1::system_error: unique_lock::lock: references null mutex: Operation not permitted
-	if(!this->some_std_vec.empty()){
-		for(int v2 = 0; v2 < this->some_std_vec.size(); ++v2){
-			this->handleBackNoReturn();
+	{
+		std::unique_lock<std::mutex> v8(this->field_D64);
+		//this->field_D68.lock(); //TODO std::__ndk1::system_error: unique_lock::lock: references null mutex: Operation not permitted
+		if(!this->some_std_vec.empty()){
+			for(int v2 = 0; v2 < this->some_std_vec.size(); ++v2){
+				this->handleBackNoReturn();
+			}
+			this->some_std_vec.clear(); //TODO check
 		}
-		this->some_std_vec.clear(); //TODO check
+		//this->field_D68.unlock(); //TODO should have if(v5.field_4)
 	}
-	//this->field_D68.unlock(); //TODO should have if(v5.field_4)
 	++this->field_D4C;
 	Multitouch::commit();
 	Minecraft::update();

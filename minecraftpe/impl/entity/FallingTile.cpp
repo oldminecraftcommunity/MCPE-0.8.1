@@ -65,7 +65,7 @@ LABEL_14:
 	this->motionX = this->motionX * 0.98;
 	this->motionY = this->motionY * 0.98;
 	this->motionZ = this->motionZ * 0.98;
-	if(level->isClientMaybe) {
+	if(level->isClient) {
 		return;
 	}
 	posX = this->posX;
@@ -97,12 +97,12 @@ LABEL_14:
 		this->motionZ = this->motionZ * 0.7;
 		this->motionY = motionY * -0.5;
 		this->remove();
-		if((!this->level->mayPlace(this->blockID, floorX, floorY, floorZ, 1, 1u) || !this->level->setTileAndData(floorX, floorY, floorZ, this->blockID, this->blockMetaMaybe, 3)) && !this->level->isClientMaybe) {
+		if((!this->level->mayPlace(this->blockID, floorX, floorY, floorZ, 1, 1u) || !this->level->setTileAndData(floorX, floorY, floorZ, this->blockID, this->blockMetaMaybe, 3)) && !this->level->isClient) {
 			this->spawnAtLocation(this->blockID, 1);
 		}
 		return;
 	}
-	if(this->fallTime > 100 && !this->level->isClientMaybe) {
+	if(this->fallTime > 100 && !this->level->isClient) {
 LABEL_13:
 		goto LABEL_14;
 	}

@@ -31,7 +31,7 @@ struct Snowball: Throwable
 			this->level->addParticle(PT_BREAKING_ITEM_2, this->posX, this->posY, this->posZ, 0.0, 0.0, 0.0, Item::snowBall->itemID);
 			--v3;
 		} while (v3);
-		if (!this->level->isClientMaybe) {
+		if (!this->level->isClient) {
 			this->remove();
 		}
 	}

@@ -193,7 +193,7 @@ void FurnaceTileEntity::tick() {
 	if(burnTime > 0) {
 		this->burnTime = burnTime - 1;
 	}
-	if(!this->level->isClientMaybe) {
+	if(!this->level->isClient) {
 		v4 = this->burnTime;
 		if(!v4 && this->canBurn()) {
 			burnDuration = FurnaceTileEntity::getBurnDuration(this->inventory[1]);

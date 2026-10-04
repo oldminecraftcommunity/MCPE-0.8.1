@@ -13,8 +13,7 @@ struct NinecraftApp : Minecraft{
 	int32_t field_D4C;
 	int32_t field_D50;
 	std::vector<bool> some_std_vec;
-	int32_t field_D64; //TODO might be a part of some_std_vec
-	std::unique_lock<std::mutex> field_D68;
+	std::mutex field_D64;
 
 	NinecraftApp();
 	std::shared_ptr<TextureAtlas> getTextureAtlas(TextureAtlasId);

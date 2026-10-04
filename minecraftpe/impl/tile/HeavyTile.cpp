@@ -21,7 +21,7 @@ void HeavyTile::checkSlide(Level* level, int32_t x, int32_t y, int32_t z) {
 	v8 = y;
 	if(HeavyTile::isFree(level, x, y - 1, z) && v8 >= 0) {
 		if(!HeavyTile::instaFall && level->hasChunksAt(x - 32, v8 - 32, z - 32, x + 32, v8 + 32, z + 32)) {
-			if(!level->isClientMaybe) {
+			if(!level->isClient) {
 				a7 = level->getData(x, v8, z);
 				v10 = new FallingTile(level, (float)x + 0.5, (float)v8 + 0.5, (float)z + 0.5, this->blockID, a7);
 				this->falling(v10);
@@ -53,7 +53,7 @@ bool_t HeavyTile::isFree(Level* level, int32_t x, int32_t y, int32_t z) {
 }
 
 void HeavyTile::tick(Level* level, int32_t x, int32_t y, int32_t z, Random*) {
-	if(!level->isClientMaybe) {
+	if(!level->isClient) {
 		this->checkSlide(level, x, y, z);
 	}
 }

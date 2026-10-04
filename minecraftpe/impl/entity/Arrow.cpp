@@ -520,7 +520,7 @@ float Arrow::getShadowHeightOffs() {
 void Arrow::playerTouch(Player* a2) {
 	Level* level; // r7
 
-	if(!this->level->isClientMaybe && this->inGround && this->isInReverse && this->shake <= 0) {
+	if(!this->level->isClient && this->inGround && this->isInReverse && this->shake <= 0) {
 		ItemInstance v8(Item::arrow, 1);
 		if(a2->inventory->add(&v8)) {
 			level = this->level;

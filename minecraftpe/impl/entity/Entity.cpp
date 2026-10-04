@@ -405,9 +405,6 @@ void Entity::setPos(float x, float y, float z) {
 	this->boundingBox.maxZ = z + radius;
 }
 void Entity::move(float dx, float dy, float dz) {
-	float movX;			// s16
-	float movY;			// s24
-	float movZ;			// s17
 	float minY;			// s13
 	float v9;			// s14
 	float minZ;			// s13
@@ -432,7 +429,6 @@ void Entity::move(float dx, float dy, float dz) {
 	Level* v31;			// r0
 	float v32;			// s12
 	int32_t v34;		// r9
-	Level* v35;			// r6
 	float v36;			// s21
 	int32_t v37;		// r7
 	uint32_t v40;		// r11
@@ -448,20 +444,8 @@ void Entity::move(float dx, float dy, float dz) {
 	float v52;			// r0
 	float stepHeight;	// s22
 	float v54;			// r0
-	float v55;			// r1
-	Level* v56;			// r7
-	Level* v57;			// r0
-	int32_t v58;		// r7
-	uint32_t v61;		// r11
-	float v62;			// r0
 	float v63;			// s19
 	float v64;			// s23
-	int32_t v65;		// r7
-	uint32_t v67;		// r11
-	float v68;			// r0
-	int32_t v71;		// r6
-	uint32_t v72;		// r10
-	float v73;			// r0
 	float v74;			// s13
 	float v75;			// s14
 	float v76;			// s13
@@ -483,32 +467,32 @@ void Entity::move(float dx, float dy, float dz) {
 	uint32_t v93;		// [sp+Ch] [bp-A4h]
 	uint32_t v94;		// [sp+Ch] [bp-A4h]
 
-	movX = dx;
-	movY = dy;
-	movZ = dz;
+	float movX = dx;
+	float movY = dy;
+	float movZ = dz;
 	if(this->noclip) {
 		this->boundingBox.move(dx, dy, dz);
 		minY = this->boundingBox.minY;
-		this->posX = (float)(this->boundingBox.minX + this->boundingBox.maxX) * 0.5;
+		this->posX = (float)(this->boundingBox.minX + this->boundingBox.maxX) * 0.5f;
 		v9 = (float)(minY + this->ridingHeight) - this->ySize;
 		minZ = this->boundingBox.minZ;
 		this->posY = v9;
-		this->posZ = (float)(minZ + this->boundingBox.maxZ) * 0.5;
+		this->posZ = (float)(minZ + this->boundingBox.maxZ) * 0.5f;
 	} else {
 		posX = this->posX;
 		posZ = this->posZ;
 		if(this->maybeIsInWeb) {
 			this->maybeIsInWeb = 0;
-			this->motionX = 0.0;
-			this->motionY = 0.0;
-			this->motionZ = 0.0;
-			movX = dx * 0.25;
-			movY = dy * 0.05;
-			movZ = dz * 0.25;
+			this->motionX = 0.0f;
+			this->motionY = 0.0f;
+			this->motionZ = 0.0f;
+			movX = dx * 0.25f;
+			movY = dy * 0.05f;
+			movZ = dz * 0.25f;
 		}
 		AABB boundingBox = this->boundingBox;
 		if(this->onGround && this->isSneaking()) {
-			while(movX != 0.0) {
+			while(movX != 0.0f) {
 				maxX = this->boundingBox.maxX;
 				maxY = this->boundingBox.maxY;
 				maxZ = this->boundingBox.maxZ;
@@ -519,14 +503,14 @@ void Entity::move(float dx, float dy, float dz) {
 				if(cubes->begin() != cubes->end()) {
 					break;
 				}
-				if(movX < 0.05 && movX >= -0.05) {
+				if(movX < 0.05f && movX >= -0.05f) {
 					movX = 0.0;
 					break;
 				}
 				if(movX <= 0.0) {
-					movX = movX + 0.05;
+					movX = movX + 0.05f;
 				} else {
-					movX = movX - 0.05;
+					movX = movX - 0.05f;
 				}
 			}
 			while(movZ != 0.0) {
@@ -583,10 +567,9 @@ void Entity::move(float dx, float dy, float dz) {
 		} else {
 			v34 = 0;
 		}
-		v35 = this->level;
 		v36 = movY;
 		v37 = 0;
-		std::vector<AABB>* v38 = v35->getCubes(this, this->boundingBox.expand(movX, movY, movZ), &this->field_74);
+		std::vector<AABB>* v38 = this->level->getCubes(this, this->boundingBox.expand(movX, movY, movZ), &this->field_74);
 		v40 = v38->size();
 		while(v37 != v40) {
 			v41 = v38->at(v37).clipYCollide(this->boundingBox, v36);
@@ -634,24 +617,12 @@ void Entity::move(float dx, float dy, float dz) {
 			v43 = 0.0;
 		}
 		stepHeight = this->stepHeight;
-		if(stepHeight > 0.0 && fallingFlag && this->ySize < 0.05 && (movX != v43 || movZ != v42)) {
+		if(stepHeight > 0.0f && fallingFlag && this->ySize < 0.05f && (movX != v43 || movZ != v42)) {
 			AABB v96{this->boundingBox.minX, this->boundingBox.minY, this->boundingBox.minZ, this->boundingBox.maxX, this->boundingBox.maxY, this->boundingBox.maxZ};
-			v55 = this->boundingBox.maxZ;
-			this->boundingBox.minX = boundingBox.minX;
-			v56 = this->level;
-			this->boundingBox.minY = boundingBox.minY;
-			this->boundingBox.minZ = boundingBox.minZ;
-			this->boundingBox.maxX = boundingBox.maxX;
-			this->boundingBox.maxY = boundingBox.maxY;
-			this->boundingBox.maxZ = boundingBox.maxZ;
-			v57 = v56;
-			v58 = 0;
-			std::vector<AABB>* v38 = v57->getCubes(this, this->boundingBox.expand(movX, stepHeight, movZ), 0);
-			v61 = v38->size();
-			while(v58 != v61) {
-				v62 = v38->at(v58).clipYCollide(this->boundingBox, stepHeight);
-				++v58;
-				stepHeight = v62;
+			this->boundingBox = boundingBox;
+			std::vector<AABB> v38 = *this->level->getCubes(this, this->boundingBox.expand(movX, stepHeight, movZ), 0);
+			for(int v58 = 0; v58 != v38.size(); ++v58){
+				stepHeight = v38[v58].clipYCollide(this->boundingBox, stepHeight);
 			}
 			this->boundingBox.move(0.0, stepHeight, 0.0);
 			if(this->field_103 || movY == stepHeight) {
@@ -662,35 +633,27 @@ void Entity::move(float dx, float dy, float dz) {
 				v63 = 0.0;
 				v64 = 0.0;
 			}
-			v65 = 0;
-			v67 = v38->size();
-			while(v65 != v67) {
-				v68 = v38->at(v65).clipXCollide(this->boundingBox, v64);
-				++v65;
-				v64 = v68;
+			for(int v65 = 0; v65 != v38.size(); ++v65){
+				v64 = v38[v65].clipXCollide(this->boundingBox, v64);
 			}
-			this->boundingBox.move(v64, 0.0, 0.0);
+			this->boundingBox.move(v64, 0, 0);
 			if(!this->field_103 && movX != v64) {
-				v63 = 0.0;
-				stepHeight = 0.0;
-				v64 = 0.0;
+				v63 = 0;
+				stepHeight = 0;
+				v64 = 0;
 			}
-			v71 = 0;
-			v72 = v38->size();
-			while(v71 != v72) {
-				v73 = v38->at(v71).clipZCollide(this->boundingBox, v63);
-				++v71;
-				v63 = v73;
+			for(int v71 = 0; v71 != v38.size(); ++v71){
+				v63 = v38[v71].clipZCollide(this->boundingBox, v63);
 			}
-			this->boundingBox.move(0.0, 0.0, v63);
+			this->boundingBox.move(0, 0, v63);
 			if(!this->field_103 && movZ != v63) {
 				v63 = 0.0;
 				stepHeight = 0.0;
 				v64 = 0.0;
 			}
-			if((float)((float)(v42 * v42) + (float)(v43 * v43)) < (float)((float)(v63 * v63) + (float)(v64 * v64))) {
+			if(((v42 * v42) + (v43 * v43)) < ((v63 * v63) + (v64 * v64))) {
 				v42 = v63;
-				this->ySize = this->ySize + 0.5;
+				this->ySize = this->ySize + 0.5f;
 				v36 = stepHeight;
 				v43 = v64;
 			} else {
@@ -909,7 +872,7 @@ void Entity::baseTick() {
 	} else {
 		this->field_111 = 0;
 	}
-	if(this->level->isClientMaybe) {
+	if(this->level->isClient) {
 		v20 = 0;
 LABEL_22:
 		this->fire = v20;

@@ -14,23 +14,23 @@
 Chicken::Chicken(Level* a2)
 	: Animal(a2) {
 	this->field_C88 = 0;
-	this->field_C8C = 0.0;
-	this->field_C90 = 0.0;
-	this->field_C94 = 0.0;
-	this->field_C98 = 0.0;
-	this->field_C9C = 1.0;
+	this->field_C8C = 0.0f;
+	this->field_C90 = 0.0f;
+	this->field_C94 = 0.0f;
+	this->field_C98 = 0.0f;
+	this->field_C9C = 1.0f;
 	this->nextEggCounter = 0;
 	this->entityRenderId = CHICKEN;
 	this->skin = "mob/chicken.png";
 	this->nextEggCounter = this->random.genrand_int32() % 6000 + 6000;
-	this->setSize(0.3, 0.7);
+	this->setSize(0.3f, 0.7f);
 	this->goalSelector.addGoal(0, new FloatGoal(this), 1);
-	this->goalSelector.addGoal(1, new PanicGoal(this, 1.5), 1);
-	this->goalSelector.addGoal(2, new BreedGoal(this, 1.0), 1);
-	this->goalSelector.addGoal(3, new TemptGoal(this, 1.0, {Item::seeds_wheat->itemID}, 0), 1);
-	this->goalSelector.addGoal(4, new FollowParentGoal(this, 1.1), 1);
-	this->goalSelector.addGoal(5, new RandomStrollGoal(this, 1.0), 1);
-	this->goalSelector.addGoal(6, new LookAtPlayerGoal(this, 6.0), 1);
+	this->goalSelector.addGoal(1, new PanicGoal(this, 1.5f), 1);
+	this->goalSelector.addGoal(2, new BreedGoal(this, 1.0f), 1);
+	this->goalSelector.addGoal(3, new TemptGoal(this, 1.0f, {Item::seeds_wheat->itemID}, 0), 1);
+	this->goalSelector.addGoal(4, new FollowParentGoal(this, 1.1f), 1);
+	this->goalSelector.addGoal(5, new RandomStrollGoal(this, 1.0f), 1);
+	this->goalSelector.addGoal(6, new LookAtPlayerGoal(this, 6.0f), 1);
 	this->goalSelector.addGoal(7, new RandomLookAroundGoal(this), 1);
 }
 
@@ -49,75 +49,53 @@ int32_t Chicken::getMaxHealth() {
 	return 4;
 }
 void Chicken::aiStep() {
-	float v2;		 // s14
-	float* v3;		 // r3
-	float v4;		 // s13
-	bool_t onGround; // r2
-	float v6;		 // s15
-	float v7;		 // s15
-	float v9;		 // s15
-	float motionY;	 // s13
-	Level* level;	 // r7
-	int32_t v12;	 // r3
-
 	Animal::aiStep();
-	v2 = this->field_C8C;
+	float v2 = this->field_C8C;
 	this->field_C98 = v2;
-	v3 = &this->field_C90;
-	v4 = this->field_C90;
+	float v4 = this->field_C90;
 	this->field_C94 = v4;
-	onGround = this->onGround;
-	v6 = -0.3;
+	bool onGround = this->onGround;
+	float v6 = -0.3f;
 	if(!this->onGround) {
-		v6 = 1.2;
+		v6 = 1.2f;
 	}
-	v7 = v4 + v6;
-	if(v7 < 0.0) {
-		v7 = 0.0;
+	float v7 = v4 + v6;
+	if(v7 < 0.0f) {
+		v7 = 0.0f;
 	}
-	*v3 = v7;
-	if(v7 > 1.0) {
-		*v3 = 1.0;
+	this->field_C90 = v7;
+	if(v7 > 1.0f) {
+		this->field_C90 = 1.0f;
 	}
-	if(!onGround && this->field_C9C < 1.0) {
-		this->field_C9C = 1.0;
+	if(!onGround && this->field_C9C < 1.0f) {
+		this->field_C9C = 1.0f;
 	}
-	v9 = this->field_C9C * 0.9;
+	float v9 = this->field_C9C * 0.9f;
 	this->field_C9C = v9;
 	if(!onGround) {
-		motionY = this->motionY;
-		if(motionY < 0.0) {
-			this->motionY = motionY * 0.6;
+		if(this->motionY < 0.0f) {
+			this->motionY = this->motionY * 0.6f;
 		}
 	}
 	this->field_C8C = v2 + (float)(v9 + v9);
+
 	if(!this->isBaby()) {
-		level = this->level;
-		if(!level->isClientMaybe) {
-			v12 = this->nextEggCounter - 1;
-			this->nextEggCounter = v12;
-			if(v12 <= 0) {
-				level->playSound(this, "mob.chickenplop", 1.0, (float)((float)(this->random.nextFloat() - this->random.nextFloat()) * 0.2) + 1.0);
+		if(!this->level->isClient) {
+			this->nextEggCounter -= 1;
+			if(this->nextEggCounter <= 0) {
+				this->level->playSound(this, "mob.chickenplop", 1.0f, (this->random.nextFloat() - this->random.nextFloat()) * 0.2f + 1.0f);
 
 				this->spawnAtLocation(Item::egg->itemID, 1);
-				this->nextEggCounter = this->random.genrand_int32() % 0x1770 + 6000;
+				this->nextEggCounter = this->random.genrand_int32() % 6000 + 6000; //TODO maybe this is inlined Random::nextInt?
 			}
 		}
 	}
 }
 void Chicken::dropDeathLoot() {
-	int32_t v2; // r6
-	int32_t v3; // r7
-
-	v2 = 0;
-	v3 = this->random.genrand_int32() % 3;
-	while(1) {
-		if(v2 >= v3) {
-			break;
-		}
-		++v2;
+	for(int v2 = 0; v2 < this->random.genrand_int32() % 3; ++v2){
 		this->spawnAtLocation(Item::feather->itemID, 1);
 	}
+
 	if(this->isOnFire()) {
 		this->spawnAtLocation(Item::chicken_cooked->itemID, 1);
 	} else {

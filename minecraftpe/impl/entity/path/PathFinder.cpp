@@ -277,7 +277,7 @@ Node* PathFinder::getNode(int32_t x, int32_t y, int32_t z) {
 		return p->second;
 	}
 	Node* r = new Node(x, y, z);
-	this->nodes.insert({hash, r});
+	this->nodes.insert(std::pair<uint32_t, Node*>(hash, r));
 	return r;
 }
 int32_t PathFinder::isFree(Entity* a2, int32_t x, int32_t y, int32_t z, Node* a6) {

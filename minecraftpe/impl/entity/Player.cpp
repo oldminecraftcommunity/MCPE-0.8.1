@@ -407,7 +407,7 @@ void Player::startUsingItem(ItemInstance a2, int32_t a3) {
 	if(!(a2 == this->item)) {
 		this->item = a2;
 		this->useItemDuration = a3;
-		if(!this->level->isClientMaybe) {
+		if(!this->level->isClient) {
 			this->setSharedFlag(4, 1);
 		}
 	}
@@ -425,8 +425,8 @@ void Player::stopUsingItem() {
 	}
 	this->item.setNull();
 	this->useItemDuration = 0;
-	if(!this->level->isClientMaybe) {
-		this->setSharedFlag(4, this->level->isClientMaybe);
+	if(!this->level->isClient) {
+		this->setSharedFlag(4, this->level->isClient);
 	}
 }
 void Player::tileEntityDestroyed(int32_t a2) {
@@ -484,7 +484,7 @@ void Player::tick() {
 		}
 		this->sleepingCounter = v8;
 		level = this->level;
-		if(!level->isClientMaybe) {
+		if(!level->isClient) {
 			if(this->checkBed()) {
 				if(this->level->isDay()) {
 					this->stopSleepInBed(0, 1, 1);
@@ -505,7 +505,7 @@ void Player::tick() {
 		}
 	}
 	Mob::tick();
-	if(!this->level->isClientMaybe) {
+	if(!this->level->isClient) {
 		this->foodData.tick(this);
 		if(this->isOnFire()) {
 			if(this->level->getLevelData()->getGameType() == 1) {
@@ -521,7 +521,7 @@ void Player::rideTick() {
 	Entity* ridingAt; // r0
 
 	level = this->level;
-	if(!level->isClientMaybe && this->isSneaking()) {
+	if(!level->isClient && this->isSneaking()) {
 		this->ride(0);
 		this->setSneaking(0);
 	} else {
@@ -585,7 +585,7 @@ bool_t Player::hurt(Entity* a2, int32_t a3) {
 	if(this->health <= 0) {
 		return 0;
 	}
-	if(this->isSleeping() && !this->level->isClientMaybe) {
+	if(this->isSleeping() && !this->level->isClient) {
 		this->stopSleepInBed(1, 1, 0);
 	}
 	if(a2 && (a2->getCreatureBaseType() == 1 || a2->getEntityTypeId() == 80)) {
@@ -749,9 +749,9 @@ void Player::die(Entity* a2) {
 	level = this->level;
 	this->motionY = 0.1;
 	v5 = 0;
-	this->inventory->dropAll(level->isClientMaybe);
+	this->inventory->dropAll(level->isClient);
 	do {
-		if(!this->level->isClientMaybe && ItemInstance::isArmorItem(&this->armorSlots[v5])) {
+		if(!this->level->isClient && ItemInstance::isArmorItem(&this->armorSlots[v5])) {
 			this->drop(&this->armorSlots[v5], 1);
 		}
 		v6 = &this->armorSlots[v5++];
@@ -970,7 +970,7 @@ int32_t Player::startSleepInBed(int32_t x, int32_t y, int32_t z) {
 	Level* v17;	  // r0
 	float v19;	  // s16
 
-	if(!this->level->isClientMaybe) {
+	if(!this->level->isClient) {
 		if(this->isSleeping() || !this->isAlive()) {
 			return 4;
 		}
@@ -1018,7 +1018,7 @@ int32_t Player::startSleepInBed(int32_t x, int32_t y, int32_t z) {
 	this->motionY = 0.0;
 	this->motionZ = 0.0;
 	this->motionX = 0.0;
-	if(!v17->isClientMaybe) {
+	if(!v17->isClient) {
 		v17->updateSleepingPlayerList();
 	}
 	this->synchedEntityData.set<Pos>(17, this->bedPosition);
@@ -1047,7 +1047,7 @@ void Player::stopSleepInBed(bool_t a2, bool_t a3, bool_t a4) {
 		}
 		v12 = this->level;
 		this->sleeping = 0;
-		if(!v12->isClientMaybe) {
+		if(!v12->isClient) {
 			if(a3) {
 				v12->updateSleepingPlayerList();
 			}

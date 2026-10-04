@@ -138,7 +138,7 @@ bool_t Sheep::interactWithPlayer(Player* a2) {
 				this->isSheared();
 				if(!this->isSheared() && !this->isBaby()) {
 					level = this->level;
-					if(!level->isClientMaybe) {
+					if(!level->isClient) {
 						i = 0;
 						this->setSheared(1);
 						v6 = this->random.genrand_int32() % 3;
@@ -189,7 +189,7 @@ int32_t Sheep::getMaxHealth() {
 	return 8;
 }
 void Sheep::aiStep() {
-	if(this->level->isClientMaybe) {
+	if(this->level->isClient) {
 		if(this->field_C88 > 0) {
 			this->field_C88 = this->field_C88 - 1;
 		}

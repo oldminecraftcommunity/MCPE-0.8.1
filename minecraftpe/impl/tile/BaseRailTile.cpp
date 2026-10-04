@@ -388,7 +388,7 @@ bool_t BaseRailTile::mayPlace(Level* a2, int32_t a3, int32_t a4, int32_t a5) {
 	return a2->isTopSolidBlocking(a3, a4 - 1, a5);
 }
 void BaseRailTile::neighborChanged(Level* a2, int32_t a3, int32_t a4, int32_t a5, int32_t a6, int32_t a7, int32_t a8, int32_t a9) {
-	if(a2->isClientMaybe) return;
+	if(a2->isClient) return;
 	int32_t v15 = a2->getData(a3, a4, a5);
 	int32_t v14 = v15;
 	if(this->useDataBit) v15 &= 7;
@@ -427,7 +427,7 @@ LABEL_12:
 	this->updateState(a2, a3, a4, a5, v14, v15, a9);
 }
 void BaseRailTile::onPlace(Level* a2, int32_t a3, int32_t a4, int32_t a5) {
-	if(!a2->isClientMaybe) {
+	if(!a2->isClient) {
 		this->updateDir(a2, a3, a4, a5, 1);
 		if(this->useDataBit) {
 			this->neighborChanged(a2, a3, a4, a5, a3, a4, a5, this->blockID);
@@ -468,7 +468,7 @@ bool_t BaseRailTile::isUsesDataBit() {
 	return this->useDataBit;
 }
 void BaseRailTile::updateDir(Level* a2, int32_t a3, int32_t a4, int32_t z, bool_t a6) {
-	if(!a2->isClientMaybe) {
+	if(!a2->isClient) {
 		BaseRailTile::Rail v10(a2, a3, a4, z);
 		bool_t hasNeighborSignal = a2->hasNeighborSignal(a3, a4, z);
 		v10.place(hasNeighborSignal, a6);

@@ -126,7 +126,7 @@ void GrassTile::tick(Level* level, int32_t x, int32_t y, int32_t z, Random* rand
 	int32_t za;	   // [sp+20h] [bp+0h]
 
 	zr = z;
-	if(!level->isClientMaybe) {
+	if(!level->isClient) {
 		if(level->getRawBrightness(x, y + 1, z) <= 3) {
 			v10 = level->getMaterial(x, y + 1, z);
 			if(v10->blocksLight()) {

@@ -16,7 +16,7 @@ bool_t MinecartItem::useOn(ItemInstance* item, Player* player, struct Level* lev
 	v14 = level->getTile(x, y, z);
 	result = BaseRailTile::isRail(v14);
 	if(result) {
-		if(!level->isClientMaybe) {
+		if(!level->isClient) {
 			level->addEntity(Minecart::createMinecart(level, (float)x + 0.5, (float)y + 0.5, (float)z + 0.5, this->type));
 		}
 		result = 1;

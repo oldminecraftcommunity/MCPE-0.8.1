@@ -10,10 +10,11 @@
 #include <entity/path/PathNavigation.hpp>
 #include <item/Item.hpp>
 #include <level/Level.hpp>
+#include <math/Mth.hpp>
 
 Zombie::Zombie(Level* a2)
 	: Monster(a2) {
-	this->field_C84 = 0;
+	this->skyCheckCounter = 0;
 	this->usingNewAI = 0;
 	this->entityRenderId = ZOMBIE;
 	this->skin = "mob/zombie.png";
@@ -21,9 +22,9 @@ Zombie::Zombie(Level* a2)
 	this->getNavigation()->setCanOpenDoors(1);
 	this->goalSelector.addGoal(0, new FloatGoal(this), 1);
 	this->goalSelector.addGoal(1, new BreakDoorGoal(this), 1);
-	this->goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, 0), 1);
-	this->goalSelector.addGoal(6, new RandomStrollGoal(this, 1.0), 1);
-	this->goalSelector.addGoal(7, new LookAtPlayerGoal(this, 8.0), 1);
+	this->goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0f, 0), 1);
+	this->goalSelector.addGoal(6, new RandomStrollGoal(this, 1.0f), 1);
+	this->goalSelector.addGoal(7, new LookAtPlayerGoal(this, 8.0f), 1);
 	this->goalSelector.addGoal(7, new RandomLookAroundGoal(this), 1);
 	this->goalSelector2.addGoal(1, new HurtByTargetGoal(this, 16), 1);
 	this->goalSelector2.addGoal(2, new NearestAttackableTargetGoal(this, 16), 1);
@@ -39,7 +40,7 @@ int32_t Zombie::getEntityTypeId() const {
 }
 void Zombie::die(Entity* a2) {
 	Mob::die(a2);
-	if(!this->level->isClientMaybe) {
+	if(!this->level->isClient) {
 		if(!(this->random.genrand_int32() << 30)) {
 			this->spawnAtLocation(Item::feather->itemID, 1);
 		}
@@ -56,48 +57,26 @@ int32_t Zombie::getMaxHealth() {
 	return 12;
 }
 int32_t Zombie::getArmorValue() {
-	int32_t v; // r0
-
-	v = Mob::getArmorValue() + 2;
+	int v = Mob::getArmorValue() + 2;
 	if(v >= 20) {
 		return 20;
 	}
 	return v;
 }
 void Zombie::aiStep() {
-	int32_t v2;	 // r3
-	float posX;	 // s15
-	int32_t v4;	 // r1
-	bool_t v5;	 // fnf
-	float posY;	 // s15
-	int32_t v7;	 // r2
-	bool_t v8;	 // fnf
-	float posZ;	 // s15
-	int32_t v10; // r3
+	this->skyCheckCounter += 1;
+	if((this->skyCheckCounter & 1) != 0 && this->level->isDay() && !this->level->isClient && !this->isBaby()) {
+		if(this->getBrightness(1.0f) > 0.5f) {
+			if(!this->isOnFire()) {
+				int x = Mth::floor(this->posX);
+				int y = Mth::floor(this->posY);
+				int z = Mth::floor(this->posZ);
+				if(this->level->canSeeSky(x, y, z)) { //TODO make this compile into cbnz and not cbz </3
+					this->setOnFire(8);
+				}
+			}
+		}
 
-	v2 = this->field_C84 + 1;
-	this->field_C84 = v2;
-	if((v2 & 1) != 0 && this->level->isDay() && !this->level->isClientMaybe && !this->isBaby() && this->getBrightness(1.0) > 0.5 && !this->isOnFire()) {
-		posX = this->posX;
-		v4 = (int32_t)posX;
-		v5 = posX < (float)(int32_t)posX;
-		posY = this->posY;
-		v7 = (int32_t)posY;
-		if(v5) {
-			--v4;
-		}
-		v8 = posY < (float)(int32_t)posY;
-		posZ = this->posZ;
-		v10 = (int32_t)posZ;
-		if(v8) {
-			--v7;
-		}
-		if(posZ < (float)(int32_t)posZ) {
-			--v10;
-		}
-		if(this->level->canSeeSky(v4, v7, v10)) {
-			this->setOnFire(8);
-		}
 	}
 	Monster::aiStep();
 }
@@ -117,11 +96,8 @@ bool_t Zombie::useNewAi() {
 	return this->usingNewAI;
 }
 int32_t Zombie::getAttackDamage(Entity* a2) {
-	ItemInstance* v3;	  // r0
-	int32_t attackDamage; // r4
-
-	v3 = this->getCarriedItem();
-	attackDamage = this->attackDamage;
+	ItemInstance* v3 = this->getCarriedItem();
+	int attackDamage = this->attackDamage;
 	if(v3) {
 		attackDamage += v3->getAttackDamage(this);
 	}

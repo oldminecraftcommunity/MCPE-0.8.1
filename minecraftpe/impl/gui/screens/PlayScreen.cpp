@@ -124,7 +124,14 @@ std::shared_ptr<GuiElement> PlayScreen::buildLocalServerList() {
 	}
 	return this->field_1F4;
 }
+
 std::shared_ptr<GuiElement> PlayScreen::buildMCOServerList() {
+	struct _sorter
+	{
+		bool operator()(const std::pair<long long, MCOServerListItem>& a, const std::pair<long long, MCOServerListItem>& b) {
+			return a.first < b.first;
+		}
+	};
 	if(!this->field_1FC) {
 		this->field_1FC = std::shared_ptr<PackedScrollContainer>(new PackedScrollContainer(0, 0, 0));
 	}
@@ -138,7 +145,7 @@ std::shared_ptr<GuiElement> PlayScreen::buildMCOServerList() {
 				for(auto&& p: *this->field_54) {
 					v26.push_back(p);
 				}
-				//TODO figure out what is happening here v26.resize(18); //TODO check
+				std::sort(v26.begin(), v26.end(), _sorter());
 				bool em = this->isEditMode();
 				for(auto&& p: v26) {
 					MCOServerListItemElement* v16 = new MCOServerListItemElement(this->minecraft, p.second, em, [this](MCOServerListItem& a2, bool_t a3) {

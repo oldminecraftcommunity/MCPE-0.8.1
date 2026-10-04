@@ -310,7 +310,7 @@ void ChestTileEntity::onNeighborChanged(int32_t a2, int32_t a3, int32_t a4) {
 
 	if(!this->pair) {
 		level = this->level;
-		if(!level->isClientMaybe) {
+		if(!level->isClient) {
 			te = level->getTileEntity(a2, a3, a4);
 			if(this->canPairWith(te)) {
 				this->pairWith(((ChestTileEntity*)te), 0);

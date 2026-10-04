@@ -125,7 +125,7 @@ void TrapDoorTile::neighborChanged(Level* level, int32_t x, int32_t y, int32_t z
 	int32_t hasNeighborSignal; // r0
 	bool_t v18; // r11
 
-	if(!level->isClientMaybe) {
+	if(!level->isClient) {
 		v13 = level->getData(x, y, z) & 3;
 		if(v13) {
 			if(v13 != 1) {

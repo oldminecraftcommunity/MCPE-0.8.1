@@ -498,7 +498,7 @@ void NetherReactorTileEntity::tick() {
 	int32_t itemsPerLevel;	 // r0
 	int32_t enemiesPerLevel; // r0
 
-	if(!this->level->isClientMaybe) {
+	if(!this->level->isClient) {
 		if(this->progress < 0) {
 			this->setRemoved();
 		}

@@ -303,8 +303,8 @@ void TileEntity::setRemoved(void) {
 	if(!this->removed) {
 		this->removed = 1;
 		level = this->level;
-		isClientMaybe = level->isClientMaybe;
-		if(!level->isClientMaybe) {
+		isClientMaybe = level->isClient;
+		if(!level->isClient) {
 			for(auto& player: level->playersMaybe) {
 				player->tileEntityDestroyed(this->id);
 			}
@@ -317,3 +317,20 @@ void TileEntity::clearCache(void) {
 	this->block = 0;
 	this->blockMetadata = -1;
 }
+
+int partitionTileEntities(const std::vector<TileEntity*>& a1, std::vector<TileEntity*>& a2, std::vector<TileEntity*>& a3) {
+	std::map<TilePos, TileEntity*> v22;
+	for(unsigned int v5 = 0; v5 < a1.size(); ++v5) {
+		TileEntity* te = a1[v5];
+		TilePos v20(te->posX, te->posY, te->posZ);
+		auto&& p = v22.find(v20);
+		if(p == v22.end() && te->shouldSave()) {
+			v22.insert(std::pair<TilePos, TileEntity*>(v20, te));
+			a2.push_back(te);
+		} else {
+			a3.push_back(te);
+		}
+	}
+	return a2.size();
+}
+

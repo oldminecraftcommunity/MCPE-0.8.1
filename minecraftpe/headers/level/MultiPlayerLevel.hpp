@@ -49,7 +49,7 @@ struct MultiPlayerLevel: Level
 	virtual ~MultiPlayerLevel() {
 	}
 	virtual void tick() {
-		if (this->isClientMaybe) {
+		if (this->isClient) {
 			if (this->adventureSettings.daylightCycle) {
 				this->setTime(this->getTime() + 1);
 			}
@@ -88,7 +88,7 @@ struct MultiPlayerLevel: Level
 		return 0;
 	}
 	virtual void addToTickNextTick(int32_t x, int32_t y, int32_t z, int32_t id, int32_t delay) {
-		if (!this->isClientMaybe) {
+		if (!this->isClient) {
 			Level::addToTickNextTick(x, y, z, id, delay);
 		}
 	}

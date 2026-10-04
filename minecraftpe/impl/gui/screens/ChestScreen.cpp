@@ -120,7 +120,7 @@ bool_t ChestScreen::handleAddItem(FillingContainer* a2, FillingContainer* a3, in
 			v39.field_28 = v37.field_C;
 			v39.field_2C = v37.field_10;
 			this->field_190.push_back(v39);
-			if(!(a2 == te) && this->minecraft->level->isClientMaybe) {
+			if(!(a2 == te) && this->minecraft->level->isClient) {
 				const ItemInstance* v23 = vec2[vec[v15]];
 				ContainerSetSlotPacket v38(0, this->field_50->field_0, vec[v15], v23 ? ItemInstance(*v23) : ItemInstance());
 				this->minecraft->rakNetInstance->send(v38);

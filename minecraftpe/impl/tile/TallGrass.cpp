@@ -51,7 +51,7 @@ int32_t TallGrass::getColor(LevelSource* level, int32_t x, int32_t y, int32_t z)
 }
 void TallGrass::playerDestroy(Level* level, Player* player, int32_t x, int32_t y, int32_t z, int32_t meta) {
 
-	if(!level->isClientMaybe && player->getSelectedItem() && Item::shears == player->getSelectedItem()->itemClass && Item::shears) {
+	if(!level->isClient && player->getSelectedItem() && Item::shears == player->getSelectedItem()->itemClass && Item::shears) {
 		this->popResource(level, x, y, z, ItemInstance(Tile::tallgrass, 1, meta));
 	} else {
 		Tile::playerDestroy(level, player, x, y, z, meta);

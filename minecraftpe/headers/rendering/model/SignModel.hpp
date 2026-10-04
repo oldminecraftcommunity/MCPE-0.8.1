@@ -17,7 +17,7 @@ struct SignModel: Model
 	virtual ~SignModel() {
 	}
 	virtual void render() {
-		this->field_1C.render(0.060606);
-		this->field_9C.render(0.0625);
+		this->field_1C.render(0.060606f);
+		this->field_9C.render(0.0625f);
 	}
 };

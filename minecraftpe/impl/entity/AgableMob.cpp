@@ -42,7 +42,7 @@ void AgableMob::aiStep() {
 	}
 }
 bool_t AgableMob::isBaby() {
-	if(!this->level->isClientMaybe) {
+	if(!this->level->isClient) {
 		return (uint32_t)this->age >> 31;
 	}
 	return this->synchedEntityData.getByte(14) & 1;

@@ -180,7 +180,7 @@ void StemTile::spawnResources(Level* level, int32_t x, int32_t y, int32_t z, int
 	ItemInstance v14; // [sp+14h] [bp-3Ch] BYREF
 
 	Tile::spawnResources(level, x, y, z, a6, a7);
-	if(!level->isClientMaybe) {
+	if(!level->isClient) {
 		if(this->grownTile == Tile::melon) {
 			v11 = Item::seeds_melon;
 		} else {

@@ -90,7 +90,7 @@ start_loop:
 						while(toSend) {
 							int sent = send(client.sock, str, toSend, 0);
 							if(sent <= 0) {
-								int err2 = _errno();
+								int err2 = errno;
 								if(err2 != 4) {
 									if(err2 == 11) break;
 									return 0;
@@ -112,7 +112,7 @@ start_loop:
 				break;
 			}
 
-			err = _errno();
+			err = errno;
 			if(err != 4) {
 				iret = err != 11;
 				break;

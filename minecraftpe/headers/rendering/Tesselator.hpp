@@ -43,7 +43,6 @@ struct Tesselator{
 	std::vector<uint8_t> vertexes;
 	int32_t someSIzeMaybe;
 	int32_t useDrawElementsOrDrawArrays;
-	//TODO field_34 is std::_Hashtable -> unordered_map (https://gcc.gnu.org/onlinedocs/gcc-4.8.5/libstdc++/api/a01318_source.html line 100)
 	std::unordered_map<uint32_t, std::unique_ptr<MeshBuffer::VertexFormat>> field_34;
 	int32_t field_4C;
 	int32_t field_50;
@@ -82,23 +81,18 @@ struct Tesselator{
 	int32_t drawMode;
 	int32_t accessMode;
 	std::map<uint32_t, int32_t> stdTree;
-	//TODO methods
 
 	Tesselator(int32_t);
 	void _buildQuadIndexBuffer();
 	MeshBuffer::VertexFormat* _genVertexFormat() {
-		//TODO check
 		uint32_t offsets = *(uint32_t*)this->meshBuffer_vf2.offsets;
 		auto&& pp = this->field_34.find(offsets);
 		if(pp != this->field_34.end()) {
 			return pp->second.get();
 		}
 
-		MeshBuffer::VertexFormat* v7 = new MeshBuffer::VertexFormat();
-		*(uint32_t*)&v7->offsets = *(uint32_t*)&this->meshBuffer_vf2.offsets;
-		v7->stride = this->meshBuffer_vf2.stride;
+		MeshBuffer::VertexFormat* v7 = new MeshBuffer::VertexFormat(this->meshBuffer_vf2);
 		this->field_34[offsets] = std::unique_ptr<MeshBuffer::VertexFormat>(v7);
-
 		return v7;
 	}
 	void addOffset(const Vec3&);

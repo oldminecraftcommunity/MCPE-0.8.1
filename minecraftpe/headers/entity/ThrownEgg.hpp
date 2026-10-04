@@ -29,7 +29,7 @@ struct ThrownEgg: Throwable
 		if (a2.hitType == 1) {
 			a2.entity->hurt(this, 0);
 		}
-		if (!this->level->isClientMaybe) {
+		if (!this->level->isClient) {
 			v3 = Entity::sharedRandom.genrand_int32() & 7;
 			if (!v3) {
 				if ((Entity::sharedRandom.genrand_int32() & 31) != 0) {
@@ -51,7 +51,7 @@ struct ThrownEgg: Throwable
 			this->level->addParticle(PT_BREAKING_ITEM_2, this->posX, this->posY, this->posZ, 0.0, 0.0, 0.0, Item::egg->itemID);
 			--v4;
 		} while (v4);
-		if (!this->level->isClientMaybe) {
+		if (!this->level->isClient) {
 			this->remove();
 		}
 	}

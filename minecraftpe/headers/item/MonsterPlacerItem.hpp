@@ -63,7 +63,7 @@ struct MonsterPlacerItem: Item
 		int32_t v17; // r8
 		float v18; // s17
 		int32_t meta; // r0
-		if (!level->isClientMaybe) {
+		if (!level->isClient) {
 			v14 = level->getTile(x, y, z);
 			v15 = x + Facing::STEP_X[face];
 			v16 = y + Facing::STEP_Y[face];

@@ -109,7 +109,7 @@ void HangingEntity::setPosition(int32_t x, int32_t y, int32_t z) {
 }
 
 void HangingEntity::move(float a2, float a3, float a4) {
-	if(!this->level->isClientMaybe && !this->isDead && (float)((float)((float)(a3 * a3) + (float)(a2 * a2)) + (float)(a4 * a4)) > 0.0) {
+	if(!this->level->isClient && !this->isDead && (float)((float)((float)(a3 * a3) + (float)(a2 * a2)) + (float)(a4 * a4)) > 0.0) {
 		this->dropItem();
 		this->remove();
 	}
@@ -119,8 +119,8 @@ void HangingEntity::tick() {
 
 	surviveTicker = this->surviveTicker;
 	this->surviveTicker = surviveTicker + 1;
-	if(surviveTicker == 100 && !this->level->isClientMaybe) {
-		this->surviveTicker = this->level->isClientMaybe;
+	if(surviveTicker == 100 && !this->level->isClient) {
+		this->surviveTicker = this->level->isClient;
 		if(!this->isDead && !this->survives()) {
 			this->remove();
 			this->dropItem();
@@ -148,7 +148,7 @@ bool_t HangingEntity::interactWithPlayer(Player* a2) {
 		return 0;
 	}
 	level = this->level;
-	if(level->isClientMaybe) {
+	if(level->isClient) {
 		return 0;
 	}
 	if(a2) {
@@ -169,7 +169,7 @@ bool_t HangingEntity::interactWithPlayer(Player* a2) {
 	return 1;
 }
 void HangingEntity::push(float x, float y, float z) {
-	if(!this->level->isClientMaybe && !this->isDead && (float)((float)((float)(y * y) + (float)(x * x)) + (float)(z * z)) > 0.0) {
+	if(!this->level->isClient && !this->isDead && (float)((float)((float)(y * y) + (float)(x * x)) + (float)(z * z)) > 0.0) {
 		this->dropItem();
 		this->remove();
 	}
@@ -180,7 +180,7 @@ bool_t HangingEntity::isPickable() {
 bool_t HangingEntity::hurt(Entity* a2, int32_t a3) {
 	Player* v5; // r0
 
-	if(!this->isDead && !this->level->isClientMaybe) {
+	if(!this->isDead && !this->level->isClient) {
 		this->remove();
 		this->markHurt();
 		v5 = Player::asPlayer(a2);

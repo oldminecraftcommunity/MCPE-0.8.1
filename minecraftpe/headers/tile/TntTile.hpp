@@ -32,7 +32,7 @@ struct TntTile : Tile{
 	}
 	virtual void destroy(Level* level, int32_t x, int32_t y, int32_t z, int32_t meta) {
 		PrimedTnt* v7; // r5
-		if (!level->isClientMaybe && (meta & 1) != 0) {
+		if (!level->isClient && (meta & 1) != 0) {
 			v7 = new PrimedTnt(level, (float) (x) + 0.5, (float) (y) + 0.5, (float) (z) + 0.5);
 			level->addEntity(v7);
 			level->playSound(v7, "random.fuse", 1.0, 1.0);

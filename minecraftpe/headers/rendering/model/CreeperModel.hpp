@@ -41,9 +41,9 @@ struct CreeperModel: Model
 		this->field_29C.render(a8);
 	}
 	virtual void setupAnim(float a2, float a3, float a4, float a5, float a6, float a7) {
-		this->field_1C.yRotAngle = a5 / (float) ((180.0 / 3.1416));
-		this->field_1C.xRotAngle = a6 / (float) ((180.0 / 3.1416));
-		float v8 = (float) ((Mth::cos(a2 * 0.6662) * 1.4)) * a3;
+		this->field_1C.yRotAngle = a5 / (float) ((180.0f / 3.1416f));
+		this->field_1C.xRotAngle = a6 / (float) ((180.0f / 3.1416f));
+		float v8 = (float) ((Mth::cos(a2 * 0.6662f) * 1.4f)) * a3;
 		this->field_11C.xRotAngle = v8;
 		this->field_29C.xRotAngle = v8;
 		this->field_19C.xRotAngle = -v8;

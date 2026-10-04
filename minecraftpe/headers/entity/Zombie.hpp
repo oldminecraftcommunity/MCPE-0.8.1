@@ -3,7 +3,7 @@
 
 struct Zombie: Monster
 {
-	int32_t field_C84;
+	int32_t skyCheckCounter;
 	bool_t usingNewAI;
 	int8_t field_C89, field_C8A, field_C8B;
 

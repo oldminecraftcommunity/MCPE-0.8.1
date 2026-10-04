@@ -66,7 +66,7 @@ struct BowItem: Item
 			}
 			f = Item::random.nextFloat();
 			a3->playSound(a4, "random.bow", 1.0, (float) ((1.0 / (float) (((float) ((f * 0.4)) + 1.2)))) + (float) ((LaunchPower * 0.5)));
-			if (!a3->isClientMaybe) {
+			if (!a3->isClient) {
 				v10 = new Arrow(a3, a4, LaunchPower + LaunchPower);
 				if (LaunchPower == 1.0) {
 					v10->critical = 1;

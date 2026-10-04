@@ -32,7 +32,7 @@ bool_t HoeItem::useOn(ItemInstance* item, Player* player, Level* level, int32_t 
 		v16 = Tile::farmland;
 		level->playSound((float)x + 0.5, (float)y + 0.5, (float)z + 0.5, Tile::farmland->soundType->field_C, (float)(Tile::farmland->soundType->field_0 + 1.0) * 0.5, Tile::farmland->soundType->field_4 * 0.8);
 		item->hurtAndBreak(1, player);
-		if(!level->isClientMaybe) {
+		if(!level->isClient) {
 			level->setTile(x, y, z, v16->blockID, 3);
 			if(v14 == Tile::grass->blockID && !(level->random.genrand_int32() << 29)) {
 				v19 = level->random.nextFloat();

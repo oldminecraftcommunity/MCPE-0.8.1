@@ -89,7 +89,7 @@ struct TopSnowTile : Tile{
 		float f1; // s17
 		float f2; // s16
 		ItemEntity* v15; // r6
-		if (!level->isClientMaybe) {
+		if (!level->isClient) {
 			p_random = &level->random;
 			itemID = Item::snowBall->itemID;
 			f = p_random->nextFloat();

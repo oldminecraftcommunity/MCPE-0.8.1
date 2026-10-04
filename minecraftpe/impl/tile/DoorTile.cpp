@@ -295,7 +295,7 @@ void DoorTile::neighborChanged(Level* level, int32_t x, int32_t y, int32_t z, in
 		}
 		if(v17) {
 LABEL_9:
-			if(!level->isClientMaybe) {
+			if(!level->isClient) {
 				this->spawnResources(level, x, y, z, v18, 1.0);
 			}
 			return;

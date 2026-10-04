@@ -64,7 +64,7 @@ void PrimedTnt::tick() {
 	level = this->level;
 	v10 = this->ticksUntilExplode - 1;
 	this->ticksUntilExplode = v10;
-	if(level->isClientMaybe || v10 > 0) {
+	if(level->isClient || v10 > 0) {
 		level->addParticle(PT_SMOKE, this->posX, this->posY + 0.5, this->posZ, 0.0, 0.0, 0.0, 0);
 	} else {
 		this->remove();

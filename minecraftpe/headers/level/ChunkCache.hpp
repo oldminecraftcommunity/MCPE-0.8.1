@@ -141,11 +141,11 @@ struct ChunkCache: ChunkSource
 				v8->decorated = 1;
 				if (this->generatorSource) {
 					level = this->level;
-					isClientMaybe = level->isClientMaybe;
-					level->isClientMaybe = 0;
+					isClientMaybe = level->isClient;
+					level->isClient = 0;
 					this->generatorSource->postProcess(a2, x, z);
 					v9->clearUpdateMap();
-					this->level->isClientMaybe = isClientMaybe;
+					this->level->isClient = isClientMaybe;
 				}
 			}
 		}

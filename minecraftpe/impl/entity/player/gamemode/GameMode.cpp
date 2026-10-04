@@ -88,7 +88,7 @@ bool_t GameMode::useItem(Player* a2, Level* a3, ItemInstance* a4) {
 
 	count = a4->count;
 	v9 = a4->use(a3, a2);
-	if(a3->isClientMaybe) {
+	if(a3->isClient) {
 		UseItemPacket useItem(a2->entityId, (int32_t)(float)(a2->field_174.x * 32768.0), (int32_t)(float)(a2->field_174.y * 32768.0), (int32_t)(float)(a2->field_174.z * 32768.0), 255, a4->getId(), a4->getAuxValue());
 		this->minecraft->rakNetInstance->send(useItem);
 	}
@@ -99,7 +99,7 @@ bool_t GameMode::useItemOn(Player* player, Level* level, ItemInstance* a4, int32
 	float faceY = a9.y - (float)y;
 	float faceZ = a9.z - (float)z;
 	ItemInstance* sel = player->inventory->getSelected();
-	if(level->isClientMaybe) {
+	if(level->isClient) {
 		UseItemPacket v24(player, x, y, z, face, faceX, faceY, faceZ, sel);
 		this->minecraft->rakNetInstance->send(v24);
 	}
@@ -137,7 +137,7 @@ bool_t GameMode::handleInventoryMouseClick(int32_t, int32_t, int32_t, Player*) {
 void GameMode::handleCloseInventory(int32_t, Player*) {
 }
 void GameMode::releaseUsingItem(Player* a2) {
-	if(this->minecraft->level->isClientMaybe) {
+	if(this->minecraft->level->isClient) {
 		PlayerActionPacket pk(a2->entityId, 0, 0, 0, 0, 5);
 		this->minecraft->rakNetInstance->send(pk);
 	}

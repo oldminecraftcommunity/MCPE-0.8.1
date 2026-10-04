@@ -124,7 +124,7 @@ void ExternalFileLevelStorage::readPlayerData(const std::string& a1, LevelData& 
 	}
 }
 void ExternalFileLevelStorage::saveLevelData(const std::string& a1, LevelData& a2, std::vector<Player*>* a3) {
-	std::string v5 = a1 + '/';
+	std::string v5 = a1 + "/";
 	std::string v6 = v5 + "level.dat_new";
 	std::string old = v5 + "level.dat";
 	std::string filename = v5 + "level.dat_old";

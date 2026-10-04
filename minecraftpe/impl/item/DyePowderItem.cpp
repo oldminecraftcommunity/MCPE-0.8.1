@@ -25,7 +25,7 @@ const TextureUVCoordinateSet* DyePowderItem::getIcon(int32_t a2, int32_t, bool_t
 bool_t DyePowderItem::useOn(ItemInstance* item, Player* player, Level* level, int32_t x, int32_t y, int32_t z, int32_t face, float fx, float fy, float fz) {
 	Tile* result; // r0
 
-	if(item->getAuxValue() != 15 || level->isClientMaybe) {
+	if(item->getAuxValue() != 15 || level->isClient) {
 		return 0;
 	}
 	if(!player->abilities.instabuild) {

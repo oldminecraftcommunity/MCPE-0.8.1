@@ -173,7 +173,7 @@ void ClientSideNetworkHandler::onUnableToConnect() {
 
 void ClientSideNetworkHandler::onDisconnect(const RakNet::RakNetGUID& a2) {
 	if(this->level) {
-		this->level->isClientMaybe = 0;
+		this->level->isClient = 0;
 		int v5 = this->level->playersMaybe.size() - 1;
 		while(v5 >= 0) {
 			Player* v7 = this->level->playersMaybe[v5];

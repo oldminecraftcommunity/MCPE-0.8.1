@@ -31,7 +31,7 @@ void Spider::setClimbing(bool_t a2) {
 
 void Spider::tick() {
 	Monster::tick();
-	if(!this->level->isClientMaybe) {
+	if(!this->level->isClient) {
 		this->setClimbing(this->isCollidedHorizontally);
 	}
 }

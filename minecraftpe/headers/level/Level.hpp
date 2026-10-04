@@ -29,7 +29,7 @@ struct Particle;
 struct Level : LevelSource{
 	std::vector<AABB> aabbVec;
 	bool_t instantTick;
-	bool_t isClientMaybe;
+	bool_t isClient;
 	int8_t field_12, field_13;
 	int32_t difficulty;
 	AdventureSettings adventureSettings;

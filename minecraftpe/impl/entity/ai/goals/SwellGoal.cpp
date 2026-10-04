@@ -26,7 +26,7 @@ void SwellGoal::start() {
 		if(v3) {
 			this->target.entityId = v3->entityId;
 			this->target.level = v3->level;
-			v3->level->registerTemporaryPointer(&this->target);
+			this->target.level->registerTemporaryPointer(&this->target);
 			this->target.locked = 0;
 		} else {
 			this->target.unset();
@@ -34,8 +34,9 @@ void SwellGoal::start() {
 	}
 }
 void SwellGoal::stop() {
-	if(this->target.entity) {
-		this->target.unset();
+	TempEPtr<Mob>* ptr = &this->target;
+	if(ptr->entity) {
+		ptr->unset();
 	}
 }
 void SwellGoal::tick() {

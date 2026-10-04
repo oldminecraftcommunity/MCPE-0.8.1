@@ -26,10 +26,9 @@ struct Biome{
 	std::vector<Biome::MobSpawnerData> creatureVec;
 	std::vector<Biome::MobSpawnerData> waterCreatureVec;
 	std::string biomeName;
-	int32_t color = 0; //this stuff is necessary for memset before the constructor - (maybe there is a better way?)
+	int32_t color = 0; //this stuff is necessary for memset before the constructor - (maybe there is a better way?) TODO this makes constructor larger
 	uint8_t topBlock = 0;
 	uint8_t fillerBlock = 0;
-	//align
 
 	int32_t leafColor = 0;
 	float temperature = 0;

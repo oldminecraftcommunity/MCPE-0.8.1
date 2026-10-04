@@ -111,7 +111,7 @@ void CropTile::spawnResources(Level* level, int32_t a3, int32_t a4, int32_t a5, 
 	float v19;		 // s14
 
 	Tile::spawnResources(level, a3, a4, a5, a6, a7);
-	if(!level->isClientMaybe) {
+	if(!level->isClient) {
 		v11 = 3;
 		do {
 			if((int32_t)(level->random.genrand_int32() % 0xF) <= a6) {

@@ -126,7 +126,7 @@ void Explosion::finalizeExplosion() {
 			this->level->addParticle(PT_SMOKE, v13, v14, v18, v28, v29, v30, 0);
 		}
 		if(id) {
-			if(!this->level->isClientMaybe) {
+			if(!this->level->isClient) {
 				if(this->level->getLevelData()->getGameType() != 1) {
 					Tile::tiles[id]->spawnResources(this->level, p.x, p.y, p.z, this->level->getData(p.x, p.y, p.z), 0.3);
 				}
@@ -135,7 +135,7 @@ void Explosion::finalizeExplosion() {
 				this->level->updateNeighborsAt(p.x, p.y, p.z, 0);
 			}
 			this->level->setTileDirty(p.x, p.y, p.z);
-			if(!this->level->isClientMaybe) {
+			if(!this->level->isClient) {
 				Tile::tiles[id]->wasExploded(this->level, p.x, p.y, p.z);
 			}
 		}

@@ -87,7 +87,7 @@ struct FarmTile : Tile{
 		return Tile::dirt->getResource(0, a3);
 	}
 	virtual void fallOn(Level* level, int32_t x, int32_t y, int32_t z, Entity* ent, float fd) {
-		if (!level->isClientMaybe && level->random.nextFloat() < (fd - 0.5)) {
+		if (!level->isClient && level->random.nextFloat() < (fd - 0.5)) {
 			level->setTile(x, y, z, Tile::dirt->blockID, 3);
 		}
 	}

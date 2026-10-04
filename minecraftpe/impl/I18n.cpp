@@ -88,7 +88,7 @@ void I18n::fillTranslations(struct AppPlatform* a1, const std::string& a2, bool_
 					auto&& v7 = I18n::_strings.find(key);
 					if(v7 == I18n::_strings.end()) {
 						std::string value = Util::stringTrim(v10.substr(v5 + 1));
-						I18n::_strings.insert({key, value});
+						I18n::_strings.insert(std::pair<std::string, std::string>(key, value));
 					}
 				}
 			}

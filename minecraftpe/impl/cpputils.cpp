@@ -106,8 +106,11 @@ int recursiveDelete(const char_t* a1) {
 	return remove(a1);
 #endif
 }
+bool _access(const char* a, int b){
+	return access(a, b);
+}
 bool_t exists(const char_t* a1){
-	return access(a1, 0) == 0;
+	return _access(a1, 0) == 0;
 }
 int FUNC_ERRNO() {
 	return errno; //TODO check

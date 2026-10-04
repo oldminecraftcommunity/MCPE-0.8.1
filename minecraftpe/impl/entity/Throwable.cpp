@@ -258,7 +258,7 @@ LABEL_9:
 			end = a1.hitVec;
 		}
 		v23 = this->level;
-		if(!v23->isClientMaybe) {
+		if(!v23->isClient) {
 			minX = this->boundingBox.minX;
 			minY = this->boundingBox.minY;
 			minZ = this->boundingBox.minZ;

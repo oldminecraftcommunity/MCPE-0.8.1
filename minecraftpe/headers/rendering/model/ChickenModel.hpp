@@ -4,8 +4,8 @@
 
 struct ChickenModel: Model
 {
-	ModelPart field_18, field_98, field_118, field_198;
-	ModelPart field_218, field_298, field_318, field_398, field_418;
+	ModelPart headModel, field_98, bodyModel, leg1Model;
+	ModelPart leg2Model, wing1Model, wing2Model, beakModel, redThingModel;
 
 	ChickenModel();
 

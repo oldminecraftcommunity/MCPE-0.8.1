@@ -17,7 +17,7 @@ struct EggItem: Item
 			--item->count;
 		}
 		level->playSound(player, "random.bow", 0.5, 0.5 / (float) (((float) ((Item::random.nextFloat() * 0.4)) + 0.8)));
-		if (!level->isClientMaybe) {
+		if (!level->isClient) {
 			level->addEntity(new ThrownEgg(level, player));
 		}
 		return item;

@@ -13,8 +13,7 @@ struct ExternalFileLevelStorage: LevelStorage, ChunkStorage
 	int32_t field_1C;
 	Level* level;
 	int32_t field_24, field_28;
-	std::list<UnsavedLevelChunk> field_2C; //linked list in stlport
-	//TODO field_30 seems to be related to field_2C
+	std::list<UnsavedLevelChunk> field_2C;
 	int32_t field_34;
 
 	ExternalFileLevelStorage(const std::string&, const std::string&);

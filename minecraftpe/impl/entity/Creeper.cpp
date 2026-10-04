@@ -44,7 +44,7 @@ void Creeper::tick() {
 	int32_t v3; // r3
 
 	this->prevSwellTime = this->swellTime;
-	if(this->level->isClientMaybe && this->getSwellDir() > 0) {
+	if(this->level->isClient && this->getSwellDir() > 0) {
 		if(!this->swellTime) {
 			this->level->playSound(this, "random.fuse", 1.0, 0.5);
 		}
@@ -58,7 +58,7 @@ void Creeper::tick() {
 		}
 	}
 	Monster::tick();
-	if(!this->level->isClientMaybe && !this->attackTarget) {
+	if(!this->level->isClient && !this->attackTarget) {
 		this->checkCantSeeTarget(0, 0.0);
 	}
 }
@@ -75,7 +75,7 @@ bool_t Creeper::interactWithPlayer(Player* a2) {
 	if(!sel || Item::flintAndSteel != sel->itemClass || !Item::flintAndSteel) {
 		return this->interactWithPlayer(a2);
 	}
-	if(!this->level->isClientMaybe && this->getSwellDir() != 2) {
+	if(!this->level->isClient && this->getSwellDir() != 2) {
 		v7 = a2->posX + 0.5;
 		v8 = a2->posY + 0.5;
 		v9 = a2->posZ + 0.5;
@@ -112,7 +112,7 @@ void Creeper::checkHurtTarget(Entity* a2, float radius) {
 	int32_t swellDIr; // r5
 	int32_t v10;	  // r3
 
-	if(!this->level->isClientMaybe) {
+	if(!this->level->isClient) {
 		v6 = this->getSwellDir();
 		v7 = v6;
 		if(v6 > 0) {
@@ -155,7 +155,7 @@ LABEL_13:
 void Creeper::checkCantSeeTarget(Entity* a2, float a3) {
 	int32_t v4; // r3
 
-	if(!this->level->isClientMaybe && this->swellTime > 0 && this->getSwellDir() != 2) {
+	if(!this->level->isClient && this->swellTime > 0 && this->getSwellDir() != 2) {
 		this->setSwellDir(-1);
 		v4 = this->swellTime - 1;
 		if(v4 < 0) {

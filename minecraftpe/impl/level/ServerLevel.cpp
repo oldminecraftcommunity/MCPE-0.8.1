@@ -9,7 +9,7 @@ ServerLevel::ServerLevel(LevelStorage* a2, const std::string& a3, const LevelSet
 	this->_allPlayersSleeping = 0;
 }
 bool_t ServerLevel::allPlayersSleeping() {
-	if(!this->_allPlayersSleeping || this->isClientMaybe) return 0;
+	if(!this->_allPlayersSleeping || this->isClient) return 0;
 	for(auto&& p: this->playersMaybe) {
 		if(!p->isSleepingLongEnough()) return 0;
 	}

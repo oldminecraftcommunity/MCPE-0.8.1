@@ -47,7 +47,7 @@ bool_t Monster::isDarkEnoughToSpawn() {
 
 void Monster::tick() {
 	Mob::tick();
-	if(!this->level->isClientMaybe && !this->level->difficulty) {
+	if(!this->level->isClient && !this->level->difficulty) {
 		this->remove();
 	}
 }

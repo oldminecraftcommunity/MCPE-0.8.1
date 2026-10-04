@@ -271,7 +271,7 @@ void LocalPlayer::tick() {
 				}
 			}
 			if(this->useItemDuration == 0) {
-				if(this->level->isClientMaybe) {
+				if(this->level->isClient) {
 					EntityEventPacket v23(this->entityId, 9);
 					this->level->rakNetInstance->send(v23);
 				} else {
@@ -286,7 +286,7 @@ void LocalPlayer::tick() {
 		if(this->isRiding() || fabsf(this->posX - this->field_BC8) > 0.1 || fabsf(this->posY - this->field_BCC) > 0.01 || fabsf(this->posZ - this->field_BD0) > 0.1 || fabsf(this->field_BD4 - this->pitch) > 1.0 || fabsf(this->field_BD8 - this->yaw) > 1.0 || fabsf(this->field_DCC - this->headYaw) > 1.0) {
 			this->sendPosition();
 		}
-		if(this->level->isClientMaybe) {
+		if(this->level->isClient) {
 			static Stopwatch sw; //no name
 			sw.start();
 			this->inventoryMenu.broadcastChanges();
@@ -347,7 +347,7 @@ void LocalPlayer::ride(Entity* a2) {
 	}
 	Player::ride(a2);
 	level = this->level;
-	if(!level->isClientMaybe) {
+	if(!level->isClient) {
 		SetEntityLinkPacket v9(0, this->entityId, this->ridingAt ? this->ridingAt->entityId : 0); // [sp+8h] [bp-30h] BYREF
 		this->minecraft->rakNetInstance->send(v9);
 	}
@@ -359,7 +359,7 @@ void LocalPlayer::causeFallDamage(float a2) {
 	int32_t v4; // r6
 
 	v4 = (int32_t)ceil((float)(a2 - 3.0));
-	if(v4 > 0 && this->level->isClientMaybe) {
+	if(v4 > 0 && this->level->isClient) {
 		SetHealthPacket v5(v4 - 64);
 		this->minecraft->rakNetInstance->send(v5);
 	}
@@ -482,7 +482,7 @@ void LocalPlayer::take(Entity*, int32_t) {
 }
 void LocalPlayer::drop(const ItemInstance* a2, bool_t a3) {
 	if(a2) {
-		if(this->level->isClientMaybe) {
+		if(this->level->isClient) {
 			DropItemPacket pk(this->entityId, 0, *a2);
 			this->minecraft->rakNetInstance->send(pk);
 		} else {
@@ -522,7 +522,7 @@ int32_t LocalPlayer::startSleepInBed(int32_t a2, int32_t a3, int32_t a4) {
 	return r;
 }
 void LocalPlayer::stopSleepInBed(bool_t a2, bool_t a3, bool_t a4) {
-	if(this->level->isClientMaybe) {
+	if(this->level->isClient) {
 		PlayerActionPacket v10(this->entityId, 0, 0, 0, 0, 6);
 		this->minecraft->rakNetInstance->send(v10);
 	}
@@ -538,7 +538,7 @@ bool_t LocalPlayer::isLocalPlayer() {
 	return 1;
 }
 void LocalPlayer::closeContainer() {
-	if(this->level->isClientMaybe) {
+	if(this->level->isClient) {
 		ContainerClosePacket v3(this->currentContainer->field_0);
 		this->minecraft->rakNetInstance->send(v3);
 	}
@@ -548,7 +548,7 @@ void LocalPlayer::closeContainer() {
 void LocalPlayer::refreshContainer(BaseContainerMenu*, const std::vector<ItemInstance>&) {
 }
 void LocalPlayer::slotChanged(BaseContainerMenu* a2, int32_t a3, const ItemInstance& a4, bool_t a5) {
-	if(this->level->isClientMaybe && a2 == &this->inventoryMenu) {
+	if(this->level->isClient && a2 == &this->inventoryMenu) {
 		ContainerSetSlotPacket v8(0, 0, a3, a4);
 		this->minecraft->rakNetInstance->send(v8);
 	}

@@ -37,7 +37,7 @@
 #include <sstream>
 
 Level::Level(struct LevelStorage* a2, const std::string& a3, const struct LevelSettings& a4, bool_t a5, int32_t a6, struct Dimension* a7) : random(1){
-	this->isClientMaybe = a5;
+	this->isClient = a5;
 	this->instantTick = 0;
 	this->field_5C = 0;
 	this->skyDarken = 0;
@@ -84,7 +84,7 @@ void Level::_init(const std::string& levelName, const struct LevelSettings& a3, 
 	this->updateSkyBrightness();
 }
 void Level::_syncTime(long a2) { //long
-	if(!this->isClientMaybe) {
+	if(!this->isClient) {
 		SetTimePacket pk(a2, (uint32_t)this->levelData.stopTime >> 31);
 		this->rakNetInstance->send(pk);
 	}
@@ -105,7 +105,7 @@ bool_t Level::addEntity(struct Entity* e) {
 	}
 	this->getChunk(v4, v5)->addEntity(e);
 	this->entities.push_back(e);
-	this->eid2entity.insert(std::pair<int, Entity*>(e->entityId, e));
+	this->eid2entity[e->entityId] = e; //cant believe mojang used [] somewhere
 	this->entityAdded(e);
 	return 1;
 }
@@ -148,7 +148,7 @@ void Level::broadcastEntityEvent(struct Entity* a2, char_t a3) {
 	int32_t entityId;				// r6
 	RakNetInstance* rakNetInstance; // r0
 
-	if(!this->isClientMaybe) {
+	if(!this->isClient) {
 		entityId = a2->entityId;
 		EntityEventPacket v7(entityId, a3);
 
@@ -644,7 +644,7 @@ int32_t Level::countInstanceOfType(int32_t a2) {
 	return v5;
 }
 void Level::dispatchEntityData(struct Entity* a2) {
-	if(!this->isClientMaybe) {
+	if(!this->isClient) {
 		this->eid2entity2.insert(std::pair<int,Entity*>(a2->entityId, a2));
 	}
 }
@@ -668,7 +668,7 @@ void Level::explode(struct Entity* a2, float a3, float a4, float a5, float a6) {
 	this->explode(a2, a3, a4, a5, a6, 0);
 }
 void Level::explode(struct Entity* a2, float a3, float a4, float a5, float a6, bool_t a7) {
-	if(!this->isClientMaybe) {
+	if(!this->isClient) {
 		Explosion v15(this, a2, a3, a4, a5, a6);
 		v15.field_30 = a7;
 		v15.explode();
@@ -1584,7 +1584,7 @@ bool_t Level::mayPlace(int32_t blockID, int32_t x, int32_t y, int32_t z, bool_t 
 void Level::neighborChanged(int32_t x, int32_t y, int32_t z, int32_t a5, int32_t a6, int32_t a7, int32_t a8) {
 	Tile* v12; // r0
 
-	if(!this->isClientMaybe) {
+	if(!this->isClient) {
 		v12 = Tile::tiles[this->getTile(x, y, z)];
 		if(v12) {
 			v12->neighborChanged(this, x, y, z, a5, a6, a7, a8);
@@ -1656,7 +1656,7 @@ void Level::saveLevelData() {
 	this->levelStoragePtr->saveLevelData(this->levelData, &this->playersMaybe);
 }
 void Level::savePlayers() {
-	if(!this->isClientMaybe) {
+	if(!this->isClient) {
 		if(this->levelStoragePtr) {
 			for(int32_t i = 0; i < this->playersMaybe.size(); ++i) {
 				Player* p = this->playersMaybe[i];
@@ -1699,10 +1699,10 @@ bool_t Level::setData(int32_t x, int32_t y, int32_t z, int32_t data, int32_t fla
 	v11 = chunk->setData(x & 0xF, y, z & 0xF, data);
 	if(v11) {
 		v12 = chunk->getTile(x & 0xF, y, z & 0xF);
-		if((flags & 2) != 0 && (!this->isClientMaybe || (flags & 4) == 0)) {
+		if((flags & 2) != 0 && (!this->isClient || (flags & 4) == 0)) {
 			this->sendTileUpdated(x, y, z);
 		}
-		if(!this->isClientMaybe && (flags & 1) != 0) {
+		if(!this->isClient && (flags & 1) != 0) {
 			this->tileUpdated(x, y, z, v12);
 		}
 	}
@@ -1794,10 +1794,10 @@ bool_t Level::setTileAndData(int32_t x, int32_t y, int32_t z, int32_t id, int32_
 	}
 	res = chunk_->setTileAndData(x & 0xF, y, z & 0xF, id, meta);
 	if(res) {
-		if(!this->isClientMaybe && (flags & 1) != 0) {
+		if(!this->isClient && (flags & 1) != 0) {
 			this->tileUpdated(x, y, z, curid);
 		}
-		if((flags & 2) != 0 && (!this->isClientMaybe || (flags & 4) == 0)) {
+		if((flags & 2) != 0 && (!this->isClient || (flags & 4) == 0)) {
 			this->sendTileUpdated(x, y, z);
 		}
 	}
@@ -2346,7 +2346,7 @@ struct Biome* Level::getBiome(int32_t x, int32_t z) {
 }
 static int32_t _D6E4DF90 = 0;
 void Level::tick() {
-	if(!this->isClientMaybe) {
+	if(!this->isClient) {
 		if(this->levelData.getSpawnMobs()) {
 			if(_D6E4DF90 + 1 > 1) {
 				_D6E4DF90 = 0;

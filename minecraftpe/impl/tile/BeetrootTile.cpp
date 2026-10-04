@@ -44,9 +44,9 @@ void BeetrootTile::spawnResources(Level* level, int32_t x, int32_t y, int32_t z,
 	bool_t isClientMaybe; // [sp+Ch] [bp-44h]
 	int32_t v20;		  // [sp+Ch] [bp-44h]
 
-	if(!level->isClientMaybe && a6 > 1) {
+	if(!level->isClient && a6 > 1) {
 		if(a6 > 6) {
-			isClientMaybe = level->isClientMaybe;
+			isClientMaybe = level->isClient;
 			v13 = level->random.genrand_int32() % 3;
 			v14 = level->random.genrand_int32();
 			v15 = isClientMaybe;

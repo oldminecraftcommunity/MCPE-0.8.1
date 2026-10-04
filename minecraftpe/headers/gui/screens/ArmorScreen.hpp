@@ -19,7 +19,7 @@ struct ArmorScreen: Screen, Touch::IInventoryPaneCallback
 	BlankButton field_B8, field_E8, field_118, field_148;
 	BlankButton* field_178[4];
 	Touch::THeader header;
-	Touch::InventoryPane* field_1BC;
+	Touch::InventoryPane* inventoryPane;
 	IntRectangle field_1C0;
 	int32_t field_1D0, field_1D4, field_1D8, field_1DC;
 	std::vector<const ItemInstance*> field_1E0;

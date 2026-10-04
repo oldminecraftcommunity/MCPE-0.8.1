@@ -23,7 +23,7 @@ bool_t HangingEntityItem::useOn(ItemInstance* item, Player* player, Level* level
 	v14 = (Entity*)e;
 	if(e) {
 		if(e->survives()) {
-			if(level->isClientMaybe) {
+			if(level->isClient) {
 				delete v14;
 			} else {
 				level->addEntity(v14);
