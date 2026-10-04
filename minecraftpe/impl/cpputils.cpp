@@ -8,6 +8,11 @@
 #include <errno.h>
 #include <stdio.h>
 #include <time.h>
+#ifdef __WIN32__
+#define FUNC_ACCESS _access2
+#else
+#define FUNC_ACCESS _access
+#endif
 inline time_t _startedAt(){
 	struct timeval v1;
 	gettimeofday(&v1, 0);
@@ -106,11 +111,11 @@ int recursiveDelete(const char_t* a1) {
 	return remove(a1);
 #endif
 }
-bool _access(const char* a, int b){
+bool FUNC_ACCESS(const char* a, int b){
 	return access(a, b);
 }
 bool_t exists(const char_t* a1){
-	return _access(a1, 0) == 0;
+	return FUNC_ACCESS(a1, 0) == 0;
 }
 int FUNC_ERRNO() {
 	return errno; //TODO check
