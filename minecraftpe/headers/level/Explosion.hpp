@@ -8,11 +8,10 @@ struct Entity;
 struct Level;
 struct Explosion
 {
-	float field_0, field_4, field_8, field_C;
-	std::unordered_set<TilePos> field_10;
+	float x, y, z, radius;
+	std::unordered_set<TilePos> affectedTiles;
 	int32_t field_28, field_2C;
-	bool_t field_30;
-	int8_t field_31, field_32, field_33;
+	bool_t setFire;
 	Entity* entity;
 	Random random;
 	Level* level;

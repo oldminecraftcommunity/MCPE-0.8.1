@@ -10,7 +10,7 @@ std::vector<ItemInstance> InventoryMenu::getItems() {
 	std::vector<ItemInstance> result;
 	for(int32_t v4 = 9; v4 < this->linkedContainer->getContainerSize(); ++v4) {
 		ItemInstance* v5 = this->linkedContainer->getItem(v4);
-		result.emplace_back(v5 ? ItemInstance(*v5) : ItemInstance());
+		result.push_back(v5 ? ItemInstance(*v5) : ItemInstance());
 	}
 	return result;
 }

@@ -7,7 +7,7 @@ OptionsPane::OptionsPane()
 }
 OptionsGroup* OptionsPane::createOptionsGroup(std::string a2) {
 	std::shared_ptr<OptionsGroup> g(new OptionsGroup(a2));
-	this->children.emplace_back(std::shared_ptr<GuiElement>(g));
+	this->children.push_back(std::shared_ptr<GuiElement>(g));
 	return (OptionsGroup*) g.get();
 }
 

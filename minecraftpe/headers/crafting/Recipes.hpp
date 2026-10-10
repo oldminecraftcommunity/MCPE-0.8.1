@@ -64,7 +64,7 @@ struct Recipes
 };
 
 #define _d_arg(n) char a##n, T##n b##n
-#define _d_emplc(n) ret.emplace_back(Recipes::Type(a##n, b##n));
+#define _d_emplc(n) ret.push_back(Recipes::Type(a##n, b##n));
 template<typename T0>
 std::vector<Recipes::Type> definition(_d_arg(0)) {
 	std::vector<Recipes::Type> ret;

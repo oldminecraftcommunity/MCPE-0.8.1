@@ -58,7 +58,7 @@ void ChatScreen::sendChatMessage() {
 		if(!this->minecraft->isOnlineClient()) {
 			this->minecraft->gui.addMessage(this->minecraft->player->username, this->field_54, 200);
 		}
-		this->field_78.emplace_back(this->field_54);
+		this->field_78.push_back(this->field_54);
 		this->field_84 = this->field_78.size();
 		this->field_54 = "";
 		this->minecraft->platform()->updateTextBoxText(this->field_54);

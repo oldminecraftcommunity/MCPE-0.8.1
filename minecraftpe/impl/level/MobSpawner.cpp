@@ -159,11 +159,11 @@ bool_t MobSpawner::tick(Level* level, bool_t hostiles, bool_t animals) {
 			} while(v5 != 256);
 			hostiles = 0;
 		} else {
-			if(++_D6E4E9EC >= level->playersMaybe.size()) {
+			if(++_D6E4E9EC >= level->players.size()) {
 				_D6E4E9EC = 0;
 			}
-			if(level->playersMaybe.size()) {
-				Player* v9 = level->playersMaybe[_D6E4E9EC];
+			if(level->players.size()) {
+				Player* v9 = level->players[_D6E4E9EC];
 				float v10 = v9->posX * 0.0625;
 				int v11 = (int)v10;
 				float v12 = v9->posZ * 0.0625;

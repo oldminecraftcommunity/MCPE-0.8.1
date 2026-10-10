@@ -14,7 +14,7 @@ static bool_t sub_D66664FE(int a1, int a2) {
 
 struct ChunkCache: ChunkSource
 {
-	int8_t field_4, field_5, field_6, field_7;
+	int8_t field_4;
 	int32_t lastChunkX, lastChunkZ;
 	LevelChunk* emptyChunk;
 	ChunkSource* generatorSource;
@@ -42,15 +42,12 @@ struct ChunkCache: ChunkSource
 		}
 	}
 	virtual bool_t hasChunk(int32_t x, int32_t z) {
-		LevelChunk* result; // r0
 		if (!sub_D66664FE(x, z) || x == this->lastChunkX && z == this->lastChunkZ && this->lastChunk) {
 			return 1;
 		}
-		result = this->chunks[16 * (z & 0xF) + (x & 0xF)];
-		if (!result) {
-			return 0;
-		}
-		return result == this->emptyChunk || result->isAt(x, z);
+		LevelChunk* c = this->chunks[16 * (z & 0xF) + (x & 0xF)];
+		if(c) return c == this->emptyChunk || c->isAt(x, z);
+		return 0;
 	}
 	virtual LevelChunk* getChunk(int32_t x, int32_t z) {
 		LevelChunk* result; // r0

@@ -174,9 +174,9 @@ void ClientSideNetworkHandler::onUnableToConnect() {
 void ClientSideNetworkHandler::onDisconnect(const RakNet::RakNetGUID& a2) {
 	if(this->level) {
 		this->level->isClient = 0;
-		int v5 = this->level->playersMaybe.size() - 1;
+		int v5 = this->level->players.size() - 1;
 		while(v5 >= 0) {
-			Player* v7 = this->level->playersMaybe[v5];
+			Player* v7 = this->level->players[v5];
 			if(v7 != this->minecraft->player) {
 				v7->field_108 = 1;
 				this->level->removeEntity(v7);
@@ -410,7 +410,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID&, struct UpdateBl
 void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID&, struct ExplodePacket* a3) {
 	if(this->level) {
 		Explosion v5(this->level, 0, a3->x, a3->y, a3->z, a3->radius);
-		v5.field_10.insert(a3->positions.begin(), a3->positions.end());
+		v5.affectedTiles.insert(a3->positions.begin(), a3->positions.end());
 		v5.finalizeExplosion();
 	}
 }

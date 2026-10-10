@@ -92,10 +92,10 @@ void NinecraftApp::restartServer(){
 
 	levelPtr = this->level;
 	if(levelPtr) {
-		for(int32_t i = levelPtr->playersMaybe.size() - 1; i >= 0; --i) {
-			Player* player = levelPtr->playersMaybe.back();
+		for(int32_t i = levelPtr->players.size() - 1; i >= 0; --i) {
+			Player* player = levelPtr->players.back();
 			this->level->removePlayer(player);
-			levelPtr->playersMaybe.pop_back();
+			levelPtr->players.pop_back();
 		}
 		this->rakNetInstance->resetIsBroken();
 		this->gui.addMessage("server", "This server has restarted!", 200);

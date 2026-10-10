@@ -39,7 +39,7 @@ Color4 Sheep::COLOR[] = {
 
 Sheep::Sheep(Level* a2)
 	: Animal(a2) {
-	this->field_C88 = 0;
+	this->eatAnimationTick = 0;
 	this->entityRenderId = SHEEP;
 	this->skin = "mob/sheep.png";
 	this->setSize(0.9, 1.3);
@@ -62,7 +62,7 @@ int32_t Sheep::getColor() const{
 float Sheep::getHeadEatAngleScale(float a2) {
 	int v3; // r1
 
-	v3 = this->field_C88;
+	v3 = this->eatAnimationTick;
 	if((uint32_t)(v3 - 5) <= 0x1F) {
 		return (float)((float)(3.1416 * 0.07) * Mth::sin((float)((float)((float)(v3 - 4) - a2) * 0.03125) * 28.7)) + (float)(3.1416 * 0.2);
 	}
@@ -75,7 +75,7 @@ float Sheep::getHeadEatPositionScale(float a2) {
 	int32_t v2; // r3
 	int32_t v3; // s12
 
-	v2 = this->field_C88;
+	v2 = this->eatAnimationTick;
 	if(v2 <= 0) {
 		return 0.0;
 	}
@@ -85,7 +85,7 @@ float Sheep::getHeadEatPositionScale(float a2) {
 	if(v2 > 3) {
 		return -(float)((float)((float)(v2 - 40) - a2) * 0.25);
 	}
-	v3 = this->field_C88;
+	v3 = this->eatAnimationTick;
 	return (float)((float)v2 - a2) * 0.25;
 }
 int32_t Sheep::getSheepColor(Random* a1) {
@@ -161,7 +161,7 @@ bool_t Sheep::interactWithPlayer(Player* a2) {
 }
 void Sheep::handleEntityEvent(char event) {
 	if(event == 10) {
-		this->field_C88 = 40;
+		this->eatAnimationTick = 40;
 	} else {
 		Mob::handleEntityEvent(event);
 	}
@@ -190,8 +190,8 @@ int32_t Sheep::getMaxHealth() {
 }
 void Sheep::aiStep() {
 	if(this->level->isClient) {
-		if(this->field_C88 > 0) {
-			this->field_C88 = this->field_C88 - 1;
+		if(this->eatAnimationTick > 0) {
+			this->eatAnimationTick = this->eatAnimationTick - 1;
 		}
 	}
 	Animal::aiStep();
@@ -199,12 +199,16 @@ void Sheep::aiStep() {
 void Sheep::finalizeMobSpawn() {
 	this->setColor(Sheep::getSheepColor(&this->random));
 	if(this->isBaby()) {
-		int32_t v4 = this->getAge() + 1200;
-		this->setAge(v4 & (v4 >> 31));
+		int32_t newAge = this->getAge() + 1200;
+		this->setAge(newAge > 0 ? 0 : newAge);
 	}
 }
 void Sheep::ate() {
 	this->setSheared(0);
+	if(this->isBaby()) {
+		int newAge = this->getAge() + 1200;
+		this->setAge(newAge > 0 ? 0 : newAge);
+	}
 }
 int32_t Sheep::getDeathLoot() {
 	return Tile::cloth->blockID;
@@ -215,12 +219,12 @@ void Sheep::dropDeathLoot() {
 	}
 }
 void Sheep::jumpFromGround() {
-	if(this->field_C88 <= 0) {
+	if(this->eatAnimationTick <= 0) {
 		Mob::jumpFromGround();
 	}
 }
 void Sheep::newServerAiStep() {
-	this->field_C88 = this->eatTileGoal->getEatAnimationTick();
+	this->eatAnimationTick = this->eatTileGoal->getEatAnimationTick();
 	Mob::newServerAiStep();
 }
 const char_t* Sheep::getAmbientSound() {
@@ -236,7 +240,7 @@ bool_t Sheep::useNewAi() {
 	return 1;
 }
 bool_t Sheep::shouldHoldGround() {
-	return this->field_C88 > 0;
+	return this->eatAnimationTick > 0;
 }
 Mob* Sheep::getBreedOffspring(Animal* a2) {
 	Sheep* s = new Sheep(this->level);

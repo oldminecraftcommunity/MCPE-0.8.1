@@ -21,7 +21,7 @@ RandomLevelSource::RandomLevelSource(struct Level* a2, long a3, int32_t a4, bool
 	octave16noise_1(&this->random, 16)
 	, octave16noise_2(&this->random, 16)
 	, octave8noise_1(&this->random, 8)
-	, octave4noise_1(&this->random, 4)
+	, sandAndGravelNoise(&this->random, 4)
 	, octave4noise_2(&this->random, 4)
 	, octave10noise_1(&this->random, 10)
 	, octave16noise_3(&this->random, 16)
@@ -29,7 +29,7 @@ RandomLevelSource::RandomLevelSource(struct Level* a2, long a3, int32_t a4, bool
 	this->field_4 = 0;
 
 	this->level = a2;
-	this->field_72CC = a5;
+	this->spawnMobs = a5;
 	this->interpolationNoises = 0;
 	this->upperInterpolationNoises = 0;
 	this->lowerInterpolationNoises = 0;
@@ -42,13 +42,11 @@ RandomLevelSource::RandomLevelSource(struct Level* a2, long a3, int32_t a4, bool
 			this->field_9E0[v8 * 32 + i] = 0;
 		}
 	}
-	this->field_72D0 = new float[1024];
+	this->heights = new float[1024];
 	Random v12 = this->random;
 	printf("random.get : %d\n", v12.genrand_int32() >> 1);
 }
-void RandomLevelSource::buildSurfaces(int32_t a2, int32_t a3, uint8_t* a4, struct Biome** a5) {
-	float v5;			 // s17
-	float v8;			 // s16
+void RandomLevelSource::buildSurfaces(int32_t chunkX, int32_t chunkZ, uint8_t* blocks, struct Biome** biomes) {
 	int32_t v9;			 // r12
 	float v10;			 // s17
 	int32_t v11;		 // r6
@@ -76,20 +74,20 @@ void RandomLevelSource::buildSurfaces(int32_t a2, int32_t a3, uint8_t* a4, struc
 	int32_t v33;		 // [sp+34h] [bp-54h]
 	Biome** v34;		 // [sp+38h] [bp-50h]
 
-	v5 = (float)(16 * a2);
-	v8 = (float)(16 * a3);
-	this->octave4noise_1.getRegion(this->field_72D4, v5, v8, 0.0, 16, 16, 1, 0.03125, 0.03125, 1.0);
-	this->octave4noise_1.getRegion(this->field_76D4, v5, 109.01, v8, 16, 1, 16, 0.03125, 1.0, 0.03125);
-	this->octave4noise_2.getRegion(this->field_7AD4, v5, v8, 0.0, 16, 16, 1, 0.0625, 0.0625, 0.0625);
+	float worldX = 16 * chunkX;
+	float worldZ = 16 * chunkZ;
+	this->sandAndGravelNoise.getRegion(this->sandNoises, worldX, worldZ, 0.0f, 16, 16, 1, 0.03125f, 0.03125f, 1.0f);
+	this->sandAndGravelNoise.getRegion(this->gravelNoises, worldX, 109.01f, worldZ, 16, 1, 16, 0.03125f, 1.0f, 0.03125f);
+	this->octave4noise_2.getRegion(this->field_7AD4, worldX, worldZ, 0.0f, 16, 16, 1, 0.0625f, 0.0625f, 0.0625f);
 
 	//taken from Minecraft013Server(which took it from some b1.4 mod+changes from 0.1.3)
 	//arm version produced weird results
 	//x86 version inlined random calls so the function is mess
 	for(int blockX = 0; blockX < 16; ++blockX) {
 		for(int blockZ = 0; blockZ < 16; ++blockZ) {
-			Biome* biome = a5[blockX + (blockZ * 16)];
-			bool z = this->field_72D4[blockX + (blockZ * 16)] + (this->random.nextFloat() * 0.2f) > 0.0f;
-			bool z2 = this->field_76D4[blockX + (blockZ * 16)] + (this->random.nextFloat() * 0.2f) > 3.0f;
+			Biome* biome = biomes[blockX + (blockZ * 16)];
+			bool sand = this->sandNoises[blockX + (blockZ * 16)] + (this->random.nextFloat() * 0.2f) > 0.0f;
+			bool gravel = this->gravelNoises[blockX + (blockZ * 16)] + (this->random.nextFloat() * 0.2f) > 3.0f;
 			int nextFloat = (int)((this->field_7AD4[blockX + (blockZ * 16)] / 3.0f) + 3.0f + (this->random.nextFloat() * 0.25f));
 			int i = -1;
 			int b = biome->topBlock;
@@ -97,9 +95,9 @@ void RandomLevelSource::buildSurfaces(int32_t a2, int32_t a3, uint8_t* a4, struc
 			for(int blockY = 127; blockY >= 0; --blockY) {
 				int index = (blockZ * 16 + blockX) * 128 + blockY;
 				if((this->random.genrand_int32() % 5) >= blockY) {
-					a4[index] = Tile::unbreakable->blockID;
+					blocks[index] = Tile::unbreakable->blockID;
 				} else {
-					int b3 = a4[index];
+					int b3 = blocks[index];
 					if(b3 == 0) {
 						i = -1;
 					} else if(b3 == Tile::rock->blockID) {
@@ -108,11 +106,11 @@ void RandomLevelSource::buildSurfaces(int32_t a2, int32_t a3, uint8_t* a4, struc
 								if(blockY >= 60 && blockY <= 65) {
 									b = biome->topBlock;
 									b2 = biome->fillerBlock;
-									if(z2) {
+									if(gravel) {
 										b = 0;
 										b2 = Tile::gravel->blockID;
 									}
-									if(z) {
+									if(sand) {
 										b = Tile::sand->blockID;
 										b2 = Tile::sand->blockID;
 									}
@@ -128,13 +126,13 @@ void RandomLevelSource::buildSurfaces(int32_t a2, int32_t a3, uint8_t* a4, struc
 							}
 							i = nextFloat;
 							if (blockY >= 63) {
-								a4[index] = b;
+								blocks[index] = b;
 							} else {
-								a4[index] = b2;
+								blocks[index] = b2;
 							}
 						} else if (i > 0) {
 							--i;
-							a4[index] = b2;
+							blocks[index] = b2;
 							if (i == 0 && b2 == Tile::sand->blockID) {
 								i = (this->random.genrand_int32() % 4);
 								b2 = Tile::sandStone->blockID;
@@ -250,12 +248,12 @@ float* RandomLevelSource::getHeights(float* heights, int32_t chunkX, int32_t chu
 
 	rainfallNoises = this->level->getBiomeSource()->rainfallNoises;
 	temperatureNoises = this->level->getBiomeSource()->temperatureNoises;
-	this->biomeNoises = this->octave10noise_1.getRegion(this->biomeNoises, chunkX, chunkZ, scaleX, scaleZ, 1.121, 1.121, 0.5);
+	this->biomeNoises = this->octave10noise_1.getRegion(this->biomeNoises, chunkX, chunkZ, scaleX, scaleZ, 1.121f, 1.121f, 0.5f);
 	v14 = (float)chunkY;
-	this->depthNoises = this->octave16noise_3.getRegion(this->depthNoises, chunkX, chunkZ, scaleX, scaleZ, 200.0, 200.0, 0.5);
-	this->interpolationNoises = this->octave8noise_1.getRegion(this->interpolationNoises, (float)chunkX, v14, (float)chunkZ, scaleX, scaleY, scaleZ, 8.5552, 4.2776, 8.5552);
-	this->upperInterpolationNoises = this->octave16noise_1.getRegion(this->upperInterpolationNoises, (float)chunkX, v14, (float)chunkZ, scaleX, scaleY, scaleZ, 684.41, 684.41, 684.41);
-	this->lowerInterpolationNoises = this->octave16noise_2.getRegion(this->lowerInterpolationNoises, (float)chunkX, v14, (float)chunkZ, scaleX, scaleY, scaleZ, 684.41, 684.41, 684.41);
+	this->depthNoises = this->octave16noise_3.getRegion(this->depthNoises, chunkX, chunkZ, scaleX, scaleZ, 200.0f, 200.0f, 0.5f);
+	this->interpolationNoises = this->octave8noise_1.getRegion(this->interpolationNoises, (float)chunkX, v14, (float)chunkZ, scaleX, scaleY, scaleZ, 8.5552f, 4.2776f, 8.5552f);
+	this->upperInterpolationNoises = this->octave16noise_1.getRegion(this->upperInterpolationNoises, (float)chunkX, v14, (float)chunkZ, scaleX, scaleY, scaleZ, 684.41f, 684.41f, 684.41f);
+	this->lowerInterpolationNoises = this->octave16noise_2.getRegion(this->lowerInterpolationNoises, (float)chunkX, v14, (float)chunkZ, scaleX, scaleY, scaleZ, 684.41f, 684.41f, 684.41f);
 	v40 = scaleY & ~(scaleY >> 31);
 	v15 = 17 * (16 / scaleX / 2);
 	v16 = 0;
@@ -268,54 +266,54 @@ float* RandomLevelSource::getHeights(float* heights, int32_t chunkX, int32_t chu
 		v19 = 0;
 		v20 = v18;
 		for(i = 0; i < scaleZ; ++i) {
-			v22 = 1.0 - (float)(v43[v16 + v19] * v42[v16 + v19]);
+			v22 = 1.0f - (float)(v43[v16 + v19] * v42[v16 + v19]);
 			v23 = i + v39;
-			v24 = this->depthNoises[v23] / 8000.0;
-			v25 = (float)((float)(this->biomeNoises[v23] + 256.0) * 0.0019531) * (float)(1.0 - (float)((float)(v22 * v22) * (float)(v22 * v22)));
-			if(v25 > 1.0) {
-				v25 = 1.0;
+			v24 = this->depthNoises[v23] / 8000.0f;
+			v25 = (float)((float)(this->biomeNoises[v23] + 256.0f) * 0.0019531f) * (float)(1.0f - (float)((float)(v22 * v22) * (float)(v22 * v22)));
+			if(v25 > 1.0f) {
+				v25 = 1.0f;
 			}
-			if(v24 < 0.0) {
-				v24 = -(float)(v24 * 0.3);
+			if(v24 < 0.0f) {
+				v24 = -(float)(v24 * 0.3f);
 			}
-			v26 = (float)(v24 * 3.0) - 2.0;
-			if(v26 >= 0.0) {
-				if(v26 > 1.0) {
-					v26 = 1.0;
+			v26 = (float)(v24 * 3.0f) - 2.0f;
+			if(v26 >= 0.0f) {
+				if(v26 > 1.0f) {
+					v26 = 1.0f;
 				}
-				v28 = v26 * 0.125;
-				if(v25 < 0.0) {
-					v25 = 0.0;
+				v28 = v26 * 0.125f;
+				if(v25 < 0.0f) {
+					v25 = 0.0f;
 				}
 			} else {
-				v27 = v26 * 0.5;
-				if(v27 < -1.0) {
-					v27 = -1.0;
+				v27 = v26 * 0.5f;
+				if(v27 < -1.0f) {
+					v27 = -1.0f;
 				}
-				v25 = 0.0;
-				v28 = (float)(v27 / 1.4) * 0.5;
+				v25 = 0.0f;
+				v28 = (float)(v27 / 1.4f) * 0.5f;
 			}
 			v29 = v20;
 			v30 = 0;
-			v31 = v25 + 0.5;
-			v32 = (float)((float)((float)(v28 * (float)scaleY) * 0.0625) * 4.0) + (float)((float)scaleY * 0.5);
+			v31 = v25 + 0.5f;
+			v32 = (float)((float)((float)(v28 * (float)scaleY) * 0.0625f) * 4.0f) + (float)((float)scaleY * 0.5f);
 			while(v30 < scaleY) {
-				v33 = (float)((float)((float)v30 - v32) * 12.0) / v31;
-				v34 = (float)((float)(this->interpolationNoises[v29] / 10.0) + 1.0) * 0.5;
-				if(v33 < 0.0) {
-					v33 = v33 * 4.0;
+				v33 = (float)((float)((float)v30 - v32) * 12.0f) / v31;
+				v34 = (float)((float)(this->interpolationNoises[v29] / 10.0f) + 1.0f) * 0.5f;
+				if(v33 < 0.0f) {
+					v33 = v33 * 4.0f;
 				}
-				v35 = this->upperInterpolationNoises[v29] * 0.0019531;
-				if(v34 >= 0.0) {
-					if(v34 > 1.0) {
-						v35 = this->lowerInterpolationNoises[v29] * 0.0019531;
+				v35 = this->upperInterpolationNoises[v29] * 0.0019531f;
+				if(v34 >= 0.0f) {
+					if(v34 > 1.0f) {
+						v35 = this->lowerInterpolationNoises[v29] * 0.0019531f;
 					} else {
-						v35 = v35 + (float)((float)((float)(this->lowerInterpolationNoises[v29] * 0.0019531) - v35) * v34);
+						v35 = v35 + (float)((float)((float)(this->lowerInterpolationNoises[v29] * 0.0019531f) - v35) * v34);
 					}
 				}
 				v36 = v35 - v33;
 				if(scaleY - 3 <= v30) {
-					v36 = (float)((float)((float)(4 - scaleY + v30) / 3.0) * -10.0) + (float)(v36 * (float)(1.0 - (float)((float)(4 - scaleY + v30) / 3.0)));
+					v36 = (float)((float)((float)(4 - scaleY + v30) / 3.0f) * -10.0f) + (float)(v36 * (float)(1.0f - (float)((float)(4 - scaleY + v30) / 3.0f)));
 				}
 				++v30;
 				v37 = &heights[v29++];
@@ -376,7 +374,7 @@ void RandomLevelSource::prepareHeights(int32_t a2, int32_t a3, uint8_t* a4, void
 	int v45;		  // [esp+6Ch] [ebp-30h]
 	int v46;		  // [esp+78h] [ebp-24h]
 
-	this->field_72D0 = heights = this->getHeights(this->field_72D0, 4 * a2, 0, 4 * a3, 5, 17, 5);
+	this->heights = heights = this->getHeights(this->heights, 4 * a2, 0, 4 * a3, 5, 17, 5);
 	v34 = 0;
 	while(2) {
 		v44 = 85 * v34;
@@ -394,10 +392,10 @@ void RandomLevelSource::prepareHeights(int32_t a2, int32_t a3, uint8_t* a4, void
 				v35 = *v8;
 				v36 = heights[(v45 + v43 + 68)/4];
 				v31 = 2 * v43;
-				v38 = 0.125 * (float)(v7[1] - *v7);
-				v39 = 0.125 * (float)(v7[18] - v33);
-				v40 = 0.125 * (float)(v8[1] - *v8);
-				v41 = 0.125 * (float)(v8[18] - v36);
+				v38 = 0.125f * (float)(v7[1] - *v7);
+				v39 = 0.125f * (float)(v7[18] - v33);
+				v40 = 0.125f * (float)(v8[1] - *v8);
+				v41 = 0.125f * (float)(v8[18] - v36);
 				do {
 					v9 = v42;
 					v10 = v33;
@@ -405,7 +403,7 @@ void RandomLevelSource::prepareHeights(int32_t a2, int32_t a3, uint8_t* a4, void
 					v12 = v32;
 					do {
 						v13 = (v46 << 7) | v31 | ((v11 + v34) << 11);
-						v14 = (float)(v10 - v12) * 0.25;
+						v14 = (float)(v10 - v12) * 0.25f;
 						if(v31 > 63) {
 							v15 = &a4[v13];
 							v16 = v12;
@@ -413,7 +411,7 @@ void RandomLevelSource::prepareHeights(int32_t a2, int32_t a3, uint8_t* a4, void
 							v18 = v11;
 							do {
 								v19 = 0;
-								if(v16 > 0.0) v19 = Tile::rock->blockID;
+								if(v16 > 0.0f) v19 = Tile::rock->blockID;
 								++v17;
 								*v15 = v19;
 								v15 += 128;
@@ -429,12 +427,12 @@ LABEL_11:
 							v27 = 0;
 							v18 = v11;
 							do {
-								if(v9[v27] >= 0.5) {
+								if(v9[v27] >= 0.5f) {
 									v29 = Tile::calmWater->blockID;
 								} else {
 									v29 = Tile::ice->blockID;
 								}
-								if(v26 > 0.0) v29 = Tile::rock->blockID;
+								if(v26 > 0.0f) v29 = Tile::rock->blockID;
 								++v27;
 								*v25 = v29;
 								v25 += 128;
@@ -448,7 +446,7 @@ LABEL_11:
 						v30 = v11;
 						do {
 							v24 = Tile::calmWater->blockID;
-							if(v22 > 0.0) v24 = Tile::rock->blockID;
+							if(v22 > 0.0f) v24 = Tile::rock->blockID;
 							++v23;
 							*v21 = v24;
 							v21 += 128;
@@ -458,8 +456,8 @@ LABEL_11:
 LABEL_12:
 						v11 = v20 + 1;
 						v9 += 16;
-						v12 = v12 + (float)((float)(v35 - v32) * 0.25);
-						v10 = v10 + (float)((float)(v36 - v33) * 0.25);
+						v12 = v12 + (float)((float)(v35 - v32) * 0.25f);
+						v10 = v10 + (float)((float)(v36 - v33) * 0.25f);
 					} while(v11 != 4);
 					++v37;
 					++v31;
@@ -470,7 +468,7 @@ LABEL_12:
 				} while(v37 != 8);
 				v43 += 4;
 				if(v43 != 64) {
-					heights = this->field_72D0;
+					heights = this->heights;
 					continue;
 				}
 				break;
@@ -480,7 +478,7 @@ LABEL_12:
 			if(v46 != 16) {
 				v45 += 68;
 				v44 += 68;
-				heights = this->field_72D0;
+				heights = this->heights;
 				continue;
 			}
 			break;
@@ -488,7 +486,7 @@ LABEL_12:
 		v34 += 4;
 		a6 += 64;
 		if(v34 != 16) {
-			heights = this->field_72D0;
+			heights = this->heights;
 			continue;
 		}
 		break;
@@ -496,8 +494,8 @@ LABEL_12:
 }
 
 RandomLevelSource::~RandomLevelSource() {
-	if(this->field_72D0) {
-		delete[] this->field_72D0;
+	if(this->heights) {
+		delete[] this->heights;
 	}
 	if(this->interpolationNoises) {
 		delete[] this->interpolationNoises;
@@ -580,20 +578,19 @@ void RandomLevelSource::postProcess(struct ChunkSource* a2, int32_t chunkX, int3
 	this->random.setSeed((v12 + (2 * (v11 >> 2) + 1) * chunkX) ^ this->level->getSeed());
 	double timeS = getTimeS();
 	Random* a8 = &this->random;
-	for(int32_t v14 = 0; v14 < 10; ++v14) {
-		int32_t v16 = chunkXStart + (a8->genrand_int32() & 0xF);
-		int8_t v17 = a8->genrand_int32();
-		int32_t v18 = chunkZStart + (a8->genrand_int32() & 0xF);
+	for(int32_t i = 0; i < 10; ++i) {
+		int32_t x = chunkXStart + (a8->genrand_int32() & 0xF);
+		int8_t y = a8->genrand_int32();
+		int32_t z = chunkZStart + (a8->genrand_int32() & 0xF);
 		ClayFeature f;
-		f.place(this->level, a8, v16, v17 & 0x7F, v18);
+		f.place(this->level, a8, x, y & 0x7F, z);
 	}
-	for(int32_t v20 = 0; v20 < 20; ++v20) {
-		int32_t v21 = chunkXStart + (a8->genrand_int32() & 0xF);
-		int8_t v22 = a8->genrand_int32();
-		int8_t v23 = a8->genrand_int32();
-		int32_t z = chunkZStart + (v23 & 0xF);
+	for(int32_t i = 0; i < 20; ++i) {
+		int32_t x = chunkXStart + (a8->genrand_int32() & 0xF);
+		int8_t y = a8->genrand_int32();
+		int32_t z = chunkZStart + (a8->genrand_int32() & 0xF);
 		OreFeature f(Tile::dirt->blockID, 32);
-		f.place(this->level, a8, v21, v22 & 0x7F, z);
+		f.place(this->level, a8, x, y & 0x7F, z);
 	}
 	for(int32_t v25 = 0; v25 < 10; ++v25) {
 		int32_t v26 = chunkXStart + (a8->genrand_int32() & 0xF);
@@ -653,8 +650,8 @@ void RandomLevelSource::postProcess(struct ChunkSource* a2, int32_t chunkX, int3
 		f.place(this->level, a8, v59, v61, v63);
 	}
 
-	float v = this->treeNoise.getValue((float)chunkXStart * 0.5, (float)chunkZStart * 0.5);
-	int v67 = (int)(float)((float)((float)((float)(a8->nextFloat() * 4.0) + (float)(v * 0.125)) + 4.0) / 3.0);
+	float v = this->treeNoise.getValue((float)chunkXStart * 0.5f, (float)chunkZStart * 0.5f);
+	int v67 = (int)(float)((float)((float)((float)(a8->nextFloat() * 4.0f) + (float)(v * 0.125f)) + 4.0f) / 3.0f);
 	int v68 = v67;
 	int v69 = a8->genrand_int32() % 0xA;
 	int32_t amountOfTrees = v69 == 0;
@@ -758,7 +755,7 @@ void RandomLevelSource::postProcess(struct ChunkSource* a2, int32_t chunkX, int3
 		SpringFeature f(Tile::lava->blockID);
 		f.place(this->level, a8, (v108 & 0xF) + chunkXStart + 8, v109 % (v136 % (v138 % 0x70u + 8) + 8), chunkZStart + (v110 & 0xF) + 8);
 	}
-	if(this->field_72CC) {
+	if(this->spawnMobs) {
 		MobSpawner::postProcessSpawnMobs(this->level, biomeAtChunk, chunkXStart + 8, chunkZStart + 8, 16, 16, a8);
 	}
 
@@ -771,7 +768,7 @@ void RandomLevelSource::postProcess(struct ChunkSource* a2, int32_t chunkX, int3
 			int topy = this->level->getTopSolidBlock(v113, v119);
 			float v116 = *v142++;
 			int v117 = topy;
-			if((float)(v116 - (float)((float)((float)(topy - 64) * 0.015625) * 0.3)) < 0.5 && (unsigned int)(topy - 1) <= 0x7E && this->level->isEmptyTile(v113, topy, v119)) {
+			if((float)(v116 - (float)((float)((float)(topy - 64) * 0.015625f) * 0.3f)) < 0.5f && (unsigned int)(topy - 1) <= 0x7E && this->level->isEmptyTile(v113, topy, v119)) {
 				Material* v118 = this->level->getMaterial(v113, v117 - 1, v119);
 				if(v118->blocksMotion()) {
 					if(Material::ice != this->level->getMaterial(v113, v117 - 1, v119)) {

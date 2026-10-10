@@ -305,7 +305,7 @@ void TileEntity::setRemoved(void) {
 		level = this->level;
 		isClientMaybe = level->isClient;
 		if(!level->isClient) {
-			for(auto& player: level->playersMaybe) {
+			for(auto& player: level->players) {
 				player->tileEntityDestroyed(this->id);
 			}
 		}

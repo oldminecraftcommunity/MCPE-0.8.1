@@ -15,17 +15,17 @@ struct RandomLevelSource : ChunkSource{
 	PerlinNoise octave16noise_1;
 	PerlinNoise octave16noise_2;
 	PerlinNoise octave8noise_1;
-	PerlinNoise octave4noise_1;
+	PerlinNoise sandAndGravelNoise;
 	PerlinNoise octave4noise_2;
 	PerlinNoise octave10noise_1;
 	PerlinNoise octave16noise_3;
 	PerlinNoise treeNoise;
 	struct Level* level;
-	bool field_72CC;
+	bool spawnMobs;
 	int8_t field_72CD, field_72CE, field_72CF;
-	float* field_72D0;
-	float field_72D4[256];
-	float field_76D4[256];
+	float* heights;
+	float sandNoises[256];
+	float gravelNoises[256];
 	float field_7AD4[256];
 	float* interpolationNoises;
 	float* upperInterpolationNoises;
@@ -284,7 +284,7 @@ struct RandomLevelSource : ChunkSource{
 	int32_t field_82CC;
 
 	RandomLevelSource(struct Level*, long, int32_t, bool); //long, int, bool
-	void buildSurfaces(int32_t, int32_t, uint8_t*, struct Biome**);
+	void buildSurfaces(int32_t chunkX, int32_t chunkZ, uint8_t* blocks, struct Biome**);
 	void calcWaterDepths(struct ChunkSource*, int32_t, int32_t);
 	float* getHeights(float*, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t);
 	void prepareHeights(int32_t, int32_t, uint8_t*, void*, float*);

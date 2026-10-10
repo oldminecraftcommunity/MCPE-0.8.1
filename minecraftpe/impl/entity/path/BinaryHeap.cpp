@@ -2,16 +2,16 @@
 #include <entity/path/Node.hpp>
 #include <float.h>
 #include <string.h>
+#include <util/ArrayWithLength.hpp>
 
-BinaryHeap::BinaryHeap() {
-	this->array = 0;
-	this->arraySize = 0;
+BinaryHeap::BinaryHeap(){
 	this->_init();
 }
 void BinaryHeap::_init() {
+	arrayWithLength<Node*> arr(1024);
+	memset(arr.array, 0, 1024*sizeof(Node*));
+	this->array = arr;
 	this->_size = 0;
-	this->array = new Node*[1024];
-	this->arraySize = 1024;
 }
 void BinaryHeap::changeCost(Node* a2, float a3) {
 	float nodeCost;					 // s14
@@ -41,7 +41,7 @@ void BinaryHeap::downHeap(int32_t a2) {
 	Node* v10;		// r7
 	float v11;		// s13
 
-	v2 = this->array[a2];
+	v2 = this->array.array[a2];
 	nodeCost = v2->nodeCost;
 	while(1) {
 		size = this->_size;
@@ -50,7 +50,7 @@ void BinaryHeap::downHeap(int32_t a2) {
 		if(v5 >= size) {
 			break;
 		}
-		array = this->array;
+		array = this->array.array;
 		if(v6 < size) {
 			v9 = array[v6];
 			v8 = v9->nodeCost;
@@ -76,7 +76,7 @@ void BinaryHeap::downHeap(int32_t a2) {
 			a2 = 2 * a2 + 1;
 		}
 	}
-	this->array[a2] = v2;
+	this->array.array[a2] = v2;
 	v2->nodePositionInHeapMaybe = a2;
 }
 void BinaryHeap::insert(Node* a2) {
@@ -87,20 +87,20 @@ void BinaryHeap::insert(Node* a2) {
 	int v9;	   // r1
 
 	size = this->_size;
-	if(size == this->arraySize) {
+	if(size == this->array.size) {
 		v6 = 2 * size;
 		v7 = new Node*[v6];
 		memset(v7, 0, v6 * sizeof(Node*));
 		for(i = 0; i < this->_size; ++i) {
-			v7[i] = this->array[i];
+			v7[i] = this->array.array[i];
 		}
-		if(this->array) {
-			operator delete[](this->array);
+		if(this->array.array) {
+			operator delete[](this->array.array);
 		}
-		this->array = v7;
-		this->arraySize = v6;
+		this->array.array = v7;
+		this->array.size = v6;
 	}
-	this->array[this->_size] = a2;
+	this->array.array[this->_size] = a2;
 	a2->nodePositionInHeapMaybe = this->_size;
 	v9 = this->_size;
 	this->_size = v9 + 1;
@@ -110,7 +110,7 @@ bool_t BinaryHeap::isEmpty() {
 	return this->_size == 0;
 }
 Node* BinaryHeap::peek() {
-	return *this->array;
+	return *this->array.array;
 }
 Node* BinaryHeap::pop() {
 	Node** array; // r2
@@ -118,12 +118,12 @@ Node* BinaryHeap::pop() {
 	Node* v3;	  // r4
 	Node* result; // r0
 
-	array = this->array;
+	array = this->array.array;
 	v2 = this->_size - 1;
-	v3 = *this->array;
+	v3 = *this->array.array;
 	this->_size = v2;
 	*array = array[v2];
-	this->array[this->_size] = 0;
+	this->array.array[this->_size] = 0;
 	if(this->_size > 0) {
 		this->downHeap(0);
 	}
@@ -138,14 +138,14 @@ void BinaryHeap::remove(Node* a2) {
 	int32_t v6;						 // r1
 
 	nodePositionInHeapMaybe = a2->nodePositionInHeapMaybe;
-	array = this->array;
+	array = this->array.array;
 	v5 = this->_size - 1;
 	this->_size = v5;
 	array[nodePositionInHeapMaybe] = array[v5];
-	this->array[this->_size] = 0;
+	this->array.array[this->_size] = 0;
 	v6 = a2->nodePositionInHeapMaybe;
 	if(this->_size > v6) {
-		if(this->array[v6]->nodeCost >= a2->nodeCost) {
+		if(this->array.array[v6]->nodeCost >= a2->nodeCost) {
 			this->downHeap(v6);
 		} else {
 			this->upHeap(v6);
@@ -161,20 +161,20 @@ void BinaryHeap::upHeap(int32_t a2) {
 	float nodeCost; // s15
 	Node* v4;		// r2
 
-	v2 = this->array[a2];
+	v2 = this->array.array[a2];
 	nodeCost = v2->nodeCost;
 	while(a2 > 0) {
-		v4 = this->array[(a2 - 1) >> 1];
+		v4 = this->array.array[(a2 - 1) >> 1];
 		if(nodeCost >= v4->nodeCost) {
 			break;
 		}
-		this->array[a2] = v4;
+		this->array.array[a2] = v4;
 		v4->nodePositionInHeapMaybe = a2;
 		a2 = (a2 - 1) >> 1;
 	}
-	this->array[a2] = v2;
+	this->array.array[a2] = v2;
 	v2->nodePositionInHeapMaybe = a2;
 }
 BinaryHeap::~BinaryHeap() {
-	if(this->array) delete[] this->array;
+	if(this->array.array) delete[] this->array.array;
 }

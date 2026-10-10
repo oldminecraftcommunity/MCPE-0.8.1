@@ -283,7 +283,7 @@ void RolledSelectionListV::setComponentSelected(bool_t a2) {
 }
 
 int32_t RolledSelectionListV::getMaxPosition() {
-	return this->field_50 + this->field_10 * this->getNumberOfItems();
+	return this->getNumberOfItems() * this->field_10 + this->field_50;
 }
 float RolledSelectionListV::getPos(float a2) {
 	return this->field_30 - (float)(a2 * this->field_34);

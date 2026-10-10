@@ -27,9 +27,9 @@ Player::Player(Level* a2, bool_t a3)
 	this->bedPosition.x = 0;
 	this->bedPosition.y = 0;
 	this->bedPosition.z = 0;
-	this->field_CC4 = 0.0;
+	this->field_CC4 = 0.0f;
 	this->field_CC8 = 0;
-	this->field_CCC = 0.0;
+	this->field_CCC = 0.0f;
 	this->field_CD0 = 0;
 	this->useItemDuration = 0;
 	this->sleepingCounter = 0;
@@ -45,12 +45,12 @@ Player::Player(Level* a2, bool_t a3)
 	this->entityRenderId = PLAYER;
 	this->field_BEE = 0;
 	this->inventory = new Inventory(this, a3);
-	this->ridingHeight = 1.62;
+	this->ridingHeight = 1.62f;
 	TilePos res = level->getSharedSpawnPos();
-	this->moveTo((float)res.x + 0.5, (float)(res.y + 1), (float)res.z + 0.5, 0.0, 0.0);
+	this->moveTo((float)res.x + 0.5f, (float)(res.y + 1), (float)res.z + 0.5f, 0.0f, 0.0f);
 	this->health = 20;
 	this->field_B84 = "humanoid";
-	this->field_B9C = 180.0;
+	this->field_B9C = 180.0f;
 	this->field_E8 = 20;
 	this->skin = "mob/char.png";
 	this->synchedEntityData.define<int8_t>(16, 0);
@@ -126,13 +126,13 @@ void Player::findStandUpPosition(Entity* a2) {
 
 	AABB v25{0, 0, 0, 1, 1, 1};
 	v4 = 3;
-	v5 = -1.5;
+	v5 = -1.5f;
 	do {
 		v22 = 3;
-		v23 = -1.5;
+		v23 = -1.5f;
 		do {
-			if(v5 != 0.0 || v23 != 0.0) {
-				v6 = this->ridingHeight + 1.0;
+			if(v5 != 0.0f || v23 != 0.0f) {
+				v6 = this->ridingHeight + 1.0f;
 				maxY = this->boundingBox.maxY;
 				maxX = this->boundingBox.maxX;
 				minX = this->boundingBox.minX;
@@ -148,7 +148,7 @@ void Player::findStandUpPosition(Entity* a2) {
 					v19 = (int32_t)(float)(posZ + v23);
 					posY = this->posY;
 					if(this->level->isTopSolidBlocking(v18, (int32_t)this->posY, v19)) {
-						this->teleportTo(v5 + this->posX, posY + 1.0, v23 + this->posZ);
+						this->teleportTo(v5 + this->posX, posY + 1.0f, v23 + this->posZ);
 						return;
 					}
 					if(!this->level->isTopSolidBlocking(v18, (int32_t)posY - 1, v19)) {
@@ -157,10 +157,10 @@ void Player::findStandUpPosition(Entity* a2) {
 				}
 			}
 			--v22;
-			v23 = v23 + 1.5;
+			v23 = v23 + 1.5f;
 		} while(v22);
 		--v4;
-		v5 = v5 + 1.5;
+		v5 = v5 + 1.5f;
 	} while(v4);
 	a2->positionRider(1);
 }
@@ -202,18 +202,18 @@ float Player::getSleepRotation() {
 	int32_t v2; // r0
 
 	if(!this->isSleeping()) {
-		return 0.0;
+		return 0.0f;
 	}
 	v2 = this->level->getData(this->bedPosition.x, this->bedPosition.y, this->bedPosition.z) & 3;
 	switch(v2) {
 		case 2:
-			return 270.0;
+			return 270.0f;
 		case 3:
-			return 180.0;
+			return 180.0f;
 		case 1:
-			return 0.0;
+			return 0.0f;
 	}
-	return 90.0;
+	return 90.0f;
 }
 int32_t Player::getTicksUsingItem() {
 	if(this->isUsingItem()) {
@@ -228,16 +228,12 @@ bool_t Player::hasRespawnPosition() {
 	return this->hasRespawnPos;
 }
 void Player::interact(Entity* a2) {
-	ItemInstance* sel; // r6
-
 	if(!a2->interactWithPlayer(this)) {
-		sel = this->inventory->getSelected();
-		if(sel) {
-			if(a2->isMob()) {
-				sel->interactEnemy((Mob*)a2, this);
-				if(sel->count <= 0) {
-					this->inventory->clearSlot(this->inventory->selectedSlot);
-				}
+		ItemInstance* sel = this->inventory->getSelected();
+		if(sel && a2->isMob()) {
+			sel->interactEnemy((Mob*)a2, this);
+			if(sel->count <= 0) {
+				this->inventory->clearSlot(this->inventory->selectedSlot);
 			}
 		}
 	}
@@ -286,22 +282,22 @@ void Player::setBedOffset(int32_t a2) {
 	float v4; // r3
 	float v5; // r2
 
-	this->field_CC4 = 0.0;
-	this->field_CCC = 0.0;
+	this->field_CC4 = 0.0f;
+	this->field_CCC = 0.0f;
 	switch(a2) {
 		case 0:
-			v4 = -1.8;
+			v4 = -1.8f;
 			goto LABEL_4;
 		case 1:
-			v5 = 1.8;
+			v5 = 1.8f;
 			goto LABEL_7;
 		case 2:
-			v4 = 1.8;
+			v4 = 1.8f;
 LABEL_4:
 			this->field_CCC = v4;
 			return;
 		case 3:
-			v5 = -1.8;
+			v5 = -1.8f;
 LABEL_7:
 			this->field_CC4 = v5;
 			break;
@@ -310,7 +306,7 @@ LABEL_7:
 	}
 }
 void Player::setDefaultHeadHeight() {
-	this->ridingHeight = 1.62;
+	this->ridingHeight = 1.62f;
 }
 void Player::setRespawnPosition(const struct Pos& a2) {
 	this->hasRespawnPos = a2.y >= 0;
@@ -340,7 +336,7 @@ void Player::spawnEatParticles(const ItemInstance* a2, int32_t a3) {
 	Level* v28;	  // r6
 
 	if(a2->getUseAnimation() == 2) {
-		this->level->playSound(this, "random.drink", 0.5, (float)(level->random.nextFloat() * 0.1) + 0.9);
+		this->level->playSound(this, "random.drink", 0.5f, (float)(level->random.nextFloat() * 0.1f) + 0.9f);
 	} else {
 		if(a2->getUseAnimation() != 1) {
 			return;
@@ -348,18 +344,18 @@ void Player::spawnEatParticles(const ItemInstance* a2, int32_t a3) {
 		v27 = 0;
 		while(v27 < a3) {
 			++v27;
-			v8 = -(float)(this->yaw * 3.1416);
-			v9 = (float) - (float)(this->pitch * 3.1416) / 180.0;
-			v10 = this->random.nextFloat() - 0.5;
+			v8 = -(float)(this->yaw * 3.1416f);
+			v9 = (float) - (float)(this->pitch * 3.1416f) / 180.0f;
+			v10 = this->random.nextFloat() - 0.5f;
 			v11 = Mth::random();
-			v12 = v8 / 180.0;
-			v13 = (float)(v11 * 0.1) + 0.1;
-			v14 = v10 * 0.1;
-			if(v14 == 0.0) {
-				v14 = 0.0;
+			v12 = v8 / 180.0f;
+			v13 = (float)(v11 * 0.1f) + 0.1f;
+			v14 = v10 * 0.1f;
+			if(v14 == 0.0f) {
+				v14 = 0.0f;
 			}
-			if(v13 == 0.0) {
-				v13 = 0.0;
+			if(v13 == 0.0f) {
+				v13 = 0.0f;
 			}
 
 			Vec3 a6{v14, v13, 0.0f};
@@ -367,40 +363,40 @@ void Player::spawnEatParticles(const ItemInstance* a2, int32_t a3) {
 			a6.yRot(v12);
 			v15 = this->random.nextFloat();
 			v16 = this->random.nextFloat();
-			v17 = (float)(v15 - 0.5) * 0.3;
-			if(v17 == 0.0) {
-				v17 = 0.0;
+			v17 = (float)(v15 - 0.5f) * 0.3f;
+			if(v17 == 0.0f) {
+				v17 = 0.0f;
 			}
-			v18 = (float) - (float)(v16 * 0.6) - 0.3;
-			if(v18 == 0.0) {
-				v18 = 0.0;
+			v18 = (float) - (float)(v16 * 0.6f) - 0.3f;
+			if(v18 == 0.0f) {
+				v18 = 0.0f;
 			}
-			Vec3 vec{v17, v18, 0.6};
+			Vec3 vec{v17, v18, 0.6f};
 			vec.xRot(v9);
 			vec.yRot(v12);
 			posX = this->posX;
 			posY = this->posY;
 			v22 = posX + vec.x;
-			if((float)(posX + vec.x) == 0.0) {
-				v22 = 0.0;
+			if((float)(posX + vec.x) == 0.0f) {
+				v22 = 0.0f;
 			}
 			vec.x = v22;
 			v23 = this->getHeadHeight();
 			v24 = this->level;
 			v25 = (float)(posY + v23) + vec.y;
 			v26 = vec.z + this->posZ;
-			if(v25 == 0.0) {
-				v25 = 0.0;
+			if(v25 == 0.0f) {
+				v25 = 0.0f;
 			}
 			vec.y = v25;
-			if(v26 == 0.0) {
-				v26 = 0.0;
+			if(v26 == 0.0f) {
+				v26 = 0.0f;
 			}
 			vec.z = v26;
-			v24->addParticle(PT_BREAKING_ITEM_1, v22, v25, v26, a6.x, a6.y + 0.05, a6.z, a2->itemClass->itemID);
+			v24->addParticle(PT_BREAKING_ITEM_1, v22, v25, v26, a6.x, a6.y + 0.05f, a6.z, a2->itemClass->itemID);
 		}
 		v28 = this->level;
-		v28->playSound((Entity*)this, "random.eat", (float)((float)(this->random.genrand_int32() & 1) * 0.5) + 0.5, (float)((float)(this->random.nextFloat() - this->random.nextFloat()) * 0.2) + 1.0);
+		v28->playSound((Entity*)this, "random.eat", (float)((float)(this->random.genrand_int32() & 1) * 0.5f) + 0.5f, (float)((float)(this->random.nextFloat() - this->random.nextFloat()) * 0.2f) + 1.0f);
 	}
 }
 void Player::startUsingItem(ItemInstance a2, int32_t a3) {
@@ -416,17 +412,15 @@ void Player::stopUsingItem() {
 	if(this->getCarriedItem()) {
 		ItemInstance* v3 = this->getCarriedItem();
 		if(v3) {
-			if(this->item.itemClass == v3->itemClass) {
-				if(this->item.itemClass) {
-					this->getCarriedItem()->setAuxValue(this->item.getAuxValue());
-				}
+			if(this->item.itemClass == v3->itemClass && this->item.itemClass) {
+				this->getCarriedItem()->setAuxValue(this->item.getAuxValue());
 			}
 		}
 	}
 	this->item.setNull();
 	this->useItemDuration = 0;
 	if(!this->level->isClient) {
-		this->setSharedFlag(4, this->level->isClient);
+		this->setSharedFlag(4, 0);
 	}
 }
 void Player::tileEntityDestroyed(int32_t a2) {
@@ -529,7 +523,7 @@ void Player::rideTick() {
 		pitch = this->pitch;
 		Mob::rideTick();
 		this->field_C74 = this->field_C78;
-		this->field_C78 = 0.0;
+		this->field_C78 = 0.0f;
 		ridingAt = this->ridingAt;
 		if(ridingAt) {
 			if(ridingAt->getEntityTypeId() == 12) //Pig
@@ -542,7 +536,7 @@ void Player::rideTick() {
 	}
 }
 float Player::getRidingHeight() {
-	return this->ridingHeight - 0.5;
+	return this->ridingHeight - 0.5f;
 }
 void Player::ride(Entity* a2) {
 	Entity* ridingAt; // r1
@@ -564,7 +558,7 @@ bool_t Player::isInWall() {
 	return Entity::isInWall();
 }
 float Player::getHeadHeight() {
-	return 0.12;
+	return 0.12f;
 }
 bool_t Player::isShootable() {
 	return 1;
@@ -593,16 +587,9 @@ bool_t Player::hurt(Entity* a2, int32_t a3) {
 			return 0;
 		}
 		difficulty = this->level->difficulty;
-		switch(difficulty) {
-			case 0:
-				return 0;
-			case 1:
-				a3 = a3 / 3 + 1;
-				break;
-			case 3:
-				a3 = 3 * a3 / 2;
-				break;
-		}
+		if(difficulty == 0) return 0;
+		if(difficulty == 1) a3 = a3 / 3 + 1;
+		if(difficulty == 3) a3 = 3 * a3 / 2;
 	}
 	if(a3) {
 		return Mob::hurt(a2, a3);
@@ -620,8 +607,8 @@ void Player::resetPos(bool_t a2) {
 	int32_t v4; // r0
 
 	if(!this->isSleeping()) {
-		this->ridingHeight = 1.62;
-		this->setSize(0.6, 1.8);
+		this->ridingHeight = 1.62f;
+		this->setSize(0.6f, 1.8f);
 		Entity::resetPos(a2);
 	}
 	this->field_107 = 0;
@@ -744,10 +731,10 @@ void Player::die(Entity* a2) {
 	float v7;		  // s17
 
 	Mob::die(a2);
-	this->setSize(0.2, 0.2);
+	this->setSize(0.2f, 0.2f);
 	this->setPos(this->posX, this->posY, this->posZ);
 	level = this->level;
-	this->motionY = 0.1;
+	this->motionY = 0.1f;
 	v5 = 0;
 	this->inventory->dropAll(level->isClient);
 	do {
@@ -758,14 +745,14 @@ void Player::die(Entity* a2) {
 		v6->setNull();
 	} while(v5 != 4);
 	if(a2) {
-		v7 = (float)((float)(this->field_14C + this->yaw) * 3.1416) / 180.0;
-		this->motionX = -(float)(Mth::cos(v7) * 0.1);
-		this->motionZ = -(float)(Mth::sin(v7) * 0.1);
+		v7 = (float)((float)(this->field_14C + this->yaw) * 3.1416f) / 180.0f;
+		this->motionX = -(float)(Mth::cos(v7) * 0.1f);
+		this->motionZ = -(float)(Mth::sin(v7) * 0.1f);
 	} else {
-		this->motionZ = 0.0;
-		this->motionX = 0.0;
+		this->motionZ = 0.0f;
+		this->motionX = 0.0f;
 	}
-	this->ridingHeight = 0.1;
+	this->ridingHeight = 0.1f;
 }
 bool_t Player::isSleeping() {
 	return this->sleeping;
@@ -786,9 +773,9 @@ void Player::travel(float a2, float a3) {
 	if(this->abilities.flying) {
 		float motionY = this->motionY;
 		float jumpMovementFactor = this->jumpMovementFactor;
-		this->jumpMovementFactor = 0.05;
+		this->jumpMovementFactor = 0.05f;
 		Mob::travel(a2, a3);
-		this->motionY = motionY * 0.6;
+		this->motionY = motionY * 0.6f;
 		this->jumpMovementFactor = jumpMovementFactor;
 	} else {
 		Mob::travel(a2, a3);
@@ -841,23 +828,16 @@ void Player::updateAi() {
 	this->updateAttackAnim();
 }
 float Player::getWalkingSpeedModifier() {
-	return 1.0;
+	return 1.0f;
 }
 void Player::hurtArmor(int32_t a2) {
-	int32_t v2; // r1
-	int32_t v3; // r8
-	int32_t i;	// r4
+	int v2 = a2 / 4;
+	int v3 = v2 < 1 ? 1 : v2;
 
-	v2 = a2 / 4;
-	if(v2 < 1) {
-		v3 = 1;
-	} else {
-		v3 = v2;
-	}
-	for(i = 0; i != 4; ++i) {
+	for(int i = 0; i != 4; ++i) {
 		if(ItemInstance::isArmorItem(&this->armorSlots[i])) {
 			this->armorSlots[i].hurtAndBreak(v3, this);
-			if(!this->armorSlots[i].count) {
+			if(this->armorSlots[i].count == 0) {
 				this->armorSlots[i].setNull();
 			}
 		}
@@ -914,30 +894,30 @@ void Player::drop(const ItemInstance* a2, bool_t a3) {
 
 	if(a2) {
 		if(!a2->isNull()) {
-			v16 = this->posY - 0.3;
+			v16 = this->posY - 0.3f;
 			v17 = v16 + this->getHeadHeight();
 			v18 = new ItemEntity(this->level, this->posX, v17, this->posZ, *a2);
 			v18->delayBeforePickup = 40;
 			if(a3) {
-				v6 = this->random.nextFloat() * 0.5;
+				v6 = this->random.nextFloat() * 0.5f;
 				f = this->random.nextFloat();
-				v8 = (float)(f * 3.1416) + (float)(f * 3.1416);
+				v8 = (float)(f * 3.1416f) + (float)(f * 3.1416f);
 				v18->motionX = -(float)(Mth::sin(v8) * v6);
 				v9 = Mth::cos(v8);
-				v18->motionY = 0.2;
+				v18->motionY = 0.2f;
 				v18->motionZ = v9 * v6;
 			} else {
-				v10 = Mth::sin((float)(this->yaw / 180.0) * 3.1416);
-				v18->motionX = (float) - (float)(v10 * Mth::cos((float)(this->pitch / 180.0) * 3.1416)) * 0.3;
-				v11 = Mth::cos((float)(this->yaw / 180.0) * 3.1416);
-				v18->motionZ = (float)(v11 * Mth::cos((float)(this->pitch / 180.0) * 3.1416)) * 0.3;
-				v18->motionY = 0.1 - (float)(Mth::sin((float)(this->pitch / 180.0) * 3.1416) * 0.3);
-				v12 = this->random.nextFloat() * 3.1416;
+				v10 = Mth::sin((float)(this->yaw / 180.0f) * 3.1416f);
+				v18->motionX = (float) - (float)(v10 * Mth::cos((float)(this->pitch / 180.0f) * 3.1416f)) * 0.3f;
+				v11 = Mth::cos((float)(this->yaw / 180.0f) * 3.1416f);
+				v18->motionZ = (float)(v11 * Mth::cos((float)(this->pitch / 180.0f) * 3.1416f)) * 0.3f;
+				v18->motionY = 0.1f - (float)(Mth::sin((float)(this->pitch / 180.0f) * 3.1416f) * 0.3f);
+				v12 = this->random.nextFloat() * 3.1416f;
 				v13 = v12 + v12;
-				v14 = this->random.nextFloat() * 0.02;
+				v14 = this->random.nextFloat() * 0.02f;
 				v18->motionX = v18->motionX + (float)(Mth::cos(v13) * v14);
 				v15 = this->random.nextFloat();
-				v18->motionY = v18->motionY + (float)((float)(v15 - this->random.nextFloat()) * 0.1);
+				v18->motionY = v18->motionY + (float)((float)(v15 - this->random.nextFloat()) * 0.1f);
 				v18->motionZ = v18->motionZ + (float)(Mth::sin(v13) * v14);
 			}
 			this->reallyDrop(v18);
@@ -975,15 +955,15 @@ int32_t Player::startSleepInBed(int32_t x, int32_t y, int32_t z) {
 			return 4;
 		}
 		v19 = (float)x;
-		if(fabsf(this->posX - (float)x) > 3.0) {
+		if(fabsf(this->posX - (float)x) > 3.0f) {
 			return 3;
 		}
 		v8 = (float)y;
-		if(fabsf(this->posY - (float)y) > 4.0) {
+		if(fabsf(this->posY - (float)y) > 4.0f) {
 			return 3;
 		}
 		v9 = (float)z;
-		if(fabsf(this->posZ - (float)z) > 3.0) {
+		if(fabsf(this->posZ - (float)z) > 3.0f) {
 			return 3;
 		}
 		if(this->level->dimensionPtr->isNaturalDimension()) {
@@ -999,25 +979,25 @@ int32_t Player::startSleepInBed(int32_t x, int32_t y, int32_t z) {
 		level->getEntitiesOfClass(1, v21, v20);
 		if(!v20.empty()) return 5;
 	}
-	this->setSize(0.2, 0.2);
-	this->ridingHeight = 0.2;
+	this->setSize(0.2f, 0.2f);
+	this->ridingHeight = 0.2f;
 	if(this->level->hasChunkAt(x, y, z)) {
 		v12 = this->level->getData(x, y, z);
 		v14 = _BED_OFFS_X[v12 & 3];
 		v15 = _BED_OFFS_Z[v12 & 3];
 		this->setBedOffset(v12 & 3);
-		this->setPos((float)x + v14, (float)y + 0.9375, (float)z + v15);
+		this->setPos((float)x + v14, (float)y + 0.9375f, (float)z + v15);
 	} else {
-		this->setPos((float)x + 0.5, (float)y + 0.0625, (float)z + 0.5);
+		this->setPos((float)x + 0.5f, (float)y + 0.0625f, (float)z + 0.5f);
 	}
 
 	this->sleeping = 1;
 	this->sleepingCounter = 0;
 	this->bedPosition = {x, y, z};
 	v17 = this->level;
-	this->motionY = 0.0;
-	this->motionZ = 0.0;
-	this->motionX = 0.0;
+	this->motionY = 0.0f;
+	this->motionZ = 0.0f;
+	this->motionX = 0.0f;
 	if(!v17->isClient) {
 		v17->updateSleepingPlayerList();
 	}
@@ -1034,7 +1014,7 @@ void Player::stopSleepInBed(bool_t a2, bool_t a3, bool_t a4) {
 	Level* v16;			  // r0
 
 	if(this->isSleeping()) {
-		this->setSize(0.6, 1.8);
+		this->setSize(0.6f, 1.8f);
 		this->setDefaultHeadHeight();
 		level = this->level;
 		Pos v17 = this->bedPosition;
@@ -1043,7 +1023,7 @@ void Player::stopSleepInBed(bool_t a2, bool_t a3, bool_t a4) {
 			if(!BedTile::findStandUpPosition(this->level, this->bedPosition.x, this->bedPosition.y, this->bedPosition.z, 0, v17)) {
 				v17 = this->bedPosition;
 			}
-			this->setPos((float)v17.x + 0.5, (float)((float)v17.y + this->ridingHeight) + 0.1, (float)v17.z + 0.5);
+			this->setPos(v17.x + 0.5f, (v17.y + this->ridingHeight) + 0.1f, v17.z + 0.5f);
 		}
 		v12 = this->level;
 		this->sleeping = 0;
@@ -1064,7 +1044,7 @@ void Player::stopSleepInBed(bool_t a2, bool_t a3, bool_t a4) {
 		Pos v18{0, 0, 0};
 		BedTile::findStandUpPosition(v16, v15, v13, v14, 0, v18);
 		this->setRespawnPosition(v18);
-		this->synchedEntityData.clearFlag<int8_t>(16, 1); //char
+		this->synchedEntityData.clearFlag<char>(16, 1);
 		this->field_D4E = 0;
 	}
 }

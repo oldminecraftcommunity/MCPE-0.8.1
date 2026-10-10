@@ -14,7 +14,7 @@ void SimpleFoodData::eat(int32_t heal) {
 	else this->currentLevel = v2;
 }
 void SimpleFoodData::tick(Player* player) {
-	if(this->currentLevel && player->isHurt()) {
+	if(this->currentLevel > 0 && player->isHurt()) {
 		player->heal(this->currentLevel);
 		this->currentLevel = 0;
 	}

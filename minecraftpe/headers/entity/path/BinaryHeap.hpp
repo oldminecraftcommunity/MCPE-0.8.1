@@ -1,11 +1,10 @@
 #pragma once
-#include <_types.h>
+#include <util/ArrayWithLength.hpp>
 
 struct Node;
 struct BinaryHeap
 {
-	Node** array;
-	int32_t arraySize;
+	arrayWithLength<Node*> array;
 	int32_t _size;
 
 	BinaryHeap();

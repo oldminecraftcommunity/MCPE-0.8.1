@@ -38,7 +38,7 @@ PaneCraftingScreen::PaneCraftingScreen(int32_t a2)
 	this->field_184.height = 1;
 	this->field_194 = 4;
 	for(int v7 = 0; v7 < this->field_194; ++v7) {
-		this->intvec1.emplace_back(1 << v7);
+		this->intvec1.push_back(1 << v7);
 		this->intvec2.push_back(v7);
 	}
 }

@@ -20,7 +20,7 @@ struct Util{
 	static std::string toString(int);
 	static std::string toString(float);
 	static std::string toLower(std::string const&);
-	//TODO	static			compareNoCase		(std::string,std::string)
+	static bool compareNoCase(std::string a, std::string b);
 	static void stringSplit(const std::string& s, int32_t, const float*, std::function<void(const std::string&, float)>);
 	static std::string stringTrim(const std::string&, const std::string&, bool_t, bool_t);
 	static std::string stringTrim(const std::string&);

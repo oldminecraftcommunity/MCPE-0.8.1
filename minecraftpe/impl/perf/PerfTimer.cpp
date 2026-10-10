@@ -37,14 +37,14 @@ std::vector<PerfTimer::ResultField> PerfTimer::getLog(const std::string& a2) {
 			}
 		}
 		for(auto&& it3: PerfTimer::times) {
-			it3.second *= 0.999;
+			it3.second *= 0.999f;
 		}
 		if(v9 > v12) {
 			v34.push_back(PerfTimer::ResultField("unspecified", ((v9 - v12) * 100.0f) / v9, ((v9 - v12) * 100.0f) / v7));
 		}
 		std::sort(v34.begin(), v34.end()); //TODO check
-		v34.push_back(PerfTimer::ResultField(a2, 100, (v9*100)/v7));
-		return v34;
+		v34.insert(v34.begin(), PerfTimer::ResultField(a2, 100, (v9*100)/v7));
+		return std::vector<PerfTimer::ResultField>(std::move(v34));
 	} else {
 		return {};
 	}
@@ -77,7 +77,7 @@ void PerfTimer::push(const std::string& a2) {
 			PerfTimer::path += ".";
 		}
 		PerfTimer::path += a2;
-		PerfTimer::paths.emplace_back(PerfTimer::path);
+		PerfTimer::paths.push_back(PerfTimer::path);
 		PerfTimer::startTimes.push_back(getTimeS());
 	}
 

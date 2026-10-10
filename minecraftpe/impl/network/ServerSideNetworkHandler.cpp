@@ -110,9 +110,9 @@ Player* ServerSideNetworkHandler::findPendingPlayer(const RakNet::RakNetGUID& a2
 	return 0;
 }
 Player* ServerSideNetworkHandler::getPlayer(const RakNet::RakNetGUID& a2) {
-	for(int32_t i = 0; i < this->level->playersMaybe.size(); ++i) {
-		if(a2 == this->level->playersMaybe[i]->rakNetGUID) {
-			return this->level->playersMaybe[i];
+	for(int32_t i = 0; i < this->level->players.size(); ++i) {
+		if(a2 == this->level->players[i]->rakNetGUID) {
+			return this->level->players[i];
 		}
 	}
 	return 0;
@@ -127,8 +127,8 @@ void ServerSideNetworkHandler::onReady_ClientGeneration(const RakNet::RakNetGUID
 		SetTimePacket(this->level->getTime(), (uint32_t)this->level->levelData.stopTime >> 31).write(&stream);
 		this->rakPeer->Send(&stream, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE_ORDERED, 0, RakNet::AddressOrGUID(a2), 0, 0);
 
-		for(int32_t v8 = 0; v8 < this->level->playersMaybe.size(); ++v8) {
-			Player* v9 = this->level->playersMaybe[v8];
+		for(int32_t v8 = 0; v8 < this->level->players.size(); ++v8) {
+			Player* v9 = this->level->players[v8];
 			stream.Reset();
 			AddPlayerPacket(v9).write(&stream);
 			this->rakPeer->Send(&stream, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE_ORDERED, 0, RakNet::AddressOrGUID(a2), 0, 0);
@@ -154,7 +154,7 @@ void ServerSideNetworkHandler::onReady_ClientGeneration(const RakNet::RakNetGUID
 		stream.Reset();
 		ContainerSetContentPacket a3(0, p->inventory->getSlotCopies(), 9);
 		for(int v26 = 0; v26 < p->inventory->getLinkedSlotsCount(); ++v26) {
-			a3.field_1C.emplace_back(p->inventory->getLinkedSlot(v26));
+			a3.field_1C.push_back(p->inventory->getLinkedSlot(v26));
 		}
 		a3.write(&stream);
 		this->rakPeer->Send(&stream, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE_ORDERED, 0, RakNet::AddressOrGUID(a2), 0, 0);
@@ -286,8 +286,8 @@ void ServerSideNetworkHandler::onNewClient(const RakNet::RakNetGUID& a2) {
 }
 void ServerSideNetworkHandler::onDisconnect(const RakNet::RakNetGUID& a2) {
 	if(this->level) {
-		for(int i = 0; i < this->level->playersMaybe.size(); ++i) {
-			Player* v6 = this->level->playersMaybe[i];
+		for(int i = 0; i < this->level->players.size(); ++i) {
+			Player* v6 = this->level->players[i];
 			if(v6->rakNetGUID == a2) {
 				std::string v9 = v6->username + " disconnected from the game";
 				this->displayGameMessage("server", v9);

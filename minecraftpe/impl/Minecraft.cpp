@@ -57,7 +57,7 @@
 #include <util/Util.hpp>
 #include <cpputils.hpp>
 
-char Minecraft::customDebugId[8];
+char Minecraft::customDebugId[4];
 
 char_t* Minecraft::progressMessages[] = {"Locating server", "Building terrain", "Preparing", "Saving chunks", "Waiting for Minecraft Realms"};
 
@@ -738,12 +738,12 @@ void Minecraft::resetPlayer(Player* a2) {
 }
 Player* Minecraft::respawnPlayer(int32_t a2) {
 	int32_t v6 = 0;
-	int32_t v7 = this->level->playersMaybe.size();
+	int32_t v7 = this->level->players.size();
 	for(v6 = 0; v6 != v7; ++v6) {
-		Player* p = this->level->playersMaybe[v6];
+		Player* p = this->level->players[v6];
 		if(p->entityId == a2) {
 			this->resetPlayer(p);
-			return this->level->playersMaybe[v6];
+			return this->level->players[v6];
 		}
 	}
 	return 0;

@@ -11,98 +11,71 @@ Particle::Particle(Level* level, ParticleType a3, const std::string& a4)
 {
 }
 void Particle::_init(float xPos, float yPos, float zPos, float motX, float motY, float motZ, int32_t a8) {
-	float v14;	   // r0
-	float v15;	   // r0
-	float v16;	   // r0
-	float v17;	   // s23
-	float v18;	   // s22
-	float v19;	   // s15
-	float v20;	   // s17
-	float motionZ; // s15
-	float f;	   // r0
-	float Float;   // r0
-
 	Entity::_init();
-	this->gravity = 0.0;
+	this->gravity = 0.0f;
 	this->field_112 = 1;
 	this->ticksAlive = 0;
-	this->bColMul = 1.0;
-	this->gColMul = 1.0;
-	this->rColMul = 1.0;
+	this->bColMul = 1.0f;
+	this->gColMul = 1.0f;
+	this->rColMul = 1.0f;
 	this->isDead = 0;
-	this->setSize(0.2, 0.2);
-	this->ridingHeight = this->entityHeight * 0.5;
+	this->setSize(0.2f, 0.2f);
+	this->ridingHeight = this->entityHeight * 0.5f;
 	this->setPos(xPos, yPos, zPos);
-	v14 = Mth::random();
-	this->motionX = motX + (float)((float)((float)(v14 + v14) - 1.0) * 0.4);
-	v15 = Mth::random();
-	this->motionY = motY + (float)((float)((float)(v15 + v15) - 1.0) * 0.4);
-	v16 = Mth::random();
-	this->motionZ = motZ + (float)((float)((float)(v16 + v16) - 1.0) * 0.4);
-	v17 = Mth::random();
-	v18 = Mth::random();
-	v19 = sqrt((float)((float)((float)(this->motionY * this->motionY) + (float)(this->motionX * this->motionX)) + (float)(this->motionZ * this->motionZ)));
-	v20 = (float)((float)((float)((float)(v17 + v18) + 1.0) * 0.15) * 0.4) / v19;
-	this->motionX = this->motionX * v20;
-	motionZ = this->motionZ;
-	this->motionY = (float)(v20 * this->motionY) + 0.1;
-	this->motionZ = motionZ * v20;
-	this->field_138 = Entity::sharedRandom.nextFloat() * 3.0;
-	this->field_13C = Entity::sharedRandom.nextFloat() * 3.0;
-	f = Entity::sharedRandom.nextFloat();
-	this->_scale = (float)((float)(f * 0.5) + 0.5) + (float)((float)(f * 0.5) + 0.5);
-	Float = Entity::sharedRandom.nextFloat();
+	this->motionX = motX + (float)((float)(Mth::random()*2 - 1.0f) * 0.4f);
+	this->motionY = motY + (float)((float)(Mth::random()*2 - 1.0f) * 0.4f);
+	this->motionZ = motZ + (float)((float)(Mth::random()*2 - 1.0f) * 0.4f);
+
+	float v17 = Mth::random();
+	float v18 = Mth::random();
+	float v19 = sqrt((this->motionX * this->motionX) + (this->motionY * this->motionY) + (this->motionZ * this->motionZ));
+	float v20 = (((v17+v18) + 1.0f) * 0.15f * 0.4f) / v19;
+
+	this->motionX *= v20;
+	this->motionY = v20 * this->motionY + 0.1f;
+	this->motionZ *= v20;
+	this->field_138 = Entity::sharedRandom.nextFloat() * 3.0f;
+	this->field_13C = Entity::sharedRandom.nextFloat() * 3.0f;
+	this->_scale = ((Entity::sharedRandom.nextFloat() * 0.5f) + 0.5f) * 2;
+	this->maxAliveTime = (int)(4.0f / ((Entity::sharedRandom.nextFloat() * 0.9f) + 0.1f));
 	this->field_110 = 0;
-	this->maxAliveTime = (int)(float)(4.0 / (float)((float)(Float * 0.9) + 0.1));
 	this->init(xPos, yPos, zPos, motX, motY, motZ, a8);
 	this->tick();
 }
 void Particle::scale(float a2) {
-	this->setSize(a2 * 0.2, a2 * 0.2);
+	this->setSize(a2 * 0.2f, a2 * 0.2f);
 	this->_scale *= a2;
 }
 Particle* Particle::setPower(float a2) {
 	this->motionX = this->motionX * a2;
-	this->motionY = (float)((float)(this->motionY - 0.1) * a2) + 0.1;
+	this->motionY = (this->motionY - 0.1f) * a2 + 0.1f;
 	this->motionZ = this->motionZ * a2;
 	return this;
 }
 
 void Particle::tick() {
-	int32_t maxAliveTime; // r2
-	int32_t ticksAlive; // r3
-	float v4; // s15
-	float motionX; // r1
-	bool_t onGround; // r3
-	float v8; // s13
-	float v9; // s15
-
-	maxAliveTime = this->maxAliveTime;
 	this->prevX = this->posX;
 	this->prevY = this->posY;
 	this->prevZ = this->posZ;
-	ticksAlive = this->ticksAlive;
-	this->ticksAlive = ticksAlive + 1;
-	if(ticksAlive >= maxAliveTime) {
+
+	this->ticksAlive += 1;
+	if(this->ticksAlive >= this->maxAliveTime) {
 		this->remove();
 	}
-	v4 = this->motionY - (float)(this->gravity * 0.04);
-	motionX = this->motionX;
-	this->motionY = v4;
-	this->move(motionX, v4, this->motionZ);
-	onGround = this->onGround;
-	v8 = this->motionX * 0.98;
-	this->motionY = this->motionY * 0.98;
-	v9 = this->motionZ * 0.98;
-	this->motionX = v8;
-	this->motionZ = v9;
-	if(onGround) {
-		this->motionX = v8 * 0.7;
-		this->motionZ = v9 * 0.7;
+
+	this->motionY -= this->gravity * 0.04f;
+	this->move(this->motionX, this->motionY, this->motionZ);
+
+	this->motionX *= 0.98f;
+	this->motionY *= 0.98f;
+	this->motionZ *= 0.98f;
+	if(this->onGround) {
+		this->motionX *= 0.7f;
+		this->motionZ *= 0.7f;
 	}
 }
 
-void Particle::render(Tesselator& a2, float a3, float a4, float a5, float a6, float a7, float a8) {
+void Particle::render(Tesselator& a2, float pt, float a4, float a5, float a6, float a7, float a8) {
 	float minX;			   // r7
 	float maxX;			   // r9
 	float v2;			   // r8
@@ -112,7 +85,6 @@ void Particle::render(Tesselator& a2, float a3, float a4, float a5, float a6, fl
 	float v17;			   // s19
 	float v18;			   // s20
 	float v19;			   // s18
-	float v20;			   // r0
 	float v21;			   // s23
 	float v22;			   // s17
 	float v23;			   // s22
@@ -127,13 +99,13 @@ void Particle::render(Tesselator& a2, float a3, float a4, float a5, float a6, fl
 	maxX = this->texture.maxX;
 	v2 = this->texture.minY;
 	v1 = this->texture.maxY;
-	v15 = this->_scale * 0.1;
+	v15 = this->_scale * 0.1f;
 	coordMultiplier = this->coordMultiplier;
-	v17 = (float)((float)(this->prevX + (float)((float)(this->posX - this->prevX) * a3)) - Particle::xOff) + (float)(coordMultiplier * Particle::playerViewDir.x);
-	v18 = (float)((float)(this->prevY + (float)((float)(this->posY - this->prevY) * a3)) - Particle::yOff) + (float)(coordMultiplier * Particle::playerViewDir.y);
-	v19 = (float)((float)(this->prevZ + (float)((float)(this->posZ - this->prevZ) * a3)) - Particle::zOff) + (float)(coordMultiplier * Particle::playerViewDir.z);
-	v20 = this->getBrightness(a3);
-	a2.color(v20 * this->rColMul, v20 * this->gColMul, v20 * this->bColMul);
+	v17 = (this->prevX + (this->posX - this->prevX) * pt) - Particle::xOff + coordMultiplier * Particle::playerViewDir.x;
+	v18 = (this->prevY + (this->posY - this->prevY) * pt) - Particle::yOff + coordMultiplier * Particle::playerViewDir.y;
+	v19 = (this->prevZ + (this->posZ - this->prevZ) * pt) - Particle::zOff + coordMultiplier * Particle::playerViewDir.z;
+	float brightness = this->getBrightness(pt);
+	a2.color(brightness * this->rColMul, brightness * this->gColMul, brightness * this->bColMul);
 	v21 = a4 * v15;
 	v22 = a7 * v15;
 	v23 = a6 * v15;

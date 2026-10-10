@@ -43,7 +43,7 @@ struct Multitouch
 		if ((uint8_t) (a5) >= 0xBu) {
 			v7 = 0xBu;
 		}
-		Multitouch::_inputs.emplace_back(MouseAction(a1, a2, a3, a4, v7));
+		Multitouch::_inputs.push_back(MouseAction(a1, a2, a3, a4, v7));
 		Multitouch::_pointers[v7].feed(a1, a2, a3, a4);
 		if (a1) {
 			if (a2 == 1) {

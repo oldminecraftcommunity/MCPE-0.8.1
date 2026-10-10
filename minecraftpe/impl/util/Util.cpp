@@ -132,6 +132,14 @@ std::string Util::toLower(const std::string& s){
 	std::transform(cp.begin(), cp.end(), cp.begin(), tolower);
 	return cp;
 }
+bool Util::compareNoCase(std::string a, std::string b) {
+	for(int i = 0; i < a.size(); ++i) {
+		if(i >= b.size()) break;
+		if(tolower(a[i]) < tolower(b[i])) return 1;
+		if(tolower(a[i]) > tolower(b[i])) return 0;
+	}
+	return a.size() < b.size();
+}
 void Util::stringSplit(const std::string& s, int32_t a2, const float* a3, std::function<void(const std::string&, float)> onSplit) {
 	float v5 = 0;
 	int32_t v11 = 0;

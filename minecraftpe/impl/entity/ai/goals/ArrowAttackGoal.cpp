@@ -9,8 +9,7 @@
 #include <math.h>
 
 ArrowAttackGoal::ArrowAttackGoal(Mob* a2, float a3, int32_t a4, int32_t a5)
-	: Goal() {
-	this->seenTicks = 0;
+	: Goal(), attackTimeout(0), seenTicks(0) {
 	this->holder = a2;
 	this->speedMultiplier = a3;
 	this->attackType = a4;
@@ -82,7 +81,8 @@ bool_t ArrowAttackGoal::canContinueToUse() {
 	return 0;
 }
 void ArrowAttackGoal::stop() {
-	if(this->target.entity) this->target.unset();
+	TempEPtr<Mob>* target = &this->target;
+	if(target->entity) target->unset();
 }
 void ArrowAttackGoal::tick() {
 	Mob* v2;			  // r5

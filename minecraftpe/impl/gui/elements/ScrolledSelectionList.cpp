@@ -49,47 +49,31 @@ void ScrolledSelectionList::setRenderSelection(bool_t a2) {
 	this->renderSelection = a2;
 }
 int32_t ScrolledSelectionList::getMaxPosition() {
-	return this->field_44 + this->field_10 * this->getNumberOfItems();
+	return this->getNumberOfItems() * this->field_10 + this->field_44;
 }
 
 int32_t ScrolledSelectionList::getItemAtPosition(int32_t a2, int32_t a3) {
-	float v4;	 // s12
-	int32_t v6;	 // s13
-	float v7;	 // s14
-	int32_t v8;	 // r1
-	int32_t v9;	 // r0
-	int32_t v10; // s15
-	int32_t v11; // r5
+	float v4 = this->field_8;
+	int v6 = this->field_44;
+	float v7 = this->field_30;
+	int v8 = this->field_10;
+	int v9 = this->field_14 / 2;
+	if(a2 < v9 - 110) return -1;
+	if(a2 > v9 + 110) return -1;
 
-	v4 = this->field_8;
-	v6 = this->field_44;
-	v7 = this->field_30;
-	v8 = this->field_10;
-	v9 = this->field_14 / 2;
-	if(a2 < v9 - 110) {
-		return -1;
-	}
-	if(a2 > v9 + 110) {
-		return -1;
-	}
-	v10 = (int32_t)(float)((float)((float)((float)((float)a3 - v4) - (float)v6) + (float)(int32_t)v7) - 4.0);
-	v11 = v10 / v8;
-	if(v10 / v8 < 0 || v10 < 0 || v10 / v8 >= this->getNumberOfItems()) {
-		return -1;
-	}
-	return v11;
+	int v10 = (int32_t)(float)((float)((float)((float)((float)a3 - v4) - (float)v6) + (float)(int32_t)v7) - 4.0f);
+	int v11 = v10 / v8;
+	if(v11 >= 0 && v10 >= 0 && v11 < this->getNumberOfItems()) return v11;
+	return -1;
 }
 float ScrolledSelectionList::capYPosition() {
-	int32_t result; // r0
-	float v3;		// s15
-
-	result = this->getMaxPosition();
-	v3 = (float)result - (float)((float)(this->field_C - this->field_8) - 4.0);
-	if(v3 < 0.0) {
-		v3 = v3 * 0.5;
+	int result = this->getMaxPosition();
+	float v3 = result - ((this->field_C - this->field_8) - 4.0f);
+	if(v3 < 0.0f) {
+		v3 = v3 * 0.5f;
 	}
-	if(this->field_30 < 0.0) {
-		this->field_30 = 0.0;
+	if(this->field_30 < 0.0f) {
+		this->field_30 = 0.0f;
 	}
 	if(this->field_30 > v3) {
 		this->field_30 = v3;

@@ -14,7 +14,6 @@ struct RakNetInstance : IRakNetInstance{
 	int8_t field_32, field_33;
 	int8_t field_34, field_35, field_36, field_37;
 
-	//TODO
 	RakNetInstance();
 	int32_t handleUnconnectedPong(const RakNet::RakString&, const RakNet::Packet*, const char_t*, bool_t);
 

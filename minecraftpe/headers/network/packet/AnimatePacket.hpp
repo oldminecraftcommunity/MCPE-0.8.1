@@ -5,7 +5,6 @@
 struct AnimatePacket : Packet{
 	int32_t eid;
 	int8_t action;
-	char align1, align2, align3;
 
 	AnimatePacket() {
 	}

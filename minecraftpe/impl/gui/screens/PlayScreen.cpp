@@ -129,6 +129,7 @@ std::shared_ptr<GuiElement> PlayScreen::buildMCOServerList() {
 	struct _sorter
 	{
 		bool operator()(const std::pair<long long, MCOServerListItem>& a, const std::pair<long long, MCOServerListItem>& b) {
+			if(a.first == b.first) return Util::compareNoCase(a.second.worldName, b.second.worldName);
 			return a.first < b.first;
 		}
 	};
@@ -242,9 +243,9 @@ void PlayScreen::resetBaseButtons() {
 }
 void PlayScreen::resetCurrentWaitingMCOCancelButton(void) {
 	if(this->field_B4) {
-		Button** but = std::find(this->buttons.data(), this->buttons.data() + this->buttons.size(), this->field_B4);
-		if(but != (this->buttons.data() + this->buttons.size())) {
-			this->buttons.erase(this->buttons.begin() + (but - this->buttons.data())); //TODO check
+		auto&& but = std::find(this->buttons.begin(), this->buttons.end(), this->field_B4);
+		if(but != this->buttons.end()) {
+			this->buttons.erase(but);
 		}
 	}
 	this->field_B4 = 0;

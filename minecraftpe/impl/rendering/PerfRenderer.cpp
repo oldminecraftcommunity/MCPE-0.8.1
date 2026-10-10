@@ -15,8 +15,8 @@ PerfRenderer::PerfRenderer(Minecraft* mc, Font* font){
 	this->lastRenderedAt = -1;
 	int32_t cnt = 512;
 	do{
-		this->field_C.emplace_back(0.0f);
-		this->field_18.emplace_back(0.0f);
+		this->field_C.push_back(0.0f);
+		this->field_18.push_back(0.0f);
 		--cnt;
 	}while(cnt);
 }
@@ -24,19 +24,19 @@ PerfRenderer::PerfRenderer(Minecraft* mc, Font* font){
 void PerfRenderer::debugFpsMeterKeyPress(int32_t n) {
 	std::vector<PerfTimer::ResultField> v9 = PerfTimer::getLog(this->field_8);
 	if(!v9.empty()) {
-		std::string v12(v9[0].sectionName);
+		PerfTimer::ResultField res = v9[0];
 		v9.erase(v9.begin());
 		if(n) {
 			int32_t v6 = n - 1;
 			if(v6 < v9.size()) {
-				if(v9[0].sectionName == "unspecified") {
+				if(v9[0].sectionName != "unspecified") {
 					if(this->field_8.size()) {
 						this->field_8 += ".";
 					}
 					this->field_8 += v9[0].sectionName;
 				}
 			}
-		} else if(v12.size()) {
+		} else if(res.sectionName.size()) {
 			int32_t v5 = this->field_8.rfind(".");
 			if(v5 != -1) {
 				this->field_8 = this->field_8.substr(0, v5);

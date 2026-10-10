@@ -516,31 +516,23 @@ bool_t Options::canModify(const Options::Option* a2) {
 }
 void Options::addOptionToSaveOutput(std::vector<std::string>& a2, std::string a3, std::string a4) {
 	std::stringstream v11;
-	v11 << a3;
-	v11 << ":";
-	v11 << a4;
-	a2.emplace_back(v11.str());
+	v11 << a3 << ":" << a4;
+	a2.push_back(v11.str());
 }
 void Options::addOptionToSaveOutput(std::vector<std::string>& a2, std::string a3, int32_t a4) {
 	std::stringstream v11;
-	v11 << a3;
-	v11 << ":";
-	v11 << a4;
-	a2.emplace_back(v11.str());
+	v11 << a3 << ":" << a4;
+	a2.push_back(v11.str());
 }
 void Options::addOptionToSaveOutput(std::vector<std::string>& a2, std::string a3, float a4) {
 	std::stringstream v11;
-	v11 << a3;
-	v11 << ":";
-	v11 << a4;
-	a2.emplace_back(v11.str());
+	v11 << a3 << ":" << a4;
+	a2.push_back(v11.str());
 }
 void Options::addOptionToSaveOutput(std::vector<std::string>& a2, std::string a3, bool a4) {
 	std::stringstream v11;
-	v11 << a3;
-	v11 << ":";
-	v11 << a4;
-	a2.emplace_back(v11.str());
+	v11 << a3 << ":" << a4;
+	a2.push_back(v11.str());
 }
 
 void Options::init(Minecraft* mc, std::string a3) {

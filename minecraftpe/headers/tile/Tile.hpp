@@ -181,7 +181,7 @@ struct Tile{
 	int32_t field_50, field_54;
 	bool_t goodGraphics;
 	int8_t field_59, field_5A, field_5B;
-	int32_t field_5C;
+	uint32_t field_5C;
 	AABB aabb;
 	bool_t replaceable;
 	int8_t field_79, field_7A, field_7B;

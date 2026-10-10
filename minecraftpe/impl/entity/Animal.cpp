@@ -29,49 +29,26 @@ void Animal::resetLove() {
 }
 
 bool_t Animal::interactWithPlayer(Player* a2) {
-	ItemInstance* sel; // r5
-	int32_t v5;		   // r6
-	float g;		   // s21
-	float g2;		   // s20
-	float v8;		   // r0
-	float posX;		   // s16
-	Level* level;	   // r7
-	float v11;		   // s19
-	float f;		   // r0
-	float entityWidth; // s15
-	float v14;		   // s18
-	float posY;		   // s16
-	float ff;		   // r0
-	float posZ;		   // s22
-	float v18;		   // s16
-	float v19;		   // r0
 
-	sel = a2->inventory->getSelected();
-	if(!sel || !this->isFood(sel) || this->isBaby() || this->getAge()) {
-		return Entity::interactWithPlayer(a2);
-	}
+	ItemInstance* sel = a2->inventory->getSelected();
+	if(!sel || !this->isFood(sel)) return Entity::interactWithPlayer(a2);
+	if(this->isBaby() || this->getAge() != 0) return Entity::interactWithPlayer(a2);
+
 	if(!a2->abilities.instabuild) {
 		--sel->count;
 	}
-	v5 = 7;
+	int v5 = 7;
 	this->inLove = 600;
 	this->attackTarget = 0;
 	do {
-		g = this->random.nextGaussian();
-		g2 = this->random.nextGaussian();
-		v8 = this->random.nextGaussian();
-		posX = this->posX;
-		level = this->level;
-		v11 = v8;
-		f = this->random.nextFloat();
-		entityWidth = this->entityWidth;
-		v14 = posX + (float)((float)(f * entityWidth) + (float)(f * entityWidth));
-		posY = this->posY;
-		ff = this->random.nextFloat();
-		posZ = this->posZ;
-		v18 = (float)(posY + 0.5) + (float)(ff * this->entityHeight);
-		v19 = this->random.nextFloat();
-		level->addParticle(PT_HEART, v14 - entityWidth, v18, (float)(posZ + (float)((float)(v19 * this->entityWidth) + (float)(v19 * this->entityWidth))) - this->entityWidth, g * 0.02, g2 * 0.02, v11 * 0.02, 0);
+		float g = this->random.nextGaussian();
+		float g2 = this->random.nextGaussian();
+		float g3 = this->random.nextGaussian();
+		this->level->addParticle(PT_HEART,
+			this->posX + (this->random.nextFloat() * this->entityWidth)*2 - this->entityWidth,
+			(this->posY + 0.5f) + (this->random.nextFloat() * this->entityHeight),
+			this->posZ + (this->random.nextFloat() * this->entityWidth)*2 - this->entityWidth,
+			g * 0.02f, g2 * 0.02f, g3 * 0.02f, 0);
 		--v5;
 	} while(v5);
 	return 1;
@@ -98,45 +75,24 @@ int32_t Animal::getAmbientSoundInterval() {
 	return 240;
 }
 void Animal::aiStep() {
-	int32_t inLove; // r3
-	int32_t v3;		// r3
-	float g;		// s20
-	float v5;		// s19
-	float v6;		// r0
-	float posX;		// s16
-	Level* level;	// r6
-	float v9;		// s18
-	float f;		// r0
-	float v11;		// s17
-	float v12;		// s16
-	float v13;		// r0
-	float posZ;		// s21
-	float v15;		// s16
-	float v16;		// r0
-
 	AgableMob::aiStep();
-	if(this->getAge()) {
+	if(this->getAge() != 0) {
 		this->inLove = 0;
 	}
-	inLove = this->inLove;
-	if(inLove > 0) {
-		v3 = inLove - 1;
-		this->inLove = v3;
-		if((v3 & 0xF) == 0) {
-			g = this->random.nextGaussian();
-			v5 = this->random.nextGaussian();
-			v6 = this->random.nextGaussian();
-			posX = this->posX;
-			level = this->level;
-			v9 = v6;
-			f = this->random.nextFloat();
-			v11 = (float)(posX + (float)((float)(f * this->entityWidth) + (float)(f * this->entityWidth))) - this->entityWidth;
-			v12 = this->posY + 0.5;
-			v13 = this->random.nextFloat();
-			posZ = this->posZ;
-			v15 = v12 + (float)(v13 * this->entityHeight);
-			v16 = this->random.nextFloat();
-			level->addParticle(PT_HEART, v11, v15, (float)(posZ + (float)((float)(v16 * this->entityWidth) + (float)(v16 * this->entityWidth))) - this->entityWidth, g * 0.02, v5 * 0.02, v9 * 0.02, 0);
+
+	if(this->inLove > 0) {
+		this->inLove -= 1;
+		if((this->inLove & 0xF) == 0) {
+			float g = this->random.nextGaussian();
+			float g1 = this->random.nextGaussian();
+			float g2 = this->random.nextGaussian();
+
+			this->level->addParticle(PT_HEART,
+				(this->posX + (this->random.nextFloat() * this->entityWidth)*2) - this->entityWidth,
+				(this->posY + 0.5f) + (float)(this->random.nextFloat() * this->entityHeight),
+				this->posZ + (this->random.nextFloat() * this->entityWidth)*2 - this->entityWidth,
+				g * 0.02f, g1 * 0.02f, g2 * 0.02f, 0
+			);
 		}
 	}
 }

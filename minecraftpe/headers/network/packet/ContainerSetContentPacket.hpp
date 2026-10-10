@@ -37,14 +37,14 @@ struct ContainerSetContentPacket: Packet
 		int16_t v7;
 		stream->Read<int16_t>(v7);
 		for (int32_t i = 0; i < v7; ++i) {
-			this->field_10.emplace_back(PacketUtil::readItemInstance(stream));
+			this->field_10.push_back(PacketUtil::readItemInstance(stream));
 		}
 		int16_t v8;
 		stream->Read<int16_t>(v8);
 		for (int32_t i = 0; i < v8; ++i) {
 			int32_t v9;
 			stream->Read<int32_t>(v9);
-			this->field_1C.emplace_back(v9);
+			this->field_1C.push_back(v9);
 		}
 	}
 	virtual void handle(const RakNet::RakNetGUID& a2, NetEventCallback* a3) {

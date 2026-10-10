@@ -111,7 +111,7 @@ int recursiveDelete(const char_t* a1) {
 	return remove(a1);
 #endif
 }
-bool FUNC_ACCESS(const char* a, int b){
+int FUNC_ACCESS(const char* a, int b){
 	return access(a, b);
 }
 bool_t exists(const char_t* a1){

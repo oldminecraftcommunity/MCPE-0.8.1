@@ -39,7 +39,7 @@ ScrollingPane::ScrollingPane(int32_t a2, const IntRectangle& a3, const IntRectan
 	this->field_CC = 0;
 	this->field_DC = 0;
 	this->field_DD = 0;
-	this->field_DE = 0;
+	this->isTrackingMaybe = 0;
 	this->field_DF = 0;
 	this->field_FC = 0;
 	this->field_100 = 0;
@@ -53,12 +53,12 @@ ScrollingPane::ScrollingPane(int32_t a2, const IntRectangle& a3, const IntRectan
 	this->field_128 = 0;
 	this->field_12C = 0;
 	this->field_130 = 0;
-	this->field_134 = 0;
+	/*this->field_134 = 0;
 	this->field_138 = 0;
 	this->field_13C = 0;
 	this->field_14C = 0;
 	this->field_150 = 0;
-	this->field_154 = 0;
+	this->field_154 = 0;*/
 	this->field_160 = a3.minX;
 	this->field_164 = a3.minY;
 	this->field_168 = a3.width;
@@ -114,15 +114,15 @@ ScrollingPane::ScrollingPane(int32_t a2, const IntRectangle& a3, const IntRectan
 	this->float_vec.reserve(0x200 / 4); //TODO check
 	this->field_178 = 0;
 	this->field_17C = 1;
-	this->field_1A4 = new int8_t[a6];
+	this->field_1A4 = new bool[a6];
 	int32_t v40 = 0;
 	while(v40 < a6) {
 		this->field_1A4[v40++] = 0;
 	}
 	int32_t v41 = this->field_2C.minX;
 	int32_t v42 = this->field_2C.width;
-	this->verticalScrollbar.field_C = 2.3333;
-	this->verticalScrollbar.field_8 = 2.3333;
+	this->verticalScrollbar.field_C = 2.3333f;
+	this->verticalScrollbar.field_8 = 2.3333f;
 	this->field_1C4.field_C = 2.3333;
 	int32_t v43 = v41 + v42;
 	int32_t v44 = this->field_2C.minY;
@@ -131,14 +131,14 @@ ScrollingPane::ScrollingPane(int32_t a2, const IntRectangle& a3, const IntRectan
 	int32_t v45 = v43;
 	int32_t v46 = this->field_2C.height;
 	this->field_1C4.field_0 = 0;
-	this->verticalScrollbar.field_0 = (float)v45 - 2.3333;
-	this->field_1C4.field_4 = (float)(v44 + v46) - 2.3333;
+	this->verticalScrollbar.field_0 = (float)v45 - 2.3333f;
+	this->field_1C4.field_4 = (float)(v44 + v46) - 2.3333f;
 }
 void ScrollingPane::_onSelect(int32_t a2) {
 	if((this->field_4 & 0x20) != 0) {
-		this->field_1A4[a2] = this->onSelect(a2, this->field_1A4[a2] ^ 1);
+		this->field_1A4[a2] = this->onSelect(a2, !this->field_1A4[a2]);
 	} else {
-		bool_t v7 = this->onSelect(a2, 1);
+		bool v7 = this->onSelect(a2, 1);
 		int32_t v8 = this->field_1A8;
 		if(a2 != v8) {
 			if(v7) {
@@ -173,7 +173,7 @@ void ScrollingPane::adjustContentSize() {
 	else this->field_1E8 = v3;
 }
 void ScrollingPane::beginTracking(float a2, float a3, int32_t a4) {
-	if(!this->field_DE) {
+	if(!this->isTrackingMaybe) {
 		this->stopDecelerationAnimation();
 		this->adjustContentSize();
 		int32_t v7 = this->field_168;
@@ -183,23 +183,15 @@ void ScrollingPane::beginTracking(float a2, float a3, int32_t a4) {
 		this->field_12C = v8;
 		this->field_128 = (v7 - v9);
 		this->snapContentOffsetToBounds(0);
-		float v10 = this->_contentOffset.y;
-		float v11 = this->_contentOffset.z;
-		this->field_134 = this->_contentOffset.x;
-		this->field_138 = v10;
-		this->field_13C = v11;
+		this->field_134 = this->_contentOffset;
 		this->field_140.x = a2;
 		this->field_140.y = a3;
 		this->field_140.z = 0;
 		this->field_15C = a4;
 		Vec3* v12 = this->contentOffset();
-		float v13 = v12->y;
-		float v14 = v12->z;
-		this->field_14C = v12->x;
-		this->field_150 = v13;
-		this->field_154 = v14;
+		this->field_14C = *v12;
 		this->field_DC = 0;
-		this->field_DE = 1;
+		this->isTrackingMaybe = 1;
 		this->field_175 = 0;
 	}
 }
@@ -214,16 +206,16 @@ bool_t ScrollingPane::getGridItemFor_slow(int32_t a2, ScrollingPane::GridItem& a
 	ScrollingPane::GridItem v14 = this->getItemForPos(0, 0, 0);
 	int32_t v6 = v14.field_4;
 	int32_t v7 = v14.field_8;
-	ScrollingPane::GridItem v15 = this->getItemForPos(this->field_2C.width - 1, this->field_2C.height - 1, 0);
+	ScrollingPane::GridItem v15 = this->getItemForPos(this->field_2C.width - 1.0f, this->field_2C.height - 1.0f, 0);
 	int32_t v8 = this->field_8;
-	float v9 = (float)((float)this->field_2C.minX - this->field_1C) + (float)(v14.field_C - (float)v6);
-	float v10 = (float)((float)this->field_2C.minY - this->field_20) + (float)(v14.field_10 - (float)v7);
+	float v9 = (this->field_2C.minX - this->field_1C) + (v14.field_C - v6);
+	float v10 = (this->field_2C.minY - this->field_20) + (v14.field_10 - v7);
 	int32_t v11 = a2 / v8;
 	a3.field_0 = a2;
 	a3.field_C = v9 + (float)(this->field_4C.width * (a2 % v8));
-	int32_t height = this->field_4C.height;
 	a3.field_4 = a2 % v8;
-	a3.field_8 = a2 / v8;
+	a3.field_8 = v11;
+	int32_t height = this->field_4C.height;
 	a3.field_10 = v10 + (float)(height * (a2 / v8));
 	return a2 % v8 >= v6 && a2 % v8 <= v15.field_4 && v11 >= v7 && v11 <= v15.field_8;
 }
@@ -287,7 +279,7 @@ void ScrollingPane::hideScrollIndicators() {
 void ScrollingPane::onHoldItem() {
 	int32_t v2 = this->field_18C;
 	if(v2 != -1 && !this->field_DC) {
-		if(this->field_DE) {
+		if(this->isTrackingMaybe) {
 			this->_onSelect(v2);
 		}
 	}
@@ -394,15 +386,12 @@ void ScrollingPane::snapContentOffsetToBounds(bool_t a2) {
 	float v5, v6, v7, v8, xc, yc;
 	if(this->field_DF) {
 		v4 = this->field_168;
-		v5 = floorf(this->_contentOffset.x / (float)v4 + 0.5);
+		v5 = floorf(this->_contentOffset.x / (float)v4 + 0.5f);
 		v6 = this->field_16C;
 		v7 = v5 * v4;
-		v8 = floorf(this->_contentOffset.y / v6 + 0.5) * v6;
-LABEL_14:
-		this->setContentOffsetWithAnimation(Vec3(v7, v8, 0), a2); //TODO check does it use 0
-		return;
-	}
-	if((this->field_4 & 0x10) == 0) {
+		v8 = floorf(this->_contentOffset.y / v6 + 0.5f) * v6;
+		this->setContentOffsetWithAnimation(Vec3(v7, v8, 0), a2);
+	}else if((this->field_4 & 0x10) == 0) {
 		xc = this->_contentOffset.x;
 		v7 = this->field_128;
 		v8 = this->field_12C;
@@ -413,11 +402,11 @@ LABEL_14:
 		if(v8 < yc) v8 = this->_contentOffset.y;
 		if(v8 > 0) v8 = 0;
 
-		if(v7 != xc || v8 != yc) goto LABEL_14;
+		if(v7 != xc || v8 != yc) this->setContentOffsetWithAnimation(Vec3(v7, v8, 0), a2);
 	}
 }
 void ScrollingPane::startDecelerationAnimation(bool_t a2) {
-	Vec3 v28(this->_contentOffset.x - this->field_14C, this->_contentOffset.y - this->field_150, 0);
+	Vec3 v28(this->_contentOffset.x - this->field_14C.x, this->_contentOffset.y - this->field_14C.y, 0);
 	float v4 = ((float)getTimeMs() - this->field_15C) / 15;
 	Vec3 v29(v28.x / v4, v28.y / v4, 0);
 	float xc = v29.x;
@@ -437,7 +426,7 @@ void ScrollingPane::startDecelerationAnimation(bool_t a2) {
 	this->field_114 = v29.x;
 	this->field_118 = v10;
 	this->field_11C = v11;
-	uint8_t v12 = (uint8_t)this->field_DF;
+	bool v12 = this->field_DF;
 	if(this->field_DF) {
 		float v13 = this->field_168;
 		float v14 = this->field_128;
@@ -460,14 +449,14 @@ void ScrollingPane::startDecelerationAnimation(bool_t a2) {
 		if(v24 >= 0) v24 = 0;
 		this->field_118 = v24;
 	}
-	this->field_120 = 0.03;
-	this->field_124 = 0.08;
+	this->field_120 = 0.03f;
+	this->field_124 = 0.08f;
 	float v25;
 	if(v12) {
-		v25 = 1.3333;
-		this->field_120 = 0.15;
+		v25 = 1.3333f;
+		this->field_120 = 0.15f;
 	} else {
-		v25 = 0.3333;
+		v25 = 0.3333f;
 	}
 
 	if(a2 || fabsf(this->field_FC) > v25 || fabsf(this->field_100) > v25) {
@@ -586,7 +575,7 @@ void ScrollingPane::touchesEnded(float a2, float a3, int32_t a4) {
 	this->field_188 = -1;
 	uint8_t v5 = (uint8_t)this->field_DC;
 	this->field_17C = 0;
-	this->field_DE = 0;
+	this->isTrackingMaybe = 0;
 	if(v5) {
 		int32_t v8 = this->field_F8;
 		this->field_DC = 0;
@@ -638,11 +627,11 @@ void ScrollingPane::touchesMoved(float a2, float a3, int32_t a4) {
 		float v9 = this->field_128;
 		float xc, yc;
 		if((v8 & 1) != 0) xc = this->_contentOffset.x;
-		else xc = this->field_134;
+		else xc = this->field_134.x;
 		if((v8 & 1) == 0) xc = v6 + xc;
 
 		if((v8 & 2) != 0) yc = this->_contentOffset.y;
-		else yc = this->field_138;
+		else yc = this->field_134.y;
 		if((v8 & 2) == 0) yc = v7 + yc;
 
 		if((v8 & 0x10) != 0) {

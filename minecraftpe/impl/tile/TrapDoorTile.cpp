@@ -13,36 +13,23 @@ TrapDoorTile::TrapDoorTile(int32_t id, const struct Material* mat)
 }
 
 void TrapDoorTile::_setShape(int32_t meta) {
-	int32_t v4; // r6
 
-	this->setShape(0.0, 0.0, 0.0, 1.0, 0.1875, 1.0);
+	Tile::setShape(0.0f, 0.0f, 0.0f, 1.0f, 0.1875f, 1.0f);
 	if(TrapDoorTile::isOpen(meta)) {
-		v4 = meta & 3;
-		if(v4) {
-			if(v4 == 1) {
-				this->setShape(0.0, 0.0, 0.0, 1.0, 1.0, 0.1875);
-			} else if(v4 == 2) {
-				this->setShape(0.8125, 0.0, 0.0, 1.0, 1.0, 1.0);
-			} else {
-				this->setShape(0.0, 0.0, 0.0, 0.1875, 1.0, 1.0);
-			}
-		} else {
-			this->setShape(0.0, 0.0, 0.8125, 1.0, 1.0, 1.0);
-		}
+		int v4 = meta & 3;
+		if(v4 == 0) Tile::setShape(0.0f, 0.0f, 0.8125f, 1.0f, 1.0f, 1.0f);
+		if(v4 == 1) Tile::setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.1875f);
+		if(v4 == 2) Tile::setShape(0.8125f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+		if(v4 == 3) Tile::setShape(0.0f, 0.0f, 0.0f, 0.1875f, 1.0f, 1.0f);
 	}
 }
 bool_t TrapDoorTile::attachesTo(int32_t a1) {
-	Tile* tile; // r4
-	int32_t v2; // r6
+	if(a1 <= 0) return 0;
 
-	if(a1 <= 0) {
-		return 0;
-	}
-	tile = Tile::tiles[a1];
-	if(!tile) {
-		return 0;
-	}
-	v2 = tile->getRenderShape();
+	Tile* tile = Tile::tiles[a1];
+	if(!tile) return 0;
+
+	int v2 = tile->getRenderShape();
 	return tile->material->isSolidBlocking() && tile->isCubeShaped() || tile == Tile::lightGem || tile == Tile::stoneSlabHalf || tile == Tile::woodSlabHalf || v2 == 10;
 }
 bool_t TrapDoorTile::blocksLight(void) {
@@ -50,8 +37,7 @@ bool_t TrapDoorTile::blocksLight(void) {
 }
 int32_t TrapDoorTile::getDir(int32_t a2) {
 	if((a2 & 4) == 0) {
-		//LOBYTE(a2) = a2 - 1;
-		a2 = a2 - 1;
+		a2 -= 1;
 	}
 	return a2 & 3;
 }
@@ -59,9 +45,8 @@ bool_t TrapDoorTile::isOpen(int32_t a1) {
 	return ((uint32_t)a1 >> 2) & 1;
 }
 void TrapDoorTile::setOpen(Level* level, int32_t x, int32_t y, int32_t z, bool_t open) {
-	uint32_t v9; // r0
 
-	v9 = level->getData(x, y, z);
+	uint32_t v9 = level->getData(x, y, z);
 	if(((v9 >> 2) & 1) != open) {
 		level->setData(x, y, z, v9 ^ 4, 2);
 		level->levelEvent(0, 1003, x, y, z, 0);
@@ -79,7 +64,7 @@ void TrapDoorTile::updateShape(LevelSource* level, int32_t x, int32_t y, int32_t
 	this->_setShape(v6);
 }
 void TrapDoorTile::updateDefaultShape() {
-	this->setShape(0.0, 0.40625, 0.0, 1.0, 0.59375, 1.0);
+	this->setShape(0.0f, 0.40625f, 0.0f, 1.0f, 0.59375f, 1.0f);
 }
 AABB* TrapDoorTile::getAABB(Level* level, int32_t x, int32_t y, int32_t z) {
 	this->updateShape(level, x, y, z);
@@ -93,28 +78,15 @@ bool_t TrapDoorTile::isSolidRender() {
 	return 0;
 }
 bool_t TrapDoorTile::mayPlace(Level* level, int32_t x, int32_t y, int32_t z, uint8_t a6) {
-	int32_t v7; // r3
-	int32_t v8; // r0
+	if(a6 == 0) return 0;
+	if(a6 == 1) return 0;
 
-	v7 = z;
-	switch(a6) {
-		case 0u:
-		case 1u:
-			return 0;
-		case 2u:
-			v7 = z + 1;
-			break;
-		case 3u:
-			v7 = z - 1;
-			break;
-		case 4u:
-			++x;
-			break;
-		case 5u:
-			--x;
-			break;
-	}
-	v8 = level->getTile(x, y, v7);
+	if(a6 == 2) ++z;
+	if(a6 == 3) --z;
+	if(a6 == 4) ++x;
+	if(a6 == 5) --x;
+
+	int v8 = level->getTile(x, y, z);
 	return TrapDoorTile::attachesTo(v8);
 }
 void TrapDoorTile::neighborChanged(Level* level, int32_t x, int32_t y, int32_t z, int32_t a6, int32_t a7, int32_t a8, int32_t a9) {

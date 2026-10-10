@@ -788,28 +788,18 @@ void Mob::addAdditonalSaveData(CompoundTag* a2) {
 void Mob::postInit() {
 	this->health = this->getMaxHealth();
 }
-void Mob::knockback(Entity* a2, int32_t a3, float a4, float a5) {
-	float motionY; // s9
-	float v6; // s13
-	float motionZ; // s10
-	float v8; // s11
 
-	motionY = this->motionY;
-	// This weird thing is sqrt(a4*a4 + a5*a5)/(a4*a4 + a5*a5)
-	/*v6 = COERCE_FLOAT(0x5F3759DF - (COERCE_INT((float)(a5 * a5) + (float)(a4 * a4)) >> 1))
-		 * (float)(1.5
-				   - (float)((float)((float)((float)((float)(a5 * a5) + (float)(a4 * a4)) * 0.5)
-									 * COERCE_FLOAT(0x5F3759DF - (COERCE_INT((float)(a5 * a5) + (float)(a4 * a4)) >> 1)))
-							 * COERCE_FLOAT(0x5F3759DF - (COERCE_INT((float)(a5 * a5) + (float)(a4 * a4)) >> 1))));*/
-	v6 = sqrt(a4 * a4 + a5 * a5) / (a4 * a4 + a5 * a5);
-	motionZ = this->motionZ;
-	this->motionX = (float)(this->motionX * 0.5) - (float)((float)(a4 * v6) * 0.4);
-	v8 = (float)(motionY * 0.5) + 0.4;
-	this->motionY = v8;
-	this->motionZ = (float)(motionZ * 0.5) - (float)((float)(a5 * v6) * 0.4);
-	if(v8 > 0.4) {
-		this->motionY = 0.4;
-	}
+#define FSQRT(n) ( * (n))
+void Mob::knockback(Entity* a2, int32_t a3, float x, float z) {
+	float total = Mth::rsqrt(x * x + z * z);
+	this->motionX *= 0.5f;
+	this->motionY *= 0.5f;
+	this->motionZ *= 0.5f;
+
+	this->motionX -= (x * total) * 0.4f;
+	this->motionY += 0.4f;
+	this->motionZ -= (z * total) * 0.4f;
+	if(this->motionY > 0.4f) this->motionY = 0.4f;
 }
 void Mob::die(Entity* a2) {
 	int32_t v3; // r2

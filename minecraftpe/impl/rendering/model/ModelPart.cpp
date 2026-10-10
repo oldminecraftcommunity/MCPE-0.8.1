@@ -45,15 +45,15 @@ void ModelPart::_init(int32_t texWidth, int32_t texHeight) {
 	this->meshBuffer.reset();
 }
 void ModelPart::addBox(float a2, float a3, float a4, int32_t a5, int32_t a6, int32_t a7) {
-	this->cubes.emplace_back(new Cube(this, this->texOffsetX, this->texOffsetY, a2, a3, a4, a5, a6, a7, 0.0));
+	this->cubes.push_back(new Cube(this, this->texOffsetX, this->texOffsetY, a2, a3, a4, a5, a6, a7, 0.0));
 }
 void ModelPart::addBox(float a2, float a3, float a4, int32_t a5, int32_t a6, int32_t a7, float a8) {
-	this->cubes.emplace_back(new Cube(this, this->texOffsetX, this->texOffsetY, a2, a3, a4, a5, a6, a7, a8));
+	this->cubes.push_back(new Cube(this, this->texOffsetX, this->texOffsetY, a2, a3, a4, a5, a6, a7, a8));
 }
 void ModelPart::addBox(const std::string& a2, float a3, float a4, float a5, int32_t a6, int32_t a7, int32_t a8) {
 	std::string path = this->field_38 + "." + a2;
 	Cube* c = new Cube(this, this->texOffsetX, this->texOffsetY, a3, a4, a5, a6, a7, a8, 0.0);
-	this->cubes.emplace_back(c->setId(path));
+	this->cubes.push_back(c->setId(path));
 }
 void ModelPart::addChild(ModelPart* a2) {
 	this->children.push_back(a2);

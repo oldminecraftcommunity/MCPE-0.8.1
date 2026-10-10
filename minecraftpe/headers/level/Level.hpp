@@ -30,28 +30,28 @@ struct Level : LevelSource{
 	std::vector<AABB> aabbVec;
 	bool_t instantTick;
 	bool_t isClient;
-	int8_t field_12, field_13;
+	bool field_12;
 	int32_t difficulty;
 	AdventureSettings adventureSettings;
 	std::vector<Entity*> entities;
 	std::map<int32_t, Entity*> eid2entity; //TODO check type
 	std::vector<TileEntity*> tileEntities;
 	std::vector<TileEntity*> field_50;
-	int8_t field_5C, field_5D, field_5E, field_5F;
-	std::vector<Player*> playersMaybe;
+	bool field_5C;
+	std::vector<Player*> players;
 	int32_t skyDarken;
 	Dimension* dimensionPtr;
 	struct RakNetInstance* rakNetInstance;
 	Random random;
-	int8_t field_A48, field_A49, field_A4A, field_A4B;
+	bool searchingSpawn; //mojang is so malicious for not caring about the size of the Level </3
 	std::vector<struct LevelListener*> levelListeners;
 	ChunkSource* chunkSource;
 	LevelStorage* levelStoragePtr;
 	LevelData levelData;
-	int8_t field_AF0;
-	int8_t spawnAnimalsMaybe;
-	int8_t spawnMonstersMaybe;
-	int8_t field_AF3;
+	bool field_AF0;
+	bool spawnAnimalsMaybe;
+	bool spawnMonstersMaybe;
+
 	int32_t prevRandomNumber;
 	int32_t constRandom;
 	std::vector<Entity*> entVec;
@@ -62,12 +62,13 @@ struct Level : LevelSource{
 	int8_t _updateLights;
 	int8_t field_B5D, field_B5E, field_B5F;
 	int32_t lightUpdatesCnt;
-	int8_t field_B64, nightMode, field_B66, field_B67;
+	bool field_B64; //something related to light
+	bool nightMode;
 	double field_B64_;
 	std::vector<PRInfo> field_B6C;
 	int32_t prevTimeSent;
 	std::set<_TickPtr*> tickPtrSetImpl;
-	std::vector<Entity*> field_B94; //TODO check type
+	std::vector<Entity*> field_B94;
 
 	Level(struct LevelStorage*, const std::string&, const LevelSettings&, bool_t, int32_t, struct Dimension*);
 	void _init(const std::string&, const LevelSettings&, int32_t, struct Dimension*);

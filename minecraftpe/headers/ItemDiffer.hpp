@@ -26,7 +26,7 @@ struct ItemDiffer
 		}
 		for (int32_t i = 0; i < len; ++i) {
 			if (!ItemInstance::matchesNulls(&this->items[i], a2[i])) {
-				a3.emplace_back(i);
+				a3.push_back(i);
 			}
 		}
 	}

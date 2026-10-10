@@ -42,7 +42,7 @@ Level::Level(struct LevelStorage* a2, const std::string& a3, const struct LevelS
 	this->field_5C = 0;
 	this->skyDarken = 0;
 	this->rakNetInstance = 0;
-	this->field_A48 = 0;
+	this->searchingSpawn = 0;
 	this->chunkSource = 0;
 	this->levelStoragePtr = a2;
 	this->field_AF0 = 0;
@@ -83,12 +83,6 @@ void Level::_init(const std::string& levelName, const struct LevelSettings& a3, 
 	this->chunkSource = v10;
 	this->updateSkyBrightness();
 }
-void Level::_syncTime(long a2) { //long
-	if(!this->isClient) {
-		SetTimePacket pk(a2, (uint32_t)this->levelData.stopTime >> 31);
-		this->rakNetInstance->send(pk);
-	}
-}
 
 bool_t Level::addEntity(struct Entity* e) {
 	Entity* ent = this->getEntity(e->entityId);
@@ -98,9 +92,9 @@ bool_t Level::addEntity(struct Entity* e) {
 	int v4 = Mth::floor(e->posX * 0.0625);
 	int v5 = Mth::floor(e->posZ * 0.0625);
 	if(e->isPlayer()) {
-		auto&& player = std::find(this->playersMaybe.begin(), this->playersMaybe.end(), e);
-		if(player == this->playersMaybe.end()) {
-			this->playersMaybe.emplace_back((Player*) e);
+		auto&& player = std::find(this->players.begin(), this->players.end(), e);
+		if(player == this->players.end()) {
+			this->players.push_back((Player*) e);
 		}
 	}
 	this->getChunk(v4, v5)->addEntity(e);
@@ -112,9 +106,9 @@ bool_t Level::addEntity(struct Entity* e) {
 void Level::addListener(struct LevelListener* ll) {
 	this->levelListeners.push_back(ll);
 }
-Particle* Level::addParticle(ParticleType pt, float a3, float a4, float a5, float a6, float a7, float a8, int32_t a9) {
+Particle* Level::addParticle(ParticleType pt, float x, float y, float z, float a6, float a7, float a8, int32_t a9) {
 	for(auto&& ll: this->levelListeners) {
-		Particle* p = ll->addParticle(pt, a3, a4, a5, a6, a7, a8, a9);
+		Particle* p = ll->addParticle(pt, x, y, z, a6, a7, a8, a9);
 		if(p) return p;
 	}
 	return 0;
@@ -464,23 +458,23 @@ bool_t Level::containsAnyLiquid(const struct AABB& aabb) {
 
 	minX = aabb.minX;
 	v5 = Mth::floor(aabb.minX);
-	v6 = Mth::floor(aabb.maxX + 1.0);
+	v6 = Mth::floor(aabb.maxX + 1.0f);
 	minY = aabb.minY;
 	v18 = v6;
 	v8 = Mth::floor(minY);
-	v9 = Mth::floor(aabb.maxY + 1.0);
+	v9 = Mth::floor(aabb.maxY + 1.0f);
 	minZ = aabb.minZ;
 	v19 = v9;
 	v11 = Mth::floor(minZ);
-	v12 = Mth::floor(aabb.maxZ + 1.0);
-	if(minX < 0.0) {
+	v12 = Mth::floor(aabb.maxZ + 1.0f);
+	if(minX < 0.0f) {
 		--v5;
 	}
-	if(minY < 0.0) {
+	if(minY < 0.0f) {
 		--v8;
 	}
 	v13 = v12;
-	if(minZ < 0.0) {
+	if(minZ < 0.0f) {
 		--v11;
 	}
 	while(1) {
@@ -520,11 +514,11 @@ bool_t Level::containsFireTile(const struct AABB& aabb) {
 	int32_t v13; // [sp+14h] [bp-34h]
 
 	v4 = Mth::floor(aabb.minX);
-	v12 = Mth::floor(aabb.maxX + 1.0);
+	v12 = Mth::floor(aabb.maxX + 1.0f);
 	v5 = Mth::floor(aabb.minY);
-	v13 = Mth::floor(aabb.maxY + 1.0);
+	v13 = Mth::floor(aabb.maxY + 1.0f);
 	v6 = Mth::floor(aabb.minZ);
-	v7 = Mth::floor(aabb.maxZ + 1.0);
+	v7 = Mth::floor(aabb.maxZ + 1.0f);
 	if(this->hasChunksAt(v4, v5, v6, v12, v13, v7)) {
 		while(v4 < v12) {
 			v11 = v5;
@@ -667,16 +661,16 @@ void Level::entityRemoved(struct Entity* a2) {
 void Level::explode(struct Entity* a2, float a3, float a4, float a5, float a6) {
 	this->explode(a2, a3, a4, a5, a6, 0);
 }
-void Level::explode(struct Entity* a2, float a3, float a4, float a5, float a6, bool_t a7) {
+void Level::explode(struct Entity* ent, float x, float y, float z, float radius, bool_t a7) {
 	if(!this->isClient) {
-		Explosion v15(this, a2, a3, a4, a5, a6);
-		v15.field_30 = a7;
+		Explosion v15(this, ent, x, y, z, radius);
+		v15.setFire = a7;
 		v15.explode();
 		v15.finalizeExplosion();
-		ExplodePacket v14(a3, a4, a5, a6);								//inlined
-		v14.positions = std::vector<TilePos>(v15.field_10.size()); //TODO check
+		ExplodePacket v14(x, y, z, radius);								//inlined
+		v14.positions = std::vector<TilePos>(v15.affectedTiles.size()); //TODO check
 		TilePos* tps = v14.positions.data();
-		for(const TilePos& tp: v15.field_10) {
+		for(const TilePos& tp: v15.affectedTiles) {
 			*tps = tp;
 			++tps;
 		}
@@ -720,34 +714,7 @@ void Level::extinguishFire(int32_t x, int32_t y, int32_t z, int32_t side) {
 		this->removeTile(v6, v7, v5);
 	}
 }
-Path* Level::findPath(Entity* e, Entity* to, float radius, bool_t a5, bool_t a6, bool_t a7, bool_t a8) {
-	int32_t v12; // r6
-	int32_t v13; // r5
-	int32_t v14; // r0
 
-	v12 = Mth::floor(e->posX);
-	v13 = Mth::floor(e->posY + 1.0);
-	v14 = Mth::floor(e->posZ);
-	Region v17(this, v12 - (int32_t)(float)(radius + 16.0), v13 - (int32_t)(float)(radius + 16.0), v14 - (int32_t)(float)(radius + 16.0), v12 + (int32_t)(float)(radius + 16.0), v13 + (int32_t)(float)(radius + 16.0), v14 + (int32_t)(float)(radius + 16.0));
-	PathFinder v18(&v17, a5, a6, a7, a8);
-	return v18.findPath(e, to, radius);
-	//PathFinder::~PathFinder(&v18);
-	//Region::~Region(&v17);
-}
-Path* Level::findPath(Entity* e, int32_t x, int32_t y, int32_t z, float rad, bool_t a7, bool_t a8, bool_t a9, bool_t a10) {
-	int32_t v14; // r7
-	int32_t v15; // r6
-	int32_t v16; // r0
-
-	v14 = Mth::floor(e->posX);
-	v15 = Mth::floor(e->posY);
-	v16 = Mth::floor(e->posZ);
-	Region v19(this, v14 - (int32_t)(float)(rad + 8.0), v15 - (int32_t)(float)(rad + 8.0), v16 - (int32_t)(float)(rad + 8.0), v14 + (int32_t)(float)(rad + 8.0), v15 + (int32_t)(float)(rad + 8.0), v16 + (int32_t)(float)(rad + 8.0));
-	PathFinder v20(&v19, a7, a8, a9, a10);
-	return v20.findPath(e, x, y, z, rad);
-	//PathFinder::~PathFinder(&v20);
-	//Region::~Region(&v19);
-}
 
 std::vector<struct Entity*>* Level::getAllEntities() {
 	return &this->entities;
@@ -993,36 +960,17 @@ struct Mob* Level::getMob(int32_t a2) {
 int32_t Level::getMoonPhase() {
 	return this->dimensionPtr->getMoonPhase(this->getTime());
 }
-struct Player* Level::getNearestPlayer(struct Entity* a2, float a3) {
-	return this->getNearestPlayer(a2->posX, a2->posY, a2->posZ, a3);
-}
-
-struct Player* Level::getNearestPlayer(float x, float y, float z, float a5) {
-	float v5 = -1;
-	Player* v11 = 0;
-	for(int v6 = 0; v6 < this->playersMaybe.size(); ++v6) {
-		Player* v12 = this->playersMaybe[v6];
-		if(!v12->isDead) {
-			float v13 = v12->distanceToSqr(x, y, z);
-			if((a5 < 0.0 || v13 < (float)(a5 * a5)) && (v5 == -1.0 || v13 < v5)) {
-				v5 = v13;
-				v11 = v12;
-			}
-		}
-	}
-	return v11;
-}
 
 struct Player* Level::getPlayer(const std::string& a2) {
-	for(auto&& p: this->playersMaybe) {
+	for(auto&& p: this->players) {
 		if(p->username == a2) return p;
 	}
 	return 0;
 }
 std::string Level::getPlayerNames() {
 	std::stringstream v10;
-	v10 << this->playersMaybe.size() << ':';
-	for(Player* p: this->playersMaybe) {
+	v10 << this->players.size() << ':';
+	for(Player* p: this->players) {
 		v10 << p->username << ',';
 	}
 	return v10.str();
@@ -1614,9 +1562,9 @@ void Level::removeEntity(struct Entity* a2) {
 	if(a2->isPlayer()) {
 		if(a2->field_108) {
 			//the cast to Player* is very important to match the original
-			auto&& p = std::find(this->playersMaybe.begin(), this->playersMaybe.end(), (Player*)a2);
-			if(p != this->playersMaybe.end()) {
-				this->playersMaybe.erase(p);
+			auto&& p = std::find(this->players.begin(), this->players.end(), (Player*)a2);
+			if(p != this->players.end()) {
+				this->players.erase(p);
 			}
 		}
 	}
@@ -1625,9 +1573,9 @@ void Level::removeListener(struct LevelListener* a2) {
 	this->levelListeners.erase(std::find(this->levelListeners.begin(), this->levelListeners.end(), a2));
 }
 void Level::removePlayer(struct Player* a2) {
-	for(int32_t i = 0; i < this->playersMaybe.size(); ++i) {
-		if(this->playersMaybe[i] == a2) {
-			this->playersMaybe.erase(this->playersMaybe.begin() + i); //TODO bight be broken?
+	for(int32_t i = 0; i < this->players.size(); ++i) {
+		if(this->players[i] == a2) {
+			this->players.erase(this->players.begin() + i); //TODO bight be broken?
 		}
 	}
 }
@@ -1653,13 +1601,13 @@ void Level::saveGame() {
 	}
 }
 void Level::saveLevelData() {
-	this->levelStoragePtr->saveLevelData(this->levelData, &this->playersMaybe);
+	this->levelStoragePtr->saveLevelData(this->levelData, &this->players);
 }
 void Level::savePlayers() {
 	if(!this->isClient) {
 		if(this->levelStoragePtr) {
-			for(int32_t i = 0; i < this->playersMaybe.size(); ++i) {
-				Player* p = this->playersMaybe[i];
+			for(int32_t i = 0; i < this->players.size(); ++i) {
+				Player* p = this->players[i];
 				if(!p->isLocalPlayer()) {
 					this->levelStoragePtr->save(p);
 				}
@@ -1739,7 +1687,7 @@ void Level::setInitialSpawn(void) {
 	int8_t v6;		  // r8
 
 	spawnZ = 128;
-	this->field_A48 = 1;
+	this->searchingSpawn = 1;
 	spawnX = 128;
 
 	while(!this->dimensionPtr->isValidSpawn(spawnX, spawnZ)) {
@@ -1763,7 +1711,7 @@ void Level::setInitialSpawn(void) {
 		}
 	}
 	this->levelData.setSpawn(spawnX, 64, spawnZ);
-	this->field_A48 = 0;
+	this->searchingSpawn = 0;
 }
 void Level::setNightMode(bool_t a2) {
 	this->nightMode = a2;
@@ -1859,8 +1807,8 @@ void Level::setUpdateLights(bool_t a2) {
 }
 void Level::setZombieAi(std::vector<struct Zombie*>& a2) {
 	if(a2.size()) {
-		for(int32_t i = 0; i < this->playersMaybe.size(); ++i) {
-			Vec3 v9(this->playersMaybe[i]->posX, this->playersMaybe[i]->posY, this->playersMaybe[i]->posZ);
+		for(int32_t i = 0; i < this->players.size(); ++i) {
+			Vec3 v9(this->players[i]->posX, this->players[i]->posY, this->players[i]->posZ);
 			std::nth_element(a2.begin(), a2.begin(), a2.end(), DistanceEntitySorter{v9.x, v9.y, v9.z});
 		}
 	}
@@ -1975,7 +1923,7 @@ void Level::tickEntities() {
 	for(int i = 0; i < this->field_B94.size(); ++i) {
 		Entity* e = this->field_B94[i];
 		if(e->isPlayer()) {
-			this->field_B6C.emplace_back(PRInfo{e, 16});
+			this->field_B6C.push_back(PRInfo(e, 16));
 		} else {
 			delete e;
 		}
@@ -2271,7 +2219,7 @@ Level::~Level() {
 
 	std::set<Entity*> v27;
 	v27.insert(this->entities.begin(), this->entities.end());
-	v27.insert(this->playersMaybe.begin(), this->playersMaybe.end());
+	v27.insert(this->players.begin(), this->players.end());
 	for(auto&& p: this->field_B6C) {
 		v27.insert(p.entity);
 	}
@@ -2300,6 +2248,115 @@ int32_t Level::getTile(int32_t x, int32_t y, int32_t z) {
 bool_t Level::isEmptyTile(int32_t x, int32_t y, int32_t z) {
 	return this->getTile(x, y, z) == 0;
 }
+struct Material* Level::getMaterial(int32_t x, int32_t y, int32_t z) {
+	int32_t id = this->getTile(x, y, z);
+	if(id) return (Material*)Tile::tiles[id]->material;
+	return Material::air;
+}
+struct Biome* Level::getBiome(int32_t x, int32_t z) {
+	return this->dimensionPtr->biomeSourcePtr->getBiome(x, z);
+}
+
+bool_t Level::isSolidBlockingTile(int32_t x, int32_t y, int32_t z) {
+	Tile* v4; // r4
+
+	v4 = Tile::tiles[this->getTile(x, y, z)];
+	if(v4 && v4->material->isSolidBlocking()) {
+		return v4->isCubeShaped();
+	} else {
+		return 0;
+	}
+}
+bool_t Level::isSolidRenderTile(int32_t x, int32_t y, int32_t z) {
+	Tile* result; // r0
+
+	result = Tile::tiles[this->getTile(x, y, z)];
+	if(result) {
+		return result->isSolidRender();
+	}
+	return 0;
+}
+struct ChunkSource* Level::createChunkSource() {
+	LevelStorage* levelStoragePtr; // r0
+	ChunkCache* v3;				   // r4
+	ChunkStorage* v4;			   // r7
+	ChunkSource* v5;			   // r9
+	ChunkCache* v6;				   // r0
+
+	levelStoragePtr = this->levelStoragePtr;
+	if(levelStoragePtr) {
+		v4 = levelStoragePtr->createChunkStorage(this->dimensionPtr);
+		v5 = this->dimensionPtr->createRandomLevelSource();
+		v6 = new ChunkCache();
+		v3 = v6;
+		v6->generatorSource = v5;
+		v6->chunkStorage = v4;
+		v6->lastChunkX = -999999999;
+		v6->lastChunkZ = -999999999;
+		v6->level = this;
+		v6->lastChunk = 0;
+		v6->field_4 = 1;
+		v3->emptyChunk = new EmptyLevelChunk(this);
+		memset(v3->chunks, 0, sizeof(v3->chunks));
+	} else {
+		puts("no level data, calling dimension->createRandomLevelSource");
+		return (ChunkSource*)this->dimensionPtr->createRandomLevelSource();
+	}
+	return (ChunkSource*)v3;
+}
+struct Player* Level::getNearestPlayer(float x, float y, float z, float a5) {
+	float v5 = -1;
+	Player* v11 = 0;
+	for(int v6 = 0; v6 < this->players.size(); ++v6) {
+		Player* v12 = this->players[v6];
+		if(!v12->isDead) {
+			float v13 = v12->distanceToSqr(x, y, z);
+			if((a5 < 0.0 || v13 < (float)(a5 * a5)) && (v5 == -1.0 || v13 < v5)) {
+				v5 = v13;
+				v11 = v12;
+			}
+		}
+	}
+	return v11;
+}
+struct Player* Level::getNearestPlayer(struct Entity* a2, float a3) {
+	return this->getNearestPlayer(a2->posX, a2->posY, a2->posZ, a3);
+}
+void Level::_syncTime(long a2) { //long
+	if(!this->isClient) {
+		SetTimePacket pk(a2, (uint32_t)this->levelData.stopTime >> 31);
+		this->rakNetInstance->send(pk);
+	}
+}
+Path* Level::findPath(Entity* e, Entity* to, float radius, bool_t a5, bool_t a6, bool_t a7, bool_t a8) {
+	int32_t v12; // r6
+	int32_t v13; // r5
+	int32_t v14; // r0
+
+	v12 = Mth::floor(e->posX);
+	v13 = Mth::floor(e->posY + 1.0);
+	v14 = Mth::floor(e->posZ);
+	Region v17(this, v12 - (int32_t)(float)(radius + 16.0), v13 - (int32_t)(float)(radius + 16.0), v14 - (int32_t)(float)(radius + 16.0), v12 + (int32_t)(float)(radius + 16.0), v13 + (int32_t)(float)(radius + 16.0), v14 + (int32_t)(float)(radius + 16.0));
+	PathFinder v18(&v17, a5, a6, a7, a8);
+	return v18.findPath(e, to, radius);
+	//PathFinder::~PathFinder(&v18);
+	//Region::~Region(&v17);
+}
+Path* Level::findPath(Entity* e, int32_t x, int32_t y, int32_t z, float rad, bool_t a7, bool_t a8, bool_t a9, bool_t a10) {
+	int32_t v14; // r7
+	int32_t v15; // r6
+	int32_t v16; // r0
+
+	v14 = Mth::floor(e->posX);
+	v15 = Mth::floor(e->posY);
+	v16 = Mth::floor(e->posZ);
+	Region v19(this, v14 - (int32_t)(float)(rad + 8.0), v15 - (int32_t)(float)(rad + 8.0), v16 - (int32_t)(float)(rad + 8.0), v14 + (int32_t)(float)(rad + 8.0), v15 + (int32_t)(float)(rad + 8.0), v16 + (int32_t)(float)(rad + 8.0));
+	PathFinder v20(&v19, a7, a8, a9, a10);
+	return v20.findPath(e, x, y, z, rad);
+	//PathFinder::~PathFinder(&v20);
+	//Region::~Region(&v19);
+}
+
 float Level::getBrightness(int32_t x, int32_t y, int32_t z) {
 	return this->dimensionPtr->lightRamp[this->getRawBrightness(x, y, z)];
 }
@@ -2315,34 +2372,6 @@ int32_t Level::getData(int32_t x, int32_t y, int32_t z) {
 	}
 	chunk = this->getChunk(x >> 4, z >> 4);
 	return chunk->getData(xx & 0xF, y, zz & 0xF);
-}
-struct Material* Level::getMaterial(int32_t x, int32_t y, int32_t z) {
-	int32_t id = this->getTile(x, y, z);
-	if(id) return (Material*)Tile::tiles[id]->material;
-	return Material::air;
-}
-
-bool_t Level::isSolidRenderTile(int32_t x, int32_t y, int32_t z) {
-	Tile* result; // r0
-
-	result = Tile::tiles[this->getTile(x, y, z)];
-	if(result) {
-		return result->isSolidRender();
-	}
-	return 0;
-}
-bool_t Level::isSolidBlockingTile(int32_t x, int32_t y, int32_t z) {
-	Tile* v4; // r4
-
-	v4 = Tile::tiles[this->getTile(x, y, z)];
-	if(v4 && v4->material->isSolidBlocking()) {
-		return v4->isCubeShaped();
-	} else {
-		return 0;
-	}
-}
-struct Biome* Level::getBiome(int32_t x, int32_t z) {
-	return this->dimensionPtr->biomeSourcePtr->getBiome(x, z);
 }
 static int32_t _D6E4DF90 = 0;
 void Level::tick() {
@@ -2444,41 +2473,13 @@ void Level::addToTickNextTick(int32_t x, int32_t y, int32_t z, int32_t id, int32
 	}
 }
 
-struct ChunkSource* Level::createChunkSource() {
-	LevelStorage* levelStoragePtr; // r0
-	ChunkCache* v3;				   // r4
-	ChunkStorage* v4;			   // r7
-	ChunkSource* v5;			   // r9
-	ChunkCache* v6;				   // r0
-
-	levelStoragePtr = this->levelStoragePtr;
-	if(levelStoragePtr) {
-		v4 = levelStoragePtr->createChunkStorage(this->dimensionPtr);
-		v5 = this->dimensionPtr->createRandomLevelSource();
-		v6 = new ChunkCache();
-		v3 = v6;
-		v6->generatorSource = v5;
-		v6->chunkStorage = v4;
-		v6->lastChunkX = -999999999;
-		v6->lastChunkZ = -999999999;
-		v6->level = this;
-		v6->lastChunk = 0;
-		v6->field_4 = 1;
-		v3->emptyChunk = new EmptyLevelChunk(this);
-		memset(v3->chunks, 0, sizeof(v3->chunks));
-	} else {
-		puts("no level data, calling dimension->createRandomLevelSource");
-		return (ChunkSource*)this->dimensionPtr->createRandomLevelSource();
-	}
-	return (ChunkSource*)v3;
-}
 
 //no idea why are they stored in data
 static ChunkPos _offsets[] = {{-1, -4}, {0, -4}, {1, -4}, {-2, -3}, {-1, -3}, {0, -3}, {1, -3}, {2, -3}, {-3, -2}, {-2, -2}, {-1, -2}, {0, -2}, {1, -2}, {2, -2}, {3, -2}, {-4, -1}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {3, -1}, {4, -1}, {-4, 0}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {-4, 1}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1}, {-3, 2}, {-2, 2}, {-1, 2}, {0, 2}, {1, 2}, {2, 2}, {3, 2}, {-2, 3}, {-1, 3}, {0, 3}, {1, 3}, {2, 3}, {-1, 4}, {0, 4}, {1, 4}};
 
 void Level::tickTiles() {
 	this->somethingRelatedToChunkPos.clear();
-	for(auto& p: this->playersMaybe) {
+	for(auto& p: this->players) {
 		int32_t posX = Mth::floor(p->posX * 0.0625);
 		int32_t posZ = Mth::floor(p->posZ * 0.0625);
 

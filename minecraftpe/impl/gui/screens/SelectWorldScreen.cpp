@@ -66,14 +66,14 @@ void SelectWorldScreen::init() {
 	this->selectionList = new WorldSelectionList(this->minecraft, this->width, this->height);
 	this->loadLevelSource();
 	this->selectionList->commit();
-	this->buttons.emplace_back(&this->deleteButton);
-	this->buttons.emplace_back(&this->createNewButton);
-	this->buttons.emplace_back(&this->backButton);
+	this->buttons.push_back(&this->deleteButton);
+	this->buttons.push_back(&this->createNewButton);
+	this->buttons.push_back(&this->backButton);
 	this->field_120 = Mouse::getButtonState(1) == 0;
-	this->field_2C.emplace_back(&this->field_EC);
-	this->field_2C.emplace_back(&this->deleteButton);
-	this->field_2C.emplace_back(&this->createNewButton);
-	this->field_2C.emplace_back(&this->backButton);
+	this->field_2C.push_back(&this->field_EC);
+	this->field_2C.push_back(&this->deleteButton);
+	this->field_2C.push_back(&this->createNewButton);
+	this->field_2C.push_back(&this->backButton);
 }
 void SelectWorldScreen::setupPositions() {
 	int32_t v1; // r3

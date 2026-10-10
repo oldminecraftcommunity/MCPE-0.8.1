@@ -35,7 +35,7 @@ struct SendInventoryPacket : Packet{
 		stream->Read<int16_t>(this->field_1C);
 		int32_t v5 = 0;
 		while (this->field_1C + 3 >= v5) {
-			this->items.emplace_back(PacketUtil::readItemInstance(stream));
+			this->items.push_back(PacketUtil::readItemInstance(stream));
 			++v5;
 		}
 	}

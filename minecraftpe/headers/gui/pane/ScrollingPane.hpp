@@ -36,7 +36,8 @@ struct ScrollingPane: GuiComponent
 	int32_t field_C8, field_CC;
 	float field_D0;
 	int32_t field_D4, field_D8;
-	int8_t field_DC, field_DD, field_DE, field_DF;
+	int8_t field_DC, field_DD;
+	bool isTrackingMaybe, field_DF;
 	Vec3 _contentOffset;
 	Vec3 field_EC;
 	int32_t field_F8;
@@ -46,9 +47,9 @@ struct ScrollingPane: GuiComponent
 	float field_114, field_118, field_11C;
 	float field_120, field_124, field_128, field_12C;
 	int32_t field_130;
-	float field_134, field_138, field_13C;
+	Vec3 field_134;
 	Vec3 field_140;
-	float field_14C, field_150, field_154;
+	Vec3 field_14C;
 	int8_t field_158, field_159, field_15A, field_15B;
 	float field_15C;
 	int32_t field_160, field_164;
@@ -57,7 +58,7 @@ struct ScrollingPane: GuiComponent
 	int32_t field_178, field_17C, field_180, field_184;
 	int32_t field_188, field_18C, field_190, field_194;
 	int32_t field_198, field_19C, field_1A0;
-	int8_t* field_1A4;
+	bool* field_1A4;
 	int32_t field_1A8;
 	ScrollBar verticalScrollbar, field_1C4;
 	int32_t field_1DC, field_1E0, field_1E4, field_1E8;

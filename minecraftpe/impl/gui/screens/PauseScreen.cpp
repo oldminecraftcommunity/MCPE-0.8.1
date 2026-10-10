@@ -116,9 +116,9 @@ void PauseScreen::setupPositions() {
 	this->field_74->posY = v3;
 }
 void PauseScreen::tick() {
-	if(this->playerListChanged(this->minecraft->level->playersMaybe)) {
-		this->rebuildPlayerList(this->minecraft->level->playersMaybe);
-		this->players = this->minecraft->level->playersMaybe;
+	if(this->playerListChanged(this->minecraft->level->players)) {
+		this->rebuildPlayerList(this->minecraft->level->players);
+		this->players = this->minecraft->level->players;
 	}
 	++this->tickCounter;
 }

@@ -20,9 +20,9 @@
 #include <tile/entity/ChestTileEntity.hpp>
 
 void TileRenderer::_randomizeFaceDirection(Tile* a2, int32_t face, float a4, float a5, float a6) {
-	if((((uint32_t)a2->field_5C >> face) & 1) != 0) {
-		if(!this->randomizeFace[face]) {
-			int v7 = (int32_t)a5 ^ (0x2FC20F * (int32_t)a4) ^ (0x6EBFFF5 * (int32_t)a6);
+	if(((a2->field_5C >> face) & 1) != 0) {
+		if(this->randomizeFace[face] == 0) {
+			int v7 = (int32_t)a5 ^ ((int32_t)a4 * 0x2FC20F) ^ ((int32_t)a6 * 0x6EBFFF5);
 			this->randomizeFace[face] = ((uint32_t)(11 * v7 + 0x285B825 * v7 * v7) >> 24) & 3;
 		}
 	}
@@ -32,45 +32,42 @@ bool_t TileRenderer::canRender(int32_t a1) {
 }
 
 TileRenderer::TileRenderer(struct LevelSource* a2) :
-	levelSource(a2), field_0(0), hasUVCoords(0),
-	field_8(),  //field_8 is inlined
-	field_21(0), disableCulling(0), enableAO(0), randomizeFace{0, 0, 0, 0, 0, 0}
+	field_0(0), levelSource(a2), hasUVCoords(0),
+	field_8(),
+	field_21(0), disableCulling(0), enableAO(0), randomizeFace{0}
 {
 }
-float TileRenderer::getWaterHeight(int32_t x, int32_t y, int32_t z, const struct Material* a5) {
-	float v5;	   // s16
-	int32_t v6;	   // r5
-	int32_t v11;   // r4
-	Material* v12; // r0
-	int32_t v13;   // r0
+float TileRenderer::getWaterHeight(int32_t x, int32_t y, int32_t z, const struct Material* mat) {
 
-	v5 = 0.0;
-	v6 = 0;
-	v11 = 0;
-	while(a5 != this->levelSource->getMaterial(x - (v6 & 1), y + 1, z - (v6 >> 1))) {
-		v12 = this->levelSource->getMaterial(x - (v6 & 1), y, z - (v6 >> 1));
-		if(v12 == a5) {
-			v13 = this->levelSource->getData(x - (v6 & 1), y, z - (v6 >> 1));
-			if(v13 > 7 || !v13) {
-				v5 = v5 + 1.1111;
-				v11 += 10;
-				if(v13 > 7) {
-					v13 = 0;
+	float v5 = 0.0f;
+	int v6 = 0;
+	int v11 = 0;
+	for(int i = 0; i < 4; ++i){
+		int xx = x - (i & 1);
+		int zz = z - (i >> 1);
+		if(this->levelSource->getMaterial(xx, y+1, zz) != mat){
+			Material* v12 = this->levelSource->getMaterial(xx, y, zz);
+			if(v12 == mat){
+				int32_t data = this->levelSource->getData(x - (i & 1), y, z - (i >> 1));
+				if(data > 7 || data == 0) {
+					v5 = v5 + 1.1111f;
+					v11 += 10;
+					if(data > 7) {
+						data = 0;
+					}
 				}
+				v5 = v5 + (data + 1) / 9.0f;
+				v11 += 1;
+			}else if(!v12->isSolid()){
+				v5 += 1.0f;
+				v11 += 1;
 			}
-			v5 = v5 + (float)((float)(v13 + 1) / 9.0);
-			goto LABEL_11;
-		}
-		if(!v12->isSolid()) {
-			v5 = v5 + 1.0;
-LABEL_11:
-			++v11;
-		}
-		if(++v6 == 4) {
-			return 1.0 - (float)(v5 / (float)v11);
+		}else{
+			return 1.0f;
 		}
 	}
-	return 1.0;
+
+	return 1.0f - (v5 / v11);
 }
 void TileRenderer::renderEast(Tile* a2, float a3, float a4, float a5, const struct TextureUVCoordinateSet& _a6) {
 	float minX;	 // s16
@@ -127,11 +124,11 @@ void TileRenderer::renderEast(Tile* a2, float a3, float a4, float a5, const stru
 		v19 = v20;
 		v20 = v22;
 	}
-	if(minZ >= 0.0 && maxZ <= 1.0) {
+	if(minZ >= 0.0f && maxZ <= 1.0f) {
 		maxX = v20;
 		minX = v19;
 	}
-	if(v21 >= 0.0 && maxY <= 1.0) {
+	if(v21 >= 0.0f && maxY <= 1.0f) {
 		v23 = v17 - minY;
 		v17 = v17 - (float)(v21 * (float)(v17 - minY));
 		minY = a6->maxY - (float)(maxY * v23);
@@ -246,12 +243,12 @@ void TileRenderer::renderFaceDown(Tile* a2, float a3, float a4, float a5, const 
 	minY = a6->minY;
 	maxY = a6->maxY;
 	maxZ = a2->maxZ;
-	if(minX >= 0.0 && v14 <= 1.0) {
+	if(minX >= 0.0f && v14 <= 1.0f) {
 		v19 = maxX - v12;
 		v12 = v12 + (float)(minX * (float)(maxX - v12));
 		maxX = a6->minX + (float)(v14 * v19);
 	}
-	if(minZ >= 0.0 && maxZ <= 1.0) {
+	if(minZ >= 0.0f && maxZ <= 1.0f) {
 		v20 = maxY - minY;
 		minY = minY + (float)(minZ * (float)(maxY - minY));
 		maxY = a6->minY + (float)(maxZ * v20);
@@ -367,12 +364,12 @@ void TileRenderer::renderFaceUp(Tile* a2, float a3, float a4, float a5, const st
 	minY = a6->minY;
 	maxY = a6->maxY;
 	maxZ = a2->maxZ;
-	if(minX >= 0.0 && v14 <= 1.0) {
+	if(minX >= 0.0f && v14 <= 1.0f) {
 		v19 = maxX - v12;
 		v12 = v12 + (float)(minX * (float)(maxX - v12));
 		maxX = a6->minX + (float)(v14 * v19);
 	}
-	if(minZ >= 0.0 && maxZ <= 1.0) {
+	if(minZ >= 0.0f && maxZ <= 1.0f) {
 		v20 = maxY - minY;
 		minY = minY + (float)(minZ * (float)(maxY - minY));
 		maxY = a6->minY + (float)(maxZ * v20);
@@ -502,13 +499,13 @@ void TileRenderer::renderGuiTile(Tile* tile, int32_t a3, float a4, float a5) {
 		Tesselator::instance.begin(7, 24);
 		Tesselator::instance.color(a4, a4, a4, a5);
 		v13 = tile->getCarriedTexture(1, a3);
-		TileRenderer::renderFaceUp(tile, 0.0, 0.0, 0.0, *v13);
-		Tesselator::instance.color(a4 * 0.5, a4 * 0.5, a4 * 0.5, a5);
+		TileRenderer::renderFaceUp(tile, 0.0f, 0.0f, 0.0f, *v13);
+		Tesselator::instance.color(a4 * 0.5f, a4 * 0.5f, a4 * 0.5f, a5);
 		v49 = *tile->getCarriedTexture(3, a3);
-		TileRenderer::renderSouth(tile, 0.0, 0.0, 0.0, v49);
-		Tesselator::instance.color(a4 * 0.73, a4 * 0.73, a4 * 0.73, a5);
+		TileRenderer::renderSouth(tile, 0.0f, 0.0f, 0.0f, v49);
+		Tesselator::instance.color(a4 * 0.73f, a4 * 0.73f, a4 * 0.73f, a5);
 		v14 = tile->getCarriedTexture(4, a3);
-		TileRenderer::renderWest(tile, 0.0, 0.0, 0.0, *v14);
+		TileRenderer::renderWest(tile, 0.0f, 0.0f, 0.0f, *v14);
 LABEL_10:
 		v15 = 1;
 		goto LABEL_7;
@@ -517,7 +514,7 @@ LABEL_10:
 		case 1:
 			Tesselator::instance.begin(8);
 			Tesselator::instance.color(a4, a4, a4, a5);
-			this->tesselateCrossTexture(tile, a3, -0.5, -0.5, -0.5);
+			this->tesselateCrossTexture(tile, a3, -0.5f, -0.5f, -0.5f);
 			v15 = v12;
 LABEL_7:
 			Tesselator::instance.draw(v15);
@@ -527,44 +524,44 @@ LABEL_7:
 			Tesselator::instance.begin(24);
 			Tesselator::instance.color(a4, a4, a4, a5);
 			v16 = tile->getTexture(0);
-			this->renderFaceDown(tile, 0.0, 0.0, 0.0, *v16);
+			this->renderFaceDown(tile, 0.0f, 0.0f, 0.0f, *v16);
 			v17 = tile->getTexture(1);
-			this->renderFaceUp(tile, 0.0, 0.0, 0.0, *v17);
-			Tesselator::instance.color(a4 * 0.5, a4 * 0.5, a4 * 0.5, a5);
+			this->renderFaceUp(tile, 0.0f, 0.0f, 0.0f, *v17);
+			Tesselator::instance.color(a4 * 0.5f, a4 * 0.5f, a4 * 0.5f, a5);
 			v18 = tile->getTexture(2);
-			this->renderNorth(tile, 0.0, 0.0, 0.0625, *v18);
+			this->renderNorth(tile, 0.0f, 0.0f, 0.0625f, *v18);
 			v50 = *tile->getTexture(3);
-			this->renderSouth(tile, 0.0, 0.0, -0.0625, v50);
-			Tesselator::instance.color(a4 * 0.73, a4 * 0.73, a4 * 0.73, a5);
+			this->renderSouth(tile, 0.0f, 0.0f, -0.0625f, v50);
+			Tesselator::instance.color(a4 * 0.73f, a4 * 0.73f, a4 * 0.73f, a5);
 			v19 = tile->getTexture(4);
-			this->renderWest(tile, 0.0625, 0.0, 0.0, *v19);
+			this->renderWest(tile, 0.0625f, 0.0f, 0.0f, *v19);
 			v20 = tile->getTexture(5);
-			this->renderEast(tile, -0.0625, 0.0, 0.0, *v20);
+			this->renderEast(tile, -0.0625f, 0.0f, 0.0f, *v20);
 			goto LABEL_10;
 		case 10:
 			Tesselator::instance.begin(48);
 			do {
 				if(v5) {
-					tile->setShape(0.0, 0.0, 0.5, 1.0, 0.5, 1.0);
+					tile->setShape(0.0f, 0.0f, 0.5f, 1.0f, 0.5f, 1.0f);
 				} else {
-					tile->setShape(0.0, 0.0, 0.0, 1.0, 1.0, 0.5);
+					tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.5f);
 				}
 				Tesselator::instance.color(a4, a4, a4, a5);
 				++v5;
 				v22 = tile->getTexture(0);
-				this->renderFaceDown(tile, 0.0, 0.0, 0.0, *v22);
+				this->renderFaceDown(tile, 0.0f, 0.0f, 0.0f, *v22);
 				v23 = tile->getTexture(1);
-				this->renderFaceUp(tile, 0.0, 0.0, 0.0, *v23);
-				Tesselator::instance.color(a4 * 0.5, a4 * 0.5, a4 * 0.5, a5);
+				this->renderFaceUp(tile, 0.0f, 0.0f, 0.0f, *v23);
+				Tesselator::instance.color(a4 * 0.5f, a4 * 0.5f, a4 * 0.5f, a5);
 				v24 = tile->getTexture(2);
-				this->renderNorth(tile, 0.0, 0.0, 0.0, *v24);
+				this->renderNorth(tile, 0.0f, 0.0f, 0.0f, *v24);
 				v51 = *tile->getTexture(3);
-				this->renderSouth(tile, 0.0, 0.0, 0.0, v51);
-				Tesselator::instance.color(a4 * 0.73, a4 * 0.73, a4 * 0.73, a5);
+				this->renderSouth(tile, 0.0f, 0.0f, 0.0f, v51);
+				Tesselator::instance.color(a4 * 0.73f, a4 * 0.73f, a4 * 0.73f, a5);
 				v25 = tile->getTexture(4);
-				this->renderWest(tile, 0.0, 0.0, 0.0, *v25);
+				this->renderWest(tile, 0.0f, 0.0f, 0.0f, *v25);
 				v26 = tile->getTexture(5);
-				this->renderEast(tile, 0.0, 0.0, 0.0, *v26);
+				this->renderEast(tile, 0.0f, 0.0f, 0.0f, *v26);
 			} while(v5 != 2);
 			goto LABEL_10;
 		case 11:
@@ -573,67 +570,67 @@ LABEL_7:
 				if(v5) {
 					switch(v5) {
 						case 1:
-							tile->setShape(0.375, 0.0, 0.75, 0.625, 1.0, 1.0);
+							tile->setShape(0.375f, 0.0f, 0.75f, 0.625f, 1.0f, 1.0f);
 							break;
 						case 2:
-							tile->setShape(0.4375, 0.8125, -0.125, 0.5625, 0.9375, 1.125);
+							tile->setShape(0.4375f, 0.8125f, -0.125f, 0.5625f, 0.9375f, 1.125f);
 							break;
 						case 3:
-							tile->setShape(0.4375, 0.3125, -0.125, 0.5625, 0.4375, 1.125);
+							tile->setShape(0.4375f, 0.3125f, -0.125f, 0.5625f, 0.4375f, 1.125f);
 							break;
 					}
 				} else {
-					tile->setShape(0.375, 0.0, 0.0, 0.625, 1.0, 0.25);
+					tile->setShape(0.375f, 0.0f, 0.0f, 0.625f, 1.0f, 0.25f);
 				}
 				Tesselator::instance.color(a4, a4, a4, a5);
 				++v5;
 				v27 = tile->getTexture(0);
-				this->renderFaceDown(tile, 0.0, 0.0, 0.0, *v27);
+				this->renderFaceDown(tile, 0.0f, 0.0f, 0.0f, *v27);
 				v28 = tile->getTexture(1);
-				this->renderFaceUp(tile, 0.0, 0.0, 0.0, *v28);
-				Tesselator::instance.color(a4 * 0.5, a4 * 0.5, a4 * 0.5, a5);
+				this->renderFaceUp(tile, 0.0f, 0.0f, 0.0f, *v28);
+				Tesselator::instance.color(a4 * 0.5f, a4 * 0.5f, a4 * 0.5f, a5);
 				v29 = tile->getTexture(2);
-				this->renderNorth(tile, 0.0, 0.0, 0.0, *v29);
+				this->renderNorth(tile, 0.0f, 0.0f, 0.0f, *v29);
 				v52 = *tile->getTexture(3);
-				this->renderSouth(tile, 0.0, 0.0, 0.0, v52);
-				Tesselator::instance.color(a4 * 0.73, a4 * 0.73, a4 * 0.73, a5);
+				this->renderSouth(tile, 0.0f, 0.0f, 0.0f, v52);
+				Tesselator::instance.color(a4 * 0.73f, a4 * 0.73f, a4 * 0.73f, a5);
 				v30 = tile->getTexture(4);
-				this->renderWest(tile, 0.0, 0.0, 0.0, *v30);
+				this->renderWest(tile, 0.0f, 0.0f, 0.0f, *v30);
 				v31 = tile->getTexture(5);
-				this->renderEast(tile, 0.0, 0.0, 0.0, *v31);
+				this->renderEast(tile, 0.0f, 0.0f, 0.0f, *v31);
 			} while(v5 != 4);
 LABEL_28:
 			Tesselator::instance.draw(1);
-			tile->setShape(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+			tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 			break;
 		case 21:
 			Tesselator::instance.begin(72);
 			do {
 				if(v5) {
 					if(v5 == 1) {
-						tile->setShape(0.4375, 0.3, 0.875, 0.5625, 1.0, 1.0);
+						tile->setShape(0.4375f, 0.3f, 0.875f, 0.5625f, 1.0f, 1.0f);
 					} else {
-						tile->setShape(0.4375, 0.5, 0.0, 0.5625, 0.9375, 1.0);
+						tile->setShape(0.4375f, 0.5f, 0.0f, 0.5625f, 0.9375f, 1.0f);
 					}
 				} else {
-					tile->setShape(0.4375, 0.3, 0.0, 0.5625, 1.0, 0.125);
+					tile->setShape(0.4375f, 0.3f, 0.0f, 0.5625f, 1.0f, 0.125f);
 				}
 				Tesselator::instance.color(a4, a4, a4, a5);
 				++v5;
 				v33 = tile->getTexture(0);
-				this->renderFaceUp(tile, 0.0, 0.0, 0.0, *v33);
+				this->renderFaceUp(tile, 0.0f, 0.0f, 0.0f, *v33);
 				v34 = tile->getTexture(1);
-				this->renderFaceDown(tile, 0.0, 0.0, 0.0, *v34);
-				Tesselator::instance.color(a4 * 0.5, a4 * 0.5, a4 * 0.5, a5);
+				this->renderFaceDown(tile, 0.0f, 0.0f, 0.0f, *v34);
+				Tesselator::instance.color(a4 * 0.5f, a4 * 0.5f, a4 * 0.5f, a5);
 				v35 = tile->getTexture(2);
-				this->renderNorth(tile, 0.0, 0.0, 0.0, *v35);
+				this->renderNorth(tile, 0.0f, 0.0f, 0.0f, *v35);
 				v53 = *tile->getTexture(3);
-				this->renderSouth(tile, 0.0, 0.0, 0.0, v53);
-				Tesselator::instance.color(a4 * 0.73, a4 * 0.73, a4 * 0.73, a5);
+				this->renderSouth(tile, 0.0f, 0.0f, 0.0f, v53);
+				Tesselator::instance.color(a4 * 0.73f, a4 * 0.73f, a4 * 0.73f, a5);
 				v36 = tile->getTexture(4);
-				this->renderWest(tile, 0.0, 0.0, 0.0, *v36);
+				this->renderWest(tile, 0.0f, 0.0f, 0.0f, *v36);
 				v37 = tile->getTexture(5);
-				this->renderEast(tile, 0.0, 0.0, 0.0, *v37);
+				this->renderEast(tile, 0.0f, 0.0f, 0.0f, *v37);
 			} while(v5 != 3);
 			goto LABEL_28;
 		case 32:
@@ -642,60 +639,60 @@ LABEL_28:
 				if(v5 != 1) {
 					if(v5 == 2) {
 						v39 = tile;
-						v40 = 0.25 + 0.0;
-						v38 = 0.1875;
-						v48 = 0.5;
-						v54 = 0.8125;
-						v56 = 0.1875 + 0.5;
+						v40 = 0.25f + 0.0f;
+						v38 = 0.1875f;
+						v48 = 0.5f;
+						v54 = 0.8125f;
+						v56 = 0.1875f + 0.5f;
 					} else {
-						v38 = 0.25;
+						v38 = 0.25f;
 						v39 = tile;
-						v48 = 0.25 + 0.0;
-						v54 = 1.0;
-						v56 = 0.25 + 0.5;
-						v40 = 0.0 - 0.25;
+						v48 = 0.25f + 0.0f;
+						v54 = 1.0f;
+						v56 = 0.25f + 0.5f;
+						v40 = 0.0f - 0.25f;
 					}
 					goto LABEL_48;
 				}
 				v39 = tile;
-				v42 = 0.5;
-				v38 = 0.1875;
-				v48 = 1.0 - 0.25;
-				v54 = 0.8125;
-				v56 = 0.1875 + 0.5;
+				v42 = 0.5f;
+				v38 = 0.1875f;
+				v48 = 1.0f - 0.25f;
+				v54 = 0.8125f;
+				v56 = 0.1875f + 0.5f;
 LABEL_49:
 				++v5;
-				v39->setShape(v42, 0.0, 0.5 - v38, v48, v54, v56);
+				v39->setShape(v42, 0.0f, 0.5f - v38, v48, v54, v56);
 				Tesselator::instance.color(a4, a4, a4, a5);
 				v43 = tile->getTexture(0, a3);
-				this->renderFaceUp(tile, 0.0, 0.0, 0.0, *v43);
+				this->renderFaceUp(tile, 0.0f, 0.0f, 0.0f, *v43);
 				v44 = tile->getTexture(1, a3);
-				this->renderFaceDown(tile, 0.0, 0.0, 0.0, *v44);
-				Tesselator::instance.color(a4 * 0.5, a4 * 0.5, a4 * 0.5, a5);
+				this->renderFaceDown(tile, 0.0f, 0.0f, 0.0f, *v44);
+				Tesselator::instance.color(a4 * 0.5f, a4 * 0.5f, a4 * 0.5f, a5);
 				v45 = tile->getTexture(2, a3);
-				this->renderNorth(tile, 0.0, 0.0, 0.0, *v45);
+				this->renderNorth(tile, 0.0f, 0.0f, 0.0f, *v45);
 				v55 = *tile->getTexture(3, a3);
-				this->renderSouth(tile, 0.0, 0.0, 0.0, v55);
-				Tesselator::instance.color(a4 * 0.73, a4 * 0.73, a4 * 0.73, a5);
+				this->renderSouth(tile, 0.0f, 0.0f, 0.0f, v55);
+				Tesselator::instance.color(a4 * 0.73f, a4 * 0.73f, a4 * 0.73f, a5);
 				v46 = tile->getTexture(4, a3);
-				this->renderWest(tile, 0.0, 0.0, 0.0, *v46);
+				this->renderWest(tile, 0.0f, 0.0f, 0.0f, *v46);
 				v47 = tile->getTexture(5, a3);
-				this->renderEast(tile, 0.0, 0.0, 0.0, *v47);
+				this->renderEast(tile, 0.0f, 0.0f, 0.0f, *v47);
 				if(v5 == 4) {
 					goto LABEL_28;
 				}
 			}
-			v38 = 0.25;
+			v38 = 0.25f;
 			v39 = tile;
-			v48 = 0.25 + 1.0;
-			v54 = 1.0;
-			v56 = 0.25 + 0.5;
-			v40 = 1.0 - 0.25;
+			v48 = 0.25f + 1.0f;
+			v54 = 1.0f;
+			v56 = 0.25f + 0.5f;
+			v40 = 1.0f - 0.25f;
 LABEL_48:
 			v42 = v40;
 			goto LABEL_49;
 		case 22:
-			EntityTileRenderer::instance->render(tile, a3, 1.0);
+			EntityTileRenderer::instance->render(tile, a3, 1.0f);
 			break;
 	}
 	this->field_0 = v6;
@@ -755,11 +752,11 @@ void TileRenderer::renderNorth(Tile* a2, float a3, float a4, float a5, const str
 		v19 = v20;
 		v20 = v22;
 	}
-	if(v15 >= 0.0 && v14 <= 1.0) {
+	if(v15 >= 0.0f && v14 <= 1.0f) {
 		maxX = v20;
 		minX = v19;
 	}
-	if(v21 >= 0.0 && maxY <= 1.0) {
+	if(v21 >= 0.0f && maxY <= 1.0f) {
 		v23 = v17 - minY;
 		v17 = v17 - (float)(v21 * (float)(v17 - minY));
 		minY = a6->maxY - (float)(maxY * v23);
@@ -823,12 +820,13 @@ void TileRenderer::renderNorth(Tile* a2, float a3, float a4, float a5, const str
 		Tesselator::instance.color(this->redXsYe, this->greenXsYe, this->blueXsYe);
 		Tesselator::instance.vertexUV(v41, v42, v44, v30, v29);
 		Tesselator::instance.color(this->redXeYe, this->greenXeYe, this->blueXeYe);
+		Tesselator::instance.vertexUV(v40, v42, v44, maxX, v17);
 	} else {
 		Tesselator::instance.vertexUV(v40, v43, v44, v31, v28);
 		Tesselator::instance.vertexUV(v41, v43, v44, minX, minY);
 		Tesselator::instance.vertexUV(v41, v42, v44, v30, v29);
+		Tesselator::instance.vertexUV(v40, v42, v44, maxX, v17);
 	}
-	Tesselator::instance.vertexUV(v40, v42, v44, maxX, v17);
 }
 void TileRenderer::renderSouth(Tile* a2, float a3, float a4, float a5, const TextureUVCoordinateSet a6) { //mojang moment
 	TextureUVCoordinateSet* v10;																		  // r6
@@ -888,11 +886,11 @@ void TileRenderer::renderSouth(Tile* a2, float a3, float a4, float a5, const Tex
 		v19 = v20;
 		v20 = v22;
 	}
-	if(v15 >= 0.0 && v14 <= 1.0) {
+	if(v15 >= 0.0f && v14 <= 1.0f) {
 		maxX = v20;
 		minX = v19;
 	}
-	if(v21 >= 0.0 && maxY <= 1.0) {
+	if(v21 >= 0.0f && maxY <= 1.0f) {
 		v23 = v17 - minY;
 		v17 = v17 - (float)(v21 * (float)(v17 - minY));
 		minY = v10->maxY - (float)(maxY * v23);
@@ -1017,165 +1015,165 @@ void TileRenderer::renderTile(Tile* tile, int32_t a3, bool_t a4) {
 		case 0:
 		case 31:
 			tile->updateDefaultShape();
-			Tesselator::instance.addOffset(-0.5, -0.5, -0.5);
+			Tesselator::instance.addOffset(-0.5f, -0.5f, -0.5f);
 			Tesselator::instance.begin(24);
 			Tesselator::instance.normal(Vec3::NEG_UNIT_Y);
 			v8 = tile->getCarriedTexture(0, a3);
-			this->renderFaceDown(tile, 0.0, 0.0, 0.0, *v8);
+			this->renderFaceDown(tile, 0.0f, 0.0f, 0.0f, *v8);
 			v9 = tile->getCarriedTexture(1, a3);
-			this->renderFaceUp(tile, 0.0, 0.0, 0.0, *v9);
+			this->renderFaceUp(tile, 0.0f, 0.0f, 0.0f, *v9);
 			v10 = tile->getCarriedTexture(2, a3);
-			this->renderNorth(tile, 0.0, 0.0, 0.0, *v10);
+			this->renderNorth(tile, 0.0f, 0.0f, 0.0f, *v10);
 			v46 = *tile->getCarriedTexture(3, a3);
-			this->renderSouth(tile, 0.0, 0.0, 0.0, v46);
+			this->renderSouth(tile, 0.0f, 0.0f, 0.0f, v46);
 			v11 = tile->getCarriedTexture(4, a3);
-			this->renderWest(tile, 0.0, 0.0, 0.0, *v11);
+			this->renderWest(tile, 0.0f, 0.0f, 0.0f, *v11);
 			v12 = tile->getCarriedTexture(5, a3);
-			this->renderEast(tile, 0.0, 0.0, 0.0, *v12);
+			this->renderEast(tile, 0.0f, 0.0f, 0.0f, *v12);
 			Tesselator::instance.draw(0);
 LABEL_21:
-			Tesselator::instance.addOffset(0.5, 0.5, 0.5);
+			Tesselator::instance.addOffset(0.5f, 0.5f, 0.5f);
 			break;
 		case 1:
 			Tesselator::instance.begin(8);
-			this->tesselateCrossTexture(tile, a3, -0.5, -0.5, -0.5);
+			this->tesselateCrossTexture(tile, a3, -0.5f, -0.5f, -0.5f);
 LABEL_8:
 			Tesselator::instance.draw(0);
 			break;
 		case 19:
 			Tesselator::instance.begin(8);
 			tile->updateDefaultShape();
-			this->tesselateStemTexture(tile, a3, tile->maxY, -0.5, -0.5, -0.5);
+			this->tesselateStemTexture(tile, a3, tile->maxY, -0.5f, -0.5f, -0.5f);
 			goto LABEL_8;
 		case 13:
 			tile->updateDefaultShape();
-			Tesselator::instance.offset(-0.5, -0.5, -0.5);
+			Tesselator::instance.offset(-0.5f, -0.5f, -0.5f);
 			Tesselator::instance.begin(24);
 			v13 = tile->getTexture(0);
-			this->renderFaceDown(tile, 0.0, 0.0, 0.0, *v13);
+			this->renderFaceDown(tile, 0.0f, 0.0f, 0.0f, *v13);
 			v14 = tile->getTexture(1);
-			this->renderFaceUp(tile, 0.0, 0.0, 0.0, *v14);
-			Tesselator::instance.addOffset(0.0, 0.0, 0.0625);
+			this->renderFaceUp(tile, 0.0f, 0.0f, 0.0f, *v14);
+			Tesselator::instance.addOffset(0.0f, 0.0f, 0.0625f);
 			v15 = tile->getTexture(2);
-			this->renderNorth(tile, 0.0, 0.0, 0.0, *v15);
-			Tesselator::instance.addOffset(0.0, 0.0, -0.0625);
-			Tesselator::instance.addOffset(0.0, 0.0, -0.0625);
+			this->renderNorth(tile, 0.0f, 0.0f, 0.0f, *v15);
+			Tesselator::instance.addOffset(0.0f, 0.0f, -0.0625f);
+			Tesselator::instance.addOffset(0.0f, 0.0f, -0.0625f);
 			v47 = *tile->getTexture(3);
-			this->renderSouth(tile, 0.0, 0.0, 0.0, v47);
-			Tesselator::instance.addOffset(0.0, 0.0, 0.0625);
-			Tesselator::instance.addOffset(0.0625, 0.0, 0.0);
+			this->renderSouth(tile, 0.0f, 0.0f, 0.0f, v47);
+			Tesselator::instance.addOffset(0.0f, 0.0f, 0.0625f);
+			Tesselator::instance.addOffset(0.0625f, 0.0f, 0.0f);
 			v16 = tile->getTexture(4);
-			this->renderWest(tile, 0.0, 0.0, 0.0, *v16);
-			Tesselator::instance.addOffset(-0.0625, 0.0, 0.0);
-			Tesselator::instance.addOffset(-0.0625, 0.0, 0.0);
+			this->renderWest(tile, 0.0f, 0.0f, 0.0f, *v16);
+			Tesselator::instance.addOffset(-0.0625f, 0.0f, 0.0f);
+			Tesselator::instance.addOffset(-0.0625f, 0.0f, 0.0f);
 			v17 = tile->getTexture(5);
-			this->renderEast(tile, 0.0, 0.0, 0.0, *v17);
-			Tesselator::instance.addOffset(0.0625, 0.0, 0.0);
+			this->renderEast(tile, 0.0f, 0.0f, 0.0f, *v17);
+			Tesselator::instance.addOffset(0.0625f, 0.0f, 0.0f);
 			Tesselator::instance.draw(0);
-			Tesselator::instance.offset(0.0, 0.0, 0.0);
+			Tesselator::instance.offset(0.0f, 0.0f, 0.0f);
 			break;
 		case 6:
 			Tesselator::instance.begin(0);
-			Tesselator::instance.normal(0.0, -1.0, 0.0);
-			this->tesselateRowTexture(tile, a3, -0.5, -0.5, -0.5);
+			Tesselator::instance.normal(0.0f, -1.0f, 0.0f);
+			this->tesselateRowTexture(tile, a3, -0.5f, -0.5f, -0.5f);
 			break;
 		case 22:
-			EntityTileRenderer::instance->render(tile, a3, 1.0);
+			EntityTileRenderer::instance->render(tile, a3, 1.0f);
 			break;
 		case 10:
 			v18 = 0;
-			Tesselator::instance.addOffset(-0.5, -0.5, -0.5);
+			Tesselator::instance.addOffset(-0.5f, -0.5f, -0.5f);
 			Tesselator::instance.begin(48);
 			do {
 				if(v18) {
-					tile->setShape(0.0, 0.0, 0.5, 1.0, 0.5, 1.0);
+					tile->setShape(0.0f, 0.0f, 0.5f, 1.0f, 0.5f, 1.0f);
 				} else {
-					tile->setShape(0.0, 0.0, 0.0, 1.0, 1.0, 0.5);
+					tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.5f);
 				}
 				++v18;
 				v20 = tile->getTexture(0);
-				this->renderFaceDown(tile, 0.0, 0.0, 0.0, *v20);
+				this->renderFaceDown(tile, 0.0f, 0.0f, 0.0f, *v20);
 				v21 = tile->getTexture(1);
-				this->renderFaceUp(tile, 0.0, 0.0, 0.0, *v21);
+				this->renderFaceUp(tile, 0.0f, 0.0f, 0.0f, *v21);
 				v22 = tile->getTexture(2);
-				this->renderNorth(tile, 0.0, 0.0, 0.0, *v22);
+				this->renderNorth(tile, 0.0f, 0.0f, 0.0f, *v22);
 				v48 = *tile->getTexture(3);
-				this->renderSouth(tile, 0.0, 0.0, 0.0, v48);
+				this->renderSouth(tile, 0.0f, 0.0f, 0.0f, v48);
 				v23 = tile->getTexture(4);
-				this->renderWest(tile, 0.0, 0.0, 0.0, *v23);
+				this->renderWest(tile, 0.0f, 0.0f, 0.0f, *v23);
 				v24 = tile->getTexture(5);
-				this->renderEast(tile, 0.0, 0.0, 0.0, *v24);
+				this->renderEast(tile, 0.0f, 0.0f, 0.0f, *v24);
 			} while(v18 != 2);
 			Tesselator::instance.draw(0);
 			goto LABEL_21;
 		case 11:
 			v25 = 0;
-			Tesselator::instance.addOffset(-0.5, -0.5, -0.5);
+			Tesselator::instance.addOffset(-0.5f, -0.5f, -0.5f);
 			Tesselator::instance.begin(96);
 			do {
 				//v26 = tile->vtable;
 				if(v25) {
 					switch(v25) {
 						case 1:
-							tile->setShape(0.375, 0.0, 0.75, 0.625, 1.0, 1.0);
+							tile->setShape(0.375f, 0.0f, 0.75f, 0.625f, 1.0f, 1.0f);
 							break;
 						case 2:
-							tile->setShape(0.4375, 0.8125, -0.125, 0.5625, 0.9375, 1.125);
+							tile->setShape(0.4375f, 0.8125f, -0.125f, 0.5625f, 0.9375f, 1.125f);
 							break;
 						case 3:
-							tile->setShape(0.4375, 0.3125, -0.125, 0.5625, 0.4375, 1.125);
+							tile->setShape(0.4375f, 0.3125f, -0.125f, 0.5625f, 0.4375f, 1.125f);
 							break;
 					}
 				} else {
-					tile->setShape(0.375, 0.0, 0.0, 0.625, 1.0, 0.25);
+					tile->setShape(0.375f, 0.0f, 0.0f, 0.625f, 1.0f, 0.25f);
 				}
 				++v25;
 				v27 = tile->getTexture(0);
-				this->renderFaceDown(tile, 0.0, 0.0, 0.0, *v27);
+				this->renderFaceDown(tile, 0.0f, 0.0f, 0.0f, *v27);
 				v28 = tile->getTexture(1);
-				this->renderFaceUp(tile, 0.0, 0.0, 0.0, *v28);
+				this->renderFaceUp(tile, 0.0f, 0.0f, 0.0f, *v28);
 				v29 = tile->getTexture(2);
-				this->renderNorth(tile, 0.0, 0.0, 0.0, *v29);
+				this->renderNorth(tile, 0.0f, 0.0f, 0.0f, *v29);
 				v49 = *tile->getTexture(3);
-				this->renderSouth(tile, 0.0, 0.0, 0.0, v49);
+				this->renderSouth(tile, 0.0f, 0.0f, 0.0f, v49);
 				v30 = tile->getTexture(4);
-				this->renderWest(tile, 0.0, 0.0, 0.0, *v30);
+				this->renderWest(tile, 0.0f, 0.0f, 0.0f, *v30);
 				v31 = tile->getTexture(5);
-				this->renderEast(tile, 0.0, 0.0, 0.0, *v31);
+				this->renderEast(tile, 0.0f, 0.0f, 0.0f, *v31);
 			} while(v25 != 4);
 LABEL_42:
 			Tesselator::instance.draw(0);
-			Tesselator::instance.addOffset(0.5, 0.5, 0.5);
-			tile->setShape(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+			Tesselator::instance.addOffset(0.5f, 0.5f, 0.5f);
+			tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 			break;
 		case 21:
 			v32 = 0;
-			Tesselator::instance.addOffset(-0.5, -0.5, -0.5);
+			Tesselator::instance.addOffset(-0.5f, -0.5f, -0.5f);
 			Tesselator::instance.begin(72);
 			do {
 				//v33 = tile->vtable;
 				if(v32) {
 					if(v32 == 1) {
-						tile->setShape(0.4375, 0.3, 0.875, 0.5625, 1.0, 1.0);
+						tile->setShape(0.4375f, 0.3f, 0.875f, 0.5625f, 1.0f, 1.0f);
 					} else {
-						tile->setShape(0.4375, 0.5, 0.125, 0.5625, 0.9375, 0.875);
+						tile->setShape(0.4375f, 0.5f, 0.125f, 0.5625f, 0.9375f, 0.875f);
 					}
 				} else {
-					tile->setShape(0.4375, 0.3, 0.0, 0.5625, 1.0, 0.125);
+					tile->setShape(0.4375f, 0.3f, 0.0f, 0.5625f, 1.0f, 0.125f);
 				}
 				++v32;
 				v34 = tile->getTexture(0);
-				this->renderFaceUp(tile, 0.0, 0.0, 0.0, *v34);
+				this->renderFaceUp(tile, 0.0f, 0.0f, 0.0f, *v34);
 				v35 = tile->getTexture(1);
-				this->renderFaceDown(tile, 0.0, 0.0, 0.0, *v35);
+				this->renderFaceDown(tile, 0.0f, 0.0f, 0.0f, *v35);
 				v36 = tile->getTexture(2);
-				this->renderNorth(tile, 0.0, 0.0, 0.0, *v36);
+				this->renderNorth(tile, 0.0f, 0.0f, 0.0f, *v36);
 				v50 = *tile->getTexture(3);
-				this->renderSouth(tile, 0.0, 0.0, 0.0, v50);
+				this->renderSouth(tile, 0.0f, 0.0f, 0.0f, v50);
 				v37 = tile->getTexture(4);
-				this->renderWest(tile, 0.0, 0.0, 0.0, *v37);
+				this->renderWest(tile, 0.0f, 0.0f, 0.0f, *v37);
 				v38 = tile->getTexture(5);
-				this->renderEast(tile, 0.0, 0.0, 0.0, *v38);
+				this->renderEast(tile, 0.0f, 0.0f, 0.0f, *v38);
 			} while(v32 != 3);
 			goto LABEL_42;
 		case 32:
@@ -1184,34 +1182,34 @@ LABEL_42:
 			do {
 				if(v39) {
 					if(v39 == 1) {
-						tile->setShape(0.5 - 0.1875, 0.0, 0.5, 0.1875 + 0.5, 0.8125, 1.0 - 0.25);
+						tile->setShape(0.5f - 0.1875f, 0.0f, 0.5f, 0.1875f + 0.5f, 0.8125f, 1.0f - 0.25f);
 					} else {
 						//v40 = tile->vtable;
 						if(v39 == 2) {
-							tile->setShape(0.5 - 0.1875, 0.0, 0.25 + 0.0, 0.1875 + 0.5, 0.8125, 0.5);
+							tile->setShape(0.5f - 0.1875f, 0.0f, 0.25f + 0.0f, 0.1875f + 0.5f, 0.8125f, 0.5f);
 						} else {
-							tile->setShape(0.5 - 0.25, 0.0, 0.0 - 0.25, 0.25 + 0.5, 1.0, 0.25 + 0.0);
+							tile->setShape(0.5f - 0.25f, 0.0f, 0.0f - 0.25f, 0.25f + 0.5f, 1.0f, 0.25f + 0.0f);
 						}
 					}
 				} else {
-					tile->setShape(0.5 - 0.25, 0.0, 1.0 - 0.25, 0.25 + 0.5, 1.0, 0.25 + 1.0);
+					tile->setShape(0.5f - 0.25f, 0.0f, 1.0f - 0.25f, 0.25f + 0.5f, 1.0f, 0.25f + 1.0f);
 				}
 				++v39;
 				v41 = tile->getTexture(0, a3);
-				this->renderFaceUp(tile, 0.0, 0.0, 0.0, *v41);
+				this->renderFaceUp(tile, 0.0f, 0.0f, 0.0f, *v41);
 				v42 = tile->getTexture(1, a3);
-				this->renderFaceDown(tile, 0.0, 0.0, 0.0, *v42);
+				this->renderFaceDown(tile, 0.0f, 0.0f, 0.0f, *v42);
 				v43 = tile->getTexture(2, a3);
-				this->renderNorth(tile, 0.0, 0.0, 0.0, *v43);
+				this->renderNorth(tile, 0.0f, 0.0f, 0.0f, *v43);
 				v51 = *tile->getTexture(3, a3);
-				this->renderSouth(tile, 0.0, 0.0, 0.0, v51);
+				this->renderSouth(tile, 0.0f, 0.0f, 0.0f, v51);
 				v44 = tile->getTexture(4, a3);
-				this->renderWest(tile, 0.0, 0.0, 0.0, *v44);
+				this->renderWest(tile, 0.0f, 0.0f, 0.0f, *v44);
 				v45 = tile->getTexture(5, a3);
-				this->renderEast(tile, 0.0, 0.0, 0.0, *v45);
+				this->renderEast(tile, 0.0f, 0.0f, 0.0f, *v45);
 			} while(v39 != 4);
 			Tesselator::instance.draw(0);
-			tile->setShape(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+			tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 			break;
 	}
 	this->field_0 = 0;
@@ -1272,11 +1270,11 @@ void TileRenderer::renderWest(Tile* a2, float a3, float a4, float a5, const stru
 		v19 = v20;
 		v20 = v22;
 	}
-	if(minZ >= 0.0 && maxZ <= 1.0) {
+	if(minZ >= 0.0f && maxZ <= 1.0f) {
 		maxX = v20;
 		minX = v19;
 	}
-	if(v21 >= 0.0 && maxY <= 1.0) {
+	if(v21 >= 0.0f && maxY <= 1.0f) {
 		v23 = v17 - minY;
 		v17 = v17 - (float)(v21 * (float)(v17 - minY));
 		minY = a6->maxY - (float)(maxY * v23);
@@ -1402,7 +1400,7 @@ bool_t TileRenderer::tesselateBedInWorld(Tile* tile, int32_t x, int32_t y, int32
 	v10 = v9 & 3;
 	isHeadPiece = BedTile::isHeadPiece(v9);
 	v11 = tile->getBrightness(this->levelSource, x, y, z);
-	Tesselator::instance.color((float)(v11 * 0.5), v11 * 0.5, v11 * 0.5);
+	Tesselator::instance.color((float)(v11 * 0.5f), v11 * 0.5f, v11 * 0.5f);
 	v12 = tile->getTexture(this->levelSource, x, y, z, 0);
 	v13 = (float)x;
 	maxX = tile->maxX;
@@ -1410,7 +1408,7 @@ bool_t TileRenderer::tesselateBedInWorld(Tile* tile, int32_t x, int32_t y, int32
 	minY = v12->minY;
 	minX = v12->minX;
 	maxY = v12->maxY;
-	v19 = (float)((float)y + tile->minY) + 0.1875;
+	v19 = (float)((float)y + tile->minY) + 0.1875f;
 	v20 = (float)z;
 	v21 = (float)z + tile->maxZ;
 	v22 = (float)x + tile->minX;
@@ -1484,10 +1482,10 @@ LABEL_10:
 	}
 	if(this->disableCulling || tile->shouldRenderFace(this->levelSource, x, y, z - 1, 2)) {
 		v45 = tile->getBrightness(this->levelSource, x, y, z - 1);
-		if(tile->minZ > 0.0) {
+		if(tile->minZ > 0.0f) {
 			v45 = v11;
 		}
-		Tesselator::instance.color((float)(v45 * 0.8), v45 * 0.8, v45 * 0.8);
+		Tesselator::instance.color((float)(v45 * 0.8f), v45 * 0.8f, v45 * 0.8f);
 		this->field_21 = v44 == 2;
 		v46 = tile->getTexture(this->levelSource, x, y, z, 2);
 		this->renderNorth(tile, (float)x, (float)y, (float)z, *v46);
@@ -1496,10 +1494,10 @@ LABEL_10:
 LABEL_18:
 		if(this->disableCulling || tile->shouldRenderFace(this->levelSource, x, y, z + 1, 3)) {
 			v47 = tile->getBrightness(this->levelSource, x, y, z + 1);
-			if(tile->maxZ < 1.0) {
+			if(tile->maxZ < 1.0f) {
 				v47 = v11;
 			}
-			Tesselator::instance.color((float)(v47 * 0.8), v47 * 0.8, v47 * 0.8);
+			Tesselator::instance.color((float)(v47 * 0.8f), v47 * 0.8f, v47 * 0.8f);
 			this->field_21 = v44 == 3;
 			v53 = *tile->getTexture(this->levelSource, x, y, z, 3);
 			this->renderSouth(tile, (float)x, (float)y, (float)z, v53);
@@ -1510,10 +1508,10 @@ LABEL_18:
 	}
 	if(this->disableCulling || tile->shouldRenderFace(this->levelSource, x - 1, y, z, 4)) {
 		v48 = tile->getBrightness(this->levelSource, x - 1, y, z);
-		if(tile->minX > 0.0) {
+		if(tile->minX > 0.0f) {
 			v48 = v11;
 		}
-		Tesselator::instance.color((float)(v48 * 0.6), v48 * 0.6, v48 * 0.6);
+		Tesselator::instance.color((float)(v48 * 0.6f), v48 * 0.6f, v48 * 0.6f);
 		this->field_21 = v44 == 4;
 		v49 = tile->getTexture(this->levelSource, x, y, z, 4);
 		this->renderWest(tile, (float)x, (float)y, (float)z, *v49);
@@ -1522,10 +1520,10 @@ LABEL_18:
 LABEL_40:
 		if(this->disableCulling || tile->shouldRenderFace(this->levelSource, x + 1, y, z, 5)) {
 			v50 = tile->getBrightness(this->levelSource, x + 1, y, z);
-			if(tile->maxX >= 1.0) {
+			if(tile->maxX >= 1.0f) {
 				v11 = v50;
 			}
-			Tesselator::instance.color((float)(v11 * 0.6), v11 * 0.6, v11 * 0.6);
+			Tesselator::instance.color((float)(v11 * 0.6f), v11 * 0.6f, v11 * 0.6f);
 			this->field_21 = v44 == 5;
 			v51 = tile->getTexture(this->levelSource, x, y, z, 5);
 			this->renderEast(tile, (float)x, (float)y, (float)z, *v51);
@@ -1560,9 +1558,9 @@ bool_t TileRenderer::tesselateBlockInWorld(Tile* tile, int32_t x, int32_t y, int
 
 	this->enableAO = 0;
 	if(tile == Tile::grass) {
-		v12 = 1.0;
-		v13 = 1.0;
-		v14 = 1.0;
+		v12 = 1.0f;
+		v13 = 1.0f;
+		v14 = 1.0f;
 	} else {
 		v12 = b;
 		v13 = g;
@@ -1571,7 +1569,7 @@ bool_t TileRenderer::tesselateBlockInWorld(Tile* tile, int32_t x, int32_t y, int
 	if(this->disableCulling || tile->shouldRenderFace(this->levelSource, x, y - 1, z, 0)) {
 		v15 = 1;
 		v25 = tile->getBrightness(this->levelSource, x, y - 1, z);
-		Tesselator::instance.color((float)(v25 * 0.5) * v14, (float)(v25 * 0.5) * v13, (float)(v25 * 0.5) * v12);
+		Tesselator::instance.color((float)(v25 * 0.5f) * v14, (float)(v25 * 0.5f) * v13, (float)(v25 * 0.5f) * v12);
 		v26 = tile->getTexture(this->levelSource, x, y, z, 0);
 		this->renderFaceDown(tile, (float)x, (float)y, (float)z, *v26);
 	} else {
@@ -1579,8 +1577,8 @@ bool_t TileRenderer::tesselateBlockInWorld(Tile* tile, int32_t x, int32_t y, int
 	}
 	if(this->disableCulling || tile->shouldRenderFace(this->levelSource, x, y + 1, z, 1)) {
 		v27 = tile->getBrightness(this->levelSource, x, y + 1, z);
-		if(tile->maxY == 1.0 || tile->material->isLiquid()) {
-			v16 = -999.0;
+		if(tile->maxY == 1.0f || tile->material->isLiquid()) {
+			v16 = -999.0f;
 		} else {
 			v16 = tile->getBrightness(this->levelSource, x, y, z);
 			v27 = v16;
@@ -1590,58 +1588,58 @@ bool_t TileRenderer::tesselateBlockInWorld(Tile* tile, int32_t x, int32_t y, int
 		v17 = tile->getTexture(this->levelSource, x, y, z, 1);
 		this->renderFaceUp(tile, (float)x, (float)y, (float)z, *v17);
 	} else {
-		v16 = -999.0;
+		v16 = -999.0f;
 	}
 	if(this->disableCulling || tile->shouldRenderFace(this->levelSource, x, y, z - 1, 2)) {
 		v18 = tile->getBrightness(this->levelSource, x, y, z - 1);
-		if(tile->minZ > 0.0) {
-			if(v16 == -999.0) {
+		if(tile->minZ > 0.0f) {
+			if(v16 == -999.0f) {
 				v16 = tile->getBrightness(this->levelSource, x, y, z);
 			}
 			v18 = v16;
 		}
 		v15 = 1;
-		Tesselator::instance.color(v14 * (float)(v18 * 0.8), v13 * (float)(v18 * 0.8), v12 * (float)(v18 * 0.8));
+		Tesselator::instance.color(v14 * (float)(v18 * 0.8f), v13 * (float)(v18 * 0.8f), v12 * (float)(v18 * 0.8f));
 		v19 = tile->getTexture(this->levelSource, x, y, z, 2);
 		this->renderNorth(tile, (float)x, (float)y, (float)z, *v19);
 	}
 	if(this->disableCulling || tile->shouldRenderFace(this->levelSource, x, y, z + 1, 3)) {
 		v20 = tile->getBrightness(this->levelSource, x, y, z + 1);
-		if(tile->maxZ < 1.0) {
-			if(v16 == -999.0) {
+		if(tile->maxZ < 1.0f) {
+			if(v16 == -999.0f) {
 				v16 = tile->getBrightness(this->levelSource, x, y, z);
 			}
 			v20 = v16;
 		}
 		v15 = 1;
-		Tesselator::instance.color(v14 * (float)(v20 * 0.8), v13 * (float)(v20 * 0.8), v12 * (float)(v20 * 0.8));
+		Tesselator::instance.color(v14 * (float)(v20 * 0.8f), v13 * (float)(v20 * 0.8f), v12 * (float)(v20 * 0.8f));
 		v29 = *tile->getTexture(this->levelSource, x, y, z, 3);
 		this->renderSouth(tile, (float)x, (float)y, (float)z, v29);
 	}
 	if(this->disableCulling || tile->shouldRenderFace(this->levelSource, x - 1, y, z, 4)) {
 		v21 = tile->getBrightness(this->levelSource, x - 1, y, z);
-		if(tile->minX > 0.0) {
-			if(v16 == -999.0) {
+		if(tile->minX > 0.0f) {
+			if(v16 == -999.0f) {
 				v16 = tile->getBrightness(this->levelSource, x, y, z);
 			}
 			v21 = v16;
 		}
 		v15 = 1;
-		Tesselator::instance.color(v14 * (float)(v21 * 0.6), v13 * (float)(v21 * 0.6), v12 * (float)(v21 * 0.6));
+		Tesselator::instance.color(v14 * (float)(v21 * 0.6f), v13 * (float)(v21 * 0.6f), v12 * (float)(v21 * 0.6f));
 		v22 = tile->getTexture(this->levelSource, x, y, z, 4);
 		this->renderWest(tile, (float)x, (float)y, (float)z, *v22);
 	}
 	if(this->disableCulling || tile->shouldRenderFace(this->levelSource, x + 1, y, z, 5)) {
 		v23 = tile->getBrightness(this->levelSource, x + 1, y, z);
-		if(tile->maxX < 1.0) {
-			if(v16 == -999.0) {
+		if(tile->maxX < 1.0f) {
+			if(v16 == -999.0f) {
 				v23 = tile->getBrightness(this->levelSource, x, y, z);
 			} else {
 				v23 = v16;
 			}
 		}
 		v15 = 1;
-		Tesselator::instance.color(v14 * (float)(v23 * 0.6), v13 * (float)(v23 * 0.6), v12 * (float)(v23 * 0.6));
+		Tesselator::instance.color(v14 * (float)(v23 * 0.6f), v13 * (float)(v23 * 0.6f), v12 * (float)(v23 * 0.6f));
 		v24 = tile->getTexture(this->levelSource, x, y, z, 5);
 		this->renderEast(tile, (float)x, (float)y, (float)z, *v24);
 	}
@@ -1669,19 +1667,19 @@ bool_t TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* tile, int3
 		float v16 = zp || xp ? tile->getBrightness(this->levelSource, x + 1, y - 1, z + 1) : b_xp;
 		float v17 = tile->getBrightness(this->levelSource, x, y - 1, z);
 
-		float v18 = (float)((float)((float)(v14 + b_xn) + b_zp) + v17) * 0.25;
-		float v19 = (float)((float)((float)(b_zp + v17) + v16) + b_xp) * 0.25;
-		float v20 = (float)((float)((float)(v17 + b_zn) + b_xp) + v15) * 0.25;
-		float v21 = (float)((float)((float)(b_xn + v13) + v17) + b_zn) * 0.25;
+		float v18 = (float)((float)((float)(v14 + b_xn) + b_zp) + v17) * 0.25f;
+		float v19 = (float)((float)((float)(b_zp + v17) + v16) + b_xp) * 0.25f;
+		float v20 = (float)((float)((float)(v17 + b_zn) + b_xp) + v15) * 0.25f;
+		float v21 = (float)((float)((float)(b_xn + v13) + v17) + b_zn) * 0.25f;
 
 		if(dontApplyGrassColor) {
-			this->redXeYe = this->redXsYe = this->redXsYs = this->redXeYs = r * 0.5;
-			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = g * 0.5;
-			this->blueXeYs = this->blueXsYs = this->blueXsYe = this->blueXeYe = b * 0.5;
+			this->redXeYe = this->redXsYe = this->redXsYs = this->redXeYs = r * 0.5f;
+			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = g * 0.5f;
+			this->blueXeYs = this->blueXsYs = this->blueXsYe = this->blueXeYe = b * 0.5f;
 		} else {
-			this->redXeYe = this->redXsYe = this->redXsYs = this->redXeYs = 0.5;
-			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = 0.5;
-			this->blueXeYs = this->blueXsYs = this->blueXsYe = this->blueXeYe = 0.5;
+			this->redXeYe = this->redXsYe = this->redXsYs = this->redXeYs = 0.5f;
+			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = 0.5f;
+			this->blueXeYs = this->blueXsYs = this->blueXsYe = this->blueXeYe = 0.5f;
 		}
 
 		renderedSomething = 1;
@@ -1709,22 +1707,22 @@ bool_t TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* tile, int3
 		bool zp = Tile::translucent[this->levelSource->getTile(x, y + 1, z + 1)];
 		bool zn = Tile::translucent[this->levelSource->getTile(x, y + 1, z - 1)];
 		float thick = tile->getThickness();
-		float b_xn = tile->getBrightness(this->levelSource, x - 1, (thick <= 0.0) + y, z);
-		float b_xp = tile->getBrightness(this->levelSource, x + 1, (thick <= 0.0) + y, z);
-		float b_zn = tile->getBrightness(this->levelSource, x, (thick <= 0.0) + y, z - 1);
-		float b_zp = tile->getBrightness(this->levelSource, x, (thick <= 0.0) + y, z + 1);
+		float b_xn = tile->getBrightness(this->levelSource, x - 1, (thick <= 0.0f) + y, z);
+		float b_xp = tile->getBrightness(this->levelSource, x + 1, (thick <= 0.0f) + y, z);
+		float b_zn = tile->getBrightness(this->levelSource, x, (thick <= 0.0f) + y, z - 1);
+		float b_zp = tile->getBrightness(this->levelSource, x, (thick <= 0.0f) + y, z + 1);
 
-		float v29 = zn || xn ? tile->getBrightness(this->levelSource, x - 1, (thick <= 0.0) + y, z - 1) : b_xn;
-		float v30 = zn || xp ? tile->getBrightness(this->levelSource, x + 1, (thick <= 0.0) + y, z - 1) : b_xp;
-		float v31 = zp || xn ? tile->getBrightness(this->levelSource, x - 1, (thick <= 0.0) + y, z + 1) : b_xn;
-		float v32 = zp || xp ? tile->getBrightness(this->levelSource, x + 1, (thick <= 0.0) + y, z + 1) : b_xp;
+		float v29 = zn || xn ? tile->getBrightness(this->levelSource, x - 1, (thick <= 0.0f) + y, z - 1) : b_xn;
+		float v30 = zn || xp ? tile->getBrightness(this->levelSource, x + 1, (thick <= 0.0f) + y, z - 1) : b_xp;
+		float v31 = zp || xn ? tile->getBrightness(this->levelSource, x - 1, (thick <= 0.0f) + y, z + 1) : b_xn;
+		float v32 = zp || xp ? tile->getBrightness(this->levelSource, x + 1, (thick <= 0.0f) + y, z + 1) : b_xp;
 		float v33 = tile->getBrightness(this->levelSource, x, y + 1, z);
 
 		renderedSomething = 1;
-		float v36 = (float)((float)((float)(b_zp + v33) + v32) + b_xp) * 0.25;
-		float v37 = (float)((float)((float)(b_xn + v29) + v33) + b_zn) * 0.25;
-		float v38 = (float)((float)((float)(v33 + b_zn) + b_xp) + v30) * 0.25;
-		float v39 = (float)((float)((float)(v31 + b_xn) + b_zp) + v33) * 0.25;
+		float v36 = (float)((float)((float)(b_zp + v33) + v32) + b_xp) * 0.25f;
+		float v37 = (float)((float)((float)(b_xn + v29) + v33) + b_zn) * 0.25f;
+		float v38 = (float)((float)((float)(v33 + b_zn) + b_xp) + v30) * 0.25f;
+		float v39 = (float)((float)((float)(v31 + b_xn) + b_zp) + v33) * 0.25f;
 
 		this->redXeYs = r * v36;
 		this->greenXeYs = g * v36;
@@ -1760,19 +1758,19 @@ bool_t TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* tile, int3
 		float v43 = xp || yn ? tile->getBrightness(this->levelSource, x + 1, y - 1, z - 1) : b_xp;
 		float v44 = xp || yp ? tile->getBrightness(this->levelSource, x + 1, y + 1, z - 1) : b_xp;
 		float v45 = tile->getBrightness(this->levelSource, x, y, z - 1);
-		float v47 = (float)((float)((float)(b_xn + v42) + v45) + b_yp) * 0.25;
-		float v48 = (float)((float)((float)(v45 + b_yp) + b_xp) + v44) * 0.25;
-		float v49 = (float)((float)((float)(b_yn + v45) + v43) + b_xp) * 0.25;
-		float v50 = (float)((float)((float)(v41 + b_xn) + b_yn) + v45) * 0.25;
+		float v47 = (float)((float)((float)(b_xn + v42) + v45) + b_yp) * 0.25f;
+		float v48 = (float)((float)((float)(v45 + b_yp) + b_xp) + v44) * 0.25f;
+		float v49 = (float)((float)((float)(b_yn + v45) + v43) + b_xp) * 0.25f;
+		float v50 = (float)((float)((float)(v41 + b_xn) + b_yn) + v45) * 0.25f;
 
 		if(dontApplyGrassColor) {
-			this->redXeYe = this->redXsYe = this->redXsYs = this->redXeYs = r * 0.8;
-			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = g * 0.8;
-			this->blueXeYs = this->blueXsYs = this->blueXsYe = this->blueXeYe = b * 0.8;
+			this->redXeYe = this->redXsYe = this->redXsYs = this->redXeYs = r * 0.8f;
+			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = g * 0.8f;
+			this->blueXeYs = this->blueXsYs = this->blueXsYe = this->blueXeYe = b * 0.8f;
 		} else {
-			this->redXeYe = this->redXsYe = this->redXsYs = this->redXeYs = 0.8;
-			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = 0.8;
-			this->blueXeYs = this->blueXsYs = this->blueXsYe = this->blueXeYe = 0.8;
+			this->redXeYe = this->redXsYe = this->redXsYs = this->redXeYs = 0.8f;
+			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = 0.8f;
+			this->blueXeYs = this->blueXsYs = this->blueXsYe = this->blueXeYe = 0.8f;
 		}
 		renderedSomething = 1;
 		this->redXeYs = this->redXeYs * v47;
@@ -1809,18 +1807,18 @@ bool_t TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* tile, int3
 		float v60 = xp || yp ? tile->getBrightness(this->levelSource, x + 1, y + 1, z + 1) : b_xp;
 		float v61 = tile->getBrightness(this->levelSource, x, y, z + 1);
 
-		float v63 = (float)((float)((float)(b_xn + v58) + v61) + b_yp) * 0.25;
-		float v64 = (float)((float)((float)(v61 + b_yp) + b_xp) + v60) * 0.25;
-		float v65 = (float)((float)((float)(b_yn + v61) + v59) + b_xp) * 0.25;
-		float v66 = (float)((float)((float)(v57 + b_xn) + b_yn) + v61) * 0.25;
+		float v63 = (float)((float)((float)(b_xn + v58) + v61) + b_yp) * 0.25f;
+		float v64 = (float)((float)((float)(v61 + b_yp) + b_xp) + v60) * 0.25f;
+		float v65 = (float)((float)((float)(b_yn + v61) + v59) + b_xp) * 0.25f;
+		float v66 = (float)((float)((float)(v57 + b_xn) + b_yn) + v61) * 0.25f;
 		if(dontApplyGrassColor) {
-			this->redXeYe = this->redXsYe = this->redXsYs = this->redXeYs = r * 0.8;
-			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = g * 0.8;
-			this->blueXeYs = this->blueXsYs = this->blueXsYe = this->blueXeYe = b * 0.8;
+			this->redXeYe = this->redXsYe = this->redXsYs = this->redXeYs = r * 0.8f;
+			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = g * 0.8f;
+			this->blueXeYs = this->blueXsYs = this->blueXsYe = this->blueXeYe = b * 0.8f;
 		} else {
-			this->redXeYe = this->redXsYe = this->redXsYs = this->redXeYs = 0.8;
-			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = 0.8;
-			this->blueXeYs = this->blueXsYs = this->blueXsYe = this->blueXeYe = 0.8;
+			this->redXeYe = this->redXsYe = this->redXsYs = this->redXeYs = 0.8f;
+			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = 0.8f;
+			this->blueXeYs = this->blueXsYs = this->blueXsYe = this->blueXeYe = 0.8f;
 		}
 
 		renderedSomething = 1;
@@ -1858,18 +1856,18 @@ bool_t TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* tile, int3
 		float v75 = zp || yp ? tile->getBrightness(this->levelSource, x - 1, y + 1, z + 1) : b_zp;
 		float v76 = tile->getBrightness(this->levelSource, x - 1, y, z);
 
-		float v78 = (float)((float)((float)(b_yn + v73) + v76) + b_zp) * 0.25;
-		float v79 = (float)((float)((float)(v76 + b_zp) + b_yp) + v75) * 0.25;
-		float v80 = (float)((float)((float)(b_zn + v76) + v74) + b_yp) * 0.25;
-		float v81 = (float)((float)((float)(v72 + b_yn) + b_zn) + v76) * 0.25;
+		float v78 = (float)((float)((float)(b_yn + v73) + v76) + b_zp) * 0.25f;
+		float v79 = (float)((float)((float)(v76 + b_zp) + b_yp) + v75) * 0.25f;
+		float v80 = (float)((float)((float)(b_zn + v76) + v74) + b_yp) * 0.25f;
+		float v81 = (float)((float)((float)(v72 + b_yn) + b_zn) + v76) * 0.25f;
 		if(dontApplyGrassColor) {
-			this->redXeYe = this->redXsYe = this->redXsYs = this->redXeYs = r * 0.6;
-			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = g * 0.6;
-			this->blueXeYs = this->blueXsYs = this->blueXsYe = this->blueXeYe = b * 0.6;
+			this->redXeYe = this->redXsYe = this->redXsYs = this->redXeYs = r * 0.6f;
+			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = g * 0.6f;
+			this->blueXeYs = this->blueXsYs = this->blueXsYe = this->blueXeYe = b * 0.6f;
 		} else {
-			this->redXeYe = this->redXsYe = this->redXsYs = this->redXeYs = 0.6;
-			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = 0.6;
-			this->blueXeYs = this->blueXsYs = this->blueXsYe = this->blueXeYe = 0.6;
+			this->redXeYe = this->redXsYe = this->redXsYs = this->redXeYs = 0.6f;
+			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = 0.6f;
+			this->blueXeYs = this->blueXsYs = this->blueXsYe = this->blueXeYe = 0.6f;
 		}
 		renderedSomething = 1;
 		this->redXeYs = this->redXeYs * v79;
@@ -1907,18 +1905,18 @@ bool_t TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* tile, int3
 		float v91 = yp || zp ? tile->getBrightness(this->levelSource, x + 1, y + 1, z + 1) : b_zp;
 		float v92 = tile->getBrightness(this->levelSource, x + 1, y, z);
 
-		float v93 = (float)((float)((float)(b_yn + v89) + v92) + b_zp) * 0.25;
-		float v94 = (float)((float)((float)(v92 + b_zp) + b_yp) + v91) * 0.25;
-		float v95 = (float)((float)((float)(b_zn + v92) + v90) + b_yp) * 0.25;
-		float v96 = (float)((float)((float)(v88 + b_yn) + b_zn) + v92) * 0.25;
+		float v93 = (float)((float)((float)(b_yn + v89) + v92) + b_zp) * 0.25f;
+		float v94 = (float)((float)((float)(v92 + b_zp) + b_yp) + v91) * 0.25f;
+		float v95 = (float)((float)((float)(b_zn + v92) + v90) + b_yp) * 0.25f;
+		float v96 = (float)((float)((float)(v88 + b_yn) + b_zn) + v92) * 0.25f;
 		if(dontApplyGrassColor) {
-			this->redXeYe = this->redXsYe = this->redXsYs = this->redXeYs = r * 0.6;
-			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = g * 0.6;
-			this->blueXeYe = this->blueXsYe = this->blueXsYs = this->blueXeYs = b * 0.6;
+			this->redXeYe = this->redXsYe = this->redXsYs = this->redXeYs = r * 0.6f;
+			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = g * 0.6f;
+			this->blueXeYe = this->blueXsYe = this->blueXsYs = this->blueXeYs = b * 0.6f;
 		} else {
-			this->redXeYe = this->redXsYe = this->redXsYs =this->redXeYs = 0.6;
-			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = 0.6;
-			this->blueXeYe = this->blueXsYe = this->blueXsYs = this->blueXeYs = 0.6;
+			this->redXeYe = this->redXsYe = this->redXsYs =this->redXeYs = 0.6f;
+			this->greenXeYe = this->greenXsYe = this->greenXsYs = this->greenXeYs = 0.6f;
+			this->blueXeYe = this->blueXsYe = this->blueXsYs = this->blueXeYs = 0.6f;
 		}
 
 		renderedSomething = 1;
@@ -1948,7 +1946,7 @@ bool_t TileRenderer::tesselateCactusInWorld(Tile* tile, int32_t x, int32_t y, in
 	int32_t v9; // r0
 
 	v9 = tile->getColor(this->levelSource, x, y, z);
-	return this->tesselateCactusInWorld(tile, x, y, z, (float)((v9 & 0xff0000) >> 16) / 255.0, (float)((v9 & 0xff00) >> 8) / 255.0, (float)(v9 & 0xff) / 255.0);
+	return this->tesselateCactusInWorld(tile, x, y, z, (float)((v9 & 0xff0000) >> 16) / 255.0f, (float)((v9 & 0xff00) >> 8) / 255.0f, (float)(v9 & 0xff) / 255.0f);
 }
 bool_t TileRenderer::tesselateCactusInWorld(Tile* tile, int32_t x, int32_t y, int32_t z, float r, float g, float b) {
 	float v10;						   // s17
@@ -1978,17 +1976,17 @@ bool_t TileRenderer::tesselateCactusInWorld(Tile* tile, int32_t x, int32_t y, in
 	v10 = (float)x;
 	v13 = (float)y;
 	v14 = (float)z;
-	v15 = r * 0.8;
+	v15 = r * 0.8f;
 	v16 = tile->getBrightness(this->levelSource, x, y, z);
-	v17 = r * 0.6;
-	v18 = g * 0.8;
-	v19 = g * 0.6;
-	v20 = b * 0.8;
-	v21 = b * 0.6;
+	v17 = r * 0.6f;
+	v18 = g * 0.8f;
+	v19 = g * 0.6f;
+	v20 = b * 0.8f;
+	v21 = b * 0.6f;
 	if(this->disableCulling || tile->shouldRenderFace(this->levelSource, x, y - 1, z, 0)) {
 		v22 = 1;
 		v25 = tile->getBrightness(this->levelSource, x, y - 1, z);
-		Tesselator::instance.color((float)(r * 0.5) * v25, (float)(g * 0.5) * v25, (float)(b * 0.5) * v25);
+		Tesselator::instance.color((float)(r * 0.5f) * v25, (float)(g * 0.5f) * v25, (float)(b * 0.5f) * v25);
 		v26 = tile->getTexture(this->levelSource, x, y, z, 0);
 		this->renderFaceDown(tile, v10, v13, v14, *v26);
 	} else {
@@ -1996,7 +1994,7 @@ bool_t TileRenderer::tesselateCactusInWorld(Tile* tile, int32_t x, int32_t y, in
 	}
 	if(this->disableCulling || tile->shouldRenderFace(this->levelSource, x, y + 1, z, 1)) {
 		v23 = tile->getBrightness(this->levelSource, x, y + 1, z);
-		if(tile->maxY != 1.0 && !tile->material->isLiquid()) {
+		if(tile->maxY != 1.0f && !tile->material->isLiquid()) {
 			v23 = v16;
 		}
 		v22 = 1;
@@ -2006,51 +2004,51 @@ bool_t TileRenderer::tesselateCactusInWorld(Tile* tile, int32_t x, int32_t y, in
 	}
 	if(this->disableCulling || tile->shouldRenderFace(this->levelSource, x, y, z - 1, 2)) {
 		v27 = tile->getBrightness(this->levelSource, x, y, z - 1);
-		if(tile->minZ > 0.0) {
+		if(tile->minZ > 0.0f) {
 			v27 = v16;
 		}
 		Tesselator::instance.color(v15 * v27, v18 * v27, v20 * v27);
-		Tesselator::instance.addOffset(0.0, 0.0, 0.0625);
+		Tesselator::instance.addOffset(0.0f, 0.0f, 0.0625f);
 		v28 = tile->getTexture(this->levelSource, x, y, z, 2);
 		this->renderNorth(tile, v10, v13, v14, *v28);
 		v22 = 1;
-		Tesselator::instance.addOffset(0.0, 0.0, -0.0625);
+		Tesselator::instance.addOffset(0.0f, 0.0f, -0.0625f);
 	}
 	if(this->disableCulling || tile->shouldRenderFace(this->levelSource, x, y, z + 1, 3)) {
 		v29 = tile->getBrightness(this->levelSource, x, y, z + 1);
-		if(tile->maxZ < 1.0) {
+		if(tile->maxZ < 1.0f) {
 			v29 = v16;
 		}
 		Tesselator::instance.color(v15 * v29, v18 * v29, v20 * v29);
-		Tesselator::instance.addOffset(0.0, 0.0, -0.0625);
+		Tesselator::instance.addOffset(0.0f, 0.0f, -0.0625f);
 		v35 = *tile->getTexture(this->levelSource, x, y, z, 3);
 		this->renderSouth(tile, v10, v13, v14, v35);
 		v22 = 1;
-		Tesselator::instance.addOffset(0.0, 0.0, 0.0625);
+		Tesselator::instance.addOffset(0.0f, 0.0f, 0.0625f);
 	}
 	if(this->disableCulling || tile->shouldRenderFace(this->levelSource, x - 1, y, z, 4)) {
 		v30 = tile->getBrightness(this->levelSource, x - 1, y, z);
-		if(tile->minX > 0.0) {
+		if(tile->minX > 0.0f) {
 			v30 = v16;
 		}
 		Tesselator::instance.color(v17 * v30, v19 * v30, v21 * v30);
-		Tesselator::instance.addOffset(0.0625, 0.0, 0.0);
+		Tesselator::instance.addOffset(0.0625f, 0.0f, 0.0f);
 		v31 = tile->getTexture(this->levelSource, x, y, z, 4);
 		this->renderWest(tile, v10, v13, v14, *v31);
 		v22 = 1;
-		Tesselator::instance.addOffset(-0.0625, 0.0, 0.0);
+		Tesselator::instance.addOffset(-0.0625f, 0.0f, 0.0f);
 	}
 	if(this->disableCulling || tile->shouldRenderFace(this->levelSource, x + 1, y, z, 5)) {
 		v22 = 1;
 		v32 = tile->getBrightness(this->levelSource, x + 1, y, z);
-		if(tile->maxX >= 1.0) {
+		if(tile->maxX >= 1.0f) {
 			v16 = v32;
 		}
 		Tesselator::instance.color(v17 * v16, v19 * v16, v21 * v16);
-		Tesselator::instance.addOffset(-0.0625, 0.0, 0.0);
+		Tesselator::instance.addOffset(-0.0625f, 0.0f, 0.0f);
 		v33 = tile->getTexture(this->levelSource, x, y, z, 5);
 		this->renderEast(tile, v10, v13, v14, *v33);
-		Tesselator::instance.addOffset(0.0625, 0.0, 0.0);
+		Tesselator::instance.addOffset(0.0625f, 0.0f, 0.0f);
 	}
 	return v22;
 }
@@ -2069,7 +2067,7 @@ bool_t TileRenderer::tesselateCrossInWorld(Tile* tile, int32_t x, int32_t y, int
 
 	v9 = tile->getBrightness(this->levelSource, x, y, z);
 	v10 = tile->getColor(this->levelSource, x, y, z);
-	Tesselator::instance.color(v9 * (float)((float)((v10 & 0xff0000) >> 16) / 255.0), v9 * (float)((float)((v10 & 0xff00) >> 8) / 255.0), v9 * (float)((float)(v10 & 0xff) / 255.0));
+	Tesselator::instance.color(v9 * (float)((float)((v10 & 0xff0000) >> 16) / 255.0f), v9 * (float)((float)((v10 & 0xff00) >> 8) / 255.0f), v9 * (float)((float)(v10 & 0xff) / 255.0f));
 	v11 = (float)x;
 	v12 = (float)y;
 	v13 = (float)z;
@@ -2078,13 +2076,13 @@ bool_t TileRenderer::tesselateCrossInWorld(Tile* tile, int32_t x, int32_t y, int
 		v15 = ((v14 & 0xffff0000) >> 16) /*HIWORD*/ & 0xF;
 		v16 = (v14 >> 20) & 0xF;
 		v17 = ((v14 & 0xff000000) >> 24) & 0xF;
-		v11 = v11 + (float)((float)((float)((float)v15 / 15.0) - 0.5) * 0.35);
-		v18 = 0.1;
+		v11 = v11 + (float)((float)((float)((float)v15 / 15.0f) - 0.5f) * 0.35f);
+		v18 = 0.1f;
 		if(!Tile::flower) {
-			v18 = 0.35;
+			v18 = 0.35f;
 		}
-		v12 = v12 + (float)((float)((float)((float)v16 / 15.0) - 1.0) * v18);
-		v13 = v13 + (float)((float)((float)((float)v17 / 15.0) - 0.5) * 0.35);
+		v12 = v12 + (float)((float)((float)((float)v16 / 15.0f) - 1.0f) * v18);
+		v13 = v13 + (float)((float)((float)((float)v17 / 15.0f) - 0.5f) * 0.35f);
 	}
 	v19 = this->levelSource->getData(x, y, z);
 	this->tesselateCrossTexture(tile, v19, v11, v12, v13);
@@ -2106,22 +2104,22 @@ void TileRenderer::tesselateCrossTexture(Tile* tile, int32_t d, float a4, float 
 	minY = v7->minY;
 	maxY = v7->maxY;
 	minX = v7->minX;
-	Tesselator::instance.vertexUV((float)(a4 + 0.5) - 0.45, a5 + 1.0, (float)(a6 + 0.5) - 0.45, v7->minX, minY);
-	Tesselator::instance.vertexUV((float)(a4 + 0.5) - 0.45, a5 + 0.0, (float)(a6 + 0.5) - 0.45, minX, maxY);
-	Tesselator::instance.vertexUV((float)(a4 + 0.5) + 0.45, a5 + 0.0, (float)(a6 + 0.5) + 0.45, maxX, maxY);
-	Tesselator::instance.vertexUV((float)(a4 + 0.5) + 0.45, a5 + 1.0, (float)(a6 + 0.5) + 0.45, maxX, minY);
-	Tesselator::instance.vertexUV((float)(a4 + 0.5) + 0.45, a5 + 1.0, (float)(a6 + 0.5) + 0.45, minX, minY);
-	Tesselator::instance.vertexUV((float)(a4 + 0.5) + 0.45, a5 + 0.0, (float)(a6 + 0.5) + 0.45, minX, maxY);
-	Tesselator::instance.vertexUV((float)(a4 + 0.5) - 0.45, a5 + 0.0, (float)(a6 + 0.5) - 0.45, maxX, maxY);
-	Tesselator::instance.vertexUV((float)(a4 + 0.5) - 0.45, a5 + 1.0, (float)(a6 + 0.5) - 0.45, maxX, minY);
-	Tesselator::instance.vertexUV((float)(a4 + 0.5) - 0.45, a5 + 1.0, (float)(a6 + 0.5) + 0.45, minX, minY);
-	Tesselator::instance.vertexUV((float)(a4 + 0.5) - 0.45, a5 + 0.0, (float)(a6 + 0.5) + 0.45, minX, maxY);
-	Tesselator::instance.vertexUV((float)(a4 + 0.5) + 0.45, a5 + 0.0, (float)(a6 + 0.5) - 0.45, maxX, maxY);
-	Tesselator::instance.vertexUV((float)(a4 + 0.5) + 0.45, a5 + 1.0, (float)(a6 + 0.5) - 0.45, maxX, minY);
-	Tesselator::instance.vertexUV((float)(a4 + 0.5) + 0.45, a5 + 1.0, (float)(a6 + 0.5) - 0.45, minX, minY);
-	Tesselator::instance.vertexUV((float)(a4 + 0.5) + 0.45, a5 + 0.0, (float)(a6 + 0.5) - 0.45, minX, maxY);
-	Tesselator::instance.vertexUV((float)(a4 + 0.5) - 0.45, a5 + 0.0, (float)(a6 + 0.5) + 0.45, maxX, maxY);
-	Tesselator::instance.vertexUV((float)(a4 + 0.5) - 0.45, a5 + 1.0, (float)(a6 + 0.5) + 0.45, maxX, minY);
+	Tesselator::instance.vertexUV((float)(a4 + 0.5f) - 0.45f, a5 + 1.0f, (float)(a6 + 0.5f) - 0.45f, v7->minX, minY);
+	Tesselator::instance.vertexUV((float)(a4 + 0.5f) - 0.45f, a5 + 0.0f, (float)(a6 + 0.5f) - 0.45f, minX, maxY);
+	Tesselator::instance.vertexUV((float)(a4 + 0.5f) + 0.45f, a5 + 0.0f, (float)(a6 + 0.5f) + 0.45f, maxX, maxY);
+	Tesselator::instance.vertexUV((float)(a4 + 0.5f) + 0.45f, a5 + 1.0f, (float)(a6 + 0.5f) + 0.45f, maxX, minY);
+	Tesselator::instance.vertexUV((float)(a4 + 0.5f) + 0.45f, a5 + 1.0f, (float)(a6 + 0.5f) + 0.45f, minX, minY);
+	Tesselator::instance.vertexUV((float)(a4 + 0.5f) + 0.45f, a5 + 0.0f, (float)(a6 + 0.5f) + 0.45f, minX, maxY);
+	Tesselator::instance.vertexUV((float)(a4 + 0.5f) - 0.45f, a5 + 0.0f, (float)(a6 + 0.5f) - 0.45f, maxX, maxY);
+	Tesselator::instance.vertexUV((float)(a4 + 0.5f) - 0.45f, a5 + 1.0f, (float)(a6 + 0.5f) - 0.45f, maxX, minY);
+	Tesselator::instance.vertexUV((float)(a4 + 0.5f) - 0.45f, a5 + 1.0f, (float)(a6 + 0.5f) + 0.45f, minX, minY);
+	Tesselator::instance.vertexUV((float)(a4 + 0.5f) - 0.45f, a5 + 0.0f, (float)(a6 + 0.5f) + 0.45f, minX, maxY);
+	Tesselator::instance.vertexUV((float)(a4 + 0.5f) + 0.45f, a5 + 0.0f, (float)(a6 + 0.5f) - 0.45f, maxX, maxY);
+	Tesselator::instance.vertexUV((float)(a4 + 0.5f) + 0.45f, a5 + 1.0f, (float)(a6 + 0.5f) - 0.45f, maxX, minY);
+	Tesselator::instance.vertexUV((float)(a4 + 0.5f) + 0.45f, a5 + 1.0f, (float)(a6 + 0.5f) - 0.45f, minX, minY);
+	Tesselator::instance.vertexUV((float)(a4 + 0.5f) + 0.45f, a5 + 0.0f, (float)(a6 + 0.5f) - 0.45f, minX, maxY);
+	Tesselator::instance.vertexUV((float)(a4 + 0.5f) - 0.45f, a5 + 0.0f, (float)(a6 + 0.5f) + 0.45f, maxX, maxY);
+	Tesselator::instance.vertexUV((float)(a4 + 0.5f) - 0.45f, a5 + 1.0f, (float)(a6 + 0.5f) + 0.45f, maxX, minY);
 }
 bool_t TileRenderer::tesselateDoorInWorld(Tile* tile, int32_t x, int32_t y, int32_t z) {
 	float v9;						   // s20
@@ -2140,66 +2138,66 @@ bool_t TileRenderer::tesselateDoorInWorld(Tile* tile, int32_t x, int32_t y, int3
 
 	v9 = tile->getBrightness(this->levelSource, x, y, z);
 	v10 = tile->getBrightness(this->levelSource, x, y - 1, z);
-	if(tile->minY > 0.0) {
+	if(tile->minY > 0.0f) {
 		v10 = v9;
 	}
 	if(Tile::lightEmission[tile->blockID] > 0) {
-		v10 = 1.0;
+		v10 = 1.0f;
 	}
-	Tesselator::instance.color((float)(v10 * 0.5), v10 * 0.5, v10 * 0.5);
+	Tesselator::instance.color((float)(v10 * 0.5f), v10 * 0.5f, v10 * 0.5f);
 	v11 = tile->getTexture(this->levelSource, x, y, z, 0);
 	this->renderFaceDown(tile, (float)x, (float)y, (float)z, *v11);
 	v12 = tile->getBrightness(this->levelSource, x, y + 1, z);
-	if(tile->maxY < 1.0) {
+	if(tile->maxY < 1.0f) {
 		v12 = v9;
 	}
 	if(Tile::lightEmission[tile->blockID] > 0) {
-		v12 = 1.0;
+		v12 = 1.0f;
 	}
 	Tesselator::instance.color(v12, v12, v12);
 	v13 = tile->getTexture(this->levelSource, x, y, z, 1);
 	this->renderFaceUp(tile, (float)x, (float)y, (float)z, *v13);
 	v14 = tile->getBrightness(this->levelSource, x, y, z - 1);
-	if(tile->minZ > 0.0) {
+	if(tile->minZ > 0.0f) {
 		v14 = v9;
 	}
 	if(Tile::lightEmission[tile->blockID] > 0) {
-		v14 = 1.0;
+		v14 = 1.0f;
 	}
-	Tesselator::instance.color((float)(v14 * 0.8), v14 * 0.8, v14 * 0.8);
+	Tesselator::instance.color((float)(v14 * 0.8f), v14 * 0.8f, v14 * 0.8f);
 	v15 = tile->getTexture(this->levelSource, x, y, z, 2);
 	this->renderNorth(tile, (float)x, (float)y, (float)z, *v15);
 	this->field_21 = 0;
 	v16 = tile->getBrightness(this->levelSource, x, y, z + 1);
-	if(tile->maxZ < 1.0) {
+	if(tile->maxZ < 1.0f) {
 		v16 = v9;
 	}
 	if(Tile::lightEmission[tile->blockID] > 0) {
-		v16 = 1.0;
+		v16 = 1.0f;
 	}
-	Tesselator::instance.color((float)(v16 * 0.8), v16 * 0.8, v16 * 0.8);
+	Tesselator::instance.color((float)(v16 * 0.8f), v16 * 0.8f, v16 * 0.8f);
 	v22 = *tile->getTexture(this->levelSource, x, y, z, 3);
 	this->renderSouth(tile, (float)x, (float)y, (float)z, v22);
 	this->field_21 = 0;
 	v17 = tile->getBrightness(this->levelSource, x - 1, y, z);
-	if(tile->minX > 0.0) {
+	if(tile->minX > 0.0f) {
 		v17 = v9;
 	}
 	if(Tile::lightEmission[tile->blockID] > 0) {
-		v17 = 1.0;
+		v17 = 1.0f;
 	}
-	Tesselator::instance.color((float)(v17 * 0.6), v17 * 0.6, v17 * 0.6);
+	Tesselator::instance.color((float)(v17 * 0.6f), v17 * 0.6f, v17 * 0.6f);
 	v18 = tile->getTexture(this->levelSource, x, y, z, 4);
 	this->renderWest(tile, (float)x, (float)y, (float)z, *v18);
 	this->field_21 = 0;
 	v19 = tile->getBrightness(this->levelSource, x + 1, y, z);
-	if(tile->maxX >= 1.0) {
+	if(tile->maxX >= 1.0f) {
 		v9 = v19;
 	}
 	if(Tile::lightEmission[tile->blockID] > 0) {
-		v9 = 1.0;
+		v9 = 1.0f;
 	}
-	Tesselator::instance.color((float)(v9 * 0.6), v9 * 0.6, v9 * 0.6);
+	Tesselator::instance.color((float)(v9 * 0.6f), v9 * 0.6f, v9 * 0.6f);
 	v20 = tile->getTexture(this->levelSource, x, y, z, 5);
 	this->renderEast(tile, (float)x, (float)y, (float)z, *v20);
 	this->field_21 = 0;
@@ -2220,85 +2218,85 @@ bool_t TileRenderer::tesselateFenceGateInWorld(FenceGateTile* tile, int32_t x, i
 	v11 = v9 & 3;
 	v22 = v9 & 4;
 	if(v11 == 3 || v11 == 1) {
-		tile->setShape(0.4375, 0.3125, 0.0, 0.5625, 1.0, 0.125);
+		tile->setShape(0.4375f, 0.3125f, 0.0f, 0.5625f, 1.0f, 0.125f);
 		this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-		tile->setShape(0.4375, 0.3125, 0.875, 0.5625, 1.0, 1.0);
+		tile->setShape(0.4375f, 0.3125f, 0.875f, 0.5625f, 1.0f, 1.0f);
 		this->tesselateBlockInWorld((Tile*)tile, x, y, z);
 		if(!v22) {
 			if(v11 == 3 || v11 == 1) {
-				tile->setShape(0.4375, 0.375, 0.375, 0.5625, 0.9375, 0.5);
+				tile->setShape(0.4375f, 0.375f, 0.375f, 0.5625f, 0.9375f, 0.5f);
 				this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-				tile->setShape(0.4375, 0.375, 0.5, 0.5625, 0.9375, 0.625);
+				tile->setShape(0.4375f, 0.375f, 0.5f, 0.5625f, 0.9375f, 0.625f);
 				this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-				tile->setShape(0.4375, 0.375, 0.625, 0.5625, 0.5625, 0.875);
+				tile->setShape(0.4375f, 0.375f, 0.625f, 0.5625f, 0.5625f, 0.875f);
 				this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-				tile->setShape(0.4375, 0.75, 0.625, 0.5625, 0.9375, 0.875);
+				tile->setShape(0.4375f, 0.75f, 0.625f, 0.5625f, 0.9375f, 0.875f);
 				this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-				tile->setShape(0.4375, 0.375, 0.125, 0.5625, 0.5625, 0.375);
+				tile->setShape(0.4375f, 0.375f, 0.125f, 0.5625f, 0.5625f, 0.375f);
 				this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-				tile->setShape(0.4375, 0.75, 0.125, 0.5625, 0.9375, 0.375);
+				tile->setShape(0.4375f, 0.75f, 0.125f, 0.5625f, 0.9375f, 0.375f);
 LABEL_21:
 				this->tesselateBlockInWorld((Tile*)tile, x, y, z);
 				goto LABEL_22;
 			}
 LABEL_10:
-			tile->setShape(0.375, 0.375, 0.4375, 0.5, 0.9375, 0.5625);
+			tile->setShape(0.375f, 0.375f, 0.4375f, 0.5f, 0.9375f, 0.5625f);
 			this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-			tile->setShape(0.5, 0.375, 0.4375, 0.625, 0.9375, 0.5625);
+			tile->setShape(0.5f, 0.375f, 0.4375f, 0.625f, 0.9375f, 0.5625f);
 			this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-			tile->setShape(0.625, 0.375, 0.4375, 0.875, 0.5625, 0.5625);
+			tile->setShape(0.625f, 0.375f, 0.4375f, 0.875f, 0.5625f, 0.5625f);
 			this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-			tile->setShape(0.625, 0.75, 0.4375, 0.875, 0.9375, 0.5625);
+			tile->setShape(0.625f, 0.75f, 0.4375f, 0.875f, 0.9375f, 0.5625f);
 			this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-			tile->setShape(0.125, 0.375, 0.4375, 0.375, 0.5625, 0.5625);
+			tile->setShape(0.125f, 0.375f, 0.4375f, 0.375f, 0.5625f, 0.5625f);
 			this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-			tile->setShape(0.125, 0.75, 0.4375, 0.375, 0.9375, 0.5625);
+			tile->setShape(0.125f, 0.75f, 0.4375f, 0.375f, 0.9375f, 0.5625f);
 			goto LABEL_21;
 		}
 		if(v11 == 3) {
-			tile->setShape(0.8125, 0.375, 0.0, 0.9375, 0.9375, 0.125);
+			tile->setShape(0.8125f, 0.375f, 0.0f, 0.9375f, 0.9375f, 0.125f);
 			this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-			tile->setShape(0.8125, 0.375, 0.875, 0.9375, 0.9375, 1.0);
+			tile->setShape(0.8125f, 0.375f, 0.875f, 0.9375f, 0.9375f, 1.0f);
 			this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-			tile->setShape(0.5625, 0.375, 0.0, 0.8125, 0.5625, 0.125);
+			tile->setShape(0.5625f, 0.375f, 0.0f, 0.8125f, 0.5625f, 0.125f);
 			this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-			tile->setShape(0.5625, 0.375, 0.875, 0.8125, 0.5625, 1.0);
+			tile->setShape(0.5625f, 0.375f, 0.875f, 0.8125f, 0.5625f, 1.0f);
 			this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-			tile->setShape(0.5625, 0.75, 0.0, 0.8125, 0.9375, 0.125);
+			tile->setShape(0.5625f, 0.75f, 0.0f, 0.8125f, 0.9375f, 0.125f);
 			this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-			v19 = 0.8125;
-			v21 = 1.0;
-			v20 = 0.9375;
+			v19 = 0.8125f;
+			v21 = 1.0f;
+			v20 = 0.9375f;
 			v13 = (Tile*)tile;
-			v15 = 0.5625;
+			v15 = 0.5625f;
 LABEL_15:
-			v16 = 0.875;
+			v16 = 0.875f;
 LABEL_20:
-			v13->setShape(v15, 0.75, v16, v19, v20, v21);
+			v13->setShape(v15, 0.75f, v16, v19, v20, v21);
 			goto LABEL_21;
 		}
 		if(v11 == 1) {
-			tile->setShape(0.0625, 0.375, 0.0, 0.1875, 0.9375, 0.125);
+			tile->setShape(0.0625f, 0.375f, 0.0f, 0.1875f, 0.9375f, 0.125f);
 			this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-			tile->setShape(0.0625, 0.375, 0.875, 0.1875, 0.9375, 1.0);
+			tile->setShape(0.0625f, 0.375f, 0.875f, 0.1875f, 0.9375f, 1.0f);
 			this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-			tile->setShape(0.1875, 0.375, 0.0, 0.4375, 0.5625, 0.125);
+			tile->setShape(0.1875f, 0.375f, 0.0f, 0.4375f, 0.5625f, 0.125f);
 			this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-			tile->setShape(0.1875, 0.375, 0.875, 0.4375, 0.5625, 1.0);
+			tile->setShape(0.1875f, 0.375f, 0.875f, 0.4375f, 0.5625f, 1.0f);
 			this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-			tile->setShape(0.1875, 0.75, 0.0, 0.4375, 0.9375, 0.125);
+			tile->setShape(0.1875f, 0.75f, 0.0f, 0.4375f, 0.9375f, 0.125f);
 			this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-			v19 = 0.4375;
-			v20 = 0.9375;
-			v21 = 1.0;
+			v19 = 0.4375f;
+			v20 = 0.9375f;
+			v21 = 1.0f;
 			v13 = (Tile*)tile;
-			v15 = 0.1875;
+			v15 = 0.1875f;
 			goto LABEL_15;
 		}
 	} else {
-		tile->setShape(0.0, 0.3125, 0.4375, 0.125, 1.0, 0.5625);
+		tile->setShape(0.0f, 0.3125f, 0.4375f, 0.125f, 1.0f, 0.5625f);
 		this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-		tile->setShape(0.875, 0.3125, 0.4375, 1.0, 1.0, 0.5625);
+		tile->setShape(0.875f, 0.3125f, 0.4375f, 1.0f, 1.0f, 0.5625f);
 		this->tesselateBlockInWorld((Tile*)tile, x, y, z);
 		if(!v22) {
 			goto LABEL_10;
@@ -2306,40 +2304,40 @@ LABEL_20:
 	}
 
 	if(!v11) {
-		tile->setShape(0.0, 0.375, 0.8125, 0.125, 0.9375, 0.9375);
+		tile->setShape(0.0f, 0.375f, 0.8125f, 0.125f, 0.9375f, 0.9375f);
 		this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-		tile->setShape(0.875, 0.375, 0.8125, 1.0, 0.9375, 0.9375);
+		tile->setShape(0.875f, 0.375f, 0.8125f, 1.0f, 0.9375f, 0.9375f);
 		this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-		tile->setShape(0.0, 0.375, 0.5625, 0.125, 0.5625, 0.8125);
+		tile->setShape(0.0f, 0.375f, 0.5625f, 0.125f, 0.5625f, 0.8125f);
 		this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-		tile->setShape(0.875, 0.375, 0.5625, 1.0, 0.5625, 0.8125);
+		tile->setShape(0.875f, 0.375f, 0.5625f, 1.0f, 0.5625f, 0.8125f);
 		this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-		tile->setShape(0.0, 0.75, 0.5625, 0.125, 0.9375, 0.8125);
+		tile->setShape(0.0f, 0.75f, 0.5625f, 0.125f, 0.9375f, 0.8125f);
 		this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-		tile->setShape(0.875, 0.75, 0.5625, 1.0, 0.9375, 0.8125);
+		tile->setShape(0.875f, 0.75f, 0.5625f, 1.0f, 0.9375f, 0.8125f);
 		goto LABEL_21;
 	}
 	if(v11 == 2) {
-		tile->setShape(0.0, 0.375, 0.0625, 0.125, 0.9375, 0.1875);
+		tile->setShape(0.0f, 0.375f, 0.0625f, 0.125f, 0.9375f, 0.1875f);
 		this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-		tile->setShape(0.875, 0.375, 0.0625, 1.0, 0.9375, 0.1875);
+		tile->setShape(0.875f, 0.375f, 0.0625f, 1.0f, 0.9375f, 0.1875f);
 		this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-		tile->setShape(0.0, 0.375, 0.1875, 0.125, 0.5625, 0.4375);
+		tile->setShape(0.0f, 0.375f, 0.1875f, 0.125f, 0.5625f, 0.4375f);
 		this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-		tile->setShape(0.875, 0.375, 0.1875, 1.0, 0.5625, 0.4375);
+		tile->setShape(0.875f, 0.375f, 0.1875f, 1.0f, 0.5625f, 0.4375f);
 		this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-		tile->setShape(0.0, 0.75, 0.1875, 0.125, 0.9375, 0.4375);
+		tile->setShape(0.0f, 0.75f, 0.1875f, 0.125f, 0.9375f, 0.4375f);
 		this->tesselateBlockInWorld((Tile*)tile, x, y, z);
-		v15 = 0.875;
-		v19 = 1.0;
-		v20 = 0.9375;
+		v15 = 0.875f;
+		v19 = 1.0f;
+		v20 = 0.9375f;
 		v13 = (Tile*)tile;
-		v21 = 0.4375;
-		v16 = 0.1875;
+		v21 = 0.4375f;
+		v16 = 0.1875f;
 		goto LABEL_20;
 	}
 LABEL_22:
-	tile->setShape(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+	tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 	return 1;
 }
 bool_t TileRenderer::tesselateFenceInWorld(FenceTile* tile, int32_t x, int32_t y, int32_t z) {
@@ -2354,7 +2352,7 @@ bool_t TileRenderer::tesselateFenceInWorld(FenceTile* tile, int32_t x, int32_t y
 	bool_t v18;	 // [sp+14h] [bp-44h]
 	bool_t v19;	 // [sp+1Ch] [bp-3Ch]
 
-	tile->setShape(0.375, 0.0, 0.375, 0.625, 1.0, 0.625);
+	tile->setShape(0.375f, 0.0f, 0.375f, 0.625f, 1.0f, 0.625f);
 	this->tesselateBlockInWorld((Tile*)tile, x, y, z);
 	v18 = tile->connectsTo((Level*)this->levelSource, x - 1, y, z);
 	v19 = tile->connectsTo((Level*)this->levelSource, x + 1, y, z);
@@ -2369,41 +2367,41 @@ bool_t TileRenderer::tesselateFenceInWorld(FenceTile* tile, int32_t x, int32_t y
 		v11 = (uint8_t)v12 ^ 1;
 	}
 	if(v18) {
-		v13 = 0.0;
+		v13 = 0.0f;
 	} else {
-		v13 = 0.4375;
+		v13 = 0.4375f;
 	}
-	v14 = 1.0;
+	v14 = 1.0f;
 	if(v19) {
-		v15 = 1.0;
+		v15 = 1.0f;
 	} else {
-		v15 = 0.5625;
+		v15 = 0.5625f;
 	}
 	if(v9) {
-		v16 = 0.0;
+		v16 = 0.0f;
 	} else {
-		v16 = 0.4375;
+		v16 = 0.4375f;
 	}
 	if(!v10) {
-		v14 = 0.5625;
+		v14 = 0.5625f;
 	}
 	if(v11) {
-		tile->setShape(v13, 0.75, 0.4375, v15, 0.9375, 0.5625);
+		tile->setShape(v13, 0.75f, 0.4375f, v15, 0.9375f, 0.5625f);
 		this->tesselateBlockInWorld((Tile*)tile, x, y, z);
 	}
 	if(v12) {
-		tile->setShape(0.4375, 0.75, v16, 0.5625, 0.9375, v14);
+		tile->setShape(0.4375f, 0.75f, v16, 0.5625f, 0.9375f, v14);
 		this->tesselateBlockInWorld((Tile*)tile, x, y, z);
 	}
 	if(v11) {
-		tile->setShape(v13, 0.375, 0.4375, v15, 0.5625, 0.5625);
+		tile->setShape(v13, 0.375f, 0.4375f, v15, 0.5625f, 0.5625f);
 		this->tesselateBlockInWorld((Tile*)tile, x, y, z);
 	}
 	if(v12) {
-		tile->setShape(0.4375, 0.375, v16, 0.5625, 0.5625, v14);
+		tile->setShape(0.4375f, 0.375f, v16, 0.5625f, 0.5625f, v14);
 		this->tesselateBlockInWorld((Tile*)tile, x, y, z);
 	}
-	tile->setShape(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+	tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 	return 1;
 }
 bool_t TileRenderer::tesselateFireInWorld(Tile* tile, int32_t x, int32_t y, int32_t z) {
@@ -2485,48 +2483,48 @@ bool_t TileRenderer::tesselateFireInWorld(Tile* tile, int32_t x, int32_t y, int3
 	Tesselator::instance.color(Color4::WHITE.r, Color4::WHITE.g, Color4::WHITE.b, Color4::WHITE.a);
 
 	if(this->levelSource->isSolidBlockingTile(x, y - 1, z) || ((FireTile*)Tile::fire)->canBurn(this->levelSource, x, y - 1, z)) {
-		v47 = (float)z + 0.5;
+		v47 = (float)z + 0.5f;
 		v48 = (float)x;
-		v49 = (float)x + 0.5;
+		v49 = (float)x + 0.5f;
 		v50 = (float)y;
-		v51 = (float)z + 1.0;
-		v52 = v50 + 1.4;
-		Tesselator::instance.vertexUV(v49 - 0.3, v50 + 1.4, v51, maxX, minY);
-		v53 = v50 + 0.0;
-		Tesselator::instance.vertexUV(v49 + 0.2, v53, v51, maxX, maxY);
-		v54 = (float)z + 0.0;
+		v51 = (float)z + 1.0f;
+		v52 = v50 + 1.4f;
+		Tesselator::instance.vertexUV(v49 - 0.3f, v50 + 1.4f, v51, maxX, minY);
+		v53 = v50 + 0.0f;
+		Tesselator::instance.vertexUV(v49 + 0.2f, v53, v51, maxX, maxY);
+		v54 = (float)z + 0.0f;
 		v55 = v53;
-		Tesselator::instance.vertexUV(v49 + 0.2, v53, v54, minX, maxY);
+		Tesselator::instance.vertexUV(v49 + 0.2f, v53, v54, minX, maxY);
 		v56 = v54;
-		Tesselator::instance.vertexUV(v49 - 0.3, v52, v54, minX, minY);
-		Tesselator::instance.vertexUV(v49 + 0.3, v52, v54, maxX, minY);
-		Tesselator::instance.vertexUV(v49 - 0.2, v53, v54, maxX, maxY);
-		Tesselator::instance.vertexUV(v49 - 0.2, v53, v51, minX, maxY);
-		Tesselator::instance.vertexUV(v49 + 0.3, v52, v51, minX, minY);
+		Tesselator::instance.vertexUV(v49 - 0.3f, v52, v54, minX, minY);
+		Tesselator::instance.vertexUV(v49 + 0.3f, v52, v54, maxX, minY);
+		Tesselator::instance.vertexUV(v49 - 0.2f, v53, v54, maxX, maxY);
+		Tesselator::instance.vertexUV(v49 - 0.2f, v53, v51, minX, maxY);
+		Tesselator::instance.vertexUV(v49 + 0.3f, v52, v51, minX, minY);
 		v57 = v15->minX;
 		v58 = v15->minY;
 		v59 = v15->maxY;
 		v60 = v15->maxX;
-		Tesselator::instance.vertexUV(v48 + 1.0, v52, v47 + 0.3, v60, v58);
-		v61 = v48 + 1.0;
-		Tesselator::instance.vertexUV(v48 + 1.0, v55, v47 - 0.2, v60, v59);
-		Tesselator::instance.vertexUV(v48 + 0.0, v55, v47 - 0.2, v57, v59);
-		v62 = v48 + 0.0;
-		Tesselator::instance.vertexUV(v48 + 0.0, v52, v47 + 0.3, v57, v58);
-		Tesselator::instance.vertexUV(v48 + 0.0, v52, v47 - 0.3, v60, v58);
-		Tesselator::instance.vertexUV(v48 + 0.0, v55, v47 + 0.2, v60, v59);
-		Tesselator::instance.vertexUV(v48 + 1.0, v55, v47 + 0.2, v57, v59);
-		Tesselator::instance.vertexUV(v48 + 1.0, v52, v47 - 0.3, v57, v58);
-		v63 = v49 - 0.4;
-		v64 = v49 - 0.5;
-		v65 = v49 - 0.4;
-		v66 = v49 + 0.5;
-		v67 = v49 + 0.4;
-		v68 = v47 - 0.4;
-		v69 = v47 - 0.5;
-		v70 = v47 + 0.5;
-		v71 = v47 + 0.4;
-		Tesselator::instance.vertexUV(v65, v52, (float)z + 0.0, v57, v58);
+		Tesselator::instance.vertexUV(v48 + 1.0f, v52, v47 + 0.3f, v60, v58);
+		v61 = v48 + 1.0f;
+		Tesselator::instance.vertexUV(v48 + 1.0f, v55, v47 - 0.2f, v60, v59);
+		Tesselator::instance.vertexUV(v48 + 0.0f, v55, v47 - 0.2f, v57, v59);
+		v62 = v48 + 0.0f;
+		Tesselator::instance.vertexUV(v48 + 0.0f, v52, v47 + 0.3f, v57, v58);
+		Tesselator::instance.vertexUV(v48 + 0.0f, v52, v47 - 0.3f, v60, v58);
+		Tesselator::instance.vertexUV(v48 + 0.0f, v55, v47 + 0.2f, v60, v59);
+		Tesselator::instance.vertexUV(v48 + 1.0f, v55, v47 + 0.2f, v57, v59);
+		Tesselator::instance.vertexUV(v48 + 1.0f, v52, v47 - 0.3f, v57, v58);
+		v63 = v49 - 0.4f;
+		v64 = v49 - 0.5f;
+		v65 = v49 - 0.4f;
+		v66 = v49 + 0.5f;
+		v67 = v49 + 0.4f;
+		v68 = v47 - 0.4f;
+		v69 = v47 - 0.5f;
+		v70 = v47 + 0.5f;
+		v71 = v47 + 0.4f;
+		Tesselator::instance.vertexUV(v65, v52, (float)z + 0.0f, v57, v58);
 		Tesselator::instance.vertexUV(v64, v55, v56, v57, v59);
 		Tesselator::instance.vertexUV(v64, v55, v51, v60, v59);
 		Tesselator::instance.vertexUV(v63, v52, v51, v60, v58);
@@ -2559,49 +2557,49 @@ bool_t TileRenderer::tesselateFireInWorld(Tile* tile, int32_t x, int32_t y, int3
 			maxX = v16;
 		}
 		if(((FireTile*)Tile::fire)->canBurn(this->levelSource, x - 1, y, z)) {
-			v17 = (float)z + 1.0;
-			Tesselator::instance.vertexUV((float)x + 0.2, (float)((float)y + 1.4) + 0.0625, v17, maxX, minY);
-			Tesselator::instance.vertexUV((float)x + 0.0, (float)y + 0.0625, v17, maxX, maxY);
-			Tesselator::instance.vertexUV((float)x + 0.0, (float)y + 0.0625, (float)z + 0.0, minX, maxY);
-			Tesselator::instance.vertexUV((float)x + 0.2, (float)((float)y + 1.4) + 0.0625, (float)z + 0.0, minX, minY);
-			Tesselator::instance.vertexUV((float)x + 0.2, (float)((float)y + 1.4) + 0.0625, (float)z + 0.0, minX, minY);
-			Tesselator::instance.vertexUV((float)x + 0.0, (float)y + 0.0625, (float)z + 0.0, minX, maxY);
-			Tesselator::instance.vertexUV((float)x + 0.0, (float)y + 0.0625, v17, maxX, maxY);
-			Tesselator::instance.vertexUV((float)x + 0.2, (float)((float)y + 1.4) + 0.0625, v17, maxX, minY);
+			v17 = (float)z + 1.0f;
+			Tesselator::instance.vertexUV((float)x + 0.2f, (float)((float)y + 1.4f) + 0.0625f, v17, maxX, minY);
+			Tesselator::instance.vertexUV((float)x + 0.0f, (float)y + 0.0625f, v17, maxX, maxY);
+			Tesselator::instance.vertexUV((float)x + 0.0f, (float)y + 0.0625f, (float)z + 0.0f, minX, maxY);
+			Tesselator::instance.vertexUV((float)x + 0.2f, (float)((float)y + 1.4f) + 0.0625f, (float)z + 0.0f, minX, minY);
+			Tesselator::instance.vertexUV((float)x + 0.2f, (float)((float)y + 1.4f) + 0.0625f, (float)z + 0.0f, minX, minY);
+			Tesselator::instance.vertexUV((float)x + 0.0f, (float)y + 0.0625f, (float)z + 0.0f, minX, maxY);
+			Tesselator::instance.vertexUV((float)x + 0.0f, (float)y + 0.0625f, v17, maxX, maxY);
+			Tesselator::instance.vertexUV((float)x + 0.2f, (float)((float)y + 1.4f) + 0.0625f, v17, maxX, minY);
 		}
 		if(((FireTile*)Tile::fire)->canBurn(this->levelSource, x + 1, y, z)) {
-			v18 = (float)x + 1.0;
-			v19 = (float)z + 0.0;
-			Tesselator::instance.vertexUV(v18 - 0.2, (float)((float)y + 1.4) + 0.0625, v19, minX, minY);
-			Tesselator::instance.vertexUV(v18, (float)y + 0.0625, v19, minX, maxY);
-			Tesselator::instance.vertexUV(v18, (float)y + 0.0625, (float)z + 1.0, maxX, maxY);
-			Tesselator::instance.vertexUV(v18 - 0.2, (float)((float)y + 1.4) + 0.0625, (float)z + 1.0, maxX, minY);
-			Tesselator::instance.vertexUV(v18 - 0.2, (float)((float)y + 1.4) + 0.0625, (float)z + 1.0, maxX, minY);
-			Tesselator::instance.vertexUV(v18, (float)y + 0.0625, (float)z + 1.0, maxX, maxY);
-			Tesselator::instance.vertexUV(v18, (float)y + 0.0625, v19, minX, maxY);
-			Tesselator::instance.vertexUV(v18 - 0.2, (float)((float)y + 1.4) + 0.0625, v19, minX, minY);
+			v18 = (float)x + 1.0f;
+			v19 = (float)z + 0.0f;
+			Tesselator::instance.vertexUV(v18 - 0.2f, (float)((float)y + 1.4f) + 0.0625f, v19, minX, minY);
+			Tesselator::instance.vertexUV(v18, (float)y + 0.0625f, v19, minX, maxY);
+			Tesselator::instance.vertexUV(v18, (float)y + 0.0625f, (float)z + 1.0f, maxX, maxY);
+			Tesselator::instance.vertexUV(v18 - 0.2f, (float)((float)y + 1.4f) + 0.0625f, (float)z + 1.0f, maxX, minY);
+			Tesselator::instance.vertexUV(v18 - 0.2f, (float)((float)y + 1.4f) + 0.0625f, (float)z + 1.0f, maxX, minY);
+			Tesselator::instance.vertexUV(v18, (float)y + 0.0625f, (float)z + 1.0f, maxX, maxY);
+			Tesselator::instance.vertexUV(v18, (float)y + 0.0625f, v19, minX, maxY);
+			Tesselator::instance.vertexUV(v18 - 0.2f, (float)((float)y + 1.4f) + 0.0625f, v19, minX, minY);
 		}
 		if(((FireTile*)Tile::fire)->canBurn(this->levelSource, x, y, z - 1)) {
-			v20 = (float)z + 0.2;
-			Tesselator::instance.vertexUV((float)x + 0.0, (float)((float)y + 1.4) + 0.0625, v20, maxX, minY);
-			Tesselator::instance.vertexUV((float)x + 0.0, (float)y + 0.0625, (float)z + 0.0, maxX, maxY);
-			Tesselator::instance.vertexUV((float)x + 1.0, (float)y + 0.0625, (float)z + 0.0, minX, maxY);
-			Tesselator::instance.vertexUV((float)x + 1.0, (float)((float)y + 1.4) + 0.0625, v20, minX, minY);
-			Tesselator::instance.vertexUV((float)x + 1.0, (float)((float)y + 1.4) + 0.0625, v20, minX, minY);
-			Tesselator::instance.vertexUV((float)x + 1.0, (float)y + 0.0625, (float)z + 0.0, minX, maxY);
-			Tesselator::instance.vertexUV((float)x + 0.0, (float)y + 0.0625, (float)z + 0.0, maxX, maxY);
-			Tesselator::instance.vertexUV((float)x + 0.0, (float)((float)y + 1.4) + 0.0625, v20, maxX, minY);
+			v20 = (float)z + 0.2f;
+			Tesselator::instance.vertexUV((float)x + 0.0f, (float)((float)y + 1.4f) + 0.0625f, v20, maxX, minY);
+			Tesselator::instance.vertexUV((float)x + 0.0f, (float)y + 0.0625f, (float)z + 0.0f, maxX, maxY);
+			Tesselator::instance.vertexUV((float)x + 1.0f, (float)y + 0.0625f, (float)z + 0.0f, minX, maxY);
+			Tesselator::instance.vertexUV((float)x + 1.0f, (float)((float)y + 1.4f) + 0.0625f, v20, minX, minY);
+			Tesselator::instance.vertexUV((float)x + 1.0f, (float)((float)y + 1.4f) + 0.0625f, v20, minX, minY);
+			Tesselator::instance.vertexUV((float)x + 1.0f, (float)y + 0.0625f, (float)z + 0.0f, minX, maxY);
+			Tesselator::instance.vertexUV((float)x + 0.0f, (float)y + 0.0625f, (float)z + 0.0f, maxX, maxY);
+			Tesselator::instance.vertexUV((float)x + 0.0f, (float)((float)y + 1.4f) + 0.0625f, v20, maxX, minY);
 		}
 		if(((FireTile*)Tile::fire)->canBurn(this->levelSource, x, y, z + 1)) {
-			v21 = (float)z + 1.0;
-			Tesselator::instance.vertexUV((float)x + 1.0, (float)((float)y + 1.4) + 0.0625, v21 - 0.2, minX, minY);
-			Tesselator::instance.vertexUV((float)x + 1.0, (float)y + 0.0625, v21, minX, maxY);
-			Tesselator::instance.vertexUV((float)x + 0.0, (float)y + 0.0625, v21, maxX, maxY);
-			Tesselator::instance.vertexUV((float)x + 0.0, (float)((float)y + 1.4) + 0.0625, v21 - 0.2, maxX, minY);
-			Tesselator::instance.vertexUV((float)x + 0.0, (float)((float)y + 1.4) + 0.0625, v21 - 0.2, maxX, minY);
-			Tesselator::instance.vertexUV((float)x + 0.0, (float)y + 0.0625, v21, maxX, maxY);
-			Tesselator::instance.vertexUV((float)x + 1.0, (float)y + 0.0625, v21, minX, maxY);
-			Tesselator::instance.vertexUV((float)x + 1.0, (float)((float)y + 1.4) + 0.0625, v21 - 0.2, minX, minY);
+			v21 = (float)z + 1.0f;
+			Tesselator::instance.vertexUV((float)x + 1.0f, (float)((float)y + 1.4f) + 0.0625f, v21 - 0.2f, minX, minY);
+			Tesselator::instance.vertexUV((float)x + 1.0f, (float)y + 0.0625f, v21, minX, maxY);
+			Tesselator::instance.vertexUV((float)x + 0.0f, (float)y + 0.0625f, v21, maxX, maxY);
+			Tesselator::instance.vertexUV((float)x + 0.0f, (float)((float)y + 1.4f) + 0.0625f, v21 - 0.2f, maxX, minY);
+			Tesselator::instance.vertexUV((float)x + 0.0f, (float)((float)y + 1.4f) + 0.0625f, v21 - 0.2f, maxX, minY);
+			Tesselator::instance.vertexUV((float)x + 0.0f, (float)y + 0.0625f, v21, maxX, maxY);
+			Tesselator::instance.vertexUV((float)x + 1.0f, (float)y + 0.0625f, v21, minX, maxY);
+			Tesselator::instance.vertexUV((float)x + 1.0f, (float)((float)y + 1.4f) + 0.0625f, v21 - 0.2f, minX, minY);
 		}
 		v22 = y + 1;
 		if(((FireTile*)Tile::fire)->canBurn(this->levelSource, x, y + 1, z)) {
@@ -2612,41 +2610,41 @@ bool_t TileRenderer::tesselateFireInWorld(Tile* tile, int32_t x, int32_t y, int3
 			v27 = v9->maxY;
 			v28 = (float)x;
 			if((((int8_t)x + (int8_t)v22 + (int8_t)z) & 1) != 0) {
-				v39 = v24 + 0.5;
+				v39 = v24 + 0.5f;
 				v40 = (float)v22;
-				v41 = v40 - 0.2;
-				Tesselator::instance.vertexUV(v28 + 0.0, v40 - 0.2, v39 + 0.5, v9->maxX, v25);
-				v42 = v40 + 0.0;
-				Tesselator::instance.vertexUV(v28 + 0.0, v42, v39 - 0.5, v26, v27);
-				Tesselator::instance.vertexUV(v28 + 1.0, v42, v39 - 0.5, v23, v27);
-				Tesselator::instance.vertexUV(v28 + 1.0, v41, v39 + 0.5, v23, v25);
+				v41 = v40 - 0.2f;
+				Tesselator::instance.vertexUV(v28 + 0.0f, v40 - 0.2f, v39 + 0.5f, v9->maxX, v25);
+				v42 = v40 + 0.0f;
+				Tesselator::instance.vertexUV(v28 + 0.0f, v42, v39 - 0.5f, v26, v27);
+				Tesselator::instance.vertexUV(v28 + 1.0f, v42, v39 - 0.5f, v23, v27);
+				Tesselator::instance.vertexUV(v28 + 1.0f, v41, v39 + 0.5f, v23, v25);
 				v43 = v15->minY;
 				v44 = v15->maxX;
 				v45 = v15->maxY;
 				v46 = v15->minX;
-				Tesselator::instance.vertexUV(v28 + 1.0, v41, v39 - 0.5, v44, v43);
-				Tesselator::instance.vertexUV(v28 + 1.0, v42, v39 + 0.5, v44, v45);
-				Tesselator::instance.vertexUV(v28 + 0.0, v42, v39 + 0.5, v46, v45);
-				Tesselator::instance.vertexUV(v28 + 0.0, v41, v39 - 0.5, v46, v43);
+				Tesselator::instance.vertexUV(v28 + 1.0f, v41, v39 - 0.5f, v44, v43);
+				Tesselator::instance.vertexUV(v28 + 1.0f, v42, v39 + 0.5f, v44, v45);
+				Tesselator::instance.vertexUV(v28 + 0.0f, v42, v39 + 0.5f, v46, v45);
+				Tesselator::instance.vertexUV(v28 + 0.0f, v41, v39 - 0.5f, v46, v43);
 			} else {
-				v29 = v28 + 0.5;
+				v29 = v28 + 0.5f;
 				v30 = (float)v22;
-				v31 = v29 + 0.5;
-				v32 = v24 + 0.0;
-				v33 = v29 - 0.5;
-				Tesselator::instance.vertexUV(v33, v30 - 0.2, v24 + 0.0, v9->maxX, v25);
-				Tesselator::instance.vertexUV(v31, v30 + 0.0, v24 + 0.0, v26, v27);
-				v34 = v24 + 1.0;
-				Tesselator::instance.vertexUV(v31, v30 + 0.0, v34, v23, v27);
-				Tesselator::instance.vertexUV(v33, v30 - 0.2, v34, v23, v25);
+				v31 = v29 + 0.5f;
+				v32 = v24 + 0.0f;
+				v33 = v29 - 0.5f;
+				Tesselator::instance.vertexUV(v33, v30 - 0.2f, v24 + 0.0f, v9->maxX, v25);
+				Tesselator::instance.vertexUV(v31, v30 + 0.0f, v24 + 0.0f, v26, v27);
+				v34 = v24 + 1.0f;
+				Tesselator::instance.vertexUV(v31, v30 + 0.0f, v34, v23, v27);
+				Tesselator::instance.vertexUV(v33, v30 - 0.2f, v34, v23, v25);
 				v35 = v15->minY;
 				v36 = v15->maxX;
 				v37 = v15->maxY;
 				v38 = v15->minX;
-				Tesselator::instance.vertexUV(v31, v30 - 0.2, v34, v36, v35);
-				Tesselator::instance.vertexUV(v33, v30 + 0.0, v34, v36, v37);
-				Tesselator::instance.vertexUV(v33, v30 + 0.0, v32, v38, v37);
-				Tesselator::instance.vertexUV(v31, v30 - 0.2, v32, v38, v35);
+				Tesselator::instance.vertexUV(v31, v30 - 0.2f, v34, v36, v35);
+				Tesselator::instance.vertexUV(v33, v30 + 0.0f, v34, v36, v37);
+				Tesselator::instance.vertexUV(v33, v30 + 0.0f, v32, v38, v37);
+				Tesselator::instance.vertexUV(v31, v30 - 0.2f, v32, v38, v35);
 			}
 		}
 	}
@@ -2748,10 +2746,10 @@ bool_t TileRenderer::tesselateLadderInWorld(Tile* tile, int32_t x, int32_t y, in
 	v15 = this->levelSource->getData(x, y, z);
 	switch(v15) {
 		case 5:
-			v16 = (float)x + 0.05;
-			v17 = (float)(y + 1) + 0.0;
-			Tesselator::instance.vertexUV(v16, v17, (float)(z + 1) + 0.0, minX, minY);
-			Tesselator::instance.vertexUV(v16, (float)y, (float)(z + 1) + 0.0, minX, maxY);
+			v16 = (float)x + 0.05f;
+			v17 = (float)(y + 1) + 0.0f;
+			Tesselator::instance.vertexUV(v16, v17, (float)(z + 1) + 0.0f, minX, minY);
+			Tesselator::instance.vertexUV(v16, (float)y, (float)(z + 1) + 0.0f, minX, maxY);
 			v18 = (float)z;
 			Tesselator::instance.vertexUV(v16, (float)y, (float)z, maxX, maxY);
 			v30 = maxX;
@@ -2764,14 +2762,14 @@ LABEL_14:
 			Tesselator::instance.vertexUV(v21, v22, v23, v30, v31);
 			return 1;
 		case 4:
-			v16 = (float)(x + 1) - 0.05;
+			v16 = (float)(x + 1) - 0.05f;
 			v19 = y;
 			v20 = y + 1;
 			v17 = (float)v19;
-			Tesselator::instance.vertexUV(v16, (float)v19, (float)(z + 1) + 0.0, maxX, maxY);
-			Tesselator::instance.vertexUV(v16, (float)v20 + 0.0, (float)(z + 1) + 0.0, maxX, minY);
+			Tesselator::instance.vertexUV(v16, (float)v19, (float)(z + 1) + 0.0f, maxX, maxY);
+			Tesselator::instance.vertexUV(v16, (float)v20 + 0.0f, (float)(z + 1) + 0.0f, maxX, minY);
 			v18 = (float)z;
-			Tesselator::instance.vertexUV(v16, (float)v20 + 0.0, (float)z, minX, minY);
+			Tesselator::instance.vertexUV(v16, (float)v20 + 0.0f, (float)z, minX, minY);
 			v30 = minX;
 			v31 = maxY;
 			goto LABEL_8;
@@ -2779,11 +2777,11 @@ LABEL_14:
 			v24 = y;
 			v25 = y + 1;
 			v26 = (float)v24;
-			v27 = (float)z + 0.05;
-			Tesselator::instance.vertexUV((float)(x + 1) + 0.0, (float)v24, v27, maxX, maxY);
-			Tesselator::instance.vertexUV((float)(x + 1) + 0.0, (float)v25 + 0.0, v27, maxX, minY);
+			v27 = (float)z + 0.05f;
+			Tesselator::instance.vertexUV((float)(x + 1) + 0.0f, (float)v24, v27, maxX, maxY);
+			Tesselator::instance.vertexUV((float)(x + 1) + 0.0f, (float)v25 + 0.0f, v27, maxX, minY);
 			v28 = (float)x;
-			Tesselator::instance.vertexUV((float)x, (float)v25 + 0.0, v27, minX, minY);
+			Tesselator::instance.vertexUV((float)x, (float)v25 + 0.0f, v27, minX, minY);
 			v30 = minX;
 			v31 = maxY;
 LABEL_13:
@@ -2792,10 +2790,10 @@ LABEL_13:
 			v23 = v27;
 			goto LABEL_14;
 		case 2:
-			v26 = (float)(y + 1) + 0.0;
-			v27 = (float)(z + 1) - 0.05;
-			Tesselator::instance.vertexUV((float)(x + 1) + 0.0, v26, v27, minX, minY);
-			Tesselator::instance.vertexUV((float)(x + 1) + 0.0, (float)y, v27, minX, maxY);
+			v26 = (float)(y + 1) + 0.0f;
+			v27 = (float)(z + 1) - 0.05f;
+			Tesselator::instance.vertexUV((float)(x + 1) + 0.0f, v26, v27, minX, minY);
+			Tesselator::instance.vertexUV((float)(x + 1) + 0.0f, (float)y, v27, minX, maxY);
 			v28 = (float)x;
 			Tesselator::instance.vertexUV((float)x, (float)y, v27, maxX, maxY);
 			v30 = maxX;
@@ -2834,56 +2832,56 @@ bool_t TileRenderer::tesselateRailInWorld(BaseRailTile* tile, int32_t x, int32_t
 	}
 	v13 = tile->getBrightness(this->levelSource, x, y, z);
 	Tesselator::instance.color(v13, v13, v13);
-	v14 = (float)x + 1.0;
-	v15 = (float)y + 0.0625;
-	v16 = (float)x + 0.0;
-	v17 = (float)z + 0.0;
-	v18 = (float)z + 1.0;
+	v14 = (float)x + 1.0f;
+	v15 = (float)y + 0.0625f;
+	v16 = (float)x + 0.0f;
+	v17 = (float)z + 0.0f;
+	v18 = (float)z + 1.0f;
 	if((uint32_t)(v9 - 1) <= 2) {
-		v22 = (float)x + 1.0;
+		v22 = (float)x + 1.0f;
 		v20 = v9 == 2;
-		v23 = (float)x + 0.0;
-		v19 = (float)z + 0.0;
+		v23 = (float)x + 0.0f;
+		v19 = (float)z + 0.0f;
 		v21 = v19;
-		v17 = (float)z + 1.0;
+		v17 = (float)z + 1.0f;
 	} else {
 		switch(v9) {
 			case 7:
-				v19 = (float)z + 0.0;
+				v19 = (float)z + 0.0f;
 				v21 = v19;
-				v22 = (float)x + 1.0;
-				v17 = (float)z + 1.0;
-				v23 = (float)x + 0.0;
+				v22 = (float)x + 1.0f;
+				v17 = (float)z + 1.0f;
+				v23 = (float)x + 0.0f;
 				goto LABEL_17;
 			case 8:
-				v21 = (float)z + 0.0;
-				v22 = (float)x + 1.0;
-				v19 = (float)z + 1.0;
+				v21 = (float)z + 0.0f;
+				v22 = (float)x + 1.0f;
+				v19 = (float)z + 1.0f;
 				v17 = v19;
-				v23 = (float)x + 0.0;
+				v23 = (float)x + 0.0f;
 				v14 = v23;
 				v18 = v21;
 				v16 = v22;
 				goto LABEL_17;
 			case 9:
-				v23 = (float)x + 1.0;
-				v19 = (float)z + 1.0;
+				v23 = (float)x + 1.0f;
+				v19 = (float)z + 1.0f;
 				v21 = v19;
-				v22 = (float)x + 0.0;
+				v22 = (float)x + 0.0f;
 				v14 = v22;
-				v18 = (float)z + 0.0;
+				v18 = (float)z + 0.0f;
 				v16 = v23;
 				goto LABEL_17;
 		}
-		v19 = (float)z + 0.0;
+		v19 = (float)z + 0.0f;
 		v20 = v9 == 4;
-		v21 = (float)z + 1.0;
-		v22 = (float)x + 0.0;
-		v23 = (float)x + 1.0;
+		v21 = (float)z + 1.0f;
+		v22 = (float)x + 0.0f;
+		v23 = (float)x + 1.0f;
 	}
 	if(!v20) {
 		if(v9 == 3 || v9 == 5) {
-			v24 = v15 + 1.0;
+			v24 = v15 + 1.0f;
 			goto LABEL_21;
 		}
 LABEL_17:
@@ -2891,7 +2889,7 @@ LABEL_17:
 		goto LABEL_21;
 	}
 	v24 = v15;
-	v15 = v15 + 1.0;
+	v15 = v15 + 1.0f;
 LABEL_21:
 	Tesselator::instance.vertexUV(v14, v15, v17, v26.maxX, v26.minY);
 	Tesselator::instance.vertexUV(v23, v24, v18, v26.maxX, v26.maxY);
@@ -2910,7 +2908,7 @@ bool_t TileRenderer::tesselateRowInWorld(Tile* tile, int32_t x, int32_t y, int32
 	v9 = tile->getBrightness(this->levelSource, x, y, z);
 	Tesselator::instance.color(v9, v9, v9);
 	v10 = this->levelSource->getData(x, y, z);
-	this->tesselateRowTexture(tile, v10, (float)x, (float)y - 0.0625, (float)z);
+	this->tesselateRowTexture(tile, v10, (float)x, (float)y - 0.0625f, (float)z);
 	return 1;
 }
 void TileRenderer::tesselateRowTexture(Tile* tile, int32_t a3, float a4, float a5, float a6) {
@@ -2930,39 +2928,39 @@ void TileRenderer::tesselateRowTexture(Tile* tile, int32_t a3, float a4, float a
 	maxX = v7->maxX;
 	maxY = v7->maxY;
 	minX = v7->minX;
-	v12 = a4 + 0.5;
-	Tesselator::instance.vertexUV(v12 - 0.25, a5 + 1.0, (float)(a6 + 0.5) - 0.5, v7->minX, minY);
-	Tesselator::instance.vertexUV(v12 - 0.25, a5 + 0.0, (float)(a6 + 0.5) - 0.5, minX, maxY);
-	Tesselator::instance.vertexUV(v12 - 0.25, a5 + 0.0, (float)(a6 + 0.5) + 0.5, maxX, maxY);
-	Tesselator::instance.vertexUV(v12 - 0.25, a5 + 1.0, (float)(a6 + 0.5) + 0.5, maxX, minY);
-	Tesselator::instance.vertexUV(v12 - 0.25, a5 + 1.0, (float)(a6 + 0.5) + 0.5, minX, minY);
-	Tesselator::instance.vertexUV(v12 - 0.25, a5 + 0.0, (float)(a6 + 0.5) + 0.5, minX, maxY);
-	Tesselator::instance.vertexUV(v12 - 0.25, a5 + 0.0, (float)(a6 + 0.5) - 0.5, maxX, maxY);
-	Tesselator::instance.vertexUV(v12 - 0.25, a5 + 1.0, (float)(a6 + 0.5) - 0.5, maxX, minY);
-	Tesselator::instance.vertexUV(v12 + 0.25, a5 + 1.0, (float)(a6 + 0.5) + 0.5, minX, minY);
-	Tesselator::instance.vertexUV(v12 + 0.25, a5 + 0.0, (float)(a6 + 0.5) + 0.5, minX, maxY);
-	Tesselator::instance.vertexUV(v12 + 0.25, a5 + 0.0, (float)(a6 + 0.5) - 0.5, maxX, maxY);
-	Tesselator::instance.vertexUV(v12 + 0.25, a5 + 1.0, (float)(a6 + 0.5) - 0.5, maxX, minY);
-	Tesselator::instance.vertexUV(v12 + 0.25, a5 + 1.0, (float)(a6 + 0.5) - 0.5, minX, minY);
-	Tesselator::instance.vertexUV(v12 + 0.25, a5 + 0.0, (float)(a6 + 0.5) - 0.5, minX, maxY);
-	Tesselator::instance.vertexUV(v12 + 0.25, a5 + 0.0, (float)(a6 + 0.5) + 0.5, maxX, maxY);
-	Tesselator::instance.vertexUV(v12 + 0.25, a5 + 1.0, (float)(a6 + 0.5) + 0.5, maxX, minY);
-	Tesselator::instance.vertexUV(v12 - 0.5, a5 + 1.0, (float)(a6 + 0.5) - 0.25, minX, minY);
-	Tesselator::instance.vertexUV(v12 - 0.5, a5 + 0.0, (float)(a6 + 0.5) - 0.25, minX, maxY);
-	Tesselator::instance.vertexUV(v12 + 0.5, a5 + 0.0, (float)(a6 + 0.5) - 0.25, maxX, maxY);
-	Tesselator::instance.vertexUV(v12 + 0.5, a5 + 1.0, (float)(a6 + 0.5) - 0.25, maxX, minY);
-	Tesselator::instance.vertexUV(v12 + 0.5, a5 + 1.0, (float)(a6 + 0.5) - 0.25, minX, minY);
-	Tesselator::instance.vertexUV(v12 + 0.5, a5 + 0.0, (float)(a6 + 0.5) - 0.25, minX, maxY);
-	Tesselator::instance.vertexUV(v12 - 0.5, a5 + 0.0, (float)(a6 + 0.5) - 0.25, maxX, maxY);
-	Tesselator::instance.vertexUV(v12 - 0.5, a5 + 1.0, (float)(a6 + 0.5) - 0.25, maxX, minY);
-	Tesselator::instance.vertexUV(v12 + 0.5, a5 + 1.0, (float)(a6 + 0.5) + 0.25, minX, minY);
-	Tesselator::instance.vertexUV(v12 + 0.5, a5 + 0.0, (float)(a6 + 0.5) + 0.25, minX, maxY);
-	Tesselator::instance.vertexUV(v12 - 0.5, a5 + 0.0, (float)(a6 + 0.5) + 0.25, maxX, maxY);
-	Tesselator::instance.vertexUV(v12 - 0.5, a5 + 1.0, (float)(a6 + 0.5) + 0.25, maxX, minY);
-	Tesselator::instance.vertexUV(v12 - 0.5, a5 + 1.0, (float)(a6 + 0.5) + 0.25, minX, minY);
-	Tesselator::instance.vertexUV(v12 - 0.5, a5 + 0.0, (float)(a6 + 0.5) + 0.25, minX, maxY);
-	Tesselator::instance.vertexUV(v12 + 0.5, a5 + 0.0, (float)(a6 + 0.5) + 0.25, maxX, maxY);
-	Tesselator::instance.vertexUV(v12 + 0.5, a5 + 1.0, (float)(a6 + 0.5) + 0.25, maxX, minY);
+	v12 = a4 + 0.5f;
+	Tesselator::instance.vertexUV(v12 - 0.25f, a5 + 1.0f, (float)(a6 + 0.5f) - 0.5f, v7->minX, minY);
+	Tesselator::instance.vertexUV(v12 - 0.25f, a5 + 0.0f, (float)(a6 + 0.5f) - 0.5f, minX, maxY);
+	Tesselator::instance.vertexUV(v12 - 0.25f, a5 + 0.0f, (float)(a6 + 0.5f) + 0.5f, maxX, maxY);
+	Tesselator::instance.vertexUV(v12 - 0.25f, a5 + 1.0f, (float)(a6 + 0.5f) + 0.5f, maxX, minY);
+	Tesselator::instance.vertexUV(v12 - 0.25f, a5 + 1.0f, (float)(a6 + 0.5f) + 0.5f, minX, minY);
+	Tesselator::instance.vertexUV(v12 - 0.25f, a5 + 0.0f, (float)(a6 + 0.5f) + 0.5f, minX, maxY);
+	Tesselator::instance.vertexUV(v12 - 0.25f, a5 + 0.0f, (float)(a6 + 0.5f) - 0.5f, maxX, maxY);
+	Tesselator::instance.vertexUV(v12 - 0.25f, a5 + 1.0f, (float)(a6 + 0.5f) - 0.5f, maxX, minY);
+	Tesselator::instance.vertexUV(v12 + 0.25f, a5 + 1.0f, (float)(a6 + 0.5f) + 0.5f, minX, minY);
+	Tesselator::instance.vertexUV(v12 + 0.25f, a5 + 0.0f, (float)(a6 + 0.5f) + 0.5f, minX, maxY);
+	Tesselator::instance.vertexUV(v12 + 0.25f, a5 + 0.0f, (float)(a6 + 0.5f) - 0.5f, maxX, maxY);
+	Tesselator::instance.vertexUV(v12 + 0.25f, a5 + 1.0f, (float)(a6 + 0.5f) - 0.5f, maxX, minY);
+	Tesselator::instance.vertexUV(v12 + 0.25f, a5 + 1.0f, (float)(a6 + 0.5f) - 0.5f, minX, minY);
+	Tesselator::instance.vertexUV(v12 + 0.25f, a5 + 0.0f, (float)(a6 + 0.5f) - 0.5f, minX, maxY);
+	Tesselator::instance.vertexUV(v12 + 0.25f, a5 + 0.0f, (float)(a6 + 0.5f) + 0.5f, maxX, maxY);
+	Tesselator::instance.vertexUV(v12 + 0.25f, a5 + 1.0f, (float)(a6 + 0.5f) + 0.5f, maxX, minY);
+	Tesselator::instance.vertexUV(v12 - 0.5f, a5 + 1.0f, (float)(a6 + 0.5f) - 0.25f, minX, minY);
+	Tesselator::instance.vertexUV(v12 - 0.5f, a5 + 0.0f, (float)(a6 + 0.5f) - 0.25f, minX, maxY);
+	Tesselator::instance.vertexUV(v12 + 0.5f, a5 + 0.0f, (float)(a6 + 0.5f) - 0.25f, maxX, maxY);
+	Tesselator::instance.vertexUV(v12 + 0.5f, a5 + 1.0f, (float)(a6 + 0.5f) - 0.25f, maxX, minY);
+	Tesselator::instance.vertexUV(v12 + 0.5f, a5 + 1.0f, (float)(a6 + 0.5f) - 0.25f, minX, minY);
+	Tesselator::instance.vertexUV(v12 + 0.5f, a5 + 0.0f, (float)(a6 + 0.5f) - 0.25f, minX, maxY);
+	Tesselator::instance.vertexUV(v12 - 0.5f, a5 + 0.0f, (float)(a6 + 0.5f) - 0.25f, maxX, maxY);
+	Tesselator::instance.vertexUV(v12 - 0.5f, a5 + 1.0f, (float)(a6 + 0.5f) - 0.25f, maxX, minY);
+	Tesselator::instance.vertexUV(v12 + 0.5f, a5 + 1.0f, (float)(a6 + 0.5f) + 0.25f, minX, minY);
+	Tesselator::instance.vertexUV(v12 + 0.5f, a5 + 0.0f, (float)(a6 + 0.5f) + 0.25f, minX, maxY);
+	Tesselator::instance.vertexUV(v12 - 0.5f, a5 + 0.0f, (float)(a6 + 0.5f) + 0.25f, maxX, maxY);
+	Tesselator::instance.vertexUV(v12 - 0.5f, a5 + 1.0f, (float)(a6 + 0.5f) + 0.25f, maxX, minY);
+	Tesselator::instance.vertexUV(v12 - 0.5f, a5 + 1.0f, (float)(a6 + 0.5f) + 0.25f, minX, minY);
+	Tesselator::instance.vertexUV(v12 - 0.5f, a5 + 0.0f, (float)(a6 + 0.5f) + 0.25f, minX, maxY);
+	Tesselator::instance.vertexUV(v12 + 0.5f, a5 + 0.0f, (float)(a6 + 0.5f) + 0.25f, maxX, maxY);
+	Tesselator::instance.vertexUV(v12 + 0.5f, a5 + 1.0f, (float)(a6 + 0.5f) + 0.25f, maxX, minY);
 }
 bool_t TileRenderer::tesselateStairsInWorld(StairTile* tile, int32_t x, int32_t y, int32_t z) {
 	bool_t v9;
@@ -3007,10 +3005,10 @@ void TileRenderer::tesselateStemDirTexture(Tile* a2, int32_t a3, int32_t a4, flo
 	maxX = ConnectedTexture->maxX;
 	minY = ConnectedTexture->minY;
 	maxY = ConnectedTexture->maxY;
-	v14 = a8 + 0.5;
-	v15 = a6 + 0.5;
-	v16 = (float)(a8 + 0.5) - 0.5;
-	v17 = (float)(a8 + 0.5) + 0.5;
+	v14 = a8 + 0.5f;
+	v15 = a6 + 0.5f;
+	v16 = (float)(a8 + 0.5f) - 0.5f;
+	v17 = (float)(a8 + 0.5f) + 0.5f;
 	if((a4 + 1) / 2 % 2 == 1) {
 		minX = ConnectedTexture->maxX;
 		maxX = ConnectedTexture->minX;
@@ -3018,31 +3016,31 @@ void TileRenderer::tesselateStemDirTexture(Tile* a2, int32_t a3, int32_t a4, flo
 	v18 = a4 <= 1;
 	v19 = a7 + a5;
 	if(v18) {
-		v20 = v15 - 0.5;
-		v21 = v15 - 0.5;
-		v22 = v15 + 0.5;
+		v20 = v15 - 0.5f;
+		v21 = v15 - 0.5f;
+		v22 = v15 + 0.5f;
 		Tesselator::instance.vertexUV(v21, v19, v14, minX, minY);
-		Tesselator::instance.vertexUV(v20, a7 + 0.0, v14, minX, maxY);
-		Tesselator::instance.vertexUV(v22, a7 + 0.0, v14, maxX, maxY);
+		Tesselator::instance.vertexUV(v20, a7 + 0.0f, v14, minX, maxY);
+		Tesselator::instance.vertexUV(v22, a7 + 0.0f, v14, maxX, maxY);
 		Tesselator::instance.vertexUV(v22, v19, v14, maxX, minY);
 		Tesselator::instance.vertexUV(v22, v19, v14, maxX, minY);
-		Tesselator::instance.vertexUV(v22, a7 + 0.0, v14, maxX, maxY);
-		Tesselator::instance.vertexUV(v20, a7 + 0.0, v14, minX, maxY);
+		Tesselator::instance.vertexUV(v22, a7 + 0.0f, v14, maxX, maxY);
+		Tesselator::instance.vertexUV(v20, a7 + 0.0f, v14, minX, maxY);
 		v26 = minX;
 		v27 = minY;
 		v23 = v20;
 		v25 = v19;
-		v24 = a8 + 0.5;
+		v24 = a8 + 0.5f;
 	} else {
-		Tesselator::instance.vertexUV(v15, v19, v14 + 0.5, minX, minY);
-		Tesselator::instance.vertexUV(v15, a7 + 0.0, v17, minX, maxY);
-		Tesselator::instance.vertexUV(v15, a7 + 0.0, v16, maxX, maxY);
+		Tesselator::instance.vertexUV(v15, v19, v14 + 0.5f, minX, minY);
+		Tesselator::instance.vertexUV(v15, a7 + 0.0f, v17, minX, maxY);
+		Tesselator::instance.vertexUV(v15, a7 + 0.0f, v16, maxX, maxY);
 		Tesselator::instance.vertexUV(v15, v19, v16, maxX, minY);
 		Tesselator::instance.vertexUV(v15, v19, v16, maxX, minY);
-		Tesselator::instance.vertexUV(v15, a7 + 0.0, v16, maxX, maxY);
-		Tesselator::instance.vertexUV(v15, a7 + 0.0, v17, minX, maxY);
-		v23 = a6 + 0.5;
-		v24 = (float)(a8 + 0.5) + 0.5;
+		Tesselator::instance.vertexUV(v15, a7 + 0.0f, v16, maxX, maxY);
+		Tesselator::instance.vertexUV(v15, a7 + 0.0f, v17, minX, maxY);
+		v23 = a6 + 0.5f;
+		v24 = (float)(a8 + 0.5f) + 0.5f;
 		v25 = a7 + a5;
 		v26 = minX;
 		v27 = minY;
@@ -3058,16 +3056,16 @@ bool_t TileRenderer::tesselateStemInWorld(Tile* tile, int32_t x, int32_t y, int3
 
 	v9 = tile->getBrightness(this->levelSource, x, y, z);
 	v10 = tile->getColor(this->levelSource, x, y, z);
-	Tesselator::instance.color(v9 * (float)((float)((v10 & 0xff0000) >> 16) / 255.0), v9 * (float)((float)((v10 & 0xff00) >> 8) / 255.0), v9 * (float)((float)(v10 & 0xff) / 255.0));
+	Tesselator::instance.color(v9 * (float)((float)((v10 & 0xff0000) >> 16) / 255.0f), v9 * (float)((float)((v10 & 0xff00) >> 8) / 255.0f), v9 * (float)((float)(v10 & 0xff) / 255.0f));
 	tile->updateShape(this->levelSource, x, y, z);
 	ConnectDir = ((StemTile*)tile)->getConnectDir(this->levelSource, x, y, z);
 	v12 = this->levelSource->getData(x, y, z);
 	if(ConnectDir < 0) {
-		this->tesselateStemTexture(tile, v12, tile->maxY, (float)x, (float)y - 0.0625, (float)z);
+		this->tesselateStemTexture(tile, v12, tile->maxY, (float)x, (float)y - 0.0625f, (float)z);
 	} else {
-		this->tesselateStemTexture(tile, v12, 0.5, (float)x, (float)y - 0.0625, (float)z);
+		this->tesselateStemTexture(tile, v12, 0.5f, (float)x, (float)y - 0.0625f, (float)z);
 		v13 = this->levelSource->getData(x, y, z);
-		this->tesselateStemDirTexture(tile, v13, ConnectDir, tile->maxY, (float)x, (float)y - 0.0625, (float)z);
+		this->tesselateStemDirTexture(tile, v13, ConnectDir, tile->maxY, (float)x, (float)y - 0.0625f, (float)z);
 	}
 	return 1;
 }
@@ -3087,24 +3085,24 @@ void TileRenderer::tesselateStemTexture(Tile* a2, int32_t a3, float a4, float a5
 	minY = v8->minY;
 	minX = v8->minX;
 	maxX = v8->maxX;
-	v12 = (float)(minY + (float)(a4 * (float)(v8->maxY - minY))) - 0.0001;
+	v12 = (float)(minY + (float)(a4 * (float)(v8->maxY - minY))) - 0.0001f;
 	v13 = a6 + a4;
-	Tesselator::instance.vertexUV((float)(a5 + 0.5) - 0.45, v13, (float)(a7 + 0.5) - 0.45, v8->minX, minY);
-	Tesselator::instance.vertexUV((float)(a5 + 0.5) - 0.45, a6 + 0.0, (float)(a7 + 0.5) - 0.45, minX, v12);
-	Tesselator::instance.vertexUV((float)(a5 + 0.5) + 0.45, a6 + 0.0, (float)(a7 + 0.5) + 0.45, maxX, v12);
-	Tesselator::instance.vertexUV((float)(a5 + 0.5) + 0.45, v13, (float)(a7 + 0.5) + 0.45, maxX, minY);
-	Tesselator::instance.vertexUV((float)(a5 + 0.5) + 0.45, v13, (float)(a7 + 0.5) + 0.45, maxX, minY);
-	Tesselator::instance.vertexUV((float)(a5 + 0.5) + 0.45, a6 + 0.0, (float)(a7 + 0.5) + 0.45, maxX, v12);
-	Tesselator::instance.vertexUV((float)(a5 + 0.5) - 0.45, a6 + 0.0, (float)(a7 + 0.5) - 0.45, minX, v12);
-	Tesselator::instance.vertexUV((float)(a5 + 0.5) - 0.45, v13, (float)(a7 + 0.5) - 0.45, minX, minY);
-	Tesselator::instance.vertexUV((float)(a5 + 0.5) - 0.45, v13, (float)(a7 + 0.5) + 0.45, minX, minY);
-	Tesselator::instance.vertexUV((float)(a5 + 0.5) - 0.45, a6 + 0.0, (float)(a7 + 0.5) + 0.45, minX, v12);
-	Tesselator::instance.vertexUV((float)(a5 + 0.5) + 0.45, a6 + 0.0, (float)(a7 + 0.5) - 0.45, maxX, v12);
-	Tesselator::instance.vertexUV((float)(a5 + 0.5) + 0.45, v13, (float)(a7 + 0.5) - 0.45, maxX, minY);
-	Tesselator::instance.vertexUV((float)(a5 + 0.5) + 0.45, v13, (float)(a7 + 0.5) - 0.45, maxX, minY);
-	Tesselator::instance.vertexUV((float)(a5 + 0.5) + 0.45, a6 + 0.0, (float)(a7 + 0.5) - 0.45, maxX, v12);
-	Tesselator::instance.vertexUV((float)(a5 + 0.5) - 0.45, a6 + 0.0, (float)(a7 + 0.5) + 0.45, minX, v12);
-	Tesselator::instance.vertexUV((float)(a5 + 0.5) - 0.45, v13, (float)(a7 + 0.5) + 0.45, minX, minY);
+	Tesselator::instance.vertexUV((float)(a5 + 0.5f) - 0.45f, v13, (float)(a7 + 0.5f) - 0.45f, v8->minX, minY);
+	Tesselator::instance.vertexUV((float)(a5 + 0.5f) - 0.45f, a6 + 0.0f, (float)(a7 + 0.5f) - 0.45f, minX, v12);
+	Tesselator::instance.vertexUV((float)(a5 + 0.5f) + 0.45f, a6 + 0.0f, (float)(a7 + 0.5f) + 0.45f, maxX, v12);
+	Tesselator::instance.vertexUV((float)(a5 + 0.5f) + 0.45f, v13, (float)(a7 + 0.5f) + 0.45f, maxX, minY);
+	Tesselator::instance.vertexUV((float)(a5 + 0.5f) + 0.45f, v13, (float)(a7 + 0.5f) + 0.45f, maxX, minY);
+	Tesselator::instance.vertexUV((float)(a5 + 0.5f) + 0.45f, a6 + 0.0f, (float)(a7 + 0.5f) + 0.45f, maxX, v12);
+	Tesselator::instance.vertexUV((float)(a5 + 0.5f) - 0.45f, a6 + 0.0f, (float)(a7 + 0.5f) - 0.45f, minX, v12);
+	Tesselator::instance.vertexUV((float)(a5 + 0.5f) - 0.45f, v13, (float)(a7 + 0.5f) - 0.45f, minX, minY);
+	Tesselator::instance.vertexUV((float)(a5 + 0.5f) - 0.45f, v13, (float)(a7 + 0.5f) + 0.45f, minX, minY);
+	Tesselator::instance.vertexUV((float)(a5 + 0.5f) - 0.45f, a6 + 0.0f, (float)(a7 + 0.5f) + 0.45f, minX, v12);
+	Tesselator::instance.vertexUV((float)(a5 + 0.5f) + 0.45f, a6 + 0.0f, (float)(a7 + 0.5f) - 0.45f, maxX, v12);
+	Tesselator::instance.vertexUV((float)(a5 + 0.5f) + 0.45f, v13, (float)(a7 + 0.5f) - 0.45f, maxX, minY);
+	Tesselator::instance.vertexUV((float)(a5 + 0.5f) + 0.45f, v13, (float)(a7 + 0.5f) - 0.45f, maxX, minY);
+	Tesselator::instance.vertexUV((float)(a5 + 0.5f) + 0.45f, a6 + 0.0f, (float)(a7 + 0.5f) - 0.45f, maxX, v12);
+	Tesselator::instance.vertexUV((float)(a5 + 0.5f) - 0.45f, a6 + 0.0f, (float)(a7 + 0.5f) + 0.45f, minX, v12);
+	Tesselator::instance.vertexUV((float)(a5 + 0.5f) - 0.45f, v13, (float)(a7 + 0.5f) + 0.45f, minX, minY);
 }
 bool_t TileRenderer::tesselateThinFenceInWorld(ThinFenceTile* tile, int32_t x, int32_t y, int32_t z) {
 	float v6;	// s16
@@ -3163,7 +3161,7 @@ bool_t TileRenderer::tesselateThinFenceInWorld(ThinFenceTile* tile, int32_t x, i
 
 	v6 = tile->getBrightness(this->levelSource, x, y, z);
 	v7 = tile->getColor(this->levelSource, x, y, z);
-	Tesselator::instance.color(v6 * (float)((float)((v7 & 0xff0000) >> 16) / 255.0), v6 * (float)((float)((v7 & 0xff00) >> 8) / 255.0), v6 * (float)((float)(v7 & 0xff) / 255.0));
+	Tesselator::instance.color(v6 * (float)((float)((v7 & 0xff0000) >> 16) / 255.0f), v6 * (float)((float)((v7 & 0xff00) >> 8) / 255.0f), v6 * (float)((float)(v7 & 0xff) / 255.0f));
 	//hasUVCoords = (unsigned __int8)this->hasUVCoords;
 	if(this->hasUVCoords) {
 		//p_width = &this->field_8.width;
@@ -3191,22 +3189,22 @@ bool_t TileRenderer::tesselateThinFenceInWorld(ThinFenceTile* tile, int32_t x, i
 	v18 = v10->maxY;
 	//v60 = *(_DWORD*)p_width;
 	//v61 = *((_DWORD*)p_width + 1);
-	v19 = v58.minX + (float)((float)(v58.maxX - v58.minX) * 0.49);
-	v20 = minX + (float)((float)(v59 - minX) * 0.4375);
-	v21 = minX + (float)((float)(v59 - minX) * 0.56187);
+	v19 = v58.minX + (float)((float)(v58.maxX - v58.minX) * 0.49f);
+	v20 = minX + (float)((float)(v59 - minX) * 0.4375f);
+	v21 = minX + (float)((float)(v59 - minX) * 0.56187f);
 	v39 = (float)x;
-	v22 = (float)x + 0.5;
-	v41 = (float)x + 1.0;
-	v23 = (float)((float)y + 0.001) + 1.0;
-	v24 = (float)y + 0.001;
-	v25 = v23 - 0.002;
+	v22 = (float)x + 0.5f;
+	v41 = (float)x + 1.0f;
+	v23 = (float)((float)y + 0.001f) + 1.0f;
+	v24 = (float)y + 0.001f;
+	v25 = v23 - 0.002f;
 	v40 = (float)z;
-	v26 = (float)z + 0.5;
-	v42 = (float)z + 1.0;
-	v37 = v22 - 0.0625;
-	v38 = v22 + 0.0625;
+	v26 = (float)z + 0.5f;
+	v42 = (float)z + 1.0f;
+	v37 = v22 - 0.0625f;
+	v38 = v22 + 0.0625f;
 	v52 = z - 1;
-	v27 = v26 + 0.0625;
+	v27 = v26 + 0.0625f;
 	v28 = this->levelSource->getTile(x, y, z - 1);
 	v53 = z + 1;
 	v49 = tile->attachsTo(v28);
@@ -3224,95 +3222,95 @@ bool_t TileRenderer::tesselateThinFenceInWorld(ThinFenceTile* tile, int32_t x, i
 	v51 = tile->shouldRenderFace(this->levelSource, x, y - 1, z, 0);
 	if(v57) {
 		if(!v56) {
-			Tesselator::instance.vertexUV(v39, v23 - 0.002, v26, v58.minX, v58.minY);
+			Tesselator::instance.vertexUV(v39, v23 - 0.002f, v26, v58.minX, v58.minY);
 			Tesselator::instance.vertexUV(v39, v24, v26, v58.minX, v58.maxY);
 			Tesselator::instance.vertexUV(v22, v24, v26, v19, v58.maxY);
-			Tesselator::instance.vertexUV(v22, v23 - 0.002, v26, v19, v58.minY);
-			Tesselator::instance.vertexUV(v22, v23 - 0.002, v26, v58.minX, v58.minY);
+			Tesselator::instance.vertexUV(v22, v23 - 0.002f, v26, v19, v58.minY);
+			Tesselator::instance.vertexUV(v22, v23 - 0.002f, v26, v58.minX, v58.minY);
 			Tesselator::instance.vertexUV(v22, v24, v26, v58.minX, v58.maxY);
 			Tesselator::instance.vertexUV(v39, v24, v26, v19, v58.maxY);
-			Tesselator::instance.vertexUV(v39, v23 - 0.002, v26, v19, v58.minY);
+			Tesselator::instance.vertexUV(v39, v23 - 0.002f, v26, v19, v58.minY);
 			if(!v48 && !v49) {
-				Tesselator::instance.vertexUV(v22, v23 - 0.002, v27, v20, v17);
+				Tesselator::instance.vertexUV(v22, v23 - 0.002f, v27, v20, v17);
 				Tesselator::instance.vertexUV(v22, v24, v27, v20, v18);
-				Tesselator::instance.vertexUV(v22, v24, v26 - 0.0625, v21, v18);
-				Tesselator::instance.vertexUV(v22, v23 - 0.002, v26 - 0.0625, v21, v17);
-				Tesselator::instance.vertexUV(v22, v23 - 0.002, v26 - 0.0625, v20, v17);
-				Tesselator::instance.vertexUV(v22, v24, v26 - 0.0625, v20, v18);
+				Tesselator::instance.vertexUV(v22, v24, v26 - 0.0625f, v21, v18);
+				Tesselator::instance.vertexUV(v22, v23 - 0.002f, v26 - 0.0625f, v21, v17);
+				Tesselator::instance.vertexUV(v22, v23 - 0.002f, v26 - 0.0625f, v20, v17);
+				Tesselator::instance.vertexUV(v22, v24, v26 - 0.0625f, v20, v18);
 				Tesselator::instance.vertexUV(v22, v24, v27, v21, v18);
-				Tesselator::instance.vertexUV(v22, v23 - 0.002, v27, v21, v17);
+				Tesselator::instance.vertexUV(v22, v23 - 0.002f, v27, v21, v17);
 			}
 			if(v50 || y <= 126 && this->levelSource->isEmptyTile(v54, v46, z)) {
-				Tesselator::instance.vertexUV(v39, v25 + 0.01, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-				Tesselator::instance.vertexUV(v22, v25 + 0.01, v27, v21, v18);
-				Tesselator::instance.vertexUV(v22, v25 + 0.01, v26 - 0.0625, v20, v18);
-				Tesselator::instance.vertexUV(v39, v25 + 0.01, v26 - 0.0625, v20, v17 + (float)((float)(v18 - v17) * 0.5));
-				Tesselator::instance.vertexUV(v22, v25 + 0.01, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-				Tesselator::instance.vertexUV(v39, v25 + 0.01, v27, v21, v18);
-				Tesselator::instance.vertexUV(v39, v25 + 0.01, v26 - 0.0625, v20, v18);
-				Tesselator::instance.vertexUV(v22, v25 + 0.01, v26 - 0.0625, v20, v17 + (float)((float)(v18 - v17) * 0.5));
+				Tesselator::instance.vertexUV(v39, v25 + 0.01f, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+				Tesselator::instance.vertexUV(v22, v25 + 0.01f, v27, v21, v18);
+				Tesselator::instance.vertexUV(v22, v25 + 0.01f, v26 - 0.0625f, v20, v18);
+				Tesselator::instance.vertexUV(v39, v25 + 0.01f, v26 - 0.0625f, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
+				Tesselator::instance.vertexUV(v22, v25 + 0.01f, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+				Tesselator::instance.vertexUV(v39, v25 + 0.01f, v27, v21, v18);
+				Tesselator::instance.vertexUV(v39, v25 + 0.01f, v26 - 0.0625f, v20, v18);
+				Tesselator::instance.vertexUV(v22, v25 + 0.01f, v26 - 0.0625f, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
 			}
 			if(!v51 && (y <= 1 || !this->levelSource->isEmptyTile(v54, v47, z))) {
 				goto LABEL_43;
 			}
-			v32 = v24 - 0.01;
-			Tesselator::instance.vertexUV(v39, v24 - 0.01, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v22, v24 - 0.01, v27, v21, v18);
-			Tesselator::instance.vertexUV(v22, v24 - 0.01, v26 - 0.0625, v20, v18);
-			Tesselator::instance.vertexUV(v39, v24 - 0.01, v26 - 0.0625, v20, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v22, v24 - 0.01, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v39, v24 - 0.01, v27, v21, v18);
-			Tesselator::instance.vertexUV(v39, v24 - 0.01, v26 - 0.0625, v20, v18);
-			v33 = (float)x + 0.5;
+			v32 = v24 - 0.01f;
+			Tesselator::instance.vertexUV(v39, v24 - 0.01f, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v22, v24 - 0.01f, v27, v21, v18);
+			Tesselator::instance.vertexUV(v22, v24 - 0.01f, v26 - 0.0625f, v20, v18);
+			Tesselator::instance.vertexUV(v39, v24 - 0.01f, v26 - 0.0625f, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v22, v24 - 0.01f, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v39, v24 - 0.01f, v27, v21, v18);
+			Tesselator::instance.vertexUV(v39, v24 - 0.01f, v26 - 0.0625f, v20, v18);
+			v33 = (float)x + 0.5f;
 			v35 = v20;
-			v36 = v17 + (float)((float)(v18 - v17) * 0.5);
+			v36 = v17 + (float)((float)(v18 - v17) * 0.5f);
 LABEL_87:
-			Tesselator::instance.vertexUV(v33, v32, v26 - 0.0625, v35, v36);
+			Tesselator::instance.vertexUV(v33, v32, v26 - 0.0625f, v35, v36);
 			goto LABEL_43;
 		}
 		goto LABEL_10;
 	}
 	if(v56) {
-		Tesselator::instance.vertexUV(v22, v23 - 0.002, v26, v19, v58.minY);
+		Tesselator::instance.vertexUV(v22, v23 - 0.002f, v26, v19, v58.minY);
 		Tesselator::instance.vertexUV(v22, v24, v26, v19, v58.maxY);
 		Tesselator::instance.vertexUV(v41, v24, v26, v58.maxX, v58.maxY);
-		Tesselator::instance.vertexUV(v41, v23 - 0.002, v26, v58.maxX, v58.minY);
-		Tesselator::instance.vertexUV(v41, v23 - 0.002, v26, v19, v58.minY);
+		Tesselator::instance.vertexUV(v41, v23 - 0.002f, v26, v58.maxX, v58.minY);
+		Tesselator::instance.vertexUV(v41, v23 - 0.002f, v26, v19, v58.minY);
 		Tesselator::instance.vertexUV(v41, v24, v26, v19, v58.maxY);
 		Tesselator::instance.vertexUV(v22, v24, v26, v58.maxX, v58.maxY);
-		Tesselator::instance.vertexUV(v22, v23 - 0.002, v26, v58.maxX, v58.minY);
+		Tesselator::instance.vertexUV(v22, v23 - 0.002f, v26, v58.maxX, v58.minY);
 		if(!v48 && !v49) {
-			Tesselator::instance.vertexUV(v22, v23 - 0.002, v26 - 0.0625, v20, v17);
-			Tesselator::instance.vertexUV(v22, v24, v26 - 0.0625, v20, v18);
+			Tesselator::instance.vertexUV(v22, v23 - 0.002f, v26 - 0.0625f, v20, v17);
+			Tesselator::instance.vertexUV(v22, v24, v26 - 0.0625f, v20, v18);
 			Tesselator::instance.vertexUV(v22, v24, v27, v21, v18);
-			Tesselator::instance.vertexUV(v22, v23 - 0.002, v27, v21, v17);
-			Tesselator::instance.vertexUV(v22, v23 - 0.002, v27, v20, v17);
+			Tesselator::instance.vertexUV(v22, v23 - 0.002f, v27, v21, v17);
+			Tesselator::instance.vertexUV(v22, v23 - 0.002f, v27, v20, v17);
 			Tesselator::instance.vertexUV(v22, v24, v27, v20, v18);
-			Tesselator::instance.vertexUV(v22, v24, v26 - 0.0625, v21, v18);
-			Tesselator::instance.vertexUV(v22, v23 - 0.002, v26 - 0.0625, v21, v17);
+			Tesselator::instance.vertexUV(v22, v24, v26 - 0.0625f, v21, v18);
+			Tesselator::instance.vertexUV(v22, v23 - 0.002f, v26 - 0.0625f, v21, v17);
 		}
 		if(v50 || y <= 126 && this->levelSource->isEmptyTile(v55, v46, z)) {
-			Tesselator::instance.vertexUV(v22, v25 + 0.01, v27, v21, v17);
-			Tesselator::instance.vertexUV(v41, v25 + 0.01, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v41, v25 + 0.01, v26 - 0.0625, v20, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v22, v25 + 0.01, v26 - 0.0625, v20, v17);
-			Tesselator::instance.vertexUV(v41, v25 + 0.01, v27, v21, v17);
-			Tesselator::instance.vertexUV(v22, v25 + 0.01, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v22, v25 + 0.01, v26 - 0.0625, v20, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v41, v25 + 0.01, v26 - 0.0625, v20, v17);
+			Tesselator::instance.vertexUV(v22, v25 + 0.01f, v27, v21, v17);
+			Tesselator::instance.vertexUV(v41, v25 + 0.01f, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v41, v25 + 0.01f, v26 - 0.0625f, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v22, v25 + 0.01f, v26 - 0.0625f, v20, v17);
+			Tesselator::instance.vertexUV(v41, v25 + 0.01f, v27, v21, v17);
+			Tesselator::instance.vertexUV(v22, v25 + 0.01f, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v22, v25 + 0.01f, v26 - 0.0625f, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v41, v25 + 0.01f, v26 - 0.0625f, v20, v17);
 		}
 		if(!v51 && (y <= 1 || !this->levelSource->isEmptyTile(v55, v47, z))) {
 			goto LABEL_43;
 		}
-		v32 = v24 - 0.01;
+		v32 = v24 - 0.01f;
 LABEL_90:
 		Tesselator::instance.vertexUV(v22, v32, v27, v21, v17);
-		Tesselator::instance.vertexUV(v41, v32, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-		Tesselator::instance.vertexUV(v41, v32, v26 - 0.0625, v20, v17 + (float)((float)(v18 - v17) * 0.5));
-		Tesselator::instance.vertexUV(v22, v32, v26 - 0.0625, v20, v17);
+		Tesselator::instance.vertexUV(v41, v32, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+		Tesselator::instance.vertexUV(v41, v32, v26 - 0.0625f, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
+		Tesselator::instance.vertexUV(v22, v32, v26 - 0.0625f, v20, v17);
 		Tesselator::instance.vertexUV(v41, v32, v27, v21, v17);
-		Tesselator::instance.vertexUV(v22, v32, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-		Tesselator::instance.vertexUV(v22, v32, v26 - 0.0625, v20, v17 + (float)((float)(v18 - v17) * 0.5));
+		Tesselator::instance.vertexUV(v22, v32, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+		Tesselator::instance.vertexUV(v22, v32, v26 - 0.0625f, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
 		v35 = v20;
 		v36 = v17;
 		goto LABEL_91;
@@ -3322,72 +3320,72 @@ LABEL_90:
 			goto LABEL_74;
 		}
 LABEL_10:
-		Tesselator::instance.vertexUV(v39, v23 - 0.002, v26, v58.minX, v58.minY);
+		Tesselator::instance.vertexUV(v39, v23 - 0.002f, v26, v58.minX, v58.minY);
 		Tesselator::instance.vertexUV(v39, v24, v26, v58.minX, v58.maxY);
 		Tesselator::instance.vertexUV(v41, v24, v26, v58.maxX, v58.maxY);
-		Tesselator::instance.vertexUV(v41, v23 - 0.002, v26, v58.maxX, v58.minY);
-		Tesselator::instance.vertexUV(v41, v23 - 0.002, v26, v58.minX, v58.minY);
+		Tesselator::instance.vertexUV(v41, v23 - 0.002f, v26, v58.maxX, v58.minY);
+		Tesselator::instance.vertexUV(v41, v23 - 0.002f, v26, v58.minX, v58.minY);
 		Tesselator::instance.vertexUV(v41, v24, v26, v58.minX, v58.maxY);
 		Tesselator::instance.vertexUV(v39, v24, v26, v58.maxX, v58.maxY);
-		Tesselator::instance.vertexUV(v39, v23 - 0.002, v26, v58.maxX, v58.minY);
+		Tesselator::instance.vertexUV(v39, v23 - 0.002f, v26, v58.maxX, v58.minY);
 		if(v50) {
-			Tesselator::instance.vertexUV(v39, v25 + 0.01, v27, v21, v18);
-			Tesselator::instance.vertexUV(v41, v25 + 0.01, v27, v21, v17);
-			Tesselator::instance.vertexUV(v41, v25 + 0.01, v26 - 0.0625, v20, v17);
-			Tesselator::instance.vertexUV(v39, v25 + 0.01, v26 - 0.0625, v20, v18);
-			Tesselator::instance.vertexUV(v41, v25 + 0.01, v27, v21, v18);
-			Tesselator::instance.vertexUV(v39, v25 + 0.01, v27, v21, v17);
-			Tesselator::instance.vertexUV(v39, v25 + 0.01, v26 - 0.0625, v20, v17);
-			Tesselator::instance.vertexUV(v41, v25 + 0.01, v26 - 0.0625, v20, v18);
+			Tesselator::instance.vertexUV(v39, v25 + 0.01f, v27, v21, v18);
+			Tesselator::instance.vertexUV(v41, v25 + 0.01f, v27, v21, v17);
+			Tesselator::instance.vertexUV(v41, v25 + 0.01f, v26 - 0.0625f, v20, v17);
+			Tesselator::instance.vertexUV(v39, v25 + 0.01f, v26 - 0.0625f, v20, v18);
+			Tesselator::instance.vertexUV(v41, v25 + 0.01f, v27, v21, v18);
+			Tesselator::instance.vertexUV(v39, v25 + 0.01f, v27, v21, v17);
+			Tesselator::instance.vertexUV(v39, v25 + 0.01f, v26 - 0.0625f, v20, v17);
+			Tesselator::instance.vertexUV(v41, v25 + 0.01f, v26 - 0.0625f, v20, v18);
 		} else if(y <= 126) {
 			if(this->levelSource->isEmptyTile(v54, v46, z)) {
-				Tesselator::instance.vertexUV(v39, v25 + 0.01, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-				Tesselator::instance.vertexUV(v22, v25 + 0.01, v27, v21, v18);
-				Tesselator::instance.vertexUV(v22, v25 + 0.01, v26 - 0.0625, v20, v18);
-				Tesselator::instance.vertexUV(v39, v25 + 0.01, v26 - 0.0625, v20, v17 + (float)((float)(v18 - v17) * 0.5));
-				Tesselator::instance.vertexUV(v22, v25 + 0.01, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-				Tesselator::instance.vertexUV(v39, v25 + 0.01, v27, v21, v18);
-				Tesselator::instance.vertexUV(v39, v25 + 0.01, v26 - 0.0625, v20, v18);
-				Tesselator::instance.vertexUV(v22, v25 + 0.01, v26 - 0.0625, v20, v17 + (float)((float)(v18 - v17) * 0.5));
+				Tesselator::instance.vertexUV(v39, v25 + 0.01f, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+				Tesselator::instance.vertexUV(v22, v25 + 0.01f, v27, v21, v18);
+				Tesselator::instance.vertexUV(v22, v25 + 0.01f, v26 - 0.0625f, v20, v18);
+				Tesselator::instance.vertexUV(v39, v25 + 0.01f, v26 - 0.0625f, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
+				Tesselator::instance.vertexUV(v22, v25 + 0.01f, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+				Tesselator::instance.vertexUV(v39, v25 + 0.01f, v27, v21, v18);
+				Tesselator::instance.vertexUV(v39, v25 + 0.01f, v26 - 0.0625f, v20, v18);
+				Tesselator::instance.vertexUV(v22, v25 + 0.01f, v26 - 0.0625f, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
 			}
 			if(this->levelSource->isEmptyTile(v55, v46, z)) {
-				Tesselator::instance.vertexUV(v22, v25 + 0.01, v27, v21, v17);
-				Tesselator::instance.vertexUV(v41, v25 + 0.01, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-				Tesselator::instance.vertexUV(v41, v25 + 0.01, v26 - 0.0625, v20, v17 + (float)((float)(v18 - v17) * 0.5));
-				Tesselator::instance.vertexUV(v22, v25 + 0.01, v26 - 0.0625, v20, v17);
-				Tesselator::instance.vertexUV(v41, v25 + 0.01, v27, v21, v17);
-				Tesselator::instance.vertexUV(v22, v25 + 0.01, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-				Tesselator::instance.vertexUV(v22, v25 + 0.01, v26 - 0.0625, v20, v17 + (float)((float)(v18 - v17) * 0.5));
-				Tesselator::instance.vertexUV(v41, v25 + 0.01, v26 - 0.0625, v20, v17);
+				Tesselator::instance.vertexUV(v22, v25 + 0.01f, v27, v21, v17);
+				Tesselator::instance.vertexUV(v41, v25 + 0.01f, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+				Tesselator::instance.vertexUV(v41, v25 + 0.01f, v26 - 0.0625f, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
+				Tesselator::instance.vertexUV(v22, v25 + 0.01f, v26 - 0.0625f, v20, v17);
+				Tesselator::instance.vertexUV(v41, v25 + 0.01f, v27, v21, v17);
+				Tesselator::instance.vertexUV(v22, v25 + 0.01f, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+				Tesselator::instance.vertexUV(v22, v25 + 0.01f, v26 - 0.0625f, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
+				Tesselator::instance.vertexUV(v41, v25 + 0.01f, v26 - 0.0625f, v20, v17);
 			}
 		}
 		if(v51) {
-			v32 = v24 - 0.01;
-			Tesselator::instance.vertexUV(v39, v24 - 0.01, v27, v21, v18);
-			Tesselator::instance.vertexUV(v41, v24 - 0.01, v27, v21, v17);
-			Tesselator::instance.vertexUV(v41, v24 - 0.01, v26 - 0.0625, v20, v17);
-			Tesselator::instance.vertexUV(v39, v24 - 0.01, v26 - 0.0625, v20, v18);
-			Tesselator::instance.vertexUV(v41, v24 - 0.01, v27, v21, v18);
-			Tesselator::instance.vertexUV(v39, v24 - 0.01, v27, v21, v17);
-			Tesselator::instance.vertexUV(v39, v24 - 0.01, v26 - 0.0625, v20, v17);
+			v32 = v24 - 0.01f;
+			Tesselator::instance.vertexUV(v39, v24 - 0.01f, v27, v21, v18);
+			Tesselator::instance.vertexUV(v41, v24 - 0.01f, v27, v21, v17);
+			Tesselator::instance.vertexUV(v41, v24 - 0.01f, v26 - 0.0625f, v20, v17);
+			Tesselator::instance.vertexUV(v39, v24 - 0.01f, v26 - 0.0625f, v20, v18);
+			Tesselator::instance.vertexUV(v41, v24 - 0.01f, v27, v21, v18);
+			Tesselator::instance.vertexUV(v39, v24 - 0.01f, v27, v21, v17);
+			Tesselator::instance.vertexUV(v39, v24 - 0.01f, v26 - 0.0625f, v20, v17);
 			v35 = v20;
 			v36 = v18;
 LABEL_91:
-			v33 = (float)x + 1.0;
+			v33 = (float)x + 1.0f;
 			goto LABEL_87;
 		}
 		if(y <= 1) {
 			goto LABEL_43;
 		}
 		if(this->levelSource->isEmptyTile(v54, v47, z)) {
-			Tesselator::instance.vertexUV(v39, v24 - 0.01, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v22, v24 - 0.01, v27, v21, v18);
-			Tesselator::instance.vertexUV(v22, v24 - 0.01, v26 - 0.0625, v20, v18);
-			Tesselator::instance.vertexUV(v39, v24 - 0.01, v26 - 0.0625, v20, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v22, v24 - 0.01, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v39, v24 - 0.01, v27, v21, v18);
-			Tesselator::instance.vertexUV(v39, v24 - 0.01, v26 - 0.0625, v20, v18);
-			Tesselator::instance.vertexUV(v22, v24 - 0.01, v26 - 0.0625, v20, v17 + (float)((float)(v18 - v17) * 0.5));
+			Tesselator::instance.vertexUV(v39, v24 - 0.01f, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v22, v24 - 0.01f, v27, v21, v18);
+			Tesselator::instance.vertexUV(v22, v24 - 0.01f, v26 - 0.0625f, v20, v18);
+			Tesselator::instance.vertexUV(v39, v24 - 0.01f, v26 - 0.0625f, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v22, v24 - 0.01f, v27, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v39, v24 - 0.01f, v27, v21, v18);
+			Tesselator::instance.vertexUV(v39, v24 - 0.01f, v26 - 0.0625f, v20, v18);
+			Tesselator::instance.vertexUV(v22, v24 - 0.01f, v26 - 0.0625f, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
 		}
 		if(!this->levelSource->isEmptyTile(v55, v47, z)) {
 LABEL_43:
@@ -3396,49 +3394,49 @@ LABEL_43:
 			}
 			goto LABEL_44;
 		}
-		v32 = v24 - 0.01;
+		v32 = v24 - 0.01f;
 		goto LABEL_90;
 	}
 LABEL_44:
 	if(v48) {
 LABEL_49:
-		Tesselator::instance.vertexUV(v22, v23 - 0.002, v42, v58.minX, v58.minY);
+		Tesselator::instance.vertexUV(v22, v23 - 0.002f, v42, v58.minX, v58.minY);
 		Tesselator::instance.vertexUV(v22, v24, v42, v58.minX, v58.maxY);
 		Tesselator::instance.vertexUV(v22, v24, v40, v58.maxX, v58.maxY);
-		Tesselator::instance.vertexUV(v22, v23 - 0.002, v40, v58.maxX, v58.minY);
-		Tesselator::instance.vertexUV(v22, v23 - 0.002, v40, v58.minX, v58.minY);
+		Tesselator::instance.vertexUV(v22, v23 - 0.002f, v40, v58.maxX, v58.minY);
+		Tesselator::instance.vertexUV(v22, v23 - 0.002f, v40, v58.minX, v58.minY);
 		Tesselator::instance.vertexUV(v22, v24, v40, v58.minX, v58.maxY);
 		Tesselator::instance.vertexUV(v22, v24, v42, v58.maxX, v58.maxY);
-		Tesselator::instance.vertexUV(v22, v23 - 0.002, v42, v58.maxX, v58.minY);
+		Tesselator::instance.vertexUV(v22, v23 - 0.002f, v42, v58.maxX, v58.minY);
 		if(v50) {
-			Tesselator::instance.vertexUV(v38, v23 - 0.002, v42, v21, v18);
-			Tesselator::instance.vertexUV(v38, v23 - 0.002, v40, v21, v17);
-			Tesselator::instance.vertexUV(v37, v23 - 0.002, v40, v20, v17);
-			Tesselator::instance.vertexUV(v37, v23 - 0.002, v42, v20, v18);
-			Tesselator::instance.vertexUV(v38, v23 - 0.002, v40, v21, v18);
-			Tesselator::instance.vertexUV(v38, v23 - 0.002, v42, v21, v17);
-			Tesselator::instance.vertexUV(v37, v23 - 0.002, v42, v20, v17);
-			Tesselator::instance.vertexUV(v37, v23 - 0.002, v40, v20, v18);
+			Tesselator::instance.vertexUV(v38, v23 - 0.002f, v42, v21, v18);
+			Tesselator::instance.vertexUV(v38, v23 - 0.002f, v40, v21, v17);
+			Tesselator::instance.vertexUV(v37, v23 - 0.002f, v40, v20, v17);
+			Tesselator::instance.vertexUV(v37, v23 - 0.002f, v42, v20, v18);
+			Tesselator::instance.vertexUV(v38, v23 - 0.002f, v40, v21, v18);
+			Tesselator::instance.vertexUV(v38, v23 - 0.002f, v42, v21, v17);
+			Tesselator::instance.vertexUV(v37, v23 - 0.002f, v42, v20, v17);
+			Tesselator::instance.vertexUV(v37, v23 - 0.002f, v40, v20, v18);
 		} else if(y <= 126) {
 			if(this->levelSource->isEmptyTile(x, v46, v52)) {
-				Tesselator::instance.vertexUV(v37, v23 - 0.002, v40, v21, v17);
-				Tesselator::instance.vertexUV(v37, v23 - 0.002, v26, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-				Tesselator::instance.vertexUV(v38, v23 - 0.002, v26, v20, v17 + (float)((float)(v18 - v17) * 0.5));
-				Tesselator::instance.vertexUV(v38, v23 - 0.002, v40, v20, v17);
-				Tesselator::instance.vertexUV(v37, v23 - 0.002, v26, v21, v17);
-				Tesselator::instance.vertexUV(v37, v23 - 0.002, v40, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-				Tesselator::instance.vertexUV(v38, v23 - 0.002, v40, v20, v17 + (float)((float)(v18 - v17) * 0.5));
-				Tesselator::instance.vertexUV(v38, v23 - 0.002, v26, v20, v17);
+				Tesselator::instance.vertexUV(v37, v23 - 0.002f, v40, v21, v17);
+				Tesselator::instance.vertexUV(v37, v23 - 0.002f, v26, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+				Tesselator::instance.vertexUV(v38, v23 - 0.002f, v26, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
+				Tesselator::instance.vertexUV(v38, v23 - 0.002f, v40, v20, v17);
+				Tesselator::instance.vertexUV(v37, v23 - 0.002f, v26, v21, v17);
+				Tesselator::instance.vertexUV(v37, v23 - 0.002f, v40, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+				Tesselator::instance.vertexUV(v38, v23 - 0.002f, v40, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
+				Tesselator::instance.vertexUV(v38, v23 - 0.002f, v26, v20, v17);
 			}
 			if(this->levelSource->isEmptyTile(x, v46, v53)) {
-				Tesselator::instance.vertexUV(v37, v23 - 0.002, v26, v20, v17 + (float)((float)(v18 - v17) * 0.5));
-				Tesselator::instance.vertexUV(v37, v23 - 0.002, v42, v20, v18);
-				Tesselator::instance.vertexUV(v38, v23 - 0.002, v42, v21, v18);
-				Tesselator::instance.vertexUV(v38, v23 - 0.002, v26, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-				Tesselator::instance.vertexUV(v37, v23 - 0.002, v42, v20, v17 + (float)((float)(v18 - v17) * 0.5));
-				Tesselator::instance.vertexUV(v37, v23 - 0.002, v26, v20, v18);
-				Tesselator::instance.vertexUV(v38, v23 - 0.002, v26, v21, v18);
-				Tesselator::instance.vertexUV(v38, v23 - 0.002, v42, v21, v17 + (float)((float)(v18 - v17) * 0.5));
+				Tesselator::instance.vertexUV(v37, v23 - 0.002f, v26, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
+				Tesselator::instance.vertexUV(v37, v23 - 0.002f, v42, v20, v18);
+				Tesselator::instance.vertexUV(v38, v23 - 0.002f, v42, v21, v18);
+				Tesselator::instance.vertexUV(v38, v23 - 0.002f, v26, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+				Tesselator::instance.vertexUV(v37, v23 - 0.002f, v42, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
+				Tesselator::instance.vertexUV(v37, v23 - 0.002f, v26, v20, v18);
+				Tesselator::instance.vertexUV(v38, v23 - 0.002f, v26, v21, v18);
+				Tesselator::instance.vertexUV(v38, v23 - 0.002f, v42, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
 			}
 		}
 		if(v51) {
@@ -3457,12 +3455,12 @@ LABEL_49:
 		}
 		if(this->levelSource->isEmptyTile(x, v47, v52)) {
 			Tesselator::instance.vertexUV(v37, v24, v40, v21, v17);
-			Tesselator::instance.vertexUV(v37, v24, v26, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v38, v24, v26, v20, v17 + (float)((float)(v18 - v17) * 0.5));
+			Tesselator::instance.vertexUV(v37, v24, v26, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v38, v24, v26, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
 			Tesselator::instance.vertexUV(v38, v24, v40, v20, v17);
 			Tesselator::instance.vertexUV(v37, v24, v26, v21, v17);
-			Tesselator::instance.vertexUV(v37, v24, v40, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v38, v24, v40, v20, v17 + (float)((float)(v18 - v17) * 0.5));
+			Tesselator::instance.vertexUV(v37, v24, v40, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v38, v24, v40, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
 			Tesselator::instance.vertexUV(v38, v24, v26, v20, v17);
 		}
 		goto LABEL_82;
@@ -3480,44 +3478,44 @@ LABEL_45:
 			goto LABEL_49;
 		}
 LABEL_74:
-		Tesselator::instance.vertexUV(v22, v23 - 0.002, v26, v19, v58.minY);
+		Tesselator::instance.vertexUV(v22, v23 - 0.002f, v26, v19, v58.minY);
 		Tesselator::instance.vertexUV(v22, v24, v26, v19, v58.maxY);
 		Tesselator::instance.vertexUV(v22, v24, v42, v58.maxX, v58.maxY);
-		Tesselator::instance.vertexUV(v22, v23 - 0.002, v42, v58.maxX, v58.minY);
-		Tesselator::instance.vertexUV(v22, v23 - 0.002, v42, v19, v58.minY);
+		Tesselator::instance.vertexUV(v22, v23 - 0.002f, v42, v58.maxX, v58.minY);
+		Tesselator::instance.vertexUV(v22, v23 - 0.002f, v42, v19, v58.minY);
 		Tesselator::instance.vertexUV(v22, v24, v42, v19, v58.maxY);
 		Tesselator::instance.vertexUV(v22, v24, v26, v58.maxX, v58.maxY);
-		Tesselator::instance.vertexUV(v22, v23 - 0.002, v26, v58.maxX, v58.minY);
+		Tesselator::instance.vertexUV(v22, v23 - 0.002f, v26, v58.maxX, v58.minY);
 		if(!v56 && !v57) {
-			Tesselator::instance.vertexUV(v38, v23 - 0.002, v26, v20, v17);
+			Tesselator::instance.vertexUV(v38, v23 - 0.002f, v26, v20, v17);
 			Tesselator::instance.vertexUV(v38, v24, v26, v20, v18);
 			Tesselator::instance.vertexUV(v37, v24, v26, v21, v18);
-			Tesselator::instance.vertexUV(v37, v23 - 0.002, v26, v21, v17);
-			Tesselator::instance.vertexUV(v37, v23 - 0.002, v26, v20, v17);
+			Tesselator::instance.vertexUV(v37, v23 - 0.002f, v26, v21, v17);
+			Tesselator::instance.vertexUV(v37, v23 - 0.002f, v26, v20, v17);
 			Tesselator::instance.vertexUV(v37, v24, v26, v20, v18);
 			Tesselator::instance.vertexUV(v38, v24, v26, v21, v18);
-			Tesselator::instance.vertexUV(v38, v23 - 0.002, v26, v21, v17);
+			Tesselator::instance.vertexUV(v38, v23 - 0.002f, v26, v21, v17);
 		}
 		if(v50 || y <= 126 && this->levelSource->isEmptyTile(x, v46, v53)) {
-			Tesselator::instance.vertexUV(v37, v23 - 0.002, v26, v20, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v37, v23 - 0.002, v42, v20, v18);
-			Tesselator::instance.vertexUV(v38, v23 - 0.002, v42, v21, v18);
-			Tesselator::instance.vertexUV(v38, v23 - 0.002, v26, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v37, v23 - 0.002, v42, v20, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v37, v23 - 0.002, v26, v20, v18);
-			Tesselator::instance.vertexUV(v38, v23 - 0.002, v26, v21, v18);
-			Tesselator::instance.vertexUV(v38, v23 - 0.002, v42, v21, v17 + (float)((float)(v18 - v17) * 0.5));
+			Tesselator::instance.vertexUV(v37, v23 - 0.002f, v26, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v37, v23 - 0.002f, v42, v20, v18);
+			Tesselator::instance.vertexUV(v38, v23 - 0.002f, v42, v21, v18);
+			Tesselator::instance.vertexUV(v38, v23 - 0.002f, v26, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v37, v23 - 0.002f, v42, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v37, v23 - 0.002f, v26, v20, v18);
+			Tesselator::instance.vertexUV(v38, v23 - 0.002f, v26, v21, v18);
+			Tesselator::instance.vertexUV(v38, v23 - 0.002f, v42, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
 		}
 		if(v51) {
 LABEL_96:
-			Tesselator::instance.vertexUV(v37, v24, v26, v20, v17 + (float)((float)(v18 - v17) * 0.5));
+			Tesselator::instance.vertexUV(v37, v24, v26, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
 			Tesselator::instance.vertexUV(v37, v24, v42, v20, v18);
 			Tesselator::instance.vertexUV(v38, v24, v42, v21, v18);
-			Tesselator::instance.vertexUV(v38, v24, v26, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v37, v24, v42, v20, v17 + (float)((float)(v18 - v17) * 0.5));
+			Tesselator::instance.vertexUV(v38, v24, v26, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v37, v24, v42, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
 			Tesselator::instance.vertexUV(v37, v24, v26, v20, v18);
 			Tesselator::instance.vertexUV(v38, v24, v26, v21, v18);
-			Tesselator::instance.vertexUV(v38, v24, v42, v21, v17 + (float)((float)(v18 - v17) * 0.5));
+			Tesselator::instance.vertexUV(v38, v24, v42, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
 			return 1;
 		}
 		if(y <= 1) {
@@ -3530,42 +3528,42 @@ LABEL_82:
 		goto LABEL_96;
 	}
 	if(!v48) {
-		Tesselator::instance.vertexUV(v22, v23 - 0.002, v40, v58.minX, v58.minY);
+		Tesselator::instance.vertexUV(v22, v23 - 0.002f, v40, v58.minX, v58.minY);
 		Tesselator::instance.vertexUV(v22, v24, v40, v58.minX, v58.maxY);
 		Tesselator::instance.vertexUV(v22, v24, v26, v19, v58.maxY);
-		Tesselator::instance.vertexUV(v22, v23 - 0.002, v26, v19, v58.minY);
-		Tesselator::instance.vertexUV(v22, v23 - 0.002, v26, v58.minX, v58.minY);
+		Tesselator::instance.vertexUV(v22, v23 - 0.002f, v26, v19, v58.minY);
+		Tesselator::instance.vertexUV(v22, v23 - 0.002f, v26, v58.minX, v58.minY);
 		Tesselator::instance.vertexUV(v22, v24, v26, v58.minX, v58.maxY);
 		Tesselator::instance.vertexUV(v22, v24, v40, v19, v58.maxY);
-		Tesselator::instance.vertexUV(v22, v23 - 0.002, v40, v19, v58.minY);
+		Tesselator::instance.vertexUV(v22, v23 - 0.002f, v40, v19, v58.minY);
 		if(!v56 && !v57) {
-			Tesselator::instance.vertexUV(v37, v23 - 0.002, v26, v20, v17);
+			Tesselator::instance.vertexUV(v37, v23 - 0.002f, v26, v20, v17);
 			Tesselator::instance.vertexUV(v37, v24, v26, v20, v18);
 			Tesselator::instance.vertexUV(v38, v24, v26, v21, v18);
-			Tesselator::instance.vertexUV(v38, v23 - 0.002, v26, v21, v17);
-			Tesselator::instance.vertexUV(v38, v23 - 0.002, v26, v20, v17);
+			Tesselator::instance.vertexUV(v38, v23 - 0.002f, v26, v21, v17);
+			Tesselator::instance.vertexUV(v38, v23 - 0.002f, v26, v20, v17);
 			Tesselator::instance.vertexUV(v38, v24, v26, v20, v18);
 			Tesselator::instance.vertexUV(v37, v24, v26, v21, v18);
-			Tesselator::instance.vertexUV(v37, v23 - 0.002, v26, v21, v17);
+			Tesselator::instance.vertexUV(v37, v23 - 0.002f, v26, v21, v17);
 		}
 		if(v50 || y <= 126 && this->levelSource->isEmptyTile(x, v46, v52)) {
-			Tesselator::instance.vertexUV(v37, v23 - 0.002, v40, v21, v17);
-			Tesselator::instance.vertexUV(v37, v23 - 0.002, v26, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v38, v23 - 0.002, v26, v20, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v38, v23 - 0.002, v40, v20, v17);
-			Tesselator::instance.vertexUV(v37, v23 - 0.002, v26, v21, v17);
-			Tesselator::instance.vertexUV(v37, v23 - 0.002, v40, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v38, v23 - 0.002, v40, v20, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v38, v23 - 0.002, v26, v20, v17);
+			Tesselator::instance.vertexUV(v37, v23 - 0.002f, v40, v21, v17);
+			Tesselator::instance.vertexUV(v37, v23 - 0.002f, v26, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v38, v23 - 0.002f, v26, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v38, v23 - 0.002f, v40, v20, v17);
+			Tesselator::instance.vertexUV(v37, v23 - 0.002f, v26, v21, v17);
+			Tesselator::instance.vertexUV(v37, v23 - 0.002f, v40, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v38, v23 - 0.002f, v40, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v38, v23 - 0.002f, v26, v20, v17);
 		}
 		if(v51 || y > 1 && this->levelSource->isEmptyTile(x, v47, v52)) {
 			Tesselator::instance.vertexUV(v37, v24, v40, v21, v17);
-			Tesselator::instance.vertexUV(v37, v24, v26, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v38, v24, v26, v20, v17 + (float)((float)(v18 - v17) * 0.5));
+			Tesselator::instance.vertexUV(v37, v24, v26, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v38, v24, v26, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
 			Tesselator::instance.vertexUV(v38, v24, v40, v20, v17);
 			Tesselator::instance.vertexUV(v37, v24, v26, v21, v17);
-			Tesselator::instance.vertexUV(v37, v24, v40, v21, v17 + (float)((float)(v18 - v17) * 0.5));
-			Tesselator::instance.vertexUV(v38, v24, v40, v20, v17 + (float)((float)(v18 - v17) * 0.5));
+			Tesselator::instance.vertexUV(v37, v24, v40, v21, v17 + (float)((float)(v18 - v17) * 0.5f));
+			Tesselator::instance.vertexUV(v38, v24, v40, v20, v17 + (float)((float)(v18 - v17) * 0.5f));
 			Tesselator::instance.vertexUV(v38, v24, v26, v20, v17);
 		}
 	}
@@ -3604,52 +3602,52 @@ void TileRenderer::tesselateTorch(Tile* tile, float a3, float a4, float a5, floa
 	maxY = v9->maxY;
 	minY = v9->minY;
 	v12 = v9->maxX - v9->minX;
-	v13 = v9->minX + (float)(v12 * 0.4375);
-	v14 = v9->minX + (float)(v12 * 0.5625);
+	v13 = v9->minX + (float)(v12 * 0.4375f);
+	v14 = v9->minX + (float)(v12 * 0.5625f);
 	v15 = maxY - minY;
-	v16 = minY + (float)((float)(maxY - minY) * 0.375);
-	if(v16 != 0.0) {
-		minY = minY + (float)((float)(maxY - minY) * 0.375);
+	v16 = minY + (float)((float)(maxY - minY) * 0.375f);
+	if(v16 != 0.0f) {
+		minY = minY + (float)((float)(maxY - minY) * 0.375f);
 	}
-	v17 = minY + (float)(v15 * 0.125);
-	v18 = a3 + 0.5;
-	v19 = v18 + (float)(a6 * 0.38125);
-	v20 = (float)(a5 + 0.5) + (float)(a7 * 0.38125);
-	v21 = v20 - 0.0625;
-	Tesselator::instance.vertexUV(v19 - 0.0625, a4 + 0.61875, v20 - 0.0625, v13, v16);
-	v22 = v20 + 0.0625;
-	Tesselator::instance.vertexUV(v19 - 0.0625, a4 + 0.61875, v22, v13, v17);
-	v23 = v19 + 0.0625;
-	Tesselator::instance.vertexUV(v23, a4 + 0.61875, v22, v14, v17);
-	Tesselator::instance.vertexUV(v23, a4 + 0.61875, v21, v14, v16);
-	v24 = (float)(a5 + 0.5) + (float)((float)(a7 * 0.61875) * 0.61875);
-	v25 = v18 + (float)((float)(a6 * 0.61875) * 0.61875);
-	v26 = v24 - 0.0625;
-	v27 = v24 + 0.0625;
-	v28 = v27 + (float)(a7 * 0.61875);
-	v29 = (float)(v25 + (float)(a6 * 0.61875)) + 0.0625;
+	v17 = minY + (float)(v15 * 0.125f);
+	v18 = a3 + 0.5f;
+	v19 = v18 + (float)(a6 * 0.38125f);
+	v20 = (float)(a5 + 0.5f) + (float)(a7 * 0.38125f);
+	v21 = v20 - 0.0625f;
+	Tesselator::instance.vertexUV(v19 - 0.0625f, a4 + 0.61875f, v20 - 0.0625f, v13, v16);
+	v22 = v20 + 0.0625f;
+	Tesselator::instance.vertexUV(v19 - 0.0625f, a4 + 0.61875f, v22, v13, v17);
+	v23 = v19 + 0.0625f;
+	Tesselator::instance.vertexUV(v23, a4 + 0.61875f, v22, v14, v17);
+	Tesselator::instance.vertexUV(v23, a4 + 0.61875f, v21, v14, v16);
+	v24 = (float)(a5 + 0.5f) + (float)((float)(a7 * 0.61875f) * 0.61875f);
+	v25 = v18 + (float)((float)(a6 * 0.61875f) * 0.61875f);
+	v26 = v24 - 0.0625f;
+	v27 = v24 + 0.0625f;
+	v28 = v27 + (float)(a7 * 0.61875f);
+	v29 = (float)(v25 + (float)(a6 * 0.61875f)) + 0.0625f;
 	Tesselator::instance.vertexUV(v29, a4, v28, v13, maxY);
-	Tesselator::instance.vertexUV((float)(v25 - 0.0625) + (float)(a6 * 0.61875), a4, v28, v13, maxY);
-	v30 = v26 + (float)(a7 * 0.61875);
-	Tesselator::instance.vertexUV((float)(v25 - 0.0625) + (float)(a6 * 0.61875), a4, v30, v14, maxY);
+	Tesselator::instance.vertexUV((float)(v25 - 0.0625f) + (float)(a6 * 0.61875f), a4, v28, v13, maxY);
+	v30 = v26 + (float)(a7 * 0.61875f);
+	Tesselator::instance.vertexUV((float)(v25 - 0.0625f) + (float)(a6 * 0.61875f), a4, v30, v14, maxY);
 	Tesselator::instance.vertexUV(v29, a4, v30, v14, maxY);
-	Tesselator::instance.vertexUV(v25 - 0.0625, a4 + 0.61875, v26, v13, v16);
-	Tesselator::instance.vertexUV((float)(v25 - 0.0625) + (float)(a6 * 0.61875), a4 + 0.0, v30, v13, maxY);
-	Tesselator::instance.vertexUV((float)(v25 - 0.0625) + (float)(a6 * 0.61875), a4 + 0.0, v28, v14, maxY);
-	Tesselator::instance.vertexUV(v25 - 0.0625, a4 + 0.61875, v27, v14, v16);
-	Tesselator::instance.vertexUV(v25 + 0.0625, a4 + 0.61875, v27, v13, v16);
-	Tesselator::instance.vertexUV(v29, a4 + 0.0, v28, v13, maxY);
-	Tesselator::instance.vertexUV(v29, a4 + 0.0, v30, v14, maxY);
-	Tesselator::instance.vertexUV(v25 + 0.0625, a4 + 0.61875, v26, v14, v16);
-	Tesselator::instance.vertexUV(v25 - 0.0625, a4 + 0.61875, v27, v13, v16);
-	Tesselator::instance.vertexUV((float)(v25 - 0.0625) + (float)(a6 * 0.61875), a4 + 0.0, v28, v13, maxY);
-	v31 = (float)(v25 + 0.0625) + (float)(a6 * 0.61875);
-	Tesselator::instance.vertexUV(v31, a4 + 0.0, v28, v14, maxY);
-	Tesselator::instance.vertexUV(v25 + 0.0625, a4 + 0.61875, v27, v14, v16);
-	Tesselator::instance.vertexUV(v25 + 0.0625, a4 + 0.61875, v26, v13, v16);
-	Tesselator::instance.vertexUV(v31, a4 + 0.0, v30, v13, maxY);
-	Tesselator::instance.vertexUV((float)(v25 - 0.0625) + (float)(a6 * 0.61875), a4 + 0.0, v30, v14, maxY);
-	Tesselator::instance.vertexUV(v25 - 0.0625, a4 + 0.61875, v26, v14, v16);
+	Tesselator::instance.vertexUV(v25 - 0.0625f, a4 + 0.61875f, v26, v13, v16);
+	Tesselator::instance.vertexUV((float)(v25 - 0.0625f) + (float)(a6 * 0.61875f), a4 + 0.0f, v30, v13, maxY);
+	Tesselator::instance.vertexUV((float)(v25 - 0.0625f) + (float)(a6 * 0.61875f), a4 + 0.0f, v28, v14, maxY);
+	Tesselator::instance.vertexUV(v25 - 0.0625f, a4 + 0.61875f, v27, v14, v16);
+	Tesselator::instance.vertexUV(v25 + 0.0625f, a4 + 0.61875f, v27, v13, v16);
+	Tesselator::instance.vertexUV(v29, a4 + 0.0f, v28, v13, maxY);
+	Tesselator::instance.vertexUV(v29, a4 + 0.0f, v30, v14, maxY);
+	Tesselator::instance.vertexUV(v25 + 0.0625f, a4 + 0.61875f, v26, v14, v16);
+	Tesselator::instance.vertexUV(v25 - 0.0625f, a4 + 0.61875f, v27, v13, v16);
+	Tesselator::instance.vertexUV((float)(v25 - 0.0625f) + (float)(a6 * 0.61875f), a4 + 0.0f, v28, v13, maxY);
+	v31 = (float)(v25 + 0.0625f) + (float)(a6 * 0.61875f);
+	Tesselator::instance.vertexUV(v31, a4 + 0.0f, v28, v14, maxY);
+	Tesselator::instance.vertexUV(v25 + 0.0625f, a4 + 0.61875f, v27, v14, v16);
+	Tesselator::instance.vertexUV(v25 + 0.0625f, a4 + 0.61875f, v26, v13, v16);
+	Tesselator::instance.vertexUV(v31, a4 + 0.0f, v30, v13, maxY);
+	Tesselator::instance.vertexUV((float)(v25 - 0.0625f) + (float)(a6 * 0.61875f), a4 + 0.0f, v30, v14, maxY);
+	Tesselator::instance.vertexUV(v25 - 0.0625f, a4 + 0.61875f, v26, v14, v16);
 }
 bool_t TileRenderer::tesselateTorchInWorld(Tile* tile, int32_t x, int32_t y, int32_t z) {
 	int32_t v9;		   // r7
@@ -3668,7 +3666,7 @@ bool_t TileRenderer::tesselateTorchInWorld(Tile* tile, int32_t x, int32_t y, int
 	v9 = this->levelSource->getData(x, y, z);
 	v10 = tile->getBrightness(this->levelSource, x, y, z);
 	if(Tile::lightEmission[tile->blockID] > 0) {
-		v10 = 1.0;
+		v10 = 1.0f;
 	}
 	Tesselator::instance.color(v10, v10, v10);
 	v11 = (float)x;
@@ -3677,41 +3675,41 @@ bool_t TileRenderer::tesselateTorchInWorld(Tile* tile, int32_t x, int32_t y, int
 		v13 = (float)y;
 		if(v9 == 2) {
 			v19 = (float)z;
-			v21 = 0.0;
+			v21 = 0.0f;
 			v14 = this;
 			v15 = tile;
-			v20 = 0.4;
-			v11 = v11 + 0.1;
+			v20 = 0.4f;
+			v11 = v11 + 0.1f;
 		} else {
 			if(v9 == 3) {
-				v20 = 0.0;
-				v16 = -0.4;
-				v19 = v12 - 0.1;
+				v20 = 0.0f;
+				v16 = -0.4f;
+				v19 = v12 - 0.1f;
 			} else {
 				if(v9 != 4) {
 					v17 = (float)x;
 					v14 = this;
 					v15 = tile;
 					v19 = (float)z;
-					v20 = 0.0;
-					v21 = 0.0;
+					v20 = 0.0f;
+					v21 = 0.0f;
 					goto LABEL_14;
 				}
-				v16 = 0.4;
-				v20 = 0.0;
-				v19 = v12 + 0.1;
+				v16 = 0.4f;
+				v20 = 0.0f;
+				v19 = v12 + 0.1f;
 			}
 			v14 = this;
 			v15 = tile;
 			v21 = v16;
 		}
 		v17 = v11;
-		v13 = v13 + 0.2;
+		v13 = v13 + 0.2f;
 LABEL_14:
 		v14->tesselateTorch(v15, v17, v13, v19, v20, v21);
 		return 1;
 	}
-	this->tesselateTorch(tile, v11 - 0.1, (float)y + 0.2, (float)z, -0.4, 0.0);
+	this->tesselateTorch(tile, v11 - 0.1f, (float)y + 0.2f, (float)z, -0.4f, 0.0f);
 	return 1;
 }
 bool_t TileRenderer::tesselateTreeInWorld(Tile* tile, int32_t x, int32_t y, int32_t z) {
@@ -3766,31 +3764,31 @@ LABEL_13:
 	v12 = this->levelSource->isEmptyTile(x, y + 1, z);
 	if(v10) {
 		if(v12) {
-			tile->setShape(0.5 - 0.1875, 0.0, 0.0, 0.1875 + 0.5, 0.8125, 1.0);
+			tile->setShape(0.5f - 0.1875f, 0.0f, 0.0f, 0.1875f + 0.5f, 0.8125f, 1.0f);
 			goto LABEL_24;
 		}
 	} else if(v11 && v12) {
-		tile->setShape(0.0, 0.0, 0.5 - 0.1875, 1.0, 0.8125, 0.1875 + 0.5);
+		tile->setShape(0.0f, 0.0f, 0.5f - 0.1875f, 1.0f, 0.8125f, 0.1875f + 0.5f);
 		goto LABEL_24;
 	}
-	v13 = 0.5 - 0.25;
-	v14 = 0.25 + 0.5;
-	tile->setShape(0.5 - 0.25, 0.0, 0.5 - 0.25, 0.25 + 0.5, 1.0, 0.25 + 0.5);
+	v13 = 0.5f - 0.25f;
+	v14 = 0.25f + 0.5f;
+	tile->setShape(0.5f - 0.25f, 0.0f, 0.5f - 0.25f, 0.25f + 0.5f, 1.0f, 0.25f + 0.5f);
 	this->tesselateBlockInWorld(tile, x, y, z);
 	if(v16) {
-		tile->setShape(0.0, 0.0, 0.5 - 0.1875, v13, 0.8125, 0.1875 + 0.5);
+		tile->setShape(0.0f, 0.0f, 0.5f - 0.1875f, v13, 0.8125f, 0.1875f + 0.5f);
 		this->tesselateBlockInWorld(tile, x, y, z);
 	}
 	if(v17) {
-		tile->setShape(v14, 0.0, 0.5 - 0.1875, 1.0, 0.8125, 0.1875 + 0.5);
+		tile->setShape(v14, 0.0f, 0.5f - 0.1875f, 1.0f, 0.8125f, 0.1875f + 0.5f);
 		this->tesselateBlockInWorld(tile, x, y, z);
 	}
 	if(v19) {
-		tile->setShape(0.5 - 0.1875, 0.0, 0.0, 0.1875 + 0.5, 0.8125, v13);
+		tile->setShape(0.5f - 0.1875f, 0.0f, 0.0f, 0.1875f + 0.5f, 0.8125f, v13);
 		this->tesselateBlockInWorld(tile, x, y, z);
 	}
 	if(v18) {
-		tile->setShape(0.5 - 0.1875, 0.0, v14, 0.1875 + 0.5, 0.8125, 1.0);
+		tile->setShape(0.5f - 0.1875f, 0.0f, v14, 0.1875f + 0.5f, 0.8125f, 1.0f);
 LABEL_24:
 		this->tesselateBlockInWorld(tile, x, y, z);
 	}
@@ -3904,18 +3902,18 @@ bool_t TileRenderer::tesselateWaterInWorld(Tile* tile, int32_t x, int32_t y, int
 		v29 = v26->maxX;
 		v30 = v26->maxY;
 		SlopeAngle = LiquidTile::getSlopeAngle(this->levelSource, x, y, z, a5);
-		if(SlopeAngle > -999.0) {
+		if(SlopeAngle > -999.0f) {
 			v32 = tile->getTexture(2, v77);
 			v27 = v32->minX;
 			v28 = v32->minY;
 			v29 = v32->maxX;
 			v30 = v32->maxY;
 		}
-		WaterHeight = WaterHeight - 0.001;
-		v23 = v23 - 0.001;
-		v24 = v24 - 0.001;
-		v25 = v25 - 0.001;
-		if(SlopeAngle < -999.0) {
+		WaterHeight = WaterHeight - 0.001f;
+		v23 = v23 - 0.001f;
+		v24 = v24 - 0.001f;
+		v25 = v25 - 0.001f;
+		if(SlopeAngle < -999.0f) {
 			v47 = v30;
 			v72 = v29;
 			v43 = v28;
@@ -3923,12 +3921,12 @@ bool_t TileRenderer::tesselateWaterInWorld(Tile* tile, int32_t x, int32_t y, int
 			v46 = v27;
 		} else {
 			v33 = v29 - v27;
-			v35 = Mth::sin(SlopeAngle) * 0.5;
-			v36 = Mth::cos(SlopeAngle) * 0.5;
-			v37 = 1.0 - v36;
+			v35 = Mth::sin(SlopeAngle) * 0.5f;
+			v36 = Mth::cos(SlopeAngle) * 0.5f;
+			v37 = 1.0f - v36;
 			v38 = v30 - v28;
-			v39 = (float)(1.0 - v36) - v35;
-			v40 = v36 + 1.0;
+			v39 = (float)(1.0f - v36) - v35;
+			v40 = v36 + 1.0f;
 			v41 = v37 + v35;
 			v42 = v27 + (float)(v41 * v33);
 			v43 = v28 + (float)(v41 * (float)(v30 - v28));
@@ -3943,17 +3941,17 @@ bool_t TileRenderer::tesselateWaterInWorld(Tile* tile, int32_t x, int32_t y, int
 		}
 		v48 = tile->getBrightness(this->levelSource, x, y, z);
 		Tesselator::instance.color(v48, v48, v48);
-		Tesselator::instance.vertexUV((float)x + 0.0, (float)y + WaterHeight, (float)z + 0.0, v46, v43);
-		Tesselator::instance.vertexUV((float)x + 0.0, (float)y + v23, (float)z + 1.0, v42, v47);
-		Tesselator::instance.vertexUV((float)x + 1.0, (float)y + v24, (float)z + 1.0, v72, v30);
-		Tesselator::instance.vertexUV((float)x + 1.0, (float)y + v25, (float)z + 0.0, v29, v28);
+		Tesselator::instance.vertexUV((float)x + 0.0f, (float)y + WaterHeight, (float)z + 0.0f, v46, v43);
+		Tesselator::instance.vertexUV((float)x + 0.0f, (float)y + v23, (float)z + 1.0f, v42, v47);
+		Tesselator::instance.vertexUV((float)x + 1.0f, (float)y + v24, (float)z + 1.0f, v72, v30);
+		Tesselator::instance.vertexUV((float)x + 1.0f, (float)y + v25, (float)z + 0.0f, v29, v28);
 		v80 = 1;
 	} else {
 		v80 = 0;
 	}
 	if(this->disableCulling || v81) {
 		v49 = tile->getBrightness(this->levelSource, x, v78, z);
-		Tesselator::instance.color((float)(v49 * 0.5), v49 * 0.5, v49 * 0.5);
+		Tesselator::instance.color((float)(v49 * 0.5f), v49 * 0.5f, v49 * 0.5f);
 		v50 = tile->getTexture(0);
 		this->renderFaceDown(tile, (float)x, (float)y, (float)z, *v50);
 		v80 = 1;
@@ -3987,21 +3985,21 @@ LABEL_29:
 		if(this->disableCulling || v82[i]) {
 			if(i) {
 				if(i == 1) {
-					v58 = (float)a4 - 0.001;
+					v58 = (float)a4 - 0.001f;
 					v59 = (float)a2;
 					v60 = (float)x;
 					v61 = v58;
 					v62 = v23;
 					v63 = v24;
 				} else if(i == 2) {
-					v59 = (float)x + 0.001;
+					v59 = (float)x + 0.001f;
 					v58 = (float)a4;
 					v61 = (float)z;
 					v60 = v59;
 					v62 = WaterHeight;
 					v63 = v23;
 				} else {
-					v59 = (float)a2 - 0.001;
+					v59 = (float)a2 - 0.001f;
 					v58 = (float)z;
 					v61 = (float)a4;
 					v60 = v59;
@@ -4009,7 +4007,7 @@ LABEL_29:
 					v63 = v25;
 				}
 			} else {
-				v58 = (float)z + 0.001;
+				v58 = (float)z + 0.001f;
 				v59 = (float)x;
 				v60 = (float)a2;
 				v61 = v58;
@@ -4017,25 +4015,25 @@ LABEL_29:
 				v63 = WaterHeight;
 			}
 			v64 = v54->maxY - v56;
-			v73 = v56 + (float)((float)(1.0 - v63) * v64);
-			v79 = v56 + (float)((float)(1.0 - v62) * v64);
+			v73 = v56 + (float)((float)(1.0f - v63) * v64);
+			v79 = v56 + (float)((float)(1.0f - v62) * v64);
 			v65 = v56 + v64;
 			v66 = tile->getBrightness(this->levelSource, v53, y, v70);
 			if(i > 1) {
-				v67 = v66 * 0.6;
+				v67 = v66 * 0.6f;
 			} else {
-				v67 = v66 * 0.8;
+				v67 = v66 * 0.8f;
 			}
 			Tesselator::instance.color(v67, v67, v67);
 			Tesselator::instance.vertexUV(v59, (float)y + v63, v58, v55, v73);
 			Tesselator::instance.vertexUV(v60, (float)y + v62, v61, v57, v79);
-			v68 = (float)y + 0.0;
+			v68 = (float)y + 0.0f;
 			Tesselator::instance.vertexUV(v60, v68, v61, v57, v65);
 			Tesselator::instance.vertexUV(v59, v68, v58, v55, v65);
 			v80 = 1;
 		}
 	}
-	tile->minY = 0.0;
-	tile->maxY = 1.0;
+	tile->minY = 0.0f;
+	tile->maxY = 1.0f;
 	return v80;
 }

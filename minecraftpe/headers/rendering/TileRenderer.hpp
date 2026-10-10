@@ -26,7 +26,7 @@ struct TileRenderer
 	void renderFaceDown(Tile*, float, float, float, const struct TextureUVCoordinateSet&);
 	void renderFaceUp(Tile*, float, float, float, const struct TextureUVCoordinateSet&);
 	void renderGuiTile(Tile*, int32_t, float, float);
-	void renderNorth(Tile*, float, float, float, const struct TextureUVCoordinateSet&);
+	void renderNorth(Tile*, float, float, float, const struct TextureUVCoordinateSet& tex_);
 	void renderSouth(Tile*, float, float, float, struct TextureUVCoordinateSet); //mojang moment
 	void renderTile(Tile*, int32_t, bool_t);
 	void renderWest(Tile*, float, float, float, const struct TextureUVCoordinateSet&);

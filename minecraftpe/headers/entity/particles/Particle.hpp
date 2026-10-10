@@ -35,5 +35,5 @@ struct Particle: Entity
 	virtual void addAdditonalSaveData(CompoundTag*){}
 	virtual void init(float, float, float, float, float, float, int32_t) = 0;
 	virtual void setEntity(Entity*){}
-	virtual void render(Tesselator&, float, float, float, float, float, float);
+	virtual void render(Tesselator&, float pt, float, float, float, float, float);
 };

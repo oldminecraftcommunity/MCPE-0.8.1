@@ -57,7 +57,7 @@ void CommandServer::_updateAccept(){
 		if(sock >= 0) {
 			setNonBlocking(sock);
 		}
-		this->connected.emplace_back(ConnectedClient(sock));
+		this->connected.push_back(ConnectedClient(sock));
 		this->connected.back().time = this->minecraft->level->getTime();
 	}
 }
@@ -251,7 +251,7 @@ std::string CommandServer::parse(ConnectedClient&, const std::string&) {
 	//TODO implement
 	return CommandServer::Fail;
 }
-int commandServerTick;
+static int commandServerTick;
 void CommandServer::tick() {
 	if(this->initialized) {
 		this->_updateAccept();

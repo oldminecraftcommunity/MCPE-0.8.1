@@ -56,10 +56,10 @@ void OptionsScreen::createCategoryButtons(void) {
 	this->createCategoryButton(v9, this->field_88, v11, 106, 28, 0, 0);
 }
 void OptionsScreen::generateOptionScreens(void) {
-	this->optionPanes.emplace_back(new OptionsPane());
-	this->optionPanes.emplace_back(new OptionsPane());
-	this->optionPanes.emplace_back(new OptionsPane());
-	this->optionPanes.emplace_back(new OptionsPane());
+	this->optionPanes.push_back(new OptionsPane());
+	this->optionPanes.push_back(new OptionsPane());
+	this->optionPanes.push_back(new OptionsPane());
+	this->optionPanes.push_back(new OptionsPane());
 
 	this->optionPanes[0]->createOptionsGroup("options.group.game")->addOptionItem(&Options::Option::NAME, this->minecraft)->addOptionItem(&Options::Option::DIFFICULTY, this->minecraft)->addOptionItem(&Options::Option::THIRD_PERSON, this->minecraft)->addOptionItem(&Options::Option::SERVER_VISIBLE, this->minecraft);
 	this->optionPanes[0]->createOptionsGroup("options.group.realms")->addLoginItem(this->minecraft);

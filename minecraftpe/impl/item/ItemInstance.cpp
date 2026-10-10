@@ -297,14 +297,7 @@ void ItemInstance::snap(Player*) {
 }
 std::string ItemInstance::toString() const{
 	std::stringstream str;
-	str << this->count;
-	str << " x ";
-	str << this->getDescriptionId();
-	str << "(";
-	str << this->itemClass->itemID;
-	str << ")";
-	str << "@";
-	str << this->metadata;
+	str << this->count << " x " << this->getDescriptionId() << "(" << this->itemClass->itemID << ")" << "@" << this->metadata;
 	return str.str();
 }
 ItemInstance* ItemInstance::use(Level* a2, Player* a3) {

@@ -107,15 +107,15 @@ void Inventory::selectSlot(int32_t a2) {
 void Inventory::setupDefault() {
 	if(this->field_20) {
 		this->items.resize(9);
-		this->items.emplace_back(new ItemInstance(Tile::rock));
-		this->items.emplace_back(new ItemInstance(Tile::stoneBrick));
-		this->items.emplace_back(new ItemInstance(Tile::dirt));
-		this->items.emplace_back(new ItemInstance(Tile::wood));
-		this->items.emplace_back(new ItemInstance(Tile::wood, 1, 1));
-		this->items.emplace_back(new ItemInstance(Tile::torch));
-		this->items.emplace_back(new ItemInstance(Tile::stairs_brick));
-		this->items.emplace_back(new ItemInstance(Tile::cobbleWall));
-		this->items.emplace_back(new ItemInstance(Tile::sapling));
+		this->items.push_back(new ItemInstance(Tile::rock));
+		this->items.push_back(new ItemInstance(Tile::stoneBrick));
+		this->items.push_back(new ItemInstance(Tile::dirt));
+		this->items.push_back(new ItemInstance(Tile::wood));
+		this->items.push_back(new ItemInstance(Tile::wood, 1, 1));
+		this->items.push_back(new ItemInstance(Tile::torch));
+		this->items.push_back(new ItemInstance(Tile::stairs_brick));
+		this->items.push_back(new ItemInstance(Tile::cobbleWall));
+		this->items.push_back(new ItemInstance(Tile::sapling));
 		for(int32_t i = 0; i != 9; ++i) {
 			this->linkSlot(i, i + 9);
 		}

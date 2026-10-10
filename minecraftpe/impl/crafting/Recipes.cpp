@@ -116,7 +116,7 @@ void Recipes::addShapedRecipe(const ItemInstance& a2, const std::string& a3, con
 }
 void Recipes::addShapedRecipe(const ItemInstance& a2, const std::vector<std::string>& a3, const std::vector<Recipes::Type>& a4) {
 	std::vector<ItemInstance> v7;
-	v7.emplace_back(ItemInstance(a2));
+	v7.push_back(ItemInstance(a2));
 	this->addShapedRecipe(v7, a3, a4); //TODO check
 }
 void Recipes::addShapedRecipe(const std::vector<ItemInstance>& results, const std::vector<std::string>& shape, const std::vector<Recipes::Type>& ingridients) {
@@ -161,9 +161,9 @@ void Recipes::addShapelessRecipe(const ItemInstance& a2, const std::vector<Recip
 	for(int32_t v3 = 0; v3 < a3.size(); ++v3) {
 		const Recipes::Type* v7 = &a3[v3];
 		if(v7->item) {
-			v14.emplace_back(ItemInstance(v7->item));
+			v14.push_back(ItemInstance(v7->item));
 		} else if(v7->tile) {
-			v14.emplace_back(ItemInstance(v7->tile));
+			v14.push_back(ItemInstance(v7->tile));
 		} else if(!v7->itemInstance.isNull()) {
 			v14.push_back(v7->itemInstance);
 		}

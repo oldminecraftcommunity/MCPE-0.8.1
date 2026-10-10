@@ -10,14 +10,14 @@ ServerLevel::ServerLevel(LevelStorage* a2, const std::string& a3, const LevelSet
 }
 bool_t ServerLevel::allPlayersSleeping() {
 	if(!this->_allPlayersSleeping || this->isClient) return 0;
-	for(auto&& p: this->playersMaybe) {
-		if(!p->isSleepingLongEnough()) return 0;
+	for(std::vector<Player*>::iterator p = this->players.begin(); p != this->players.end(); ++p){
+		if(!(*p)->isSleepingLongEnough()) return 0;
 	}
 	return 1;
 }
 void ServerLevel::awakenAllPlayers() {
 	this->_allPlayersSleeping = 0;
-	for(auto&& p: this->playersMaybe) {
+	for(auto&& p: this->players) {
 		if(p->isSleeping()) {
 			p->stopSleepInBed(0, 0, 1);
 			p->health = p->prevHealthMaybe = 20;
@@ -41,8 +41,8 @@ void ServerLevel::tick() {
 }
 void ServerLevel::updateSleepingPlayerList() {
 	bool allPlayersSleeping = this->_allPlayersSleeping;
-	this->_allPlayersSleeping = !this->playersMaybe.empty();
-	for(auto&& p: this->playersMaybe) {
+	this->_allPlayersSleeping = !this->players.empty();
+	for(auto&& p: this->players) {
 		if(!p->isSleeping()) {
 			this->_allPlayersSleeping = 0;
 			break;
@@ -52,7 +52,7 @@ void ServerLevel::updateSleepingPlayerList() {
 	if(!allPlayersSleeping) {
 		if(this->_allPlayersSleeping) {
 			this->levelEvent(0, 9800, 0, 0, 0, 0);
-			for(auto&& p: this->playersMaybe) {
+			for(auto&& p: this->players) {
 				p->setAllPlayersSleeping();
 			}
 		}

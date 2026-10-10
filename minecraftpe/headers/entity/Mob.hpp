@@ -117,7 +117,7 @@ struct Mob : Entity{
 	virtual void readAdditionalSaveData(CompoundTag*);
 	virtual void addAdditonalSaveData(CompoundTag*);
 	virtual void postInit();
-	virtual void knockback(Entity*, int32_t, float, float);
+	virtual void knockback(Entity*, int32_t, float x, float z);
 	virtual void die(Entity*);
 	virtual bool_t canSee(Entity*);
 	virtual bool_t onLadder();

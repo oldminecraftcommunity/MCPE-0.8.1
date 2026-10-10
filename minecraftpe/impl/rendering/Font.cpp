@@ -222,7 +222,7 @@ std::vector<std::vector<std::string>> Font::getParagraphs(const std::string& a3)
 		std::vector<std::string> v14;
 		for(char_t* i = v8; i; i = strtok(0, " \t\r")) {
 			//TODO
-			v14.emplace_back(i);
+			v14.push_back(i);
 		}
 		a1.push_back(v14);
 	}

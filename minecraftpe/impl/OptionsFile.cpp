@@ -28,7 +28,7 @@ std::vector<std::string> OptionsFile::getOptionStrings() {
 					std::getline(v8, v7, ':');
 					v7.erase(v7.find_last_not_of(" \n\r\t", -1) + 1, -1);
 					if(!(v7 == "")) {
-						res.emplace_back(v7);
+						res.push_back(v7);
 					}
 				}
 			}

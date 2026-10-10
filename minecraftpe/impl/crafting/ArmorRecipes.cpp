@@ -42,7 +42,7 @@ void ArmorRecipes::addRecipes(Recipes* a1) {
 			ItemInstance v8(v10[v3][v2]);
 			v5 = Item::items[v4];
 			std::vector<Recipes::Type> v6;
-			v6.emplace_back(Recipes::Type('X', v5)); //inlined
+			v6.push_back(Recipes::Type('X', v5)); //inlined
 			a1->addShapedRecipe(v8, _dword_D6E4DD70[v3++], v6);
 		} while(v3 != 4);
 		++v2;

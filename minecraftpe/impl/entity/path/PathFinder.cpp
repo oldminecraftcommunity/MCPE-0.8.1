@@ -10,7 +10,7 @@
 #include <tile/material/Material.hpp>
 
 PathFinder::PathFinder(LevelSource* a2, bool_t a3, bool_t a4, bool_t a5, bool_t a6) {
-	this->neighborNodes = new arrayWithLength<Node*>{new Node*[32], 32};
+	this->neighborNodes = new arrayWithLength<Node*>(32);
 	this->field_34 = a3;
 	this->field_36 = a5;
 	this->field_35 = a4;
@@ -368,7 +368,7 @@ Path* PathFinder::reconstruct_path(Node* a2, Node* a3) {
 		++v4_;
 	} while(a3);
 
-	Path* v8 = new Path(arrayWithLength<Node*>{v6, size});
+	Path* v8 = new Path(arrayWithLength<Node*>(v6, size));
 	if(v6) {
 		delete[] v6;
 	}

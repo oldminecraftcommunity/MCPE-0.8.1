@@ -88,10 +88,10 @@ void CreativeInventoryScreen::populateFilteredItems() {
 	}
 }
 void CreativeInventoryScreen::populateItem(Item* a1, int32_t a2, int32_t a3) {
-	CreativeInventoryScreen::items.emplace_back(ItemInstance(a1, a2, a3));
+	CreativeInventoryScreen::items.push_back(ItemInstance(a1, a2, a3));
 }
 void CreativeInventoryScreen::populateItem(Tile* a1, int32_t a2, int32_t a3) {
-	CreativeInventoryScreen::items.emplace_back(ItemInstance(a1, a2, a3));
+	CreativeInventoryScreen::items.push_back(ItemInstance(a1, a2, a3));
 }
 void CreativeInventoryScreen::populateItems() {
 	CreativeInventoryScreen::populateItem(Tile::rail, 1, 0);
@@ -279,10 +279,10 @@ void CreativeInventoryScreen::init()
 	this->field_58 = v4;
 	IntRectangle a5 = {this->minecraft->options.leftHanded ? 65 : 49, this->minecraft->options.leftHanded ? 55 : 43, 14, 14};
 	this->field_70 = std::shared_ptr<NinePatchLayer>(v16.createSymmetrical(a5, 3, 3, v4, v4));
-	this->field_98.emplace_back(CreativeInventoryScreen::TabButtonWithMeta(1, this->createInventoryTabButton(6, 1)));
-	this->field_98.emplace_back(CreativeInventoryScreen::TabButtonWithMeta(2, this->createInventoryTabButton(7, 2)));
-	this->field_98.emplace_back(CreativeInventoryScreen::TabButtonWithMeta(3, this->createInventoryTabButton(8, 3)));
-	this->field_98.emplace_back(CreativeInventoryScreen::TabButtonWithMeta(4, this->createInventoryTabButton(9, 4)));
+	this->field_98.push_back(CreativeInventoryScreen::TabButtonWithMeta(1, this->createInventoryTabButton(6, 1)));
+	this->field_98.push_back(CreativeInventoryScreen::TabButtonWithMeta(2, this->createInventoryTabButton(7, 2)));
+	this->field_98.push_back(CreativeInventoryScreen::TabButtonWithMeta(3, this->createInventoryTabButton(8, 3)));
+	this->field_98.push_back(CreativeInventoryScreen::TabButtonWithMeta(4, this->createInventoryTabButton(9, 4)));
 
 	ImageDef v18;
 	v18.field_0 = "gui/spritesheet.png";

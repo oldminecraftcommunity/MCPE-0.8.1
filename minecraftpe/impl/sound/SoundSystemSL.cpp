@@ -58,7 +58,7 @@ void SoundSystemSL::init(void) {
 }
 void SoundSystemSL::removePlayer(SLAndroidSimpleBufferQueueItf a1, void* a2) {
 	pthread_mutex_lock(&SoundSystemSL::toRemoveMutex.mutex);
-	SoundSystemSL::toRemove.emplace_back((SLObjectItf) a2);
+	SoundSystemSL::toRemove.push_back((SLObjectItf) a2);
 	pthread_mutex_unlock(&SoundSystemSL::toRemoveMutex.mutex);
 }
 void SoundSystemSL::removeStoppedSounds(void) {
@@ -134,7 +134,7 @@ void SoundSystemSL::playAt(const struct SoundDesc& a2, float x, float y, float z
 		this->checkErr((*v33)->RegisterCallback(v33, SoundSystemSL::removePlayer, (void*) player));
 		this->checkErr((*v33)->Enqueue(v33, a2.field_0, a2.field_4));
 		this->checkErr((*v31)->SetPlayState(v31, SL_PLAYSTATE_PLAYING));
-		this->field_0.emplace_back(player);
+		this->field_0.push_back(player);
 		++this->field_24;
 	}
 }

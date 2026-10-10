@@ -40,12 +40,12 @@ void JoinGameScreen::render(int32_t a2, int32_t a3, float a4) {
 	}
 }
 void JoinGameScreen::init() {
-	this->buttons.emplace_back(&this->joinGameButton);
-	this->buttons.emplace_back(&this->backButton);
+	this->buttons.push_back(&this->joinGameButton);
+	this->buttons.push_back(&this->backButton);
 	this->minecraft->rakNetInstance->clearServerList();
 	this->availableGameList = new AvailableGamesList(this->minecraft, this->width, this->height);
-	this->field_2C.emplace_back(&this->joinGameButton);
-	this->field_2C.emplace_back(&this->backButton);
+	this->field_2C.push_back(&this->joinGameButton);
+	this->field_2C.push_back(&this->backButton);
 }
 void JoinGameScreen::setupPositions() {
 	int32_t v1; // r3

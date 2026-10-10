@@ -22,14 +22,14 @@ ThreadCollection::ThreadCollection(uint32_t maxthreads) {
 	}
 
 	for(unsigned int i = 0; i != maxthreads; ++i) {
-			this->threads.emplace_back(std::thread(Worker(*this)));
+			this->threads.push_back(std::thread(Worker(*this)));
 	}
 }
 void ThreadCollection::enqueue(std::shared_ptr<Job> a2) {
 	Job* j = a2.get();
 	std::unique_lock<std::mutex> v11(this->mutex, std::defer_lock);
 	v11.lock();
-	this->field_C.emplace_back(a2);
+	this->field_C.push_back(a2);
 	v11.unlock();
 	this->field_64.notify_one();
 }

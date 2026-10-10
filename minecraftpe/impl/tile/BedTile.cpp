@@ -222,7 +222,7 @@ LABEL_45:
 			}
 			if(level->dimensionPtr->mayRespawn()) {
 				if(BedTile::isOccupied(v18)) {
-					for(auto&& player2: level->playersMaybe) {
+					for(auto&& player2: level->players) {
 						if(player2->isSleeping()) {
 							if(player2->bedPosition.x == x && player->bedPosition.y == y && player->bedPosition.z == v10) {
 								player2->displayClientMessage("This bed is occupied");

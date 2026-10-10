@@ -15,7 +15,7 @@ struct Keyboard
 	static int32_t _index;
 
 	static void feed(uint8_t a1, int32_t a2) {
-		Keyboard::_inputs.push_back(KeyboardAction { a2, a1 });
+		Keyboard::_inputs.push_back(KeyboardAction(a2, a1));
 		Keyboard::_states[a1] = a2;
 	}
 	static void feedText(const std::string& a2, bool_t a3) {

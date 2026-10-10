@@ -16,7 +16,7 @@ std::vector<ItemInstance> ContainerMenu::getItems() {
 	int32_t v2 = 0;
 	while(v2 < this->container->getContainerSize()) {
 		ItemInstance* v5 = this->container->getItem(v2);
-		result.emplace_back(v5 ? ItemInstance(*v5) : ItemInstance());
+		result.push_back(v5 ? ItemInstance(*v5) : ItemInstance());
 		++v2;
 	}
 	return result;

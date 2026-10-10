@@ -161,7 +161,8 @@ struct Frustum: FrustumData
 		v4 = v3[1];
 		v5 = v3[2];
 		v6 = (float)((float)(v4 * v4) + (float)(*v3 * *v3)) + (float)(v5 * v5);
-		*((int32_t*)&v7) = 0x5F3759DF - (*((int32_t*)&v6) >> 1); //TODO replace with sqrt if needed
+		//TODO replace with Mth::rsqrt
+		*((int32_t*)&v7) = 0x5F3759DF - (*((int32_t*)&v6) >> 1);
 		v8 = 1.5 - (float)((float)((float)(v6 * 0.5) * v7) * v7);
 		v9 = *v3 * (float)(v7 * v8);
 		v3[2] = v5 * (float)(v7 * v8);

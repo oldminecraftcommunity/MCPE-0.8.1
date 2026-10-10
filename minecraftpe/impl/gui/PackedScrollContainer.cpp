@@ -80,7 +80,6 @@ void PackedScrollContainer::render(Minecraft* a2, int32_t a3, int32_t a4) {
 	glDisable(0xC11u);
 }
 void PackedScrollContainer::setupPositions() {
-	int32_t v3;			// r5
 	int32_t v5;			// r6
 	int32_t v8;			// r5
 	int32_t v9;			// r3
@@ -94,11 +93,7 @@ void PackedScrollContainer::setupPositions() {
 	int32_t v18;		// r7
 	float v21;			// s15
 
-	if(this->scrollingPane) {
-		v3 = (int32_t)this->scrollingPane->getContentOffset()->y;
-	} else {
-		v3 = 0;
-	}
+	int v3 = this->scrollingPane ? (int32_t)this->scrollingPane->getContentOffset()->y : 0;
 
 	v5 = v3 + this->posY + this->field_44;
 	for(auto a8: this->children) {

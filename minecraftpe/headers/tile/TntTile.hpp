@@ -60,8 +60,7 @@ struct TntTile : Tile{
 		level->addEntity(v7);
 	}
 	virtual bool_t use(Level* level, int32_t x, int32_t y, int32_t z, Player* player) {
-		ItemInstance* item; // r0
-		item = player->getSelectedItem();
+		ItemInstance* item = player->getSelectedItem();
 		if (!item || Item::flintAndSteel != item->itemClass || !Item::flintAndSteel) {
 			return Tile::use(level, x, y, z, player);
 		}

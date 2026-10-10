@@ -25,7 +25,7 @@ void Worker::operator()(void) {
 				if(el->getStatus() == JS_FINISHED) {
 					std::unique_lock<std::mutex> v24(this->threadCollection->field_60, std::defer_lock);
 					v24.lock();
-					this->threadCollection->field_34.emplace_back(std::shared_ptr<Job>(el));
+					this->threadCollection->field_34.push_back(std::shared_ptr<Job>(el));
 				}
 			}
 			continue;

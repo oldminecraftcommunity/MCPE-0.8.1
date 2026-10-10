@@ -74,7 +74,7 @@ struct ServerCommandParser
 
 			if (v5 >= v8) {
 				if (v2) {
-					v24.emplace_back(ServerCommandParser::Token(v18));
+					v24.push_back(ServerCommandParser::Token(v18));
 					goto LABEL_19;
 					//goto ADD_TOKEN;
 				}
@@ -86,7 +86,7 @@ struct ServerCommandParser
 							v18 += v6;
 							goto LABEL_19;
 						}
-						ADD_TOKEN: v24.emplace_back(ServerCommandParser::Token(v18));
+						ADD_TOKEN: v24.push_back(ServerCommandParser::Token(v18));
 						v18.clear();
 						goto LABEL_19;
 					}
@@ -132,7 +132,7 @@ struct ServerCommandParser
 				if (cmd->second->numericParams.size() + 1 <= v24.size()) {
 					break;
 				}
-				v24.emplace_back(ServerCommandParser::Token(""));
+				v24.push_back(ServerCommandParser::Token(""));
 			}
 			this->retStr = cmd->second->func(v24);
 		}

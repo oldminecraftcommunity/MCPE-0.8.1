@@ -84,12 +84,12 @@ void StartMenuScreen::render(int32_t a2, int32_t a3, float a4) {
 	Screen::render(a2, a3, a4);
 }
 void StartMenuScreen::init() {
-	this->buttons.emplace_back(&this->startGameButton);
-	this->buttons.emplace_back(&this->joinGameButton);
-	this->field_2C.emplace_back(&this->startGameButton);
-	this->field_2C.emplace_back(&this->joinGameButton);
-	this->buttons.emplace_back(&this->optionsButton);
-	this->field_2C.emplace_back(&this->optionsButton);
+	this->buttons.push_back(&this->startGameButton);
+	this->buttons.push_back(&this->joinGameButton);
+	this->field_2C.push_back(&this->startGameButton);
+	this->field_2C.push_back(&this->joinGameButton);
+	this->buttons.push_back(&this->optionsButton);
+	this->field_2C.push_back(&this->optionsButton);
 	this->mojangABMaybe = "\xFFMojang AB";
 	this->gameVersion = Common::getGameVersionString();
 	this->optionsButton.active = 0;

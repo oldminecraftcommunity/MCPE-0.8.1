@@ -23,7 +23,7 @@ bool_t NetherReactor::allPlayersCloseToReactor(Level* level, int32_t x, int32_t 
 	ymin = y - 1;
 	xmax = x + 5;
 	ymax = y + 1;
-	for(auto& player: level->playersMaybe) {
+	for(auto& player: level->players) {
 		if(player->posX < xmin) return 0;
 		if(player->posX > xmax) return 0;
 		float v14 = player->posY - player->ridingHeight;

@@ -26,8 +26,6 @@ struct SoundSystemSL : public SoundSystem{
 	SoundSystemSL(void);
 	virtual ~SoundSystemSL();
 	bool_t checkErr(unsigned long);
-	void destroy(void);
-	void init(void);
 	static void removePlayer(SLAndroidSimpleBufferQueueItf, void*); //XXX SoundSystemSL::removePlayer(SLAndroidSimpleBufferQueueItf_ const* const*,void *)
 	void removeStoppedSounds(void);
 	virtual void setListenerPos(float, float, float);
@@ -41,5 +39,7 @@ struct SoundSystemSL : public SoundSystem{
 	virtual void stop(const std::string&) {
 	}
 	virtual void playAt(const struct SoundDesc&, float, float, float, float, float);
+	virtual void destroy(void);
+	virtual void init(void);
 };
 #endif

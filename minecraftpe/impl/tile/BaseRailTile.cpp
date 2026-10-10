@@ -18,7 +18,7 @@ bool_t BaseRailTile::Rail::canConnectTo(BaseRailTile::Rail* a2) {
 }
 void BaseRailTile::Rail::connectTo(BaseRailTile::Rail* a2) {
 	int32_t v9; // r5
-	this->connections.emplace_back(TilePos{a2->x, a2->y, a2->z});
+	this->connections.push_back(TilePos{a2->x, a2->y, a2->z});
 	bool hasConnection = this->hasConnection(this->x, this->y, this->z - 1);
 	bool v6 = this->hasConnection(this->x, this->y, this->z + 1);
 	bool v7 = this->hasConnection(this->x - 1, this->y, this->z);
@@ -310,9 +310,7 @@ LABEL_81:
 	}
 }
 void BaseRailTile::Rail::removeSoftConnections() {
-	auto&& railCon = this->connections.begin();
-
-	for(; railCon != this->connections.end();) { //TODO cheeck
+	for(auto&& railCon = this->connections.begin(); railCon != this->connections.end();) { //TODO check
 		std::shared_ptr<BaseRailTile::Rail> a1 = this->getRail(*railCon);
 		if(a1 && a1->connectsTo(this)) {
 			(*railCon).x = a1->x;
@@ -327,35 +325,35 @@ void BaseRailTile::Rail::removeSoftConnections() {
 void BaseRailTile::Rail::updateConnections(int32_t a2) {
 	this->connections.clear();
 	if(a2 == 0) {
-		this->connections.emplace_back(TilePos{this->x, this->y, this->z - 1});
-		this->connections.emplace_back(TilePos{this->x, this->y, this->z + 1});
+		this->connections.push_back(TilePos(this->x, this->y, this->z - 1));
+		this->connections.push_back(TilePos(this->x, this->y, this->z + 1));
 	} else if(a2 == 1) {
-		this->connections.emplace_back(TilePos{this->x - 1, this->y, this->z});
-		this->connections.emplace_back(TilePos{this->x + 1, this->y, this->z});
+		this->connections.push_back(TilePos(this->x - 1, this->y, this->z));
+		this->connections.push_back(TilePos(this->x + 1, this->y, this->z));
 	} else if(a2 == 2) {
-		this->connections.emplace_back(TilePos{this->x - 1, this->y, this->z});
-		this->connections.emplace_back(TilePos{this->x + 1, this->y + 1, this->z});
+		this->connections.push_back(TilePos(this->x - 1, this->y, this->z));
+		this->connections.push_back(TilePos(this->x + 1, this->y + 1, this->z));
 	} else if(a2 == 3) {
-		this->connections.emplace_back(TilePos{this->x - 1, this->y + 1, this->z});
-		this->connections.emplace_back(TilePos{this->x + 1, this->y, this->z});
+		this->connections.push_back(TilePos(this->x - 1, this->y + 1, this->z));
+		this->connections.push_back(TilePos(this->x + 1, this->y, this->z));
 	} else if(a2 == 4) {
-		this->connections.emplace_back(TilePos{this->x, this->y + 1, this->z - 1});
-		this->connections.emplace_back(TilePos{this->x, this->y, this->z + 1});
+		this->connections.push_back(TilePos(this->x, this->y + 1, this->z - 1));
+		this->connections.push_back(TilePos(this->x, this->y, this->z + 1));
 	} else if(a2 == 5) {
-		this->connections.emplace_back(TilePos{this->x, this->y, this->z - 1});
-		this->connections.emplace_back(TilePos{this->x, this->y + 1, this->z + 1});
+		this->connections.push_back(TilePos(this->x, this->y, this->z - 1));
+		this->connections.push_back(TilePos(this->x, this->y + 1, this->z + 1));
 	} else if(a2 == 6) {
-		this->connections.emplace_back(TilePos{this->x + 1, this->y, this->z});
-		this->connections.emplace_back(TilePos{this->x, this->y, this->z + 1});
+		this->connections.push_back(TilePos(this->x + 1, this->y, this->z));
+		this->connections.push_back(TilePos(this->x, this->y, this->z + 1));
 	} else if(a2 == 7) {
-		this->connections.emplace_back(TilePos{this->x - 1, this->y, this->z});
-		this->connections.emplace_back(TilePos{this->x, this->y, this->z + 1});
+		this->connections.push_back(TilePos(this->x - 1, this->y, this->z));
+		this->connections.push_back(TilePos(this->x, this->y, this->z + 1));
 	} else if(a2 == 8) {
-		this->connections.emplace_back(TilePos{this->x-1, this->y, this->z});
-		this->connections.emplace_back(TilePos{this->x, this->y, this->z-1});
+		this->connections.push_back(TilePos(this->x-1, this->y, this->z));
+		this->connections.push_back(TilePos(this->x, this->y, this->z-1));
 	} else if(a2 == 9) {
-		this->connections.emplace_back(TilePos{this->x+1, this->y, this->z});
-		this->connections.emplace_back(TilePos{this->x, this->y, this->z-1});
+		this->connections.push_back(TilePos(this->x+1, this->y, this->z));
+		this->connections.push_back(TilePos(this->x, this->y, this->z-1));
 	}
 }
 

@@ -7,18 +7,12 @@ RemotePlayer::RemotePlayer(Level* a2, bool_t a3) : Player(a2, a3) {
 }
 
 void RemotePlayer::tick() {
-	const ItemInstance* v3; // r0
-	ItemInstance* v4;		// r5
-
 	Player::tick();
 	if(!this->_usingItem && this->getSharedFlag(4)) {
 		this->_usingItem = 1;
-		v3 = this->inventory->getItem(9);
-		v4 = (ItemInstance*)v3;
-		if(v3) {
-			if(v3->itemClass) {
-				this->startUsingItem(ItemInstance(*v3), v4->getMaxUseDuration());
-			}
+		const ItemInstance* v3 = this->inventory->getItem(9);
+		if(v3 && v3->itemClass) {
+			this->startUsingItem(ItemInstance(*v3), v3->getMaxUseDuration());
 		}
 	} else if(this->_usingItem && !this->getSharedFlag(4)) {
 		this->stopUsingItem();

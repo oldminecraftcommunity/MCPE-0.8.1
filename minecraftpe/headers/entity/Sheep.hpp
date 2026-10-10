@@ -6,7 +6,7 @@ struct Sheep: Animal
 {
 	static Color4 COLOR[];
 	static const int NumColors;
-	int32_t field_C88;
+	int32_t eatAnimationTick;
 	EatTileGoal* eatTileGoal;
 
 	Sheep(Level*);

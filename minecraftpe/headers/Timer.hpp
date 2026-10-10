@@ -23,7 +23,7 @@ struct Timer{
 				v4 = 1;
 				passedMs = 1;
 			}
-			this->adjustTime += ((((float)passedMs / (float)v4) - this->adjustTime) * 0.2);
+			this->adjustTime += ((((float)passedMs / (float)v4) - this->adjustTime) * 0.2f);
 		}
 		this->lastMs = nowMs;
 		this->lastMsSysTime = nowMs;

@@ -14,14 +14,14 @@ struct ParameterStringify
 	static void stringifyNext(std::vector<std::string>& a1, T& t, _args... args) {
 		std::stringstream s;
 		s << t;
-		a1.emplace_back(s.str());
+		a1.push_back(s.str());
 		ParameterStringify::stringifyNext(a1, args...);
 	}
 	template<typename T>
 	static void stringifyNext(std::vector<std::string>& a1, T t) {
 		std::stringstream s;
 		s << t;
-		a1.emplace_back(s.str());
+		a1.push_back(s.str());
 	}
 
 	//should be always inlined? might not even be here actually~

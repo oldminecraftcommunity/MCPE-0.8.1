@@ -49,7 +49,7 @@ void ExternalServerFile::load() {
 						break;
 					}
 
-					v11.emplace_back(v13);
+					v11.push_back(v13);
 				}
 
 				if(v11.size() == 4) {

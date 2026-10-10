@@ -57,12 +57,12 @@ void Screen::setSize(int32_t w, int32_t h){
 
 void Screen::render(int32_t x, int32_t y, float){
 	if(this->supppressedBySubWindow()){
-		for(GuiElement** start = this->elements.data(); start != (this->elements.data()+this->elements.size()); ++start){
-			(*start)->topRender(this->minecraft, x, y);
+		for(auto&& p: this->elements) {
+			p->topRender(this->minecraft, x, y);
 		}
 	}else{
-		for(GuiElement** start = this->elements.data(); start != (this->elements.data()+this->elements.size()); ++start){
-			(*start)->render(this->minecraft, x, y);
+		for(auto&& p: this->elements) {
+			p->render(this->minecraft, x, y);
 		}
 
 		for(int i = 0; i < this->buttons.size(); ++i){
@@ -75,8 +75,8 @@ void Screen::render(int32_t x, int32_t y, float){
 }
 void Screen::init(){}
 void Screen::setupPositions(void){
-	for(GuiElement** start = this->elements.data(); start != (this->elements.data()+this->elements.size()); ++start){
-		(*start)->setupPositions();
+	for(auto&& p: this->elements) {
+		p->setupPositions();
 	}
 }
 void Screen::updateEvents(){
@@ -85,14 +85,10 @@ void Screen::updateEvents(){
 			this->mouseEvent();
 		}
 
-		while ( Keyboard::_index + 1 < Keyboard::_inputs.size() )
-		{
-			++Keyboard::_index;
+		while ( Keyboard::_index++ < Keyboard::_inputs.size() ){
 			this->keyboardEvent();
 		}
-		while ( Keyboard::_textIndex + 1 < Keyboard::_inputText.size() )
-		{
-			++Keyboard::_textIndex;
+		while ( Keyboard::_textIndex++ < Keyboard::_inputText.size() ){
 			this->keyboardTextEvent();
 		}
 	}
@@ -120,17 +116,14 @@ void Screen::keyboardTextEvent(){
 	this->keyboardNewChar(Keyboard::_inputText[Keyboard::_textIndex].field_0, Keyboard::_inputText[Keyboard::_textIndex].field_4);
 }
 bool_t Screen::handleBackEvent(bool_t a2){
-	GuiElement* v5;
-	GuiElement** start = this->elements.data();
-	do{
-		if(start == (this->elements.data()+this->elements.size())) return 0;
-		v5 = *(start++);
-	}while(!v5->backPressed(this->minecraft, a2));
-	return 1;
+	for(auto&& p: this->elements) {
+		if(p->backPressed(this->minecraft, a2)) return 1;
+	}
+	return 0;
 }
 void Screen::tick(){
-	for(GuiElement** start = this->elements.data(); start != (this->elements.data()+this->elements.size()); ++start){
-		(*start)->tick(this->minecraft);
+	for(auto&& p: this->elements) {
+		p->tick(this->minecraft);
 	}
 }
 
@@ -235,11 +228,11 @@ void Screen::toGUICoordinate(int32_t& x, int32_t& y){
 }
 
 bool_t Screen::supppressedBySubWindow(){
-	int32_t v3 = 0;
-	for(GuiElement** start = this->elements.data(); start != (this->elements.data()+this->elements.size()); ++start){
-		if((*start)->suppressOtherGUI()) v3 = 1;
+	bool ret = 0;
+	for(auto&& e: this->elements) {
+		if(e->suppressOtherGUI()) ret = 1;
 	}
-	return v3;
+	return ret;
 }
 
 void Screen::setTextboxText(const std::string& a2){
@@ -251,23 +244,19 @@ void Screen::setTextboxText(const std::string& a2){
 }
 
 void Screen::mouseClicked(int32_t a2, int32_t a3, int32_t a4) {
-	GuiElement** elements = this->elements.data();
 	if(this->supppressedBySubWindow()) {
-		while(elements != &this->elements.back()) {
-			GuiElement* el = *elements++;
-			if(el->suppressOtherGUI()) {
-				el->focusuedMouseClicked(this->minecraft, a2, a3, a4);
+		for(auto&& e: this->elements) {
+			if(e->suppressOtherGUI()) {
+				e->focusuedMouseClicked(this->minecraft, a2, a3, a4);
 			}
 		}
 	} else {
-		while(elements != (this->elements.data() + this->elements.size())) {
-			GuiElement* el = *elements++;
-			el->mouseClicked(this->minecraft, a2, a3, a4);
+		for(auto&& e: this->elements) {
+			e->mouseClicked(this->minecraft, a2, a3, a4);
 		}
 
 		if(a4 == 1) {
-			for(int32_t i = 0;; ++i) {
-				if(i >= this->buttons.size()) break;
+			for(int32_t i = 0; i < this->buttons.size(); ++i) {
 				Button* b = this->buttons[i];
 				if(b->active) {
 					if(b->clicked(this->minecraft, a2, a3)) {
@@ -280,26 +269,20 @@ void Screen::mouseClicked(int32_t a2, int32_t a3, int32_t a4) {
 	}
 }
 void Screen::mouseReleased(int32_t a2, int32_t a3, int32_t a4) {
-	GuiElement** elements = this->elements.data();
 	if(this->supppressedBySubWindow()) {
-		while(elements != &this->elements.back()) {
-			GuiElement* el = *elements++;
-			if(el->suppressOtherGUI()) {
-				el->focusuedMouseReleased(this->minecraft, a2, a3, a4);
+		for(auto&& e : this->elements){
+			if(e->suppressOtherGUI()) {
+				e->focusuedMouseReleased(this->minecraft, a2, a3, a4);
 			}
 		}
 	} else {
-		while(elements != (this->elements.data() + this->elements.size())) {
-			GuiElement* el = *elements++;
-			el->mouseReleased(this->minecraft, a2, a3, a4);
+		for(auto&& e : this->elements){
+			e->mouseReleased(this->minecraft, a2, a3, a4);
 		}
 
 		if(this->lastPressedButton) {
 			if(a4 == 1) {
-				for(int32_t i = 0;; ++i) {
-					if(i >= this->buttons.size()) break;
-
-
+				for(int32_t i = 0; i < this->buttons.size(); ++i) {
 					Button* b = this->buttons[i];
 					if(this->lastPressedButton == b) {
 						if(this->lastPressedButton->clicked(this->minecraft, a2, a3)) {

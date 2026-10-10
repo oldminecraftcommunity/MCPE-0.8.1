@@ -6,9 +6,9 @@
 
 
 Player* NetEventCallback::findPlayer(Level* a2, const RakNet::RakNetGUID* a3) {
-	for(int32_t i = 0; i < a2->playersMaybe.size(); ++i) {
-		if(a2->playersMaybe[i]->rakNetGUID == *a3) {
-			return a2->playersMaybe[i];
+	for(int32_t i = 0; i < a2->players.size(); ++i) {
+		if(a2->players[i]->rakNetGUID == *a3) {
+			return a2->players[i];
 		}
 	}
 	return 0;

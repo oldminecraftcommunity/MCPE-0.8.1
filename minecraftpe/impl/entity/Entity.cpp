@@ -215,16 +215,10 @@ bool_t Entity::saveAsMount(CompoundTag* a2) {
 	return 1;
 }
 void Entity::setOnFire(int32_t seconds) {
-	int32_t fire; // r3
-	int32_t newOnFire; // r1
-
-	fire = this->fire;
-	newOnFire = 20 * seconds;
-	if(newOnFire < fire) {
-		this->fire = fire;
-	} else {
-		this->fire = newOnFire;
-	}
+	int fire = this->fire;
+	int newFire = 20 * seconds;
+	if(newFire > fire) fire = newFire;
+	this->fire = fire;
 }
 float Entity::setupLighting(bool_t a2, float a3) {
 	float v6; // r0
@@ -767,29 +761,17 @@ void Entity::lerpMotion(float a2, float a3, float a4) {
 	this->motionZ = a4;
 }
 void Entity::turn(float a2, float a3) {
-	float yaw; // s15
-	float pitch; // s13
-	float v5; // s14
-	float v6; // s11
-	float v7; // s15
-	float v8; // s13
+	float yaw = this->yaw;
+	float pitch = this->pitch;
 
-	yaw = this->yaw;
-	pitch = this->pitch;
-	v5 = yaw + (float)(a2 * 0.15);
-	this->yaw = v5;
-	v6 = -90.0;
-	if((float)(pitch - (float)(a3 * 0.15)) >= -90.0) {
-		v6 = pitch - (float)(a3 * 0.15);
-	}
-	this->pitch = v6;
-	v7 = v5 - yaw;
-	if(v6 > 90.0) {
-		this->pitch = 90.0;
-	}
-	v8 = this->prevPitch + (float)(this->pitch - pitch);
-	this->prevYaw = this->prevYaw + v7;
-	this->prevPitch = v8;
+	this->yaw = yaw + a2 * 0.15f;
+
+	this->pitch = pitch - a3 * 0.15f;
+	if(this->pitch < -90.0f) this->pitch = -90.0;
+	if(this->pitch > 90.0f) this->pitch = 90.0;
+
+	this->prevYaw += this->yaw - yaw;
+	this->prevPitch += this->pitch - pitch;
 }
 void Entity::interpolateTurn(float a2, float a3) {
 	float pitch; // s15
@@ -1038,60 +1020,12 @@ bool_t Entity::intersects(float a2, float a3, float a4, float a5, float a6, floa
 	return a5 > this->boundingBox.minX && a2 < this->boundingBox.maxX && a6 > this->boundingBox.minY && a3 < this->boundingBox.maxY && a7 > this->boundingBox.minZ && a4 < this->boundingBox.maxZ;
 }
 bool_t Entity::isFree(float x, float y, float z, float a5){
-	float maxX; // s11
-	float v9; // s10
-	float v10; // s12
-	float maxZ; // s8
-	float v12; // s13
-	float minX; // s8
-	Level *level; // r0
-	std::vector<AABB> *cubes; // r0
-	AABB v17; // [sp+0h] [bp-20h] BYREF
-
-	maxX = this->boundingBox.maxX;
-	v9 = this->boundingBox.minZ - a5;
-	v10 = (float)(a5 + this->boundingBox.maxY) + y;
-	maxZ = this->boundingBox.maxZ;
-	v17.minY = (float)(this->boundingBox.minY - a5) + y;
-	v17.maxY = v10;
-	v17.minZ = v9 + z;
-	v12 = (float)(a5 + maxZ) + z;
-	minX = this->boundingBox.minX;
-	level = this->level;
-	v17.maxZ = v12;
-	v17.maxX = (float)(a5 + maxX) + x;
-	v17.minX = (float)(minX - a5) + x;
-	cubes = level->getCubes(this, v17, 0);
-	return cubes->size() == 0 && !this->level->containsAnyLiquid(v17);
+	AABB bb = this->boundingBox.grow(a5, a5, a5).cloneMove(x, y, z);
+	return this->level->getCubes(this, bb, 0)->size() == 0 && !this->level->containsAnyLiquid(bb);
 }
 bool_t Entity::isFree(float x, float y, float z) {
-	float maxY;	  // s9
-	float maxX;	  // s12
-	float v9;	  // s11
-	float v10;	  // s13
-	float maxZ;	  // s9
-	float v12;	  // s14
-	float minX;	  // s9
-	Level* level; // r0
-	std::vector<AABB>* cubes;
-	AABB v17; // [sp+0h] [bp-20h] BYREF
-
-	maxY = this->boundingBox.maxY;
-	maxX = this->boundingBox.maxX;
-	v9 = z + this->boundingBox.minZ;
-	v17.minY = y + this->boundingBox.minY;
-	v17.minZ = v9;
-	v10 = y + maxY;
-	maxZ = this->boundingBox.maxZ;
-	v17.maxX = x + maxX;
-	v12 = z + maxZ;
-	minX = this->boundingBox.minX;
-	level = this->level;
-	v17.maxY = v10;
-	v17.maxZ = v12;
-	v17.minX = minX + x;
-	cubes = level->getCubes(this, v17, 0);
-	return cubes->size() == 0 && !this->level->containsAnyLiquid(v17);
+	AABB bb = this->boundingBox.cloneMove(x, y, z);
+	return this->level->getCubes(this, bb, 0)->size() == 0 && !this->level->containsAnyLiquid(bb);
 }
 bool_t Entity::isInWall() {
 	int32_t x; // r0
@@ -1110,88 +1044,29 @@ bool_t Entity::isInWall() {
 	return this->level->isSolidBlockingTile(_x, y, z);
 }
 bool_t Entity::isInWater(){
-	float maxY; // s11
-	float maxX; // s13
-	float minY; // s12
-	float minX; // r4
-	float maxY_; // s14
-	float maxZ; // s11
-	AABB v10; // [sp+0h] [bp-20h] BYREF
-
-	maxY = this->boundingBox.maxY;
-	maxX = this->boundingBox.maxX;
-	minY = this->boundingBox.minY + 0.4;
-	minX = this->boundingBox.minX;
-	v10.minZ = this->boundingBox.minZ;
-	v10.minX = minX;
-	v10.minY = minY;
-	maxY_ = maxY - 0.4;
-	maxZ = this->boundingBox.maxZ;
-	v10.maxX = maxX + 0.0;
-	v10.maxY = maxY_;
-	v10.maxZ = maxZ + 0.0;
-	return this->level->checkAndHandleWater(v10, Material::water, this);
+	return this->level->checkAndHandleWater(this->boundingBox.grow(0.0f, -0.4f, 0.0f), Material::water, this);
 }
 bool_t Entity::isInLava() {
-	float maxY; // s13
-	float minX; // s9
-	float minZ; // s11
-	float minY; // s10
-	float maxX; // s12
-	float v8;	// s14
-	float maxZ; // s13
-	AABB v11;	// [sp+0h] [bp-20h] BYREF
-
-	maxY = this->boundingBox.maxY;
-	minX = this->boundingBox.minX;
-	minZ = this->boundingBox.minZ;
-	minY = this->boundingBox.minY + 0.4;
-	maxX = this->boundingBox.maxX;
-	v11.minY = minY;
-	v11.minZ = minZ + 0.1;
-	v8 = maxY - 0.4;
-	maxZ = this->boundingBox.maxZ;
-	v11.maxX = maxX - 0.1;
-	v11.maxY = v8;
-	v11.maxZ = maxZ - 0.1;
-	v11.minX = minX + 0.1;
-	return this->level->containsMaterial(v11, Material::lava);
+	return this->level->containsMaterial(this->boundingBox.grow(-0.1f, -0.4f, -0.1f), Material::lava);
 }
 bool_t Entity::isUnderLiquid(const Material* a2) {
-	float posY;		// s16
-	float v5;		// s16
-	int32_t x;		// r6
-	int32_t y;		// r0
-	int32_t yy;		// r5
-	int32_t z;		// r7
-	int32_t result; // r0
-	int32_t v11;	// r2
-	int32_t v12;	// r5
-	int32_t v13;	// r0
-
-	posY = this->posY;
-	v5 = posY + this->getHeadHeight();
-	x = Mth::floor(this->posX);
-	y = Mth::floor(v5);
-	yy = Mth::floor((float)y);
-	z = Mth::floor(this->posZ);
-	result = this->level->getTile(x, yy, z);
-	if(result) {
-		if(Tile::tiles[result]->material == a2) {
-			v11 = yy;
-			v12 = yy + 1;
-			v13 = this->level->getData(x, v11, z);
-			if(v13 > 7) {
-				v13 = 0;
-			}
-			return v5 < (float)((float)v12 - (float)((float)((float)(v13 + 1) / 9.0) - 0.11111));
+	float hy = this->posY + this->getHeadHeight();
+	int x = Mth::floor(this->posX);
+	int yy = Mth::floor(Mth::floor(hy));
+	int z = Mth::floor(this->posZ);
+	int id = this->level->getTile(x, yy, z);
+	if(id) {
+		if(Tile::tiles[id]->material == a2) {
+			int data = this->level->getData(x, yy, z);
+			if(data > 7) data = 0;
+			return hy < ((yy + 1) - (((data + 1) / 9.0f) - 0.11111f));
 		} else {
 			return 0;
 		}
 	}
 	return 0;
-}
 
+}
 void Entity::makeStuckInWeb() {
 	this->maybeIsInWeb = 1;
 	this->fallDistance = 0;
@@ -1208,7 +1083,7 @@ bool Entity::isSkyLit(float) {
 	int32_t z; // r7
 
 	x = Mth::floor(this->posX);
-	y = Mth::floor((float)(this->posY - this->ridingHeight) + (float)((float)(this->boundingBox.maxY - this->boundingBox.minY) * 0.66));
+	y = Mth::floor((this->posY - this->ridingHeight) + ((this->boundingBox.maxY - this->boundingBox.minY) * 0.66f));
 	z = Mth::floor(this->posZ);
 	if(this->level->hasChunkAt(x, y, z)) {
 		return this->level->isSkyLit(x, y, z);
@@ -1491,30 +1366,11 @@ void Entity::setSize(float w, float h) {
 	this->entityHeight = h;
 }
 void Entity::setPos(EntityPos* pos) {
-	float x;	 // r1
-	float y;	 // r2
-	float z;	 // r3
-	float yaw;	 // r1
-	float pitch; // r2
+	if(pos->hasXYZ) this->setPos(pos->x, pos->y, pos->z);
+	else this->setPos(this->posX, this->posY, this->posZ);
 
-	if(pos->hasXYZ) {
-		x = pos->x;
-		y = pos->y;
-		z = pos->z;
-	} else {
-		x = this->posX;
-		y = this->posY;
-		z = this->posZ;
-	}
-	this->setPos(x, y, z);
-	if(pos->hasRot) {
-		yaw = pos->yaw;
-		pitch = pos->pitch;
-	} else {
-		yaw = this->yaw;
-		pitch = this->pitch;
-	}
-	this->setRot(yaw, pitch);
+	if(pos->hasRot) this->setRot(pos->yaw, pos->pitch);
+	else this->setRot(this->yaw, this->pitch);
 }
 void Entity::resetPos(bool_t a2) {
 	if(this->level) {

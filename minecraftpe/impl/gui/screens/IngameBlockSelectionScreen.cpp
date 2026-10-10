@@ -174,7 +174,7 @@ void IngameBlockSelectionScreen::init() {
 			this->armorButton.width = 42;
 			this->armorButton.posY = height - this->armorButton.height;
 			this->armorButton.posX = 0;
-			this->buttons.emplace_back(&this->armorButton);
+			this->buttons.push_back(&this->armorButton);
 		}
 	}
 }

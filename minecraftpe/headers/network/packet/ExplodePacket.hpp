@@ -46,7 +46,7 @@ struct ExplodePacket : Packet{
 		if (count >= 0) {
 			int8_t x, y, z;
 			for (int32_t i = 0; i < count && stream->Read<int8_t>(x) && stream->Read<int8_t>(y) && stream->Read<int8_t>(z); ++i) {
-				this->positions.emplace_back(TilePos { (int32_t) (this->x) + x, (int32_t) (this->y) + y, (int32_t) (this->z) + z });
+				this->positions.push_back(TilePos((int)this->x + x, (int)this->y + y, (int)this->z + z));
 			}
 		}
 	}

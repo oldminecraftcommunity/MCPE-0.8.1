@@ -218,10 +218,8 @@ void RolledSelectionListH::setComponentSelected(bool_t a2) {
 	this->componentSelected = a2;
 }
 
-//void RolledSelectionListH::selectItem(int32_t, bool_t) = 0;
-//bool_t RolledSelectionListH::isSelectedItem(int32_t) = 0;
 int32_t RolledSelectionListH::getMaxPosition() {
-	return this->field_44 + this->field_10 * this->getNumberOfItems();
+	return this->getNumberOfItems() * this->field_10 + this->field_44;
 }
 float RolledSelectionListH::getPos(float a2) {
 	return this->field_30 - (float)(a2 * this->field_34);

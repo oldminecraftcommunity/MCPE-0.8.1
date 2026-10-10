@@ -45,10 +45,10 @@ ItemInstance ItemPack::getItemInstanceForId(int32_t a2) {
 }
 std::vector<ItemInstance> ItemPack::getItemInstances() const{
 	std::vector<ItemInstance> result;
-	for(auto&& p: this->items) {
+	for(auto p: this->items) {
 		ItemInstance v9 = ItemPack::getItemInstanceForId(p.first);
 		v9.count = p.second;
-		result.emplace_back(v9);
+		result.push_back(v9);
 	}
 	return result;
 }
