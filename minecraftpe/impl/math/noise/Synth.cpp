@@ -1,4 +1,4 @@
-#include <util/Synth.hpp>
+#include <math/noise/Synth.hpp>
 Synth::~Synth() = default;
 
 void Synth::create(int32_t x, int32_t y, float* arr){

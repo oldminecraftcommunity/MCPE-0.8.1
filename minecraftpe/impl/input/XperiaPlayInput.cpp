@@ -36,10 +36,10 @@ void XperiaPlayInput::tick(Player* player){
 	int32_t v10; // r5
 	int32_t v11; // r0
 
-	sneakingMaybe = this->sneakingMaybe;
+	sneakingMaybe = this->sneaking;
 	KeyboardInput::tick(player);
-	jumpingMaybe = this->jumpingMaybe;
-	this->sneakingMaybe = sneakingMaybe;
+	jumpingMaybe = this->jumping;
+	this->sneaking = sneakingMaybe;
 	v6 = jumpingMaybe && this->inputs[0];
 	this->flyUpPressed = v6;
 	if ( jumpingMaybe )
@@ -62,10 +62,10 @@ void XperiaPlayInput::tick(Player* player){
 	{
 		if ( !this->field_20 )
 		{
-			this->sneakingMaybe ^= 1u;
+			this->sneaking ^= 1u;
 		}
 	}
-	v8 = this->sneakingMaybe;
+	v8 = this->sneaking;
 	this->field_20 = isTouched;
 	if ( v8 )
 	{

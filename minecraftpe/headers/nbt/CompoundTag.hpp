@@ -96,8 +96,9 @@ struct CompoundTag : public Tag{
 			this->value.insert(std::pair<std::string,Tag *>(tag->getName(), tag));
 		}
 	}
-	virtual void print(const std::string&, PrintStream&) const {
-		//XXX does something, but probably useless
+	virtual void print(const std::string& a2, PrintStream& a3) const {
+		Tag::print(a2, a3);
+		printf("CompoundTag::print - not implemented\n");
 	}
 	virtual std::string toString(void) const {
 		std::stringstream ss;

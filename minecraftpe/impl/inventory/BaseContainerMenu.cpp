@@ -7,19 +7,6 @@ BaseContainerMenu::BaseContainerMenu(int32_t a2) {
 	this->field_0 = -1;
 	this->containerListener = 0;
 }
-
-void BaseContainerMenu::setListener(IContainerListener* a2) {
-	this->containerListener = a2;
-	if(a2) {
-		std::vector<ItemInstance> v9 = this->getItems();
-		{
-			//TODO some extremely weird exchange happens for some reason
-			std::vector<ItemInstance> v10(this->field_C);
-			this->field_C = v9;
-		}
-		a2->refreshContainer(this, this->field_C);
-	}
-}
 void BaseContainerMenu::broadcastChanges() {
 	if(this->containerListener) {
 		std::vector<ItemInstance> v13 = this->getItems();
@@ -34,5 +21,12 @@ void BaseContainerMenu::broadcastChanges() {
 			this->field_C = v13;
 			this->containerListener->refreshContainer(this, this->field_C);
 		}
+	}
+}
+
+void BaseContainerMenu::setListener(IContainerListener* a2) {
+	this->containerListener = a2;
+	if(a2) {
+		a2->refreshContainer(this, this->field_C = std::move(this->getItems()));
 	}
 }

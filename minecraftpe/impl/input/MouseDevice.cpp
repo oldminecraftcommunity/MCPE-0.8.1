@@ -21,33 +21,31 @@ void MouseDevice::feed(char a2, char a3, int16_t a4, int16_t a5){
 
 void MouseDevice::feed(char a2, char a3, int16_t mx, int16_t my, int16_t a6, int16_t a7){
 	int32_t v9 = a2;
-	int32_t v13;
-	;
+
 	this->mouseEvents.push_back(MouseAction(a2, a3, mx, my, a6, a7, 0));
 	if(v9 == 0){
 		if(this->hasDX == -9999) this->hasDX = 0;
 		if(this->hasDY == -9999) this->hasDY = 0;
 		this->hasDX = a6+this->hasDX;
 		this->hasDY = a7+this->hasDY;
-		v13 = this->firstMovement == -1;
-		goto SET_FIRST_MOVEMENT;
+		this->firstMovement = this->firstMovement == -1;
+	}else{
+		this->buttonStates[v9] = a3;
+		if(v9 == 1){
+			this->firstMovement = -1;
+		}
+	}
 
-	}
-	this->buttonStates[v9] = a3;
-	if(v9 == 1){
-		v13 = -1;
-		SET_FIRST_MOVEMENT:
-		this->firstMovement = v13;
-	}
-	int32_t mouseX = this->mouseX;
+
+
+	this->prevMouseX = this->mouseX;
 	this->mouseX = mx;
-	this->prevMouseX = mouseX;
-	int32_t mouseY = this->mouseY;
+
+	this->prevMouseY = this->mouseY;
 	this->mouseY = my;
-	this->prevMouseY = mouseY;
 }
 
-bool_t MouseDevice::getButtonState(int32_t a2){
+uint8_t MouseDevice::getButtonState(int32_t a2){
 	if((uint32_t)(a2-1) > 2) return 0;
 	return this->buttonStates[a2];
 }

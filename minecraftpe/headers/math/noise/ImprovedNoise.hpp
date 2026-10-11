@@ -1,7 +1,7 @@
 #pragma once
 #include <_types.h>
-#include "Synth.hpp"
-#include "Random.hpp"
+#include <math/noise/Synth.hpp>
+#include <util/Random.hpp>
 
 #define FADE(x) (x*x*x*(x*(x*6 - 15) + 10))
 

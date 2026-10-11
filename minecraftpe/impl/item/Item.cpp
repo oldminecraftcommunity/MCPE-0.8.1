@@ -329,9 +329,9 @@ HitResult Item::getPlayerPOVHitResult(Level* level, struct Player* player, bool_
 	v8 = player->prevYaw + (float)(player->yaw - player->prevYaw);
 	v9 = (float)(player->prevY + (float)(player->posY - player->prevY)) + 1.62 - player->ridingHeight;
 	Vec3 start(player->prevX + (float)(player->posX - player->prevX), v9, player->prevZ + (float)(player->posZ - player->prevZ));
-	v10 = -(float)(v7 * 57.296);
+	v10 = -Mth::rad2deg(v7);
 	v11 = -Mth::cos(v10);
-	Vec3 end(start.x + (float)((float)(v11 * Mth::sin((float)((float) - (float)(v8 * 57.296) - 3.1416))) * 5.0), start.y + (float)(Mth::sin(v10) * 5.0), start.z + (float)((float)(v11 * Mth::cos((float)((float) - (float)(v8 * 57.296) - 3.1416))) * 5.0));
+	Vec3 end(start.x + (float)((float)(v11 * Mth::sin((float)((float) - Mth::rad2deg(v8) - 3.1416))) * 5.0), start.y + (float)(Mth::sin(v10) * 5.0), start.z + (float)((float)(v11 * Mth::cos((float)((float) -Mth::rad2deg(v8) - 3.1416))) * 5.0));
 	return level->clip(start, end, a5, !a5);
 }
 TextureUVCoordinateSet Item::getTextureUVCoordinateSet(const std::string& a2, int32_t a3) {

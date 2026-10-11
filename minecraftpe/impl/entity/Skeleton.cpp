@@ -12,6 +12,7 @@
 #include <entity/ai/goals/RandomLookAroundGoal.hpp>
 #include <entity/ai/goals/HurtByTargetGoal.hpp>
 #include <entity/ai/goals/NearestAttackableTargetGoal.hpp>
+#include <math/Mth.hpp>
 
 Skeleton::Skeleton(Level* a2)
 	: Monster(a2)
@@ -121,22 +122,22 @@ void Skeleton::checkHurtTarget(Entity* a2, float a3) {
 	Level* level; // r5
 	float v12;	  // d8
 
-	if(a3 < 10.0) {
+	if(a3 < 10.0f) {
 		v5 = a2->posX - this->posX;
 		v6 = a2->posZ - this->posZ;
 		if(!this->attackTime) {
-			v7 = new Arrow(this->level, (Mob*)this, 1.0);
-			v9 = (float)((float)(a2->posY + a2->getHeadHeight()) - 0.7) - v7->posY;
+			v7 = new Arrow(this->level, (Mob*)this, 1.0f);
+			v9 = (float)((float)(a2->posY + a2->getHeadHeight()) - 0.7f) - v7->posY;
 			v10 = sqrt((float)((float)(v6 * v6) + (float)(v5 * v5)));
 			level = this->level;
-			level->playSound(this, "random.bow", 1.0, 1.0 / (float)((float)(this->random.nextFloat() * 0.4) + 0.8));
+			level->playSound(this, "random.bow", 1.0f, 1.0f / (float)((float)(this->random.nextFloat() * 0.4f) + 0.8f));
 
 			this->level->addEntity(v7);
-			v7->shoot(v5, v9 + (float)(v10 * 0.2), v6, 1.6, 32.0);
+			v7->shoot(v5, v9 + (float)(v10 * 0.2), v6, 1.6f, 32.0f);
 			this->attackTime = 60;
 		}
 		this->_shouldHoldGround = 1;
-		this->yaw = (float)(atan2f(v6, v5) * 57.296) - 90.0;
+		this->yaw = Mth::rad2deg(atan2f(v6, v5)) - 90.0f;
 	}
 }
 int32_t Skeleton::getUseDuration() {

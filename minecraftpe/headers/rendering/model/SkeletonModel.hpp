@@ -25,7 +25,7 @@ struct SkeletonModel: ZombieModel
 		this->leftLegModel.mirror = 1;
 		this->leftLegModel.addBox(-1.0, 0.0, -1.0, 2, 12, 2, 0.0);
 		this->leftLegModel.setPos(2.0, 12.0, 0.0);
-		this->bodyModel.field_0 = 1;
+		this->bodyModel.noFaceCull = 1;
 	}
 
 	virtual ~SkeletonModel() {

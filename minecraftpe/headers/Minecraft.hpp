@@ -1,4 +1,6 @@
 #pragma once
+#include <gui/Gui.hpp>
+#include <input/MouseHandler.hpp>
 #include <App.hpp>
 #include <memory>
 #include <rendering/TextureAtlas.hpp>
@@ -7,8 +9,6 @@
 #include <string>
 #include <Options.hpp>
 #include <gui/ScreenChooser.hpp>
-#include <gui/Gui.hpp>
-#include <input/MouseHandler.hpp>
 #include <math/HitResult.hpp>
 #include <Timer.hpp>
 

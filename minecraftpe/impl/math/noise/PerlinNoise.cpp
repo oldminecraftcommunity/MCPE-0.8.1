@@ -1,7 +1,6 @@
-#include <util/PerlinNoise.hpp>
-#include <util/ImprovedNoise.hpp>
+#include <math/noise/PerlinNoise.hpp>
+#include <math/noise/ImprovedNoise.hpp>
 #include <util/Random.hpp>
-#include <stdio.h>
 
 PerlinNoise::PerlinNoise(int32_t octaves){
 	this->randomPtr = &this->randomSelf;

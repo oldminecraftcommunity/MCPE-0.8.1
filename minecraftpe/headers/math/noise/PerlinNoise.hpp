@@ -1,6 +1,5 @@
 #pragma once
-#include <_types.h>
-#include "Synth.hpp"
+#include <math/noise/Synth.hpp>
 #include <util/Random.hpp>
 
 struct ImprovedNoise;

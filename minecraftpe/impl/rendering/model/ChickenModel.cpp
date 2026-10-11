@@ -35,8 +35,8 @@ ChickenModel::ChickenModel()
 	this->wing1Model.setPos(-4.0, 13.0, 0.0);
 	this->wing2Model.addBox(-1.0, 0.0, -3.0, 1, 4, 6);
 	this->wing2Model.setPos(4.0, 13.0, 0.0);
-	this->leg1Model.field_0 = 1;
-	this->leg2Model.field_0 = 1;
+	this->leg1Model.noFaceCull = 1;
+	this->leg2Model.noFaceCull = 1;
 }
 
 void ChickenModel::render(Entity* a2, float a3, float a4, float a5, float a6, float a7, float a8) {

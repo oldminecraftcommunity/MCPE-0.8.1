@@ -14,12 +14,12 @@ FurnaceTile::FurnaceTile(int32_t a2, bool_t a3)
 	this->isLit = a3;
 	TextureAtlasTextureItem* texItem = this->getTextureItem("furnace");
 
-	this->field_A50 = *texItem->getUV(0);
+	this->faceTexture = *texItem->getUV(0);
 	this->field_A68 = *texItem->getUV(1);
-	this->field_A80 = *texItem->getUV(2);
-	this->field_A98 = *texItem->getUV(3);
+	this->sideTexture = *texItem->getUV(2);
+	this->topBottomTexture = *texItem->getUV(3);
 
-	this->textureUV = this->field_A50;
+	this->textureUV = this->faceTexture;
 }
 void FurnaceTile::setLit(bool_t a1, Level* level, int32_t x, int32_t y, int32_t z) {
 	TileEntity* TileEntity; // r0
@@ -48,23 +48,22 @@ void FurnaceTile::setLit(bool_t a1, Level* level, int32_t x, int32_t y, int32_t 
 }
 
 TextureUVCoordinateSet* FurnaceTile::getTexture(int32_t a2) {
-	if(a2 == 1 || a2 == 0) {
-		return &this->field_A98;
-	}
-	if(a2 == 3) return &this->field_A50;
-	return &this->field_A80;
+	if(a2 == 1) return &this->topBottomTexture;
+	if(a2 == 0) return &this->topBottomTexture;
+	if(a2 == 3) return &this->faceTexture;
+	return &this->sideTexture;
 }
 TextureUVCoordinateSet* FurnaceTile::getTexture(LevelSource* level, int32_t x, int32_t y, int32_t z, int32_t a6) {
 	if((uint32_t)a6 <= 1) {
-		return &this->field_A98;
+		return &this->topBottomTexture;
 	}
 
 	if(a6 != level->getData(x, y, z)) {
-		return &this->field_A80;
+		return &this->sideTexture;
 	}
 
 	if(this->isLit) return &this->field_A68;
-	return &this->field_A50;
+	return &this->faceTexture;
 }
 
 void FurnaceTile::animateTick(Level* level, int32_t x, int32_t y, int32_t z, Random* rng) {

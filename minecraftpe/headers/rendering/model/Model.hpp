@@ -26,8 +26,8 @@ struct Model: AppPlatform::Listener
 		this->clear();
 	}
 	virtual void clear() {
-		for(auto& p: this->parts) {
-			p->meshBuffer.reset();
+		for(int i = 0; i < this->parts.size(); ++i) {
+			this->parts[i]->meshBuffer.reset();
 		}
 	}
 	virtual void render(){}

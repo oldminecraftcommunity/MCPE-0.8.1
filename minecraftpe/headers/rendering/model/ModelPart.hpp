@@ -6,17 +6,17 @@
 
 struct ModelPart
 {
-	int8_t field_0, field_1, field_2, field_3;
+	bool noFaceCull;
 	float xOffset, yOffset, zOffset;
 	float xRotAngle, yRotAngle, zRotAngle;
-	int8_t mirror;
-	int8_t field_1D, field_1E, field_1F;
+	bool mirror;
+	bool field_1D;
 	std::vector<struct Cube*> cubes;
 	std::vector<struct ModelPart*> children;
 	std::string field_38;
 	float texWidth, texHeight;
 	int32_t texOffsetX, texOffsetY;
-	int8_t field_4C, field_4D, field_4E, field_4F;
+	bool field_4C;
 	int32_t field_50;
 	MeshBuffer meshBuffer;
 	struct Model* parent;
@@ -28,9 +28,9 @@ struct ModelPart
 	ModelPart(int32_t, int32_t, int32_t, int32_t);
 	ModelPart(const std::string&);
 	void _init(int32_t, int32_t);
-	void addBox(float, float, float, int32_t, int32_t, int32_t);
+	ModelPart* addBox(float, float, float, int32_t, int32_t, int32_t);
 	void addBox(float, float, float, int32_t, int32_t, int32_t, float);
-	void addBox(const std::string&, float, float, float, int32_t, int32_t, int32_t);
+	ModelPart* addBox(const std::string&, float, float, float, int32_t, int32_t, int32_t);
 	void addChild(ModelPart*);
 	void compile(float);
 	void draw(float);

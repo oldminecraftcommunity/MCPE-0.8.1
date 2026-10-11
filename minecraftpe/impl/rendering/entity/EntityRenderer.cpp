@@ -5,6 +5,7 @@
 #include <unigl.hpp>
 #include <rendering/Tesselator.hpp>
 #include <entity/particles/Particle.hpp>
+#include <Minecraft.hpp>
 
 EntityRenderDispatcher* EntityRenderer::entityRenderDispatcher;
 
@@ -20,7 +21,7 @@ void EntityRenderer::init(EntityRenderDispatcher* a2) {
 	EntityRenderer::entityRenderDispatcher = a2;
 }
 bool_t EntityRenderer::isFancy() {
-	return EntityRenderer::entityRenderDispatcher->options->graphics;
+	return EntityRenderer::entityRenderDispatcher->minecraft->options.graphics;
 }
 void EntityRenderer::render(const AABB& bb, float x, float y, float z) {
 	glDisable(0xDE1u);

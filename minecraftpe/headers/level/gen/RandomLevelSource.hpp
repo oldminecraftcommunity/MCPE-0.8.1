@@ -2,7 +2,7 @@
 #include <level/gen/ChunkSource.hpp>
 #include <level/gen/feature/LargeCaveFeature.hpp>
 #include <map>
-#include <util/PerlinNoise.hpp>
+#include <math/noise/PerlinNoise.hpp>
 struct RandomLevelSource : ChunkSource{
 	static const float SNOW_CUTOFF;
 	static const float SNOW_SCALE;

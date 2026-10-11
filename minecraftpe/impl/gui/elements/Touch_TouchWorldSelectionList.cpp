@@ -28,12 +28,12 @@ Touch::TouchWorldSelectionList::TouchWorldSelectionList(struct Minecraft* a2, in
 void Touch::TouchWorldSelectionList::commit(void) {
 	for(int i = 0; i < this->items.size(); ++i) {
 		std::stringstream v13;
-		v13 << this->items[i].field_4 << "/preview.png";
+		v13 << this->items[i].levelName << "/preview.png";
 		this->field_90.push_back("gui/default_world.png");
 		std::vector<std::string> v12;
-		v12.push_back(this->items[i].field_4);
-		v12.push_back(this->minecraft->platform()->getDateString(this->items[i].field_8));
-		v12.push_back(this->items[i].worldName);
+		v12.push_back(this->items[i].levelName);
+		v12.push_back(this->minecraft->platform()->getDateString(this->items[i].lastPlayed));
+		v12.push_back(this->items[i].levelDir);
 		char* v8;
 		int gamemode = this->items[i].gamemode;
 		if(gamemode == 0) v8 = "Survival";

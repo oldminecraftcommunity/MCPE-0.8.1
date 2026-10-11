@@ -404,7 +404,7 @@ void ItemRenderer::render(Entity* e_, float x, float y, float z, float a6, float
 	tileClass = e->itemInstance.tileClass;
 	if(tileClass && (v18 = tileClass->getRenderShape(), TileRenderer::canRender(v18))) {
 		v19 = 0;
-		glRotatef((float)((float)(v13 / 20.0) + hoverStart) * 57.296, 0.0, 1.0, 0.0);
+		glRotatef(Mth::rad2deg((v13 / 20.0f) + hoverStart), 0.0f, 1.0f, 0.0f);
 		v35 = 0.5;
 		this->bindTexture("terrain-atlas.tga");
 		if((uint32_t)(tileClass->getRenderShape() - 1) >= 2) {

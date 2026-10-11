@@ -116,7 +116,7 @@ std::shared_ptr<GuiElement> PlayScreen::buildLocalServerList() {
 	}
 
 	for(auto&& v23: v35) {
-		if(v23.worldName != LevelStorageSource::TempLevelId) {
+		if(v23.levelDir != LevelStorageSource::TempLevelId) {
 			std::shared_ptr<LocalServerListItemElement> v32(new LocalServerListItemElement(this->minecraft, v23, isEditMode));
 			v32->init(this->minecraft);
 			v31->addChild(v32);

@@ -13,7 +13,7 @@ struct ItemInHandRenderer: AppPlatform::Listener
 	ItemInstance field_4;
 	struct Minecraft* minecraft;
 	float field_1C;
-	float field_20;
+	float prevField_1C;
 	TileRenderer tileRenderer;
 	std::unordered_map<int, std::unique_ptr<RenderCall>> field_90;
 

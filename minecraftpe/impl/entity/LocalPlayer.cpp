@@ -225,7 +225,7 @@ void LocalPlayer::move(float a2, float a3, float a4) {
 		v9 = this->field_DC0;
 		if(v9 > 0) {
 			this->field_DC0 = v9 - 1;
-			this->moveInput->jumpingMaybe = 1;
+			this->moveInput->jumping = 1;
 		}
 		posX = this->posX;
 		posZ = this->posZ;
@@ -353,7 +353,7 @@ void LocalPlayer::ride(Entity* a2) {
 	}
 }
 bool_t LocalPlayer::isSneaking() {
-	return this->moveInput->sneakingMaybe;
+	return this->moveInput->sneaking;
 }
 void LocalPlayer::causeFallDamage(float a2) {
 	int32_t v4; // r6
@@ -403,16 +403,16 @@ void LocalPlayer::aiStep() {
 	minecraft = this->minecraft;
 	moveInput = this->moveInput;
 	currentScreen = minecraft->currentScreen;
-	jumpingMaybe = moveInput->jumpingMaybe;
+	jumpingMaybe = moveInput->jumping;
 	if(!currentScreen || currentScreen->field_C) {
 		moveInput->tick(this);
 	}
-	if(this->moveInput->sneakingMaybe && this->ySize < 0.2) {
+	if(this->moveInput->sneaking && this->ySize < 0.2) {
 		this->ySize = 0.2;
 	}
 	this->field_B7C = 1.0;
 	if(this->abilities.mayfly) {
-		if(!jumpingMaybe && this->moveInput->jumpingMaybe) // enable/disable flying
+		if(!jumpingMaybe && this->moveInput->jumping) // enable/disable flying
 		{
 			if(this->flyToggleCounter > 0) {
 				flying = this->abilities.flying;
@@ -471,7 +471,7 @@ void LocalPlayer::updateAi() {
 	Player::updateAi();
 	this->moveStrafe = this->moveInput->strafeInput;
 	this->moveForward = this->moveInput->forwardInput;
-	if(moveInput->jumpingMaybe) {
+	if(moveInput->jumping) {
 		v3 = 1;
 	} else {
 		v3 = this->field_DC0 > 0;

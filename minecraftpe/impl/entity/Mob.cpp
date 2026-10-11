@@ -361,7 +361,7 @@ void Mob::tick() {
 	} else {
 		v21 = v20 * 3.0;
 		v22 = atan2(v17, v16);
-		v19 = (float)(v22 * 57.296) - 90.0;
+		v19 = Mth::rad2deg(v22) - 90.0;
 		v23 = 1.0;
 	}
 	onGround = this->onGround;
@@ -682,7 +682,7 @@ LABEL_7:
 				v15 = Mth::random();
 			}
 			v16 = atan2f(i, v12);
-			this->field_14C = (float)(v16 * 57.296) - this->yaw;
+			this->field_14C = Mth::rad2deg(v16) - this->yaw;
 			this->knockback(a2, a3, v12, i);
 			if(a2->isMob()) {
 				this->setLastHurtByMob((Mob*)a2);

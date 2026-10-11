@@ -3,6 +3,7 @@
 #include <entity/Mob.hpp>
 #include <level/Level.hpp>
 #include <math.h>
+#include <math/Mth.hpp>
 
 struct CompassItem: Item
 {
@@ -38,7 +39,7 @@ struct CompassItem: Item
 		Vec3 v11(v8.x - v9.x, v8.y - v9.y, v8.z - v9.z);
 		v4 = sqrt((float) (((float) (((float) ((v11.y * v11.y)) + (float) ((v11.x * v11.x)))) + (float) ((v11.z * v11.z)))));
 		Vec3 x = v4 >= 0.0001 ? Vec3(v11.x / v4, v11.y / v4, v11.z / v4) : Vec3::ZERO; // [sp+28h] [bp-28h] BYREF
-		for (i = (float) (((float) ((atan2f(x.z, x.x) * 57.296)) - a2->yaw)) + 90.0; i < 0.0; i = i + 360.0) {
+		for (i = (float) (((float) ((Mth::rad2deg(atan2f(x.z, x.x)))) - a2->yaw)) + 90.0; i < 0.0; i = i + 360.0) {
 			;
 		}
 		while (i >= 360.0) {

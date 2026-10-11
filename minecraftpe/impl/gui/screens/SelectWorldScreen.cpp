@@ -25,7 +25,7 @@ SelectWorldScreen::SelectWorldScreen()
 std::string SelectWorldScreen::getUniqueLevelName(const std::string& a3) {
 	std::set<std::string> v14;
 	for(int v6 = 0; v6 < this->field_50.size(); ++v6) {
-		v14.insert(this->field_50[v6].worldName);
+		v14.insert(this->field_50[v6].levelDir);
 	}
 	std::string ret = a3;
 	while(1) {
@@ -41,7 +41,7 @@ void SelectWorldScreen::loadLevelSource() {
 	std::sort(this->field_50.begin(), this->field_50.end());
 	for(int i = 0; i < this->field_50.size(); ++i) {
 		LevelSummary* v9 = &this->field_50[i];
-		if(v9->worldName != LevelStorageSource::TempLevelId) {
+		if(v9->levelDir != LevelStorageSource::TempLevelId) {
 			this->selectionList->field_74.push_back(*v9);
 		}
 	}
@@ -153,7 +153,7 @@ void SelectWorldScreen::tick() {
 		this->selectionList->tick();
 		selectionList = this->selectionList;
 		if(selectionList->field_98) {
-			this->minecraft->selectLevel(this->selectionList->field_9C.worldName, this->selectionList->field_9C.field_4, {-1, -1});
+			this->minecraft->selectLevel(this->selectionList->field_9C.levelDir, this->selectionList->field_9C.levelName, {-1, -1});
 			this->minecraft->hostMultiplayer(19132);
 			this->minecraft->setScreen(new ProgressScreen());
 			this->field_121 = 1;

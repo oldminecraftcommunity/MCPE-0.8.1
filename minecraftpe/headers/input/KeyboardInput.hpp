@@ -6,7 +6,7 @@ struct Player;
 
 struct KeyboardInput: IMoveInput
 {
-	int8_t inputs[10];
+	bool inputs[10];
 	Options* options;
 
 	KeyboardInput(Options*);
@@ -14,6 +14,6 @@ struct KeyboardInput: IMoveInput
 	virtual ~KeyboardInput() {
 	}
 	virtual void tick(Player*);
-	virtual void setKey(int32_t, bool_t);
+	virtual void setKey(int32_t key, bool_t);
 	virtual void releaseAllKeys();
 };

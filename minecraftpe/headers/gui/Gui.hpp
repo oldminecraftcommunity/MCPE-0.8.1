@@ -1,12 +1,11 @@
 #pragma once
-#include <_types.h>
+#include <IConfigListener.hpp>
 #include <gui/GuiComponent.hpp>
 #include <util/Random.hpp>
 #include <rendering/MeshBuffer.hpp>
 #include <util/area/RectangleArea.hpp>
 #include <AppPlatform.hpp>
 #include <util/GuiMessage.hpp>
-#include <IConfigListener.hpp>
 
 struct Gui : GuiComponent, IConfigListener, AppPlatform::Listener{
 	static float InvGuiScale; //0.333333

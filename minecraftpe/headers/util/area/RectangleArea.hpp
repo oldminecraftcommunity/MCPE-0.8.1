@@ -1,5 +1,4 @@
 #pragma once
-#include <_types.h>
 #include <util/area/IArea.hpp>
 
 struct RectangleArea : IArea{

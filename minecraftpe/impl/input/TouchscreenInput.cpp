@@ -17,8 +17,8 @@ TouchscreenInput::TouchscreenInput(Minecraft* a2, Options* a3)
 	this->strafeInput = 0.0;
 	this->forwardInput = 0.0;
 	this->idkWhatIsThis = 0;
-	this->jumpingMaybe = 0;
-	this->sneakingMaybe = 0;
+	this->jumping = 0;
+	this->sneaking = 0;
 	this->flyUpPressed  = 0;
 	this->flyDownPressed = 0;
 	this->idkWhatIsThis2 = 0;
@@ -220,7 +220,7 @@ void TouchscreenInput::tick(Player* a2) {
 	v2 = 0;
 	this->strafeInput = 0.0;
 	this->forwardInput = 0.0;
-	this->jumpingMaybe  = 0;
+	this->jumping  = 0;
 	this->field_B0[0] = 0;
 	this->field_B0[1] = 0;
 	v5 = 0;
@@ -280,7 +280,7 @@ void TouchscreenInput::tick(Player* a2) {
 				}
 				if(Multitouch::_wasPressed[v7]) {
 LABEL_30:
-					this->jumpingMaybe  = 1;
+					this->jumping  = 1;
 					goto LABEL_80;
 				}
 				if(this->field_41 && !a2->abilities.flying) {
@@ -300,7 +300,7 @@ LABEL_59:
 			if(pointerId == 100) {
 LABEL_35:
 				if(a2->isInWater()) {
-					this->jumpingMaybe  = 1;
+					this->jumping  = 1;
 				} else if(!this->idkWhatIsThis2)  {
 					v5 = 1;
 				}
@@ -352,7 +352,7 @@ LABEL_60:
 	this->field_41 = v5;
 	if(v24) {
 		if(!this->field_42) {
-			this->jumpingMaybe  = 1;
+			this->jumping  = 1;
 		}
 		this->field_42 = 1;
 	} else {
@@ -378,7 +378,7 @@ LABEL_60:
 		this->idkWhatIsThis2 = 1;
 	}
 	this->field_43 = a2->abilities.flying;
-	if ( this->sneakingMaybe   )
+	if ( this->sneaking   )
 	{
 		this->strafeInput = this->strafeInput * 0.3;
 		this->forwardInput = this->forwardInput * 0.3;

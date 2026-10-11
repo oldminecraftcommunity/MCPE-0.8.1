@@ -4,56 +4,44 @@
 #include <rendering/model/Cube.hpp>
 #include <rendering/model/Model.hpp>
 #include <algorithm>
+#include <math/Mth.hpp>
 
-ModelPart::ModelPart(struct Model* a2, int32_t a3, int32_t a4, int32_t a5, int32_t a6) {
-	this->field_0 = 0;
-	this->texOffsetX = a3;
-	this->texOffsetY = a4;
-	this->field_38 = "";
-	this->parent = a2;
+ModelPart::ModelPart(struct Model* a2, int32_t a3, int32_t a4, int32_t a5, int32_t a6) : noFaceCull(0), texOffsetX(a3), texOffsetY(a4), parent(a2){
 	this->_init(a5, a6);
 }
-ModelPart::ModelPart(int32_t a2, int32_t a3, int32_t tw, int32_t th) {
-	this->field_0 = 0;
-	this->texOffsetX = a2;
-	this->texOffsetY = a3;
-	this->field_38 = "";
-	this->parent = 0;
+ModelPart::ModelPart(int32_t a2, int32_t a3, int32_t tw, int32_t th) : noFaceCull(0), texOffsetX(a2), texOffsetY(a3), parent(0){
 	this->_init(tw, th);
 }
-ModelPart::ModelPart(const std::string& a2) {
-	this->field_0 = 0;
-	this->field_38 = a2;
-	this->texOffsetX = 0;
-	this->texOffsetY = 0;
-	this->parent = 0;
+ModelPart::ModelPart(const std::string& a2): noFaceCull(0), field_38(a2), texOffsetX(0), texOffsetY(0), parent(0) {
 	this->_init(64, 32);
 }
 void ModelPart::_init(int32_t texWidth, int32_t texHeight) {
-	this->zOffset = 0.0;
-	this->yOffset = 0.0;
-	this->xOffset = 0.0;
-	this->zRotAngle = 0.0;
-	this->yRotAngle = 0.0;
-	this->xRotAngle = 0.0;
-	this->texWidth = (float)texWidth;
+	this->zOffset = 0;
+	this->yOffset = 0;
+	this->xOffset = 0;
+	this->zRotAngle = 0;
+	this->yRotAngle = 0;
+	this->xRotAngle = 0;
+	this->texWidth = texWidth;
+	this->texHeight = texHeight;
 	this->field_50 = 0;
 	this->mirror = 0;
-	this->field_1D = 1;
 	this->field_4C = 0;
-	this->texHeight = (float)texHeight;
+	this->field_1D = 1;
 	this->meshBuffer.reset();
 }
-void ModelPart::addBox(float a2, float a3, float a4, int32_t a5, int32_t a6, int32_t a7) {
-	this->cubes.push_back(new Cube(this, this->texOffsetX, this->texOffsetY, a2, a3, a4, a5, a6, a7, 0.0));
+ModelPart* ModelPart::addBox(float a2, float a3, float a4, int32_t a5, int32_t a6, int32_t a7) {
+	this->cubes.push_back(new Cube(this, this->texOffsetX, this->texOffsetY, a2, a3, a4, a5, a6, a7, 0.0f));
+	return this;
 }
 void ModelPart::addBox(float a2, float a3, float a4, int32_t a5, int32_t a6, int32_t a7, float a8) {
 	this->cubes.push_back(new Cube(this, this->texOffsetX, this->texOffsetY, a2, a3, a4, a5, a6, a7, a8));
 }
-void ModelPart::addBox(const std::string& a2, float a3, float a4, float a5, int32_t a6, int32_t a7, int32_t a8) {
+ModelPart* ModelPart::addBox(const std::string& a2, float a3, float a4, float a5, int32_t a6, int32_t a7, int32_t a8) {
 	std::string path = this->field_38 + "." + a2;
 	Cube* c = new Cube(this, this->texOffsetX, this->texOffsetY, a3, a4, a5, a6, a7, a8, 0.0);
 	this->cubes.push_back(c->setId(path));
+	return this;
 }
 void ModelPart::addChild(ModelPart* a2) {
 	this->children.push_back(a2);
@@ -66,20 +54,17 @@ void ModelPart::compile(float a2) {
 	this->meshBuffer = Tesselator::instance.end();
 }
 void ModelPart::draw(float a2) {
-	MeshBuffer* p_meshBuffer; // r5
-
-	p_meshBuffer = &this->meshBuffer;
 	if(!this->meshBuffer.arrayBuffer || this->meshBuffer.arraysCount <= 3 || !this->meshBuffer.drawMode || !this->meshBuffer.vertexFormat) {
 		this->compile(a2);
 	}
-	if(this->field_0) {
-		glDisable(0xB44u);
-		glEnable(0xBC0u);
-		p_meshBuffer->render();
-		glDisable(0xBC0u);
-		glEnable(0xB44u);
+	if(this->noFaceCull) {
+		glDisable(GL_CULL_FACE);
+		glEnable(GL_ALPHA_TEST);
+		this->meshBuffer.render();
+		glDisable(GL_ALPHA_TEST);
+		glEnable(GL_CULL_FACE);
 	} else {
-		p_meshBuffer->render();
+		this->meshBuffer.render();
 	}
 }
 void ModelPart::drawSlow(float) {
@@ -106,82 +91,67 @@ ModelPart& ModelPart::operator=(const ModelPart& a2) {
 	return *this;
 }
 void ModelPart::render(float a2) {
-	float zRotAngle; // s15
-	float yRotAngle; // s15
-	float xRotAngle; // s15
-
 	if(!this->field_4C && this->field_1D) {
-		if(this->xRotAngle != 0.0 || this->yRotAngle != 0.0 || this->zRotAngle != 0.0) {
+		if(this->xRotAngle != 0 || this->yRotAngle != 0 || this->zRotAngle != 0) {
 			glPushMatrix();
 			glTranslatef(a2 * this->xOffset, a2 * this->yOffset, a2 * this->zOffset);
-			zRotAngle = this->zRotAngle;
-			if(zRotAngle != 0.0) {
-				glRotatef(zRotAngle * 57.296, 0.0, 0.0, 1.0);
-			}
-			yRotAngle = this->yRotAngle;
-			if(yRotAngle != 0.0) {
-				glRotatef(yRotAngle * 57.296, 0.0, 1.0, 0.0);
-			}
-			xRotAngle = this->xRotAngle;
-			if(xRotAngle != 0.0) {
-				glRotatef(xRotAngle * 57.296, 1.0, 0.0, 0.0);
-			}
+
+			if(this->zRotAngle != 0.0f) glRotatef(Mth::rad2deg(this->zRotAngle), 0.0f, 0.0f, 1.0f);
+			if(this->yRotAngle != 0.0f) glRotatef(Mth::rad2deg(this->yRotAngle), 0.0f, 1.0f, 0.0f);
+			if(this->xRotAngle != 0.0f) glRotatef(Mth::rad2deg(this->xRotAngle), 1.0f, 0.0f, 0.0f);
+
 			this->draw(a2);
-			if(this->children.begin() != this->children.end()) {
-				for(auto& p: this->children) {
-					p->render(a2);
+			if(!this->children.empty()) {
+				for(int i = 0; i < this->children.size(); ++i) {
+					this->children[i]->render(a2);
 				}
 			}
-LABEL_14:
+
 			glPopMatrix();
 			return;
 		}
-		if(this->xOffset != 0.0 || this->yOffset != 0.0 || this->zOffset != 0.0) {
+		if(this->xOffset != 0.0f || this->yOffset != 0.0f || this->zOffset != 0.0f) {
 			glPushMatrix();
 			glTranslatef(a2 * this->xOffset, a2 * this->yOffset, a2 * this->zOffset);
 			this->draw(a2);
-			if(this->children.begin() != this->children.end()) {
-				for(auto& p: this->children) {
-					p->render(a2);
+			if(!this->children.empty()) {
+				for(int i = 0; i < this->children.size(); ++i) {
+					this->children[i]->render(a2);
 				}
 			}
-			goto LABEL_14;
+			glPopMatrix();
+			return;
 		}
 		this->draw(a2);
-		if(this->children.begin() != this->children.end()) {
-			for(auto& p: this->children) {
-				p->render(a2);
+		if(!this->children.empty()) {
+			for(int i = 0; i < this->children.size(); ++i) {
+				this->children[i]->render(a2);
 			}
 		}
 	}
 }
 void ModelPart::renderHorrible(float a2) {
-	float zRotAngle; // s15
-	float yRotAngle; // s15
-	float xRotAngle; // s15
-
 	if(!this->field_4C && this->field_1D) {
-		if(this->xRotAngle != 0.0 || this->yRotAngle != 0.0 || this->zRotAngle != 0.0) {
+		if(this->xRotAngle != 0.0f || this->yRotAngle != 0.0f || this->zRotAngle != 0.0f) {
 			glPushMatrix();
 			glTranslatef(a2 * this->xOffset, a2 * this->yOffset, a2 * this->zOffset);
-			zRotAngle = this->zRotAngle;
-			if(zRotAngle != 0.0) {
-				glRotatef(zRotAngle * 57.296, 0.0, 0.0, 1.0);
+			if(this->zRotAngle != 0.0) {
+				glRotatef(Mth::rad2deg(this->zRotAngle), 0.0f, 0.0f, 1.0f);
 			}
-			yRotAngle = this->yRotAngle;
-			if(yRotAngle != 0.0) {
-				glRotatef(yRotAngle * 57.296, 0.0, 1.0, 0.0);
+			if(this->yRotAngle != 0.0) {
+				glRotatef(Mth::rad2deg(this->yRotAngle), 0.0f, 1.0f, 0.0f);
 			}
-			xRotAngle = this->xRotAngle;
-			if(xRotAngle != 0.0) {
-				glRotatef(xRotAngle * 57.296, 1.0, 0.0, 0.0);
+			if(this->xRotAngle != 0.0) {
+				glRotatef(Mth::rad2deg(this->xRotAngle), 1.0f, 0.0f, 0.0f);
 			}
-			goto LABEL_16;
+
+			this->drawSlow(a2);
+			glPopMatrix();
+			return;
 		}
-		if(this->xOffset != 0.0 || this->yOffset != 0.0 || this->zOffset != 0.0) {
+		if(this->xOffset != 0.0f || this->yOffset != 0.0f || this->zOffset != 0.0f) {
 			glPushMatrix();
 			glTranslatef(a2 * this->xOffset, a2 * this->yOffset, a2 * this->zOffset);
-LABEL_16:
 			this->drawSlow(a2);
 			glPopMatrix();
 			return;
@@ -190,9 +160,10 @@ LABEL_16:
 	}
 }
 void ModelPart::reset(void) {
-	for(auto& c: this->cubes) {
-		if(c) delete c;
+	for(int i = 0; i < this->cubes.size(); ++i){
+		if(this->cubes[i]) delete this->cubes[i];
 	}
+
 	this->cubes.clear();
 	this->setModel(0);
 	this->meshBuffer.reset();
@@ -200,9 +171,7 @@ void ModelPart::reset(void) {
 void ModelPart::setModel(Model* a2) {
 	if(this->parent) {
 		auto&& ptr = std::find(this->parent->parts.begin(), this->parent->parts.end(), this);
-		if(ptr != this->parent->parts.end()) {
-			this->parent->parts.erase(ptr); //TODO check
-		}
+		if(ptr != this->parent->parts.end()) this->parent->parts.erase(ptr);
 	}
 
 	if(a2) {
@@ -226,29 +195,20 @@ ModelPart* ModelPart::texOffs(int32_t a2, int32_t a3) {
 	return this;
 }
 void ModelPart::translateTo(float a2) {
-	float zRotAngle; // s15
-	float yRotAngle; // s15
-	float xRotAngle; // s15
-	float xOffset; // s14
-
-	if(this->xRotAngle == 0.0 && this->yRotAngle == 0.0 && this->zRotAngle == 0.0) {
-		xOffset = this->xOffset;
-		if(xOffset != 0.0 || this->yOffset != 0.0 || this->zOffset != 0.0) {
-			glTranslatef(xOffset * a2, a2 * this->yOffset, a2 * this->zOffset);
+	if(this->xRotAngle == 0.0f && this->yRotAngle == 0.0f && this->zRotAngle == 0.0f) {
+		if(this->xOffset != 0.0f || this->yOffset != 0.0f || this->zOffset != 0.0f) {
+			glTranslatef(this->xOffset * a2, a2 * this->yOffset, a2 * this->zOffset);
 		}
 	} else {
 		glTranslatef(a2 * this->xOffset, a2 * this->yOffset, a2 * this->zOffset);
-		zRotAngle = this->zRotAngle;
-		if(zRotAngle != 0.0) {
-			glRotatef(zRotAngle * 57.296, 0.0, 0.0, 1.0);
+		if(this->zRotAngle != 0.0) {
+			glRotatef(Mth::rad2deg(this->zRotAngle), 0.0f, 0.0f, 1.0f);
 		}
-		yRotAngle = this->yRotAngle;
-		if(yRotAngle != 0.0) {
-			glRotatef(yRotAngle * 57.296, 0.0, 1.0, 0.0);
+		if(this->yRotAngle != 0.0) {
+			glRotatef(Mth::rad2deg(this->yRotAngle), 0.0f, 1.0f, 0.0f);
 		}
-		xRotAngle = this->xRotAngle;
-		if(xRotAngle != 0.0) {
-			glRotatef(xRotAngle * 57.296, 1.0, 0.0, 0.0);
+		if(this->xRotAngle != 0.0) {
+			glRotatef(Mth::rad2deg(this->xRotAngle), 1.0f, 0.0f, 0.0f);
 		}
 	}
 }

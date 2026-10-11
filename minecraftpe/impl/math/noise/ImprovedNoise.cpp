@@ -1,4 +1,4 @@
-#include <util/ImprovedNoise.hpp>
+#include <math/noise/ImprovedNoise.hpp>
 
 ImprovedNoise::ImprovedNoise(Random* random){
 	this->init(random);
@@ -53,7 +53,7 @@ float ImprovedNoise::grad(int32_t a2, float a3, float a4, float a5){
 	if(v6 != 14) a3 = a5;
 
 LABEL_8:
-	if((a2 & 1) != 0)v7 = -v7;
+	if((a2 & 1) != 0) v7 = -v7;
 	if((a2 & 2) != 0) a3 = -a3;
 
 	return v7 + a3;
@@ -208,13 +208,10 @@ void ImprovedNoise::add(float* noises, float x, float y, float z, int32_t width,
 }
 
 int32_t ImprovedNoise::hashCode(void){
-	int32_t v1, v2;
-
-	v1 = 0;
-	v2 = 4711;
+	int v1 = 0;
+	int v2 = 4711;
 	do{
-		v2 = this->permutations[v1] + 37 * v2; //TODO check somehow
-	}while(v1 != 2048);
-
+		v2 = this->permutations[v1] + 37 * v2;
+	}while(++v1 != 512);
 	return v2;
 }

@@ -37,7 +37,7 @@ Touch::SelectWorldScreen::SelectWorldScreen()
 std::string Touch::SelectWorldScreen::getUniqueLevelName(const std::string& a3) {
 	std::set<std::string> v14;
 	for(int v6 = 0; v6 < this->field_19C.size(); ++v6) {
-		v14.insert(this->field_19C[v6].worldName);
+		v14.insert(this->field_19C[v6].levelDir);
 	}
 	std::string ret = a3;
 	while(1) {
@@ -53,7 +53,7 @@ void Touch::SelectWorldScreen::loadLevelSource(){
 	std::sort(this->field_19C.begin(), this->field_19C.end());
 	for(int i = 0; i < this->field_19C.size(); ++i) {
 		LevelSummary* v9 = &this->field_19C[i];
-		if(v9->worldName != LevelStorageSource::TempLevelId) {
+		if(v9->levelDir != LevelStorageSource::TempLevelId) {
 			this->selectionList->items.push_back(*v9);
 		}
 	}
@@ -162,7 +162,7 @@ void Touch::SelectWorldScreen::tick(){
 		this->selectionList->tick();
 		if(this->selectionList->field_9C) {
 			if(this->selectionList->field_B8 != this->selectionList->items.size()) {
-				this->minecraft->selectLevel(this->selectionList->field_A0.worldName, this->selectionList->field_A0.field_4, LevelSettings{-1, -1});
+				this->minecraft->selectLevel(this->selectionList->field_A0.levelDir, this->selectionList->field_A0.levelName, LevelSettings{-1, -1});
 				this->minecraft->hostMultiplayer(19132);
 				this->minecraft->setScreen(new ProgressScreen());
 				this->field_1A9 = 1;

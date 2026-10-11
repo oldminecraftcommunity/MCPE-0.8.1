@@ -27,7 +27,20 @@ void Tag::print(PrintStream& ps) const{
 	this->print(result, ps);
 }
 void Tag::print(const std::string& s, PrintStream& ps) const{
-	//doesnt seem to do anything with params?
+	//TODO figure out what is happening here
+	std::string tagName = this->getName();
+	Tag::getTagName(this->getId());
+	if(tagName.size() != 0) {
+		std::string v9;
+		v9.reserve(tagName.size() + 2);
+		v9 += "(\"";
+		v9 += tagName;
+		v9 += "\")";
+		std::string tagName2 = v9;
+	}
+	std::string(": ");
+	this->toString() + "\n";
+	printf("Tag::print - not implemented\n");
 }
 Tag* Tag::setName(const std::string& name){
 	this->tagName = name;

@@ -172,7 +172,7 @@ void AppPlatform_sdl::onKeyPressed(Minecraft* mc, SDLKey key, bool pressed) {
 	if(key == SDLK_RETURN) k = 13;
 	if(key == SDLK_LSHIFT) {
 		if(mc->player && !mc->currentScreen) {
-			mc->player->moveInput->sneakingMaybe = pressed;
+			mc->player->moveInput->sneaking = pressed;
 		}
 	}
 	if(key >= SDLK_1 && key <= SDLK_8) {

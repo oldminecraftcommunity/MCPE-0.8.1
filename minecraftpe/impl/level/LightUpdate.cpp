@@ -13,62 +13,50 @@ LightUpdate::LightUpdate(const LightLayer& ll, int32_t minX, int32_t minY, int32
 	this->maxY = maxY;
 	this->maxZ = maxZ;
 }
-LightUpdate::LightUpdate(const LightUpdate& a2) {
-	*this = a2;
-}
+LightUpdate::LightUpdate(const LightUpdate& a2) = default;
 LightUpdate::LightUpdate(const LightUpdate* a2) {
-	*this = *a2;
+	this->layer = a2->layer;
+	this->minX = a2->minX;
+	this->minY = a2->minY;
+	this->minZ = a2->minZ;
+	this->maxX = a2->maxX;
+	this->maxY = a2->maxY;
+	this->maxZ = a2->maxZ;
 }
-bool_t LightUpdate::expandToContain(int32_t newMinX, int32_t newMinY, int32_t newMinZ, int32_t a5, int32_t a6, int32_t a7) {
-	int32_t minX;	 // r4
-	int32_t newMaxX; // r7
-	int32_t minY;	 // r8
-	int32_t maxX;	 // r10
-	int32_t maxY;	 // r9
-	int32_t maxZ;	 // r12
-	int32_t newMaxZ; // r6
-	int32_t newMaxY; // r11
-	int32_t v15;	 // r5
-	int32_t minZ;	 // [sp+8h] [bp-30h]
-
-	minX = this->minX;
-	newMaxX = a5;
-	if(newMinX >= minX && newMinY >= this->minY && newMinZ >= this->minZ && a5 <= this->maxX && a6 <= this->maxY && a7 <= this->maxZ) {
+bool_t LightUpdate::expandToContain(int32_t newMinX, int32_t newMinY, int32_t newMinZ, int32_t newMaxX, int32_t newMaxY, int32_t newMaxZ) {
+	if(newMinX >= this->minX && newMinY >= this->minY && newMinZ >= this->minZ && newMaxX <= this->maxX && newMaxY <= this->maxY && newMaxZ <= this->maxZ) {
 		return 1;
 	}
-	if(newMinX >= minX - 1) {
-		minY = this->minY;
+	if(newMinX >= this->minX - 1) {
+		int minY = this->minY;
 		if(newMinY >= minY - 1) {
-			minZ = this->minZ;
+			int minZ = this->minZ;
 			if(newMinZ >= minZ - 1) {
-				maxX = this->maxX;
-				if(a5 <= maxX + 1) {
-					maxY = this->maxY;
-					if(a6 <= maxY + 1) {
-						maxZ = this->maxZ;
-						newMaxZ = a7;
-						if(a7 <= maxZ + 1) {
-							newMaxY = a6;
-							if(newMinX >= minX) {
+				int maxX = this->maxX;
+				if(newMaxX <= maxX + 1) {
+					int maxY = this->maxY;
+					if(newMaxY <= maxY + 1) {
+						int maxZ = this->maxZ;
+						if(newMaxZ <= maxZ + 1) {
+							if(newMinX >= this->minX) {
 								newMinX = this->minX;
 							}
-							v15 = this->minZ;
 							if(newMinY >= minY) {
 								newMinY = this->minY;
 							}
-							if(a5 < maxX) {
+							if(newMaxX < maxX) {
 								newMaxX = this->maxX;
 							}
-							if(a6 < maxY) {
+							if(newMaxY < maxY) {
 								newMaxY = this->maxY;
 							}
-							if(a7 < maxZ) {
+							if(newMaxZ < maxZ) {
 								newMaxZ = this->maxZ;
 							}
 							if(newMinZ >= minZ) {
 								newMinZ = this->minZ;
 							}
-							if((newMaxZ - newMinZ) * (newMaxY - newMinY) * (newMaxX - newMinX) - (maxZ - minZ) * (maxY - minY) * (maxX - minX) <= 2) {
+							if((newMaxZ - newMinZ) * (newMaxY - newMinY) * (newMaxX - newMinX) - (maxZ - minZ) * (maxY - minY) * (maxX - this->minX) <= 2) {
 								this->minX = newMinX;
 								this->minY = newMinY;
 								this->minZ = newMinZ;
@@ -86,7 +74,13 @@ bool_t LightUpdate::expandToContain(int32_t newMinX, int32_t newMinY, int32_t ne
 	return 0;
 }
 LightUpdate& LightUpdate::operator=(const LightUpdate* a2) {
-	*this = *a2;
+	this->layer = a2->layer;
+	this->minX = a2->minX;
+	this->minY = a2->minY;
+	this->minZ = a2->minZ;
+	this->maxX = a2->maxX;
+	this->maxY = a2->maxY;
+	this->maxZ = a2->maxZ;
 	return *this;
 }
 void LightUpdate::update(Level* a2) {

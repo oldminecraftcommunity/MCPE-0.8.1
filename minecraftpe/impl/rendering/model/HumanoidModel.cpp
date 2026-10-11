@@ -44,15 +44,11 @@ HumanoidModel::HumanoidModel(float a2, float a3)
 }
 
 void HumanoidModel::render(Entity* a2, float a3, float a4, float a5, float a6, float a7, float a8) {
-	ItemInstance* item; // r7
-
-	if(a2) {
-		if(a2->isMob()) {
-			item = ((Mob*)a2)->getCarriedItem();
-			if(item) {
-				if(((Mob*)a2)->getUseItemDuration() > 0 && item->getUseAnimation() == 4) {
-					this->isUsingBow = 1;
-				}
+	if(a2 && a2->isMob()) {
+		ItemInstance* item = ((Mob*)a2)->getCarriedItem();
+		if(item) {
+			if(((Mob*)a2)->getUseItemDuration() > 0) {
+				if(item->getUseAnimation() == 4) this->isUsingBow = 1;
 			}
 		}
 	}
@@ -81,7 +77,6 @@ void HumanoidModel::setupAnim(float a2, float a3, float a4, float a5, float a6, 
 	float v12;		 // r0
 	float v14;		 // s15
 	float v15;		 // s15
-	float v16;		 // s15
 	float v17;		 // s16
 	float v18;		 // r0
 	float v19;		 // s21
@@ -127,11 +122,10 @@ void HumanoidModel::setupAnim(float a2, float a3, float a4, float a5, float a6, 
 	v15 = this->field_0;
 	this->rightArmModel.yRotAngle = 0.0;
 	this->leftArmModel.yRotAngle = 0.0;
-	if(v15 > -9990.0) {
-		v16 = sqrt(v15);
-		v17 = Mth::sin((float)(v16 * 3.1416) + (float)(v16 * 3.1416)) * 0.2;
+	if(v15 > -9990.0f) {
+		v17 = Mth::sin((float)(sqrt(v15) * 3.1416f) * 2) * 0.2f;
 		this->bodyModel.yRotAngle = v17;
-		this->rightArmModel.zOffset = Mth::sin(v17) * 5.0;
+		this->rightArmModel.zOffset = Mth::sin(v17) * 5.0f;
 		this->rightArmModel.xOffset = -(float)(Mth::cos(v17) * 5.0);
 		this->leftArmModel.zOffset = -(float)(Mth::sin(v17) * 5.0);
 		v18 = Mth::cos(v17);

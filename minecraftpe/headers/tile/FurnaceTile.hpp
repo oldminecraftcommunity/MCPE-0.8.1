@@ -9,7 +9,7 @@ struct FurnaceTile : EntityTile{
 	Random rand;
 	bool_t isLit;
 	int8_t field_A4D, field_A4E, field_A4F;
-	TextureUVCoordinateSet field_A50, field_A68, field_A80, field_A98;
+	TextureUVCoordinateSet faceTexture, field_A68, sideTexture, topBottomTexture;
 
 	FurnaceTile(int32_t, bool_t);
 	static void setLit(bool_t, Level*, int32_t, int32_t, int32_t);

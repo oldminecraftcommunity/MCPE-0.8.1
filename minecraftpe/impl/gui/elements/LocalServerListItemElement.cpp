@@ -83,7 +83,7 @@ LocalServerListItemElement::LocalServerListItemElement(Minecraft* a2, const Leve
 		this->deleteElementButton->height = 32;
 		this->deleteElementButton->setupPositions();
 		std::stringstream v16;
-		v16 << this->levelSummary->field_10;
+		v16 << this->levelSummary->seed;
 		this->field_44 = v16.str();
 		this->field_48 = a2->font->width(this->field_44);
 	}
@@ -108,7 +108,7 @@ std::string LocalServerListItemElement::getLastPlayedString() {
 	if(!this->levelSummary) {
 		return "";
 	}
-	v3 = getEpochTimeS() - this->levelSummary->field_8;
+	v3 = getEpochTimeS() - this->levelSummary->lastPlayed;
 	if(v3 > 86399) {
 		if(v3 > 172799) {
 			if(v3 > 604799) {
@@ -209,7 +209,7 @@ void LocalServerListItemElement::render(Minecraft* a2, int32_t a3, int32_t a4) {
 		v12 = 0xFFFFFFFF;
 	}
 	if(levelSummary) {
-		a2->font->drawShadow(levelSummary->field_4, (float)this->posX + 5.0, (float)this->posY + 5.0, v12);
+		a2->font->drawShadow(levelSummary->levelName, (float)this->posX + 5.0, (float)this->posY + 5.0, v12);
 		std::string ss = this->levelSummary->gamemode == 1 ? "Creative" : "Survival";
 		v14 = a2->font->width(ss);
 		a2->font->drawShadow(ss, (float)this->posX + 5.0, (float)this->posY + 16.0, 0xFFBBBBBB);
@@ -371,11 +371,11 @@ void LocalServerListItemElement::mouseReleased(Minecraft* a2, int32_t a3, int32_
 			a2->platform()->statsTrackData("start_game", v38);
 		}
 	}else{
-		a2->selectLevel(this->levelSummary->worldName, this->levelSummary->field_4, LevelSettings{-1, -1});
+		a2->selectLevel(this->levelSummary->levelDir, this->levelSummary->levelName, LevelSettings{-1, -1});
 		a2->hostMultiplayer(19132);
 		a2->setScreen(new ProgressScreen());
 
-		std::string v38 = Util::simpleFormat("{\"%\": \"%\", \"%\": \"%\", \"%\": \"%\"}", ParameterStringify::stringify("server_type", "Local", "game_type", this->levelSummary->gamemode == 1 ? "creative" : "survival", "world_name", this->levelSummary->worldName));
+		std::string v38 = Util::simpleFormat("{\"%\": \"%\", \"%\": \"%\", \"%\": \"%\"}", ParameterStringify::stringify("server_type", "Local", "game_type", this->levelSummary->gamemode == 1 ? "creative" : "survival", "world_name", this->levelSummary->levelDir));
 		a2->platform()->statsTrackData("start_game", v38);
 	}
 }

@@ -1,10 +1,10 @@
 #include <math/Mth.hpp>
 float Mth::_sin[65536]; //XXX initialized in NinecraftApp::init
-float Mth::_sinScale = 10430.0;
-float Mth::RADDEG = 57.296;
-float Mth::DEGRAD = 0.017453;
-float Mth::TAU = 6.2832;
-float Mth::PI = 3.1416;
+const float Mth::_sinScale = 10430.0;
+const float Mth::RADDEG = 57.296;
+const float Mth::DEGRAD = 0.017453;
+const float Mth::TAU = 6.2832;
+const float Mth::PI = 3.1416;
 static Random _random;
 
 float Mth::random(void){

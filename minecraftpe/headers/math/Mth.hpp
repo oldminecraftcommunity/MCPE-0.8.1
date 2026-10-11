@@ -4,19 +4,19 @@
 #include <math.h>
 
 struct Mth{
-	static float _sinScale;
-	static float RADDEG;
-	static float DEGRAD;
-	static float TAU;
-	static float PI;
+	static const float _sinScale;
+	static const float RADDEG;
+	static const float DEGRAD;
+	static const float TAU;
+	static const float PI;
 
 	static float _sin[65536];
 
 	static float cos(float x){
-		return Mth::_sin[(int32_t)(x * 10430.0f + 16384.0) & 0xffff];
+		return Mth::_sin[(int32_t)(x * Mth::_sinScale + 16384.0f) & 0xffff];
 	}
 	static float sin(float x){
-		return Mth::_sin[(int32_t)(x * 10430.0f) & 0xffff];
+		return Mth::_sin[(int32_t)(x * Mth::_sinScale) & 0xffff];
 	}
 	static int32_t floor(float x){
 		int32_t xi = (int32_t) x;
@@ -28,13 +28,10 @@ struct Mth{
 		else return ~(~x / y);
 	}
 	static float wrapDegrees(float f){
-		float v1;
-		float v2;
-
-		v1 = fmodf(f, 360.0);
-		v2 = v1;
-		if(v1 >= 180.0) v2 = v1 - 360;
-		if(v1 < -180.0) return v2 + 360;
+		float v1 = fmodf(f, 360.0f);
+		float v2 = v1;
+		if(v1 >= 180.0f) v2 = v1 - 360;
+		if(v1 < -180.0f) return v2 + 360;
 		return v2;
 	}
 	static uint32_t fastRandom(void) {
@@ -92,5 +89,11 @@ struct Mth{
 		y = y * (threehalfs - (x2 * y * y));
 
 		return y;
+	}
+	static float rad2deg(float r) {
+		return r * Mth::RADDEG;
+	}
+	static float deg2rad(float r) {
+		return r * Mth::DEGRAD;
 	}
 };

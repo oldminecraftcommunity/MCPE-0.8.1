@@ -21,7 +21,7 @@ ItemInHandRenderer::ItemInHandRenderer(struct Minecraft* a2)
 	, tileRenderer(0) {
 	this->minecraft = a2;
 	this->field_1C = 0;
-	this->field_20 = 0;
+	this->prevField_1C = 0;
 	AppPlatform::_singleton->addListener(this, 1.0);
 }
 int32_t ItemInHandRenderer::_getFrameID(struct Mob* a2, ItemInstance* a3) {
@@ -140,7 +140,7 @@ void ItemInHandRenderer::render(float a2) {
 
 	glPushMatrix();
 	player = (Mob*)this->minecraft->player;
-	v6 = this->field_20 + (float)((float)(this->field_1C - this->field_20) * a2);
+	v6 = this->prevField_1C + (float)((float)(this->field_1C - this->prevField_1C) * a2);
 	if(!this->field_4.itemClass) {
 		v28 = this->minecraft->player->getAttackAnim(a2);
 		v29 = v28;
@@ -454,7 +454,7 @@ void ItemInHandRenderer::tick() {
 	float v11;		   // s14
 	float v12;		   // s15
 
-	this->field_20 = this->field_1C;
+	this->prevField_1C = this->field_1C;
 	sel = this->minecraft->player->inventory->getSelected();
 	if(sel && sel->count > 0) {
 		this->field_4 = *sel;
@@ -476,5 +476,7 @@ ItemInHandRenderer::~ItemInHandRenderer() {
 }
 void ItemInHandRenderer::onAppSuspended() {
 	this->field_90.clear();
-	//TODO do something with field_90: (i+8) = -1
+	for(auto&& p: this->field_90) {
+		p.second->field_0 = -1;
+	}
 }

@@ -1,6 +1,6 @@
 #include <level/BiomeSource.hpp>
 #include <util/ChunkPos.hpp>
-#include <util/PerlinNoise.hpp>
+#include <math/noise/PerlinNoise.hpp>
 #include <level/biome/Biome.hpp>
 #include <level/Level.hpp>
 const float BiomeSource::noiseScale = 0.25;

@@ -2,22 +2,6 @@
 #include <tile/entity/FurnaceTileEntity.hpp>
 #include <inventory/IContainerListener.hpp>
 
-FurnaceMenu::FurnaceMenu(FurnaceTileEntity* a2)
-	: BaseContainerMenu(2) {
-	this->tileEntity = a2;
-	this->field_20 = 0;
-	this->field_24 = 0;
-	this->field_28 = 0;
-	this->field_1C = a2->id;
-}
-
-std::vector<ItemInstance> FurnaceMenu::getItems() {
-	std::vector<ItemInstance> result;
-	for(int32_t i = 0; i < this->tileEntity->getContainerSize(); ++i) {
-		result.push_back(*this->tileEntity->getItem(i));
-	}
-	return result;
-}
 void FurnaceMenu::setSlot(int32_t a2, ItemInstance* a3) {
 	this->tileEntity->setItem(a2, a3);
 }
@@ -31,6 +15,10 @@ void FurnaceMenu::setData(int32_t a2, int32_t a3) {
 	} else {
 		this->tileEntity->cookTime = a3;
 	}
+}
+
+bool_t FurnaceMenu::tileEntityDestroyedIsInvalid(int32_t a2) {
+	return a2 == this->field_1C;
 }
 void FurnaceMenu::setListener(IContainerListener* a2) {
 	BaseContainerMenu::setListener(a2);
@@ -53,32 +41,36 @@ void FurnaceMenu::broadcastChanges(){
 		cookTime = this->tileEntity->cookTime;
 		if ( cookTime != this->field_20 )
 		{
-			containerListener->setContainerData(
-				this,
-				0,
-				cookTime);
+			containerListener->setContainerData(this, 0, cookTime);
 			this->field_20 = this->tileEntity->cookTime;
 		}
 		burnTime = this->tileEntity->burnTime;
 		if ( burnTime != this->field_24 )
 		{
-			this->containerListener->setContainerData(
-				this,
-				1,
-				burnTime);
+			this->containerListener->setContainerData(this, 1, burnTime);
 			this->field_24 = this->tileEntity->burnTime;
 		}
 		v5 = this->tileEntity->field_6C;
 		if ( v5 != this->field_28 )
 		{
-			this->containerListener->setContainerData(
-				this,
-				2,
-				v5);
+			this->containerListener->setContainerData(this, 2, v5);
 			this->field_28 = this->tileEntity->field_6C;
 		}
 	}
 }
-bool_t FurnaceMenu::tileEntityDestroyedIsInvalid(int32_t a2) {
-	return a2 == this->field_1C;
+FurnaceMenu::FurnaceMenu(FurnaceTileEntity* a2)
+	: BaseContainerMenu(2) {
+	this->tileEntity = a2;
+	this->field_20 = 0;
+	this->field_24 = 0;
+	this->field_28 = 0;
+	this->field_1C = a2->id;
+}
+
+std::vector<ItemInstance> FurnaceMenu::getItems() {
+	std::vector<ItemInstance> result;
+	for(int32_t i = 0; i < this->tileEntity->getContainerSize(); ++i) {
+		result.push_back(*this->tileEntity->getItem(i));
+	}
+	return result;
 }

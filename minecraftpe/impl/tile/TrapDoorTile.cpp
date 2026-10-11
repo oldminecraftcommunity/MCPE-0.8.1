@@ -153,14 +153,9 @@ bool_t TrapDoorTile::use(Level* level, int32_t x, int32_t y, int32_t z, Player* 
 	return 1;
 }
 int32_t TrapDoorTile::getPlacementDataValue(Level* level, int32_t x, int32_t y, int32_t z, int32_t a6, float, float, float, Mob*, int32_t) {
-	switch(a6) {
-		case 3:
-			return 1;
-		case 4:
-			return 2;
-		case 5:
-			return 3;
-	}
+	if(a6 == 3) return 1;
+	if(a6 == 4) return 2;
+	if(a6 == 5) return 3;
 	return 0;
 }
 void TrapDoorTile::attack(Level* level, int32_t x, int32_t y, int32_t z, Player* player) {

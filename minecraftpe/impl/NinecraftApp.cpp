@@ -1,5 +1,5 @@
-#include <I18n.hpp>
 #include <NinecraftApp.hpp>
+#include <I18n.hpp>
 #include <cpputils.hpp>
 #include <entity/LocalPlayer.hpp>
 #include <entity/MobCategory.hpp>

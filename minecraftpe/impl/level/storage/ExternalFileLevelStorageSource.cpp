@@ -20,16 +20,16 @@ ExternalFileLevelStorageSource::ExternalFileLevelStorageSource(const std::string
 }
 void ExternalFileLevelStorageSource::addLevelSummaryIfExists(std::vector<LevelSummary>& a2, const char_t* a3) {
 	std::string a1 = this->field_4;
-	a1 += '/';
+	a1 += "/";
 	a1 += a3;
 	LevelData ld;
 	if(ExternalFileLevelStorage::readLevelData(a1, ld)) {
 		LevelSummary ls;
-		ls.worldName = a3;
-		ls.field_10 = ld.getSeed();
-		ls.field_4 = ld.levelName;
-		ls.field_8 = ld.getLastPlayed();
-		ls.field_14 = ld.getSizeOnDisk();
+		ls.levelDir = a3;
+		ls.seed = ld.getSeed();
+		ls.levelName = ld.levelName;
+		ls.lastPlayed = ld.getLastPlayed();
+		ls.sizeOnDisk = ld.getSizeOnDisk();
 		ls.gamemode = ld.getGameType();
 		a2.push_back(ls);
 	}
@@ -123,4 +123,8 @@ void ExternalFileLevelStorageSource::loadFromCache(LevelData* a2, const std::str
 	}
 }
 void ExternalFileLevelStorageSource::clearCache() {
+	if(Util::endsWith(this->folderName, "_LevelCache")) {
+		DeleteDirectory(this->folderName, 1);
+		createFolderIfNotExists(this->folderName.c_str());
+	}
 }
