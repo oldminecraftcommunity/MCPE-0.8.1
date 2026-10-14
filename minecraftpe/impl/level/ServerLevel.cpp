@@ -8,13 +8,7 @@ ServerLevel::ServerLevel(LevelStorage* a2, const std::string& a3, const LevelSet
 	: Level(a2, a3, a4, 0, a5, a6) {
 	this->_allPlayersSleeping = 0;
 }
-bool_t ServerLevel::allPlayersSleeping() {
-	if(!this->_allPlayersSleeping || this->isClient) return 0;
-	for(std::vector<Player*>::iterator p = this->players.begin(); p != this->players.end(); ++p){
-		if(!(*p)->isSleepingLongEnough()) return 0;
-	}
-	return 1;
-}
+
 void ServerLevel::awakenAllPlayers() {
 	this->_allPlayersSleeping = 0;
 	for(auto&& p: this->players) {
@@ -25,6 +19,14 @@ void ServerLevel::awakenAllPlayers() {
 	}
 	SetHealthPacket v6(20);
 	this->rakNetInstance->send(v6);
+}
+
+bool_t ServerLevel::allPlayersSleeping() {
+	if(!this->_allPlayersSleeping || this->isClient) return 0;
+	for(std::vector<Player*>::iterator p = this->players.begin(); p != this->players.end(); ++p){
+		if(!(*p)->isSleepingLongEnough()) return 0;
+	}
+	return 1;
 }
 
 void ServerLevel::tick() {

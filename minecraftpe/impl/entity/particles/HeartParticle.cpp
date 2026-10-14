@@ -1,5 +1,23 @@
 #include <entity/particles/HeartParticle.hpp>
 
+void HeartParticle::init(float a2, float a3, float a4, float a5, float a6, float a7, int32_t a8) {
+	float motionY; // s13
+	int32_t v9;	   // r2
+	float v11;	   // s15
+
+	motionY = this->motionY;
+	v9 = a8;
+	if(!a8) {
+		v9 = 2;
+	}
+	this->motionX = this->motionX * 0.01;
+	this->motionZ = this->motionZ * 0.01;
+	this->motionY = (float)(motionY * 0.01) + 0.1;
+	v11 = (float)((float)v9 * 0.75) * this->_scale;
+	this->_scale = v11;
+	this->field_164 = v11;
+	this->tick();
+}
 void HeartParticle::tick() {
 	int32_t maxAliveTime; // r2
 	int32_t ticksAlive;	  // r3
@@ -31,24 +49,6 @@ void HeartParticle::tick() {
 		this->motionX = v5 * 0.7;
 		this->motionZ = v6 * 0.7;
 	}
-}
-void HeartParticle::init(float a2, float a3, float a4, float a5, float a6, float a7, int32_t a8) {
-	float motionY; // s13
-	int32_t v9;	   // r2
-	float v11;	   // s15
-
-	motionY = this->motionY;
-	v9 = a8;
-	if(!a8) {
-		v9 = 2;
-	}
-	this->motionX = this->motionX * 0.01;
-	this->motionZ = this->motionZ * 0.01;
-	this->motionY = (float)(motionY * 0.01) + 0.1;
-	v11 = (float)((float)v9 * 0.75) * this->_scale;
-	this->_scale = v11;
-	this->field_164 = v11;
-	this->tick();
 }
 void HeartParticle::render(Tesselator& a2, float a3, float a4, float a5, float a6, float a7, float a8) {
 	float v8; // s15

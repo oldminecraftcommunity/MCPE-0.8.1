@@ -1,11 +1,11 @@
 #include <entity/EntityFactory.hpp>
+#include <entity/ThrownEgg.hpp>
+#include <entity/Snowball.hpp>
 #include <entity/Mob.hpp>
 #include <entity/ItemEntity.hpp>
 #include <entity/PrimedTnt.hpp>
 #include <entity/FallingTile.hpp>
 #include <entity/Arrow.hpp>
-#include <entity/Snowball.hpp>
-#include <entity/ThrownEgg.hpp>
 #include <entity/Painting.hpp>
 #include <entity/MinecartRideable.hpp>
 #include <nbt/CompoundTag.hpp>

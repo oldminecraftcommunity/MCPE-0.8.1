@@ -42,15 +42,15 @@ void Particle::_init(float xPos, float yPos, float zPos, float motX, float motY,
 	this->init(xPos, yPos, zPos, motX, motY, motZ, a8);
 	this->tick();
 }
-void Particle::scale(float a2) {
-	this->setSize(a2 * 0.2f, a2 * 0.2f);
-	this->_scale *= a2;
-}
 Particle* Particle::setPower(float a2) {
 	this->motionX = this->motionX * a2;
 	this->motionY = (this->motionY - 0.1f) * a2 + 0.1f;
 	this->motionZ = this->motionZ * a2;
 	return this;
+}
+void Particle::scale(float a2) {
+	this->setSize(a2 * 0.2f, a2 * 0.2f);
+	this->_scale *= a2;
 }
 
 void Particle::tick() {

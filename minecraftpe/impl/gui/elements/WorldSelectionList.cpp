@@ -8,7 +8,7 @@
 WorldSelectionList::WorldSelectionList(Minecraft* a2, int32_t a3, int32_t a4) : RolledSelectionListH(a2, a3, a4, 0, a3, 26, a4 - 32, 120) {
 	this->field_70 = a4;
 	this->field_98 = 0;
-	this->field_B8 = 0;
+	this->tickCounter = 0;
 	this->field_C0 = 0;
 	this->field_B4 = -1;
 }
@@ -16,8 +16,7 @@ void WorldSelectionList::commit() {
 	for(int i = 0; i < this->field_74.size(); ++i) {
 		LevelSummary* v3 = &this->field_74[i];
 		std::stringstream v13;
-		v13 << v3->levelName;
-		v13 << "/preview.png";
+		v13 << v3->levelName << "/preview.png";
 		this->field_8C.push_back("gui/default_world.png");
 		std::vector<std::string> v12;
 		v12.push_back(v3->levelName);
@@ -98,92 +97,52 @@ bool WorldSelectionList::capXPosition() {
 	}
 	return result;
 }
-void WorldSelectionList::tick(){
-	int32_t v2; // r3
-	float v3; // s15
-	float v4; // s14
-	float v5; // r3
-	float v6; // s15
-	float v7; // s16
-	float v8; // s15
-	float v9; // s17
-	int32_t itemAtXPos; // r0
-	int32_t v11; // r3
-	float v12; // s15
-	int32_t v13; // s13
-	float v14; // s14
-	float v15; // s13
-	int32_t v16; // r3
-
+void WorldSelectionList::tick() {
 	RolledSelectionListH::tick();
-	++this->field_B8;
-	if ( !Mouse::isButtonDown(1) )
-	{
-		v2 = this->field_24;
-		if ( v2 )
-		{
-			this->field_6C = -1;
-			if ( this->field_C0 == 1 )
-			{
-				v3 = this->field_5C + 1.0;
-				v4 = this->field_60;
-				this->field_5C = v3;
-				if ( v3 == v4 )
-				{
-					this->field_34 = 0.0;
-					v5 = this->field_68;
-					this->field_C0 = 0;
-					this->field_2C = v5;
-					this->field_30 = v5;
-LABEL_21:
-					this->field_6C = this->getItemAtPosition(
-						this->field_14 / 2,
-						this->field_18 / 2);
-					return;
-				}
-				goto LABEL_20;
-			}
-			v6 = this->field_34;
-			v7 = fabsf(v6);
-			if ( v7 >= 5.0 )
-			{
-				this->field_34 = v6 * 0.9;
-				return;
-			}
-			v8 = v6 * 0.8;
-			this->field_34 = v8;
-			if ( v7 < 1.0 && v2 < 0 )
-			{
-				v9 = (float)((this->field_14 - this->field_10) / 2) + this->field_2C;
-				itemAtXPos = this->getItemAtXPositionRaw(
-					(int32_t)(float)(v9 - (float)(v8 * 10.0)));
-				v11 = this->field_10;
-				v12 = (float)(itemAtXPos * v11) - v9;
-				if ( v12 < (float)(v11 / -2) )
-				{
-					v13 = this->field_10;
-					v12 = v12 + (float)v11;
-				}
-				v14 = fabsf(v12);
-				if ( v14 < 1.0 && v7 < 0.1 )
-				{
-					goto LABEL_21;
-				}
-				v15 = this->field_2C;
-				this->field_5C = 0.0;
-				this->field_64 = v15;
-				this->field_68 = v15 + v12;
-				v16 = (int32_t)(float)(v14 * 0.25) + 1;
-				if ( v16 >= 7 )
-				{
-					v16 = 7;
-				}
-				this->field_C0 = 1;
-				this->field_60 = (float)v16;
-LABEL_20:
-				this->tweenInited();
-			}
+	++this->tickCounter;
+	if(Mouse::isButtonDown(1) || this->field_24 == 0) return;
+
+	this->field_6C = -1;
+	if(this->field_C0 == 1) {
+		if(++this->field_5C == this->field_60) {
+			this->field_34 = 0;
+			this->field_C0 = 0;
+			this->field_2C = this->field_68;
+			this->field_30 = this->field_68;
+get_item_at_pos:
+			this->field_6C = this->getItemAtPosition(this->field_14 / 2, this->field_18 / 2);
+			return;
 		}
+		this->tweenInited();
+		return;
+	}
+	float v7 = fabsf(this->field_34);
+	if(v7 >= 5.0f){
+		this->field_34 *= 0.9f;
+		return;
+	}
+
+	this->field_34 *= 0.8f;
+	if(v7 < 1.0f && this->field_24 < 0) {
+		float v9 = (float)((this->field_14 - this->field_10) / 2) + this->field_2C;
+		int itemAtXPos = this->getItemAtXPositionRaw((int32_t)(v9 - this->field_34 * 10.0f));
+		int v11 = this->field_10;
+		float v12 = (float)(itemAtXPos * v11) - v9;
+		if(v12 < (float)(v11 / -2)) {
+			v12 = v12 + (float)v11;
+		}
+		float v14 = fabsf(v12);
+		if(v14 < 1.0f && v7 < 0.1f) {
+			goto get_item_at_pos;
+		}
+		this->field_5C = 0.0f;
+		this->field_64 = this->field_2C;
+		this->field_68 = this->field_2C + v12;
+		int v16 = (int32_t)(float)(v14 * 0.25f) + 1;
+		if(v16 >= 7) v16 = 7;
+		this->field_C0 = 1;
+		this->field_60 = (float)v16;
+		this->tweenInited();
 	}
 }
 int32_t WorldSelectionList::getNumberOfItems() {

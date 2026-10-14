@@ -3,7 +3,32 @@
 #include <unistd.h>
 #include <util/Worker.hpp>
 
-static int sub_D66E4980() {
+void ThreadCollection::processUIThread() {
+	std::unique_lock<std::mutex> lock;
+	while(1) {
+		if(this->field_34.empty()) break;
+		auto&& it = this->field_34.front();
+
+		if(it->status == JS_FINISHED) {
+			it->finish();
+		}
+		this->field_34.pop_front();
+	}
+}
+
+ThreadCollection::~ThreadCollection() {
+	std::unique_lock<std::mutex>(this->mutex, std::defer_lock).lock();
+	std::unique_lock<std::mutex>(this->field_60, std::defer_lock).lock();
+	this->isStopped = 1;
+	this->field_64.notify_all();
+
+	for(auto&& t: this->threads) {
+		t.join();
+	}
+	this->threads.clear();
+}
+
+static int _maxThreadCnt() {
 #ifdef __WIN32__
 	return 2; //TODO get max threads cnt
 #else
@@ -16,9 +41,8 @@ ThreadCollection::ThreadCollection(uint32_t maxthreads) {
 
 	this->isStopped = 0;
 	if(maxthreads == 0) {
-		int v4 = sub_D66E4980();
-		if(v4) maxthreads = v4;
-		else maxthreads = 1;
+		int v4 = _maxThreadCnt();
+		maxthreads = v4 ? v4 : 1;
 	}
 
 	for(unsigned int i = 0; i != maxthreads; ++i) {
@@ -27,29 +51,10 @@ ThreadCollection::ThreadCollection(uint32_t maxthreads) {
 }
 void ThreadCollection::enqueue(std::shared_ptr<Job> a2) {
 	Job* j = a2.get();
-	std::unique_lock<std::mutex> v11(this->mutex, std::defer_lock);
-	v11.lock();
-	this->field_C.push_back(a2);
-	v11.unlock();
+	{
+		std::unique_lock<std::mutex> v11(this->mutex, std::defer_lock);
+		v11.lock();
+		this->field_C.push_back(a2);
+	}
 	this->field_64.notify_one();
-}
-void ThreadCollection::processUIThread() {
-	for(auto&& it = this->field_34.begin(); it != this->field_34.end();) {
-
-		if(it->get()->status == JS_FINISHED) {
-			it->get()->finish();
-		}
-		it = this->field_34.erase(it); //TODO check
-	}
-}
-ThreadCollection::~ThreadCollection() {
-	std::unique_lock<std::mutex>(this->mutex, std::defer_lock).lock();
-	std::unique_lock<std::mutex>(this->field_60, std::defer_lock).lock();
-	this->isStopped = 1;
-	this->field_64.notify_all();
-
-	for(auto&& t: this->threads) {
-		t.join();
-	}
-	this->threads.clear();
 }

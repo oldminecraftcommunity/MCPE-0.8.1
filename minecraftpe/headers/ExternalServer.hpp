@@ -4,23 +4,23 @@
 
 struct ExternalServer
 {
-	int32_t field_0;
-	std::string field_4, field_8;
-	int32_t field_C;
+	int32_t id;
+	std::string name, ip;
+	int32_t port;
 
 	ExternalServer() {
 	}
 	ExternalServer(const ExternalServer& a2) {
-		this->field_0 = a2.field_0;
-		this->field_4 = a2.field_4;
-		this->field_8 = a2.field_8;
-		this->field_C = a2.field_C;
+		this->id = a2.id;
+		this->name = a2.name;
+		this->ip = a2.ip;
+		this->port = a2.port;
 	}
 	ExternalServer(int32_t a2, const std::string& a3, const std::string& a4, int32_t a5) {
-		this->field_0 = a2;
-		this->field_4 = a3;
-		this->field_8 = a4;
-		this->field_C = a5;
+		this->id = a2;
+		this->name = a3;
+		this->ip = a4;
+		this->port = a5;
 	}
 	//~ExternalServer();
 };

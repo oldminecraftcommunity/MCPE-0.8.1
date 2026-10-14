@@ -4,10 +4,11 @@
 
 struct IMoveInput : IConfigListener{
 	float strafeInput, forwardInput;
-	int8_t idkWhatIsThis;
+	bool idkWhatIsThis;
 	bool jumping, sneaking;
-	int8_t flyUpPressed;
-	int8_t flyDownPressed, idkWhatIsThis2;
+	bool flyUpPressed;
+	bool flyDownPressed;
+	bool idkWhatIsThis2;
 
 	virtual ~IMoveInput(){}
 	virtual void tick(struct Player*){}

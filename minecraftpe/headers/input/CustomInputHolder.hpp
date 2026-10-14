@@ -1,8 +1,6 @@
 #pragma once
 #include <input/IInputHolder.hpp>
 #include <input/IMoveInput.hpp>
-#include <input/IBuildInput.hpp>
-#include <input/ITurnInput.hpp>
 
 struct IMoveInput;
 struct ITurnInput;

@@ -4,11 +4,11 @@
 #include <math.h>
 
 struct Mth{
-	static const float _sinScale;
-	static const float RADDEG;
-	static const float DEGRAD;
-	static const float TAU;
 	static const float PI;
+	static const float TAU;
+	static const float DEGRAD;
+	static const float RADDEG;
+	static const float _sinScale;
 
 	static float _sin[65536];
 

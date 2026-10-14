@@ -1,7 +1,5 @@
 #pragma once
-#include <_types.h>
 #include <math/HitResult.hpp>
-#include <math/Vec3.hpp>
 
 struct Vec3;
 struct HitResult;

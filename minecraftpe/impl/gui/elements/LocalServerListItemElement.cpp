@@ -256,19 +256,19 @@ void LocalServerListItemElement::render(Minecraft* a2, int32_t a3, int32_t a4) {
 				return;
 			}
 			a2->font->drawShadow(
-				server->field_4,
+				server->name,
 				(float)this->posX + 5.0,
 				(float)this->posY + 5.0,
 				v12);
 			//copyRawCharArrayInside(&v28, "Survival");
 			v23 = this->server;
-			if ( v23->field_8.size() <= 0x80u )
+			if ( v23->ip.size() <= 0x80u )
 			{
-				sprintf(v29, "%s:%d", v23->field_8.c_str(), v23->field_C);
+				sprintf(v29, "%s:%d", v23->ip.c_str(), v23->port);
 			}
 			else
 			{
-				sprintf(v29, "...:%d", v23->field_C);
+				sprintf(v29, "...:%d", v23->port);
 			}
 			a2->font->drawShadow(
 				v29,
@@ -328,7 +328,7 @@ void LocalServerListItemElement::mouseReleased(Minecraft* a2, int32_t a3, int32_
 	if(this->deleteElementButton && this->field_30 == this->deleteElementButton) {
 		if(this->deleteElementButton->clicked(a2, a3, a4)) {
 			if(this->server) {
-				a2->externalServerFile->removeSevrer(this->server->field_0);
+				a2->externalServerFile->removeSevrer(this->server->id);
 				this->field_54->field_50 = 1;
 			} else {
 				a2->setScreen(new Touch::TouchDeleteWorldScreen(*this->levelSummary));
@@ -353,8 +353,8 @@ void LocalServerListItemElement::mouseReleased(Minecraft* a2, int32_t a3, int32_
 		if(this->server) {
 			if(a2->platform()->isNetworkEnabled(1)) {
 				PingedCompatibleServer v43;
-				v43.field_4.FromStringExplicitPort(this->server->field_8.c_str(), this->server->field_C, 0);
-				v43.field_0 = RakNet::RakString(this->server->field_4.c_str());
+				v43.field_4.FromStringExplicitPort(this->server->ip.c_str(), this->server->port, 0);
+				v43.field_0 = RakNet::RakString(this->server->name.c_str());
 				a2->joinMultiplayer(v43, 0);
 				a2->setScreen(new ProgressScreen());
 

@@ -24,8 +24,3 @@ struct ENGINE{
 	int8_t field_24;
 	AppContext appCtx;
 };
-#ifdef ANDROID
-void engine_handle_cmd(android_app*, int);
-void engine_term_display(ENGINE*);
-int engine_handle_input(struct android_app* app, struct AInputEvent* event); //XXX no symbol name
-#endif

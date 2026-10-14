@@ -1,5 +1,4 @@
 #pragma once
-#include <_types.h>
 #include <gui/GuiComponent.hpp>
 #include <network/mco/MojangConnectionStatus.hpp>
 #include <network/mco/MCOEvent.hpp>

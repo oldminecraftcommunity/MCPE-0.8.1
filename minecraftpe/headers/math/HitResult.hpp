@@ -1,5 +1,4 @@
 #pragma once
-#include <_types.h>
 #include <math/Vec3.hpp>
 
 struct Entity;

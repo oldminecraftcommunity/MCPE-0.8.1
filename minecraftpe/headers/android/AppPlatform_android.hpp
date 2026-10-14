@@ -1,9 +1,7 @@
 #pragma once
 #ifdef ANDROID
 #include <AppPlatform.hpp>
-#include <jni.h>
 #include <android/JVMAttacher.hpp>
-#include <network/mco/LoginInformation.hpp>
 #include <_AssetFile.hpp>
 #include <string>
 #include <stb_image.h>
@@ -11,7 +9,7 @@
 #include <stdlib.h>
 
 static unsigned int _d65c6fb8(unsigned int a1){
-	return (a1 & 0xFF00FF00) | (a1 << 16) & 0xFF0000 | ((a1 >> 16) & 0xff);
+	return (a1 & 0xFF00FF00) | ((a1 << 16) & 0xFF0000) | ((a1 >> 16) & 0xff);
 }
 static bool _stringAssign(JNIEnv* env, jstring a2, std::string& ret){
 	const char* str = env->GetStringUTFChars(a2, 0);
@@ -467,9 +465,6 @@ struct AppPlatform_android : AppPlatform{
 
 		return JVMAttacher(this->jvm).env->CallBooleanMethod(this->mainActivityRef, this->_jniSupportsNonTouchscreen) == 0;
 	}
-	virtual bool_t supportsVibration(void) {
-		return 1;
-	}
 	virtual void vibrate(int32_t a2) {
 		if (this->initialized) {
 			if (this->_jniWebRequest) {
@@ -568,6 +563,8 @@ struct AppPlatform_android : AppPlatform{
 			}
 		}
 	}
+	//prev vt end
+
 	virtual void initWithActivity(ANativeActivity* a2) {
 		this->field_10C = a2;
 	}
@@ -607,6 +604,11 @@ struct AppPlatform_android : AppPlatform{
 		}
 		return JVMAttacher(this->jvm).env->CallIntMethod(this->mainActivityRef,
 				this->_jniAbortWebRequest, a2);
+	}
+
+
+	virtual bool_t supportsVibration(void) {
+		return 1;
 	}
 };
 #endif

@@ -17,9 +17,6 @@ const float Options::SENSITIVITY_MAX_VALUE = 1.0f;
 const float Options::PIXELS_PER_MILLIMETER_MIN_VALUE = 3.0f;
 const float Options::PIXELS_PER_MILLIMETER_MAX_VALUE = 12.0f;
 
-const char* Options::RENDER_DISTANCE_NAMES[] = {"options.renderDistance.far", "options.renderDistance.normal", "options.renderDistance.short", "options.renderDistance.tiny"};
-const char* Options::DIFFICULTY_NAMES[] = {"options.difficulty.peaceful", "options.difficulty.easy", "options.difficulty.normal", "options.difficulty.hard"};
-const char* Options::GUI_SCALE[] = {"options.guiScale.auto", "options.guiScale.small", "options.guiScale.normal", "options.guiScale.large"};
 
 bool Options::debugGl = 0;
 
@@ -46,6 +43,11 @@ Options::Option Options::Option::PIXELS_PER_MILLIMETER{1, "options.pixelspermili
 Options::Option Options::Option::NAME{2, "options.name", 22};
 std::vector<int32_t> Options::DIFFICULTY_LEVELS = {0, 2};
 std::vector<int32_t> Options::RENDERDISTANCE_LEVELS = {3, 2, 1, 0};
+
+const char* Options::RENDER_DISTANCE_NAMES[] = {"options.renderDistance.far", "options.renderDistance.normal", "options.renderDistance.short", "options.renderDistance.tiny"};
+const char* Options::DIFFICULTY_NAMES[] = {"options.difficulty.peaceful", "options.difficulty.easy", "options.difficulty.normal", "options.difficulty.hard"};
+const char* Options::GUI_SCALE[] = {"options.guiScale.auto", "options.guiScale.small", "options.guiScale.normal", "options.guiScale.large"};
+
 
 void Options::update() {
 	std::vector<std::string> v13 = this->settingFolderPath.getOptionStrings();

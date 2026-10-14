@@ -10,11 +10,11 @@ struct Job
 	JobStatus status;
 	int32_t field_4;
 
-	static void addToThreadCollection(std::shared_ptr<Job>, ThreadCollection&);
 	Job() : field_4(0){
 
 	}
 	JobStatus getStatus();
+	static void addToThreadCollection(std::shared_ptr<Job>, ThreadCollection&);
 	JobStatus trySetStatus(JobStatus);
 	virtual ~Job() {
 	}

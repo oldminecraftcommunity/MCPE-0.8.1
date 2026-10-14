@@ -53,5 +53,5 @@ void RestRequestJob::finish() {
 	JobStatus status = this->status;
 	std::unique_lock<std::mutex> l;
 	if(status == JS_STOPPED) return;
-	this->onFinish(200, "Yey", RestCallTagData(), this->field_8.lock());
+	this->onFinish(200, "Yey", RestCallTagData(), std::shared_ptr<RestRequestJob>(this->field_8));
 }

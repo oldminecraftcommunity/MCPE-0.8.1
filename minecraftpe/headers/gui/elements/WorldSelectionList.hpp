@@ -12,7 +12,7 @@ struct WorldSelectionList: RolledSelectionListH
 	std::vector<std::string> field_8C;
 	int8_t field_98, field_99, field_9A, field_9B;
 	LevelSummary field_9C;
-	int32_t field_B4, field_B8, field_BC, field_C0;
+	int32_t field_B4, tickCounter, field_BC, field_C0;
 
 	WorldSelectionList(Minecraft*, int32_t, int32_t);
 	void commit();

@@ -1,12 +1,11 @@
 #pragma once
-#include <_types.h>
+#include <ExternalServer.hpp>
 #include <string>
 #include <unordered_map>
-#include <ExternalServer.hpp>
 
 struct ExternalServerFile
 {
-	std::unordered_map<int32_t, ExternalServer> field_0;
+	std::unordered_map<int32_t, ExternalServer> servers;
 	std::string fileName;
 
 	ExternalServerFile(const std::string&);

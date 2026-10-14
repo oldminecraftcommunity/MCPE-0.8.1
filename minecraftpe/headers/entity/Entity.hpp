@@ -1,5 +1,4 @@
 #pragma once
-#include <_types.h>
 #include <math/AABB.hpp>
 #include <entity/data/SynchedEntityData.hpp>
 #include <rendering/EntityRendererId.hpp>

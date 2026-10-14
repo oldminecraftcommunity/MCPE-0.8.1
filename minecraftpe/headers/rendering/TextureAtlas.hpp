@@ -1,9 +1,8 @@
 #pragma once
-#include <_types.h>
+#include <rendering/TextureAtlasTextureItem.hpp>
+#include <rendering/TextureUVCoordinateSet.hpp>
 #include <json/value.h>
 #include <unordered_map>
-#include <rendering/TextureUVCoordinateSet.hpp>
-#include <rendering/TextureAtlasTextureItem.hpp>
 #include <string>
 
 struct TextureAtlasTextureItem;

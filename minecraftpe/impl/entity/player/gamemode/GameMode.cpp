@@ -1,18 +1,18 @@
 #include <entity/player/gamemode/GameMode.hpp>
+#include <network/packet/UseItemPacket.hpp>
+#include <network/packet/PlayerActionPacket.hpp>
+#include <network/packet/RemoveBlockPacket.hpp>
 #include <Minecraft.hpp>
 #include <rendering/LevelRenderer.hpp>
 #include <entity/LocalPlayer.hpp>
 #include <level/Level.hpp>
 #include <level/dimension/Dimension.hpp>
 #include <item/Item.hpp>
-#include <network/packet/UseItemPacket.hpp>
 #include <network/RakNetInstance.hpp>
-#include <network/packet/PlayerActionPacket.hpp>
 #include <tile/Tile.hpp>
 #include <rendering/ParticleEngine.hpp>
 #include <sound/SoundEngine.hpp>
 #include <tile/material/Material.hpp>
-#include <network/packet/RemoveBlockPacket.hpp>
 #include <inventory/Inventory.hpp>
 
 GameMode::GameMode(Minecraft* a2) {
@@ -27,6 +27,32 @@ void GameMode::startDestroyBlock(int32_t x, int32_t y, int32_t z, int32_t a5) {
 	if(!this->minecraft->player->getCarriedItem() || Item::bow != this->minecraft->player->getCarriedItem()->itemClass || !Item::bow) {
 		this->destroyBlock(x, y, z, a5);
 	}
+}
+
+bool_t GameMode::handleInventoryMouseClick(int32_t, int32_t, int32_t, Player*) {
+	return 0;
+}
+void GameMode::handleCloseInventory(int32_t, Player*) {
+}
+
+float GameMode::getPickRange() {
+	return 5.0f;
+}
+void GameMode::initPlayer(Player* a2) {
+	this->initAbilities(a2->abilities);
+}
+
+void GameMode::tick() {
+	this->field_4 = this->field_8;
+}
+
+
+void GameMode::releaseUsingItem(Player* a2) {
+	if(this->minecraft->level->isClient) {
+		PlayerActionPacket pk(a2->entityId, 0, 0, 0, 0, 5);
+		this->minecraft->rakNetInstance->send(pk);
+	}
+	a2->releaseUsingItem();
 }
 bool_t GameMode::destroyBlock(int32_t x, int32_t y, int32_t z, int32_t side) {
 	Level* level; // r5
@@ -50,7 +76,7 @@ bool_t GameMode::destroyBlock(int32_t x, int32_t y, int32_t z, int32_t side) {
 	if(!v11) {
 		return 0;
 	}
-	this->minecraft->soundEngine->play(tile->soundType->field_8, (float)x + 0.5, (float)y + 0.5, (float)z + 0.5, (float)(tile->soundType->field_0 + 1.0) * 0.5, tile->soundType->field_4 * 0.8);
+	this->minecraft->soundEngine->play(tile->soundType->field_8, (float)x + 0.5f, (float)y + 0.5f, (float)z + 0.5f, (float)(tile->soundType->field_0 + 1.0) * 0.5, tile->soundType->field_4 * 0.8);
 	tile->destroy(level, x, y, z, meta);
 	minecraft = this->minecraft;
 	if(minecraft->options.destroyVibration) {
@@ -62,9 +88,13 @@ bool_t GameMode::destroyBlock(int32_t x, int32_t y, int32_t z, int32_t side) {
 	}
 	return v11;
 }
-void GameMode::tick() {
-	this->field_4 = this->field_8;
+void GameMode::interact(Player* a2, Entity* a3) {
+	a2->interact(a3);
 }
+Player* GameMode::createPlayer(Level* a2) {
+	return new LocalPlayer(this->minecraft, a2, this->minecraft->user, a2->dimensionPtr->id, this->isCreativeType());
+}
+
 void GameMode::render(float a2) {
 	float v2; // s14
 	float v3; // s15
@@ -79,20 +109,11 @@ void GameMode::render(float a2) {
 		this->minecraft->levelRenderer->destroyProgress = 0.0;
 	}
 }
-float GameMode::getPickRange() {
-	return 5.0;
-}
-bool_t GameMode::useItem(Player* a2, Level* a3, ItemInstance* a4) {
-	int32_t count;	  // r9
-	ItemInstance* v9; // r8
 
-	count = a4->count;
-	v9 = a4->use(a3, a2);
-	if(a3->isClient) {
-		UseItemPacket useItem(a2->entityId, (int32_t)(float)(a2->field_174.x * 32768.0), (int32_t)(float)(a2->field_174.y * 32768.0), (int32_t)(float)(a2->field_174.z * 32768.0), 255, a4->getId(), a4->getAuxValue());
-		this->minecraft->rakNetInstance->send(useItem);
+void GameMode::attack(Player* a2, Entity* a3) {
+	if((!this->minecraft->level->adventureSettings.enablePVP || !a3->isPlayer()) && (!this->minecraft->level->adventureSettings.enablePVE || !a3->isMob())) {
+		a2->attack(a3);
 	}
-	return v9 != a4 || v9->count != count;
 }
 bool_t GameMode::useItemOn(Player* player, Level* level, ItemInstance* a4, int32_t x, int32_t y, int32_t z, int32_t face, const Vec3& a9) {
 	float faceX = a9.x - (float)x;
@@ -117,29 +138,16 @@ bool_t GameMode::useItemOn(Player* player, Level* level, ItemInstance* a4, int32
 	sel->count = count;
 	return v19;
 }
-Player* GameMode::createPlayer(Level* a2) {
-	return new LocalPlayer(this->minecraft, a2, this->minecraft->user, a2->dimensionPtr->id, this->isCreativeType());
-}
-void GameMode::initPlayer(Player* a2) {
-	this->initAbilities(a2->abilities);
-}
-void GameMode::interact(Player* a2, Entity* a3) {
-	a2->interact(a3);
-}
-void GameMode::attack(Player* a2, Entity* a3) {
-	if((!this->minecraft->level->adventureSettings.enablePVP || !a3->isPlayer()) && (!this->minecraft->level->adventureSettings.enablePVE || !a3->isMob())) {
-		a2->attack(a3);
+
+bool_t GameMode::useItem(Player* a2, Level* a3, ItemInstance* a4) {
+	int32_t count;	  // r9
+	ItemInstance* v9; // r8
+
+	count = a4->count;
+	v9 = a4->use(a3, a2);
+	if(a3->isClient) {
+		UseItemPacket useItem(a2->entityId, (int32_t)(float)(a2->field_174.x * 32768.0), (int32_t)(float)(a2->field_174.y * 32768.0), (int32_t)(float)(a2->field_174.z * 32768.0), 255, a4->getId(), a4->getAuxValue());
+		this->minecraft->rakNetInstance->send(useItem);
 	}
-}
-bool_t GameMode::handleInventoryMouseClick(int32_t, int32_t, int32_t, Player*) {
-	return 0;
-}
-void GameMode::handleCloseInventory(int32_t, Player*) {
-}
-void GameMode::releaseUsingItem(Player* a2) {
-	if(this->minecraft->level->isClient) {
-		PlayerActionPacket pk(a2->entityId, 0, 0, 0, 0, 5);
-		this->minecraft->rakNetInstance->send(pk);
-	}
-	a2->releaseUsingItem();
+	return v9 != a4 || v9->count != count;
 }

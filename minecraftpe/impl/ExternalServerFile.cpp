@@ -2,35 +2,35 @@
 #include <sstream>
 #include <string.h>
 #include <vector>
-#include <ExternalServer.hpp>
 #include <stdlib.h>
+
 ExternalServerFile::ExternalServerFile(const std::string& a2) {
 	this->fileName = a2 + "/external_servers.txt";
 }
 void ExternalServerFile::addServer(const std::string& a2, const std::string& a3, int32_t a4) {
 	int32_t i;
-	for(i = 1; i <= 59999 && this->field_0.find(i) != this->field_0.end(); ++i) {
+	for(i = 1; i <= 59999 && this->servers.find(i) != this->servers.end(); ++i) {
 	}
 
 	{
 		ExternalServer v10(i, a2, a3, a4);
 		ExternalServer v12(v10);
-		this->field_0[i] = v12;
+		this->servers[i] = v12;
 		//~v12, ~v10
 	}
 	this->save();
 }
 void ExternalServerFile::editServer(int32_t a2, const std::string& a3, const std::string& a4, int32_t a5) {
-	auto v8 = this->field_0.find(a2);
-	if(v8 != this->field_0.end()) {
-		v8->second.field_4 = a3;
-		v8->second.field_8 = a4;
-		v8->second.field_C = a5;
+	auto v8 = this->servers.find(a2);
+	if(v8 != this->servers.end()) {
+		v8->second.ip = a3;
+		v8->second.ip = a4;
+		v8->second.port = a5;
 	}
 	this->save();
 }
 std::unordered_map<int32_t, ExternalServer>* ExternalServerFile::getExternalServers() {
-	return &this->field_0;
+	return &this->servers;
 }
 void ExternalServerFile::load() {
 	FILE* v4 = fopen(this->fileName.c_str(), "r");
@@ -58,7 +58,7 @@ void ExternalServerFile::load() {
 					std::string v9 = v11[2];
 					int v7 = strtol(v11[3].c_str(), 0, 0);
 					if(v7 && v6){
-						this->field_0.insert({v6, ExternalServer(v6, v8, v9, v7)}); //TODO check
+						this->servers.insert({v6, ExternalServer(v6, v8, v9, v7)}); //TODO check
 					}
 				}
 			}
@@ -68,9 +68,9 @@ void ExternalServerFile::load() {
 	}
 }
 void ExternalServerFile::removeSevrer(int32_t i) {
-	auto v8 = this->field_0.find(i);
-	if(v8 != this->field_0.end()) {
-		this->field_0.erase(v8);
+	auto v8 = this->servers.find(i);
+	if(v8 != this->servers.end()) {
+		this->servers.erase(v8);
 	}
 	this->save();
 }
@@ -78,9 +78,9 @@ void ExternalServerFile::removeSevrer(int32_t i) {
 void ExternalServerFile::save() {
 	FILE* v2 = fopen(this->fileName.c_str(), "w");
 	if(v2) {
-		for(auto& it: this->field_0) {
+		for(auto& it: this->servers) {
 			ExternalServer v5(it.second);
-			fprintf(v2, "%d:%s:%s:%d\n", v5.field_0, v5.field_4.c_str(), v5.field_8.c_str(), v5.field_C);
+			fprintf(v2, "%d:%s:%s:%d\n", v5.id, v5.name.c_str(), v5.ip.c_str(), v5.port);
 		}
 		fclose(v2);
 	}

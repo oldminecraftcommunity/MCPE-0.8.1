@@ -1,5 +1,4 @@
 #pragma once
-#include <_types.h>
 #include <IConfigListener.hpp>
 #include <input/Mouse.hpp>
 #include <input/ITurnInput.hpp>

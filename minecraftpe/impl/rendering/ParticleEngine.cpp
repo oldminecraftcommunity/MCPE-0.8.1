@@ -1,6 +1,4 @@
 #include <rendering/ParticleEngine.hpp>
-#include <level/Level.hpp>
-#include <tile/Tile.hpp>
 #include <entity/particles/Particle.hpp>
 #include <entity/particles/BubbleParticle.hpp>
 #include <entity/particles/CritParticle2.hpp>
@@ -10,10 +8,12 @@
 #include <entity/particles/LavaParticle.hpp>
 #include <entity/particles/RedDustParticle.hpp>
 #include <entity/particles/BreakingItemParticle.hpp>
-#include <item/Item.hpp>
 #include <entity/particles/MobFlameParticle.hpp>
-#include <entity/particles/HeartParticle.hpp>
 #include <entity/particles/TerrainParticle.hpp>
+#include <entity/particles/HeartParticle.hpp>
+#include <level/Level.hpp>
+#include <tile/Tile.hpp>
+#include <item/Item.hpp>
 #include <math/Mth.hpp>
 #include <unigl.hpp>
 #include <entity/Mob.hpp>

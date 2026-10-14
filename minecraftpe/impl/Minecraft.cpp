@@ -1,4 +1,9 @@
 #include <Minecraft.hpp>
+#include <input/CustomInputHolder.hpp>
+#include <input/TouchInputHolder.hpp>
+#include <network/packet/InteractPacket.hpp>
+#include <input/ControllerTurnInput.hpp>
+#include <network/packet/RespawnPacket.hpp>
 #include <ICreator.hpp>
 #include <ExternalServer.hpp>
 #include <ExternalServerFile.hpp>
@@ -12,12 +17,9 @@
 #include <gui/screens/PauseScreen.hpp>
 #include <gui/screens/RenameMPLevelScreen.hpp>
 #include <input/BuildActionIntention.hpp>
-#include <input/ControllerTurnInput.hpp>
-#include <input/CustomInputHolder.hpp>
 #include <input/Keyboard.hpp>
 #include <input/Mouse.hpp>
 #include <input/Multitouch.hpp>
-#include <input/TouchInputHolder.hpp>
 #include <input/XperiaPlayInput.hpp>
 #include <inventory/Inventory.hpp>
 #include <level/ServerLevel.hpp>
@@ -35,8 +37,6 @@
 #include <network/mco/MCOStringify.hpp>
 #include <network/mco/MojangConnector.hpp>
 #include <network/mco/RestRequestJob.hpp>
-#include <network/packet/InteractPacket.hpp>
-#include <network/packet/RespawnPacket.hpp>
 #include <perf/PerfTimer.hpp>
 #include <perf/Stopwatch.hpp>
 #include <rendering/EntityRenderDispatcher.hpp>

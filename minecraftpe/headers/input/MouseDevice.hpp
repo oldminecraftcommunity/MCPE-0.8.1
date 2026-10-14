@@ -30,5 +30,4 @@ struct MouseDevice{
 	void reset2();
 	void rewind(void);
 	bool_t wasFirstMovement();
-	//~MouseDevice() -> vec destructor -> not needed?
 };

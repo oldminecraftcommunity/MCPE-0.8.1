@@ -9,19 +9,6 @@ PolygonQuad::PolygonQuad(VertexPT* v1, VertexPT* v2, VertexPT* v3, VertexPT* v4)
 	this->verticies[3] = *v4;
 }
 
-PolygonQuad::PolygonQuad(VertexPT* v1, VertexPT* v2, VertexPT* v3, VertexPT* v4, float a, float b, float c, float d){
-	this->flipnormal = 0;
-	//seems like it does this instead of this->verticies[] = VertexPT(...) based on stack size~
-	VertexPT p1(*v1, c, b);
-	this->verticies[0] = p1;
-	VertexPT p2(*v2, a, b);
-	this->verticies[1] = p2;
-	VertexPT p3(*v3, a, d);
-	this->verticies[2] = p3;
-	VertexPT p4(*v4, c, d);
-	this->verticies[3] = p4;
-}
-
 PolygonQuad::PolygonQuad(VertexPT* v1, VertexPT* v2, VertexPT* v3, VertexPT* v4, int32_t a, int32_t b, int32_t c, int32_t d, int32_t texWidth, int32_t texHeight){
 	float tw = (float) texWidth, th = (float) texHeight;
 
@@ -41,9 +28,17 @@ PolygonQuad::PolygonQuad(VertexPT* v1, VertexPT* v2, VertexPT* v3, VertexPT* v4,
 	this->verticies[3] = p4;
 }
 
-
-void PolygonQuad::flipNormal(void){
-	this->flipnormal = 1;
+PolygonQuad::PolygonQuad(VertexPT* v1, VertexPT* v2, VertexPT* v3, VertexPT* v4, float a, float b, float c, float d){
+	this->flipnormal = 0;
+	//seems like it does this instead of this->verticies[] = VertexPT(...) based on stack size~
+	VertexPT p1(*v1, c, b);
+	this->verticies[0] = p1;
+	VertexPT p2(*v2, a, b);
+	this->verticies[1] = p2;
+	VertexPT p3(*v3, a, d);
+	this->verticies[2] = p3;
+	VertexPT p4(*v4, c, d);
+	this->verticies[3] = p4;
 }
 
 void PolygonQuad::mirror(void){
@@ -96,5 +91,8 @@ void PolygonQuad::render(Tesselator& a2, float a3, int32_t a4){
 		VertexPT* v = &this->verticies[v23];
 		a2.vertexUV(a3*v->vec.x, a3*v->vec.y, a3*v->vec.z, v->u, v->v);
 	}
+}
 
+void PolygonQuad::flipNormal(void){
+	this->flipnormal = 1;
 }

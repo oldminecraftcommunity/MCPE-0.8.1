@@ -2,41 +2,15 @@
 #include <rendering/Textures.hpp>
 #include <rendering/Tesselator.hpp>
 
-NinePatchLayer::NinePatchLayer(const NinePatchDescription& desc, const std::string& str, Textures* tex, float w, float h) : GuiElement(1, 1, 0, 0, 24, 24), patchDescription(desc){
-	this->width2 = -1;
-	this->height2 = -1;
-	this->field_64 = str;
-	this->textures = tex;
-	this->excluded = 0;
-	this->setSize(w, h);
-}
-
-void NinePatchLayer::d(Tesselator& t, const NinePatchLayer::CachedQuad& q){
-	t.vertexUV(q.field_0, q.field_C, q.field_10, q.field_14, q.field_20);
-	t.vertexUV(q.field_4, q.field_C, q.field_10, q.field_18, q.field_20);
-	t.vertexUV(q.field_4, q.field_8, q.field_10, q.field_18, q.field_1C);
-	t.vertexUV(q.field_0, q.field_8, q.field_10, q.field_14, q.field_1C);
-}
-void NinePatchLayer::draw(struct Tesselator& t, float x, float y){
-	this->textures->loadAndBindTexture(this->field_64);
-	t.begin(36);
-	int32_t v8 = 1;
-	t.addOffset(x, y, 0);
-	for(int32_t i = 0; i != 9; ++i){
-		if((this->excluded & v8) == 0) {
-			this->d(t, this->cachedQuads[i]);
-		}
-		v8 *= 2;
-	}
-	t.addOffset(-x, -y, 0);
-	t.draw(1);
-
-
+NinePatchLayer* NinePatchLayer::setExcluded(int32_t a2){
+	this->excluded = a2;
+	return this;
 }
 NinePatchLayer* NinePatchLayer::exclude(int32_t a2){
 	this->setExcluded((1 << a2) | this->excluded);
 	return this;
 }
+
 void NinePatchLayer::getPatchInfo(int32_t a2, int32_t a3, float& a4, float& a5, float& a6, float& a7){
 	switch(a2){
 		case 0:
@@ -68,10 +42,6 @@ void NinePatchLayer::getPatchInfo(int32_t a2, int32_t a3, float& a4, float& a5, 
 			break;
 	}
 }
-NinePatchLayer* NinePatchLayer::setExcluded(int32_t a2){
-	this->excluded = a2;
-	return this;
-}
 
 void NinePatchLayer::buildQuad(int32_t n){
 	NinePatchLayer::CachedQuad* cq = &this->cachedQuads[n];
@@ -98,4 +68,34 @@ void NinePatchLayer::setSize(float w, float h){
 			this->buildQuad(v5);
 		}while(v4 != 9);
 	}
+}
+
+NinePatchLayer::NinePatchLayer(const NinePatchDescription& desc, const std::string& str, Textures* tex, float w, float h) : GuiElement(1, 1, 0, 0, 24, 24), patchDescription(desc){
+	this->width2 = -1;
+	this->height2 = -1;
+	this->field_64 = str;
+	this->textures = tex;
+	this->excluded = 0;
+	this->setSize(w, h);
+}
+
+void NinePatchLayer::d(Tesselator& t, const NinePatchLayer::CachedQuad& q){
+	t.vertexUV(q.field_0, q.field_C, q.field_10, q.field_14, q.field_20);
+	t.vertexUV(q.field_4, q.field_C, q.field_10, q.field_18, q.field_20);
+	t.vertexUV(q.field_4, q.field_8, q.field_10, q.field_18, q.field_1C);
+	t.vertexUV(q.field_0, q.field_8, q.field_10, q.field_14, q.field_1C);
+}
+void NinePatchLayer::draw(struct Tesselator& t, float x, float y){
+	this->textures->loadAndBindTexture(this->field_64);
+	t.begin(36);
+	int32_t v8 = 1;
+	t.addOffset(x, y, 0);
+	for(int32_t i = 0; i != 9; ++i){
+		if((this->excluded & v8) == 0) {
+			this->d(t, this->cachedQuads[i]);
+		}
+		v8 *= 2;
+	}
+	t.addOffset(-x, -y, 0);
+	t.draw(1);
 }

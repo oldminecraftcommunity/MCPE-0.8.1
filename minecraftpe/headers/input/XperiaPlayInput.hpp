@@ -6,11 +6,11 @@ struct Minecraft;
 
 struct XperiaPlayInput: KeyboardInput
 {
-	bool_t field_20;
+	bool_t sneakTouched;
 	int8_t field_21, field_22, field_23;
 	Minecraft* mc;
 	RectangleArea field_28, field_40;
-	bool_t field_58;
+	bool_t chatScreenPressed;
 	int8_t field_59, field_5A, field_5B;
 
 	XperiaPlayInput(Minecraft*, Options*);

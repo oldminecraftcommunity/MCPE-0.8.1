@@ -64,16 +64,16 @@ void AndroidRestRequestJob::run(){
 void AndroidRestRequestJob::finish(){
 	if(this->getStatus() != JS_STOPPED){
 		if(this->httpStatusOrNegativeError < 0){
-			this->onError(0, 1, this->httpStatusOrNegativeError, this->content, this->field_44, this->field_8.lock());
+			this->onError(0, 1, this->httpStatusOrNegativeError, this->content, this->field_44, std::shared_ptr<RestRequestJob>(this->field_8));
 		}else{
 			if(this->httpStatusOrNegativeError >= 300){
-				this->onError(0, 0, this->httpStatusOrNegativeError, this->content, this->field_44, this->field_8.lock());
+				this->onError(0, 0, this->httpStatusOrNegativeError, this->content, this->field_44, std::shared_ptr<RestRequestJob>(this->field_8));
 			}else{
-				this->onFinish(this->httpStatusOrNegativeError, this->content, this->field_44, this->field_8.lock());
+				this->onFinish(this->httpStatusOrNegativeError, this->content, this->field_44, std::shared_ptr<RestRequestJob>(this->field_8));
 			}
 		}
 	}else{
-		this->onError(1, 0, 0, "", this->field_44, this->field_8.lock());
+		this->onError(1, 0, 0, "", this->field_44, std::shared_ptr<RestRequestJob>(this->field_8));
 	}
 }
 #endif

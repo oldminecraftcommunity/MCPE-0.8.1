@@ -4,78 +4,41 @@
 #include <entity/path/PathNavigation.hpp>
 #include <level/Level.hpp>
 
-BreedGoal::BreedGoal(Animal* a2, float a3)
-	: Goal() {
-	this->animal = a2;
-	this->speedMultiplier = a3;
+BreedGoal::BreedGoal(Animal* a2, float a3) :
+	Goal(), animal(a2), target(), inUseTicks(0), speedMultiplier(a3){
 	this->level = a2->level;
 	this->setRequiredControlFlags(3);
 }
 void BreedGoal::breed() {
-	Animal* animal;	   // r5
-	Animal* v5;		   // r0
-	AgableMob* v6;	   // r5
-	Animal* v8;		   // r0
-	AgableMob* v9;	   // r0
-	Animal* v10;	   // r0
-	int32_t v11;	   // r6
-	Random* p_random;  // r5
-	float g;		   // s23
-	float Gaussian;	   // s22
-	float v15;		   // r0
-	Level* level;	   // r7
-	float posX;		   // s18
-	float v18;		   // s21
-	Animal* v20;	   // r3
-	float entityWidth; // s13
-	float v22;		   // s14
-	float v23;		   // s20
-	float posY;		   // s18
-	Animal* v26;	   // r3
-	float posZ;		   // s25
-	float v28;		   // s14
-	float v29;		   // s18
-	float v30;		   // s14
 
-	animal = this->animal;
-	v5 = this->target.lock();
-	v6 = (AgableMob*)animal->getBreedOffspring(v5);
-	if(v6) {
+	AgableMob* baby = (AgableMob*)this->animal->getBreedOffspring(this->target.lock());
+	if(baby) {
 		this->animal->setAge(6000);
-		v9 = this->target.lock();
-		v9->setAge(6000);
+		this->target.lock()->setAge(6000);
 		this->animal->resetLove();
-		v10 = this->target.lock();
-		v10->resetLove();
-		v6->setAge(-24000);
-		v6->moveTo(this->animal->posX, this->animal->posY, this->animal->posZ, 0.0, 0.0);
-		v11 = 7;
-		this->level->addEntity(v6);
-		p_random = &this->animal->level->random;
+		this->target.lock()->resetLove();
+
+		baby->setAge(-24000);
+		baby->moveTo(this->animal->posX, this->animal->posY, this->animal->posZ, 0.0, 0.0);
+		this->level->addEntity(baby);
+
+
+		int cnt = 7;
+		Random* rng = &this->animal->level->random;
 		do {
-			g = p_random->nextGaussian();
-			Gaussian = p_random->nextGaussian();
-			v15 = p_random->nextGaussian();
-			level = this->level;
-			posX = this->animal->posX;
-			v18 = v15;
-			v20 = this->animal;
-			entityWidth = v20->entityWidth;
-			v22 = p_random->nextFloat();
-			v23 = posX + (float)((float)(v22 * entityWidth) + (float)(v22 * entityWidth));
-			posY = v20->posY;
-			v26 = this->animal;
-			posZ = v26->posZ;
-			v28 = p_random->nextFloat();
-			v29 = (float)(posY + 0.5) + (float)(v28 * v26->entityHeight);
-			v30 = p_random->nextFloat();
-			level->addParticle(PT_HEART, v23 - entityWidth, v29, (float)(posZ + (float)((float)(v30 * this->animal->entityWidth) + (float)(v30 * this->animal->entityWidth))) - this->animal->entityWidth, g * 0.02, Gaussian * 0.02, v18 * 0.02, 0);
-			--v11;
-		} while(v11);
+			float g = rng->nextGaussian();
+			float g2 = rng->nextGaussian();
+			float g3 = rng->nextGaussian();
+			this->level->addParticle(PT_HEART,
+				this->animal->posX + (rng->nextFloat() * this->animal->entityWidth) * 2 - this->animal->entityWidth,
+				(this->animal->posY + 0.5f) + (rng->nextFloat() * this->animal->entityHeight),
+				this->animal->posZ + (rng->nextFloat() * this->animal->entityWidth) * 2 - this->animal->entityWidth,
+				g * 0.02f, g2 * 0.02f, g3 * 0.02f, 0
+			);
+		} while(--cnt);
 	} else {
 		this->animal->resetLove();
-		v8 = this->target.lock();
-		v8->resetLove();
+		this->target.lock()->resetLove();
 	}
 }
 Animal* BreedGoal::getFreePartner() {
