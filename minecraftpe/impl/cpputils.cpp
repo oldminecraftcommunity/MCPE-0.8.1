@@ -5,6 +5,8 @@
 #include <sys/time.h>
 #include <stdio.h>
 #include <time.h>
+#include <unistd.h>
+
 inline time_t _startedAt(){
 	struct timeval v1;
 	gettimeofday(&v1, 0);
