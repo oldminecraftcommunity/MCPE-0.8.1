@@ -354,14 +354,14 @@ void AppPlatform_sdl::init(){
 		prevMGrabbed = mc->mouseGrabbed;
 
 
-		while(SDL_PollEvent(&appPlatform.sdl_event)){
+		while(SDL_PollEvent(&this->sdl_event)){
 			uint16_t _mx, _my;
-			switch(appPlatform.sdl_event.type) {
+			switch(this->sdl_event.type) {
 				case SDL_ACTIVEEVENT:
 					//wine sends 6 when focus is received for some reason
 					//(and 2(SDL_APPINPUTFOCUS) when lost)
-					if(appPlatform.sdl_event.active.state == 6 || appPlatform.sdl_event.active.state == SDL_APPINPUTFOCUS) {
-						windowActive = appPlatform.sdl_event.active.gain;
+					if(this->sdl_event.active.state == 6 || this->sdl_event.active.state == SDL_APPINPUTFOCUS) {
+						windowActive = this->sdl_event.active.gain;
 						if(!windowActive && !mc->currentScreen) {
 							mc->pauseGame(1);
 						}
@@ -371,8 +371,8 @@ void AppPlatform_sdl::init(){
 					running = 0;
 					break;
 				case SDL_VIDEORESIZE:
-					this->screenWidth = appPlatform.sdl_event.resize.w;
-					this->screenHeight = appPlatform.sdl_event.resize.h;
+					this->screenWidth = this->sdl_event.resize.w;
+					this->screenHeight = this->sdl_event.resize.h;
 					this->sdl_surface = this->setSDLVideoMode();
 					if(!this->sdl_surface) {
 						printf("setSDLVideoModel: returned 0 after resize! Force quitting\n");
@@ -386,47 +386,47 @@ void AppPlatform_sdl::init(){
 					if(justGrabbed) break; //ignore first mouse motion even after grab
 #endif
 					if(!windowActive) break;
-					_mx = appPlatform.sdl_event.motion.x;
-					_my = appPlatform.sdl_event.motion.y;
-					Mouse::feed(0, 0, _mx, _my,appPlatform.sdl_event.motion.xrel, appPlatform.sdl_event.motion.yrel);
+					_mx = this->sdl_event.motion.x;
+					_my = this->sdl_event.motion.y;
+					Mouse::feed(0, 0, _mx, _my,this->sdl_event.motion.xrel, this->sdl_event.motion.yrel);
 					break;
 				case SDL_MOUSEBUTTONDOWN:
 				case SDL_MOUSEBUTTONUP:
 					if(!windowActive) break;
-					_mx = appPlatform.sdl_event.button.x;
-					_my = appPlatform.sdl_event.button.y;
+					_mx = this->sdl_event.button.x;
+					_my = this->sdl_event.button.y;
 
-					if(mc->mouseGrabbed && (appPlatform.sdl_event.button.button == SDL_BUTTON_LEFT || appPlatform.sdl_event.button.button == SDL_BUTTON_RIGHT)) {
+					if(mc->mouseGrabbed && (this->sdl_event.button.button == SDL_BUTTON_LEFT || this->sdl_event.button.button == SDL_BUTTON_RIGHT)) {
 						int key = 0;
-						if(appPlatform.sdl_event.button.button == SDL_BUTTON_LEFT) {
+						if(this->sdl_event.button.button == SDL_BUTTON_LEFT) {
 							key = lbkey;
 						}
-						if(appPlatform.sdl_event.button.button == SDL_BUTTON_RIGHT) {
+						if(this->sdl_event.button.button == SDL_BUTTON_RIGHT) {
 							key = rbkey;
 						}
 
-						if(key && appPlatform.sdl_event.type == SDL_MOUSEBUTTONDOWN && !Keyboard::_states[key]){
+						if(key && this->sdl_event.type == SDL_MOUSEBUTTONDOWN && !Keyboard::_states[key]){
 							Keyboard::feed(key, 1);
-						}else if(key && appPlatform.sdl_event.type == SDL_MOUSEBUTTONUP && Keyboard::_states[key]){
+						}else if(key && this->sdl_event.type == SDL_MOUSEBUTTONUP && Keyboard::_states[key]){
 							Keyboard::feed(key, 0);
 						}
-					} else if(appPlatform.sdl_event.type == SDL_MOUSEBUTTONDOWN && (appPlatform.sdl_event.button.button == SDL_BUTTON_WHEELUP || appPlatform.sdl_event.button.button == SDL_BUTTON_WHEELDOWN)) {
-						int off = appPlatform.sdl_event.button.button == SDL_BUTTON_WHEELDOWN ? 1 : -1;
+					} else if(this->sdl_event.type == SDL_MOUSEBUTTONDOWN && (this->sdl_event.button.button == SDL_BUTTON_WHEELUP || this->sdl_event.button.button == SDL_BUTTON_WHEELDOWN)) {
+						int off = this->sdl_event.button.button == SDL_BUTTON_WHEELDOWN ? 1 : -1;
 						if(mc->player && !mc->currentScreen) {
 							int newslot = mc->player->inventory->selectedSlot + off;
 							if(newslot < 0) newslot = mc->gui.getNumSlots() - 2; //TODO one of the slots is used by inv button
 							if(newslot >= mc->gui.getNumSlots()-1) newslot = 0;
 							mc->player->inventory->selectSlot(newslot);
 						}
-					} else if(appPlatform.sdl_event.button.button == SDL_BUTTON_LEFT || appPlatform.sdl_event.button.button == SDL_BUTTON_RIGHT){
-						Mouse::feed(appPlatform.sdl_event.button.button == SDL_BUTTON_LEFT ? 1 : 2, appPlatform.sdl_event.type == SDL_MOUSEBUTTONDOWN, _mx, _my);
+					} else if(this->sdl_event.button.button == SDL_BUTTON_LEFT || this->sdl_event.button.button == SDL_BUTTON_RIGHT){
+						Mouse::feed(this->sdl_event.button.button == SDL_BUTTON_LEFT ? 1 : 2, this->sdl_event.type == SDL_MOUSEBUTTONDOWN, _mx, _my);
 					}
 					break;
 				case SDL_KEYDOWN:
 				case SDL_KEYUP:
 					if(!windowActive) break;
-					if(this->keyboardShown && appPlatform.sdl_event.key.keysym.unicode && appPlatform.sdl_event.key.keysym.sym != SDLK_BACKSPACE && appPlatform.sdl_event.key.keysym.sym != SDLK_RETURN && appPlatform.sdl_event.key.keysym.sym != SDLK_ESCAPE) {
-						uint16_t c = appPlatform.sdl_event.key.keysym.unicode;
+					if(this->keyboardShown && this->sdl_event.key.keysym.unicode && this->sdl_event.key.keysym.sym != SDLK_BACKSPACE && this->sdl_event.key.keysym.sym != SDLK_RETURN && this->sdl_event.key.keysym.sym != SDLK_ESCAPE) {
+						uint16_t c = this->sdl_event.key.keysym.unicode;
 						char p_codepoint[5];
 						if(c <= 0x7f) {
 							p_codepoint[0] = (char)c;
@@ -446,8 +446,8 @@ void AppPlatform_sdl::init(){
 					}
 
 					int pressed = 0;
-					this->onKeyPressed(mc, appPlatform.sdl_event.key.keysym.sym, appPlatform.sdl_event.type == SDL_KEYDOWN);
-					Keyboard::feed(appPlatform.sdl_event.type == SDL_KEYDOWN ? 1 : 0, pressed);
+					this->onKeyPressed(mc, this->sdl_event.key.keysym.sym, this->sdl_event.type == SDL_KEYDOWN);
+					Keyboard::feed(this->sdl_event.type == SDL_KEYDOWN ? 1 : 0, pressed);
 					break;
 			}
 		}

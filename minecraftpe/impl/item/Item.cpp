@@ -36,6 +36,15 @@
 #include <level/Level.hpp>
 #include <math/Mth.hpp>
 
+std::string Item::ICON_DESCRIPTION_PREFIX = "item.";
+Random Item::random;
+std::shared_ptr<TextureAtlas> Item::_itemTextureAtlas;
+Item* Item::items[512];
+Item::Tier Item::Tier::WOOD(0, 59, 2.0, 0);
+Item::Tier Item::Tier::STONE(1, 131, 4.0, 1);
+Item::Tier Item::Tier::IRON(2, 250, 6.0, 2);
+Item::Tier Item::Tier::EMERALD(3, 1561, 8.0, 3);
+Item::Tier Item::Tier::GOLD(0, 32, 12.0, 0);
 Item* Item::shovel_iron;
 Item* Item::pickAxe_iron;
 Item* Item::hatchet_iron;
@@ -110,6 +119,8 @@ Item* Item::saddle;
 Item* Item::door_iron;
 Item* Item::redStone;
 Item* Item::snowBall;
+Item* Item::mobPlacer;
+Item* Item::pumpkinPie;
 Item* Item::leather;
 Item* Item::brick;
 Item* Item::clay;
@@ -121,40 +132,28 @@ Item* Item::egg;
 Item* Item::compass;
 Item* Item::clock;
 Item* Item::yellowDust;
+Item* Item::melon;
+Item* Item::seeds_pumpkin;
+Item* Item::seeds_melon;
 Item* Item::dye_powder;
 Item* Item::bone;
 Item* Item::sugar;
 Item* Item::cake;
 Item* Item::bed;
+Item* Item::potato;
+Item* Item::potatoBaked;
+Item* Item::carrot;
+Item* Item::beetroot;
+Item* Item::seeds_beetroot;
+Item* Item::beetrootSoup;
 Item* Item::shears;
-Item* Item::melon;
-Item* Item::seeds_pumpkin;
-Item* Item::seeds_melon;
 Item* Item::beef_raw;
 Item* Item::beef_cooked;
 Item* Item::chicken_raw;
 Item* Item::chicken_cooked;
-Item* Item::mobPlacer;
-Item* Item::carrot;
-Item* Item::potato;
-Item* Item::potatoBaked;
-Item* Item::pumpkinPie;
 Item* Item::netherbrick;
 Item* Item::netherQuartz;
 Item* Item::camera;
-Item* Item::beetroot;
-Item* Item::seeds_beetroot;
-Item* Item::beetrootSoup;
-Item* Item::items[512];
-std::string Item::ICON_DESCRIPTION_PREFIX = "item.";
-Random Item::random;
-
-std::shared_ptr<TextureAtlas> Item::_itemTextureAtlas;
-Item::Tier Item::Tier::GOLD{0, 32, 12.0, 0};
-Item::Tier Item::Tier::EMERALD{3, 1561, 8.0, 3};
-Item::Tier Item::Tier::IRON{2, 250, 6.0, 2};
-Item::Tier Item::Tier::STONE{1, 131, 4.0, 1};
-Item::Tier Item::Tier::WOOD{0, 59, 2.0, 0};
 
 void Item::initItems(std::shared_ptr<TextureAtlas> a2){
 	static bool initialized = 0;

@@ -2,23 +2,6 @@
 #include <math/Mth.hpp>
 #include <tile/Tile.hpp>
 
-WaterSideTexture::WaterSideTexture()
-	: DynamicTexture(*Tile::water->getTexture(3), 2) {
-	this->field_28 = 0;
-	this->field_2C = 0;
-	this->field_30 = 0;
-	this->field_34 = new float[256];
-	this->field_38 = new float[256];
-	this->field_3C = new float[256];
-	this->field_40 = new float[256];
-	for(int32_t i = 0; i != 256; ++i) {
-		this->field_34[i] = 0;
-		this->field_38[i] = 0;
-		this->field_3C[i] = 0;
-		this->field_40[i] = 0;
-	}
-}
-
 WaterSideTexture::~WaterSideTexture() {
 	if(this->field_34) delete[] this->field_34;
 	if(this->field_38) delete[] this->field_38;
@@ -90,4 +73,20 @@ void WaterSideTexture::tick() {
 		v13 += 4;
 		v17[2] = (int32_t)(float)((float)(v16 * 50.0) + 146.0);
 	} while(v14 != 256);
+}
+WaterSideTexture::WaterSideTexture()
+	: DynamicTexture(*Tile::water->getTexture(3), 2) {
+	this->field_28 = 0;
+	this->field_2C = 0;
+	this->field_30 = 0;
+	this->field_34 = new float[256];
+	this->field_38 = new float[256];
+	this->field_3C = new float[256];
+	this->field_40 = new float[256];
+	for(int32_t i = 0; i != 256; ++i) {
+		this->field_34[i] = 0;
+		this->field_38[i] = 0;
+		this->field_3C[i] = 0;
+		this->field_40[i] = 0;
+	}
 }

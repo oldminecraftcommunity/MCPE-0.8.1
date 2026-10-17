@@ -11,31 +11,45 @@
 #include <nbt/StringTag.hpp>
 #include <tile/entity/TileEntityFactory.hpp>
 
-int32_t TileEntity::_runningId = 0;
-std::map<int32_t, std::string> TileEntity::classIdMap;
 std::map<std::string, int32_t> TileEntity::idClassMap;
+std::map<int32_t, std::string> TileEntity::classIdMap;
+int32_t TileEntity::_runningId = 0;
 
-void TileEntity::initTileEntities() {
-	TileEntity::setId(1, "Furnace");
-	TileEntity::setId(2, "Chest");
-	TileEntity::setId(3, "NetherReactor");
-	TileEntity::setId(4, "Sign");
+void TileEntity::triggerEvent(int32_t, int32_t) {
+}
+void TileEntity::clearCache(void) {
+	this->block = 0;
+	this->blockMetadata = -1;
+}
+bool_t TileEntity::isFinished() {
+	return 0;
+}
+Packet* TileEntity::getUpdatePacket() {
+	return 0;
+}
+
+void TileEntity::setRemoved(void) {
+	if(!this->removed) {
+		this->removed = 1;
+		if(!this->level->isClient) {
+			for(auto& player: this->level->players) {
+				player->tileEntityDestroyed(this->id);
+			}
+		}
+	}
+}
+void TileEntity::setLevelAndPos(Level* level, int32_t x, int32_t y, int32_t z) {
+	this->level = level;
+	this->posX = x;
+	this->posY = y;
+	this->posZ = z;
+	this->_resetAABB();
+	if(this->level){
+		this->block = Tile::tiles[level->getTile(x, y, z)];
+	}
 }
 void TileEntity::teardownTileEntities() {
 }
-TileEntity* TileEntity::loadStatic(CompoundTag* a2) {
-	TileEntity* te; // r0
-
-	std::string ss = a2->contains("id", 8) ? ((StringTag*)a2->get("id"))->value : ""; //Tag::NullString maybe?
-
-	const auto& id = TileEntity::idClassMap.find(ss);
-	if(id == TileEntity::idClassMap.end() || (te = TileEntityFactory::createTileEntity(id->second)) == 0) {
-		return 0;
-	}
-	te->load(a2);
-	return te;
-}
-
 TileEntity::TileEntity(int32_t a2) {
 	int32_t v2;
 
@@ -60,6 +74,63 @@ TileEntity::TileEntity(int32_t a2) {
 	this->field_4C = 0.0;
 	this->field_50 = 0.0;
 	this->field_54 = 0.0;
+}
+int32_t TileEntity::getData(void) {
+	if(this->blockMetadata == -1) {
+		this->blockMetadata = this->level->getData(this->posX, this->posY, this->posZ);
+	}
+	return this->blockMetadata;
+}
+void TileEntity::setData(int32_t a2) {
+	this->blockMetadata = a2;
+	this->level->setData(this->posX, this->posY, this->posZ, a2, 3);
+}
+void TileEntity::setChanged(void) {
+	if(this->level) {
+		this->blockMetadata = this->level->getData(this->posX, this->posY, this->posZ);
+		this->level->tileEntityChanged(this->posX, this->posY, this->posZ, this);
+	}
+}
+float TileEntity::distanceToSqr(float x, float y, float z) {
+	float xd = (this->posX + 0.5f) - x;
+	float yd = (this->posY + 0.5f) - y;
+	float zd = (this->posZ + 0.5f) - z;
+	return (xd * xd) + (yd * yd) + (zd * zd);
+}
+struct Tile* TileEntity::getTile() {
+	if(!this->block) {
+		this->block = Tile::tiles[this->level->getTile(this->posX, this->posY, this->posZ)];
+	}
+	return this->block;
+}
+
+bool_t TileEntity::isRemoved() const{
+	return this->removed;
+}
+void TileEntity::clearRemoved(void) {
+	this->removed = 0;
+}
+bool_t TileEntity::isType(int32_t a2) {
+	return this->type == a2;
+}
+bool_t TileEntity::isType(TileEntity* ent, int32_t a2) {
+	if(ent) return ent->isType(a2);
+	return 0;
+}
+float TileEntity::getBrightness(float a2) {
+	return this->level->getBrightness(this->posX, this->posY, this->posZ);
+}
+void TileEntity::destroyTick(const Mob* a2, float a3) {
+	float y; // r1
+	float z; // r2
+
+	this->field_54 = a3;
+	Vec3 v6 = a2->getLookAngle();
+	y = v6.y;
+	z = v6.z;
+	this->field_48 = v6.x;
+	this->field_4C = y;
+	this->field_50 = z;
 }
 void TileEntity::_destructionWobble(float& x, float& y, float& z) {
 	float v4; // s14
@@ -97,74 +168,6 @@ void TileEntity::_destructionWobble(float& x, float& y, float& z) {
 			z = z + v18;
 			this->field_44 = 0.0;
 		}
-	}
-}
-
-void TileEntity::clearRemoved(void) {
-	this->removed = 0;
-}
-void TileEntity::destroyTick(const Mob* a2, float a3) {
-	float y; // r1
-	float z; // r2
-
-	this->field_54 = a3;
-	Vec3 v6 = a2->getLookAngle();
-	y = v6.y;
-	z = v6.z;
-	this->field_48 = v6.x;
-	this->field_4C = y;
-	this->field_50 = z;
-}
-float TileEntity::distanceToSqr(float x, float y, float z) {
-	float xd; // s13
-	float yd; // s15
-	float zd; // s14
-
-	xd = (float)((float)this->posX + 0.5) - x;
-	yd = (float)((float)this->posY + 0.5) - y;
-	zd = (float)((float)this->posZ + 0.5) - z;
-	return (float)((float)(yd * yd) + (float)(xd * xd)) + (float)(zd * zd);
-}
-float TileEntity::getBrightness(float a2) {
-	return this->level->getBrightness(this->posX, this->posY, this->posZ);
-}
-int32_t TileEntity::getData(void) {
-	if(this->blockMetadata == -1) {
-		this->blockMetadata = this->level->getData(this->posX, this->posY, this->posZ);
-	}
-	return this->blockMetadata;
-}
-struct Tile* TileEntity::getTile() {
-	if(!this->block) {
-		this->block = Tile::tiles[this->level->getTile(this->posX, this->posY, this->posZ)];
-	}
-	return this->block;
-}
-
-bool_t TileEntity::isRemoved() const{
-	return this->removed;
-}
-bool_t TileEntity::isType(TileEntity* ent, int32_t a2) {
-	if(ent) return ent->isType(a2);
-	return 0;
-}
-bool_t TileEntity::isType(int32_t a2) {
-	return this->type == a2;
-}
-void TileEntity::setChanged(void) {
-	if(this->level) {
-		this->blockMetadata = this->level->getData(this->posX, this->posY, this->posZ);
-		this->level->tileEntityChanged(this->posX, this->posY, this->posZ, this);
-	}
-}
-void TileEntity::setData(int32_t a2) {
-	this->blockMetadata = a2;
-	this->level->setData(this->posX, this->posY, this->posZ, a2, 3);
-}
-void TileEntity::setId(int32_t a1, const std::string& a2) {
-	if(TileEntity::idClassMap.find(a2) == TileEntity::idClassMap.end()) {
-		TileEntity::idClassMap.insert(std::pair<std::string, int32_t>(a2, a1));
-		TileEntity::classIdMap.insert(std::pair<int32_t, std::string>(a1, a2));
 	}
 }
 void TileEntity::setupLighting(bool_t a2, float a3) {
@@ -261,7 +264,18 @@ void TileEntity::setupLighting(bool_t a2, float a3) {
 	}
 	glColor4f(v22, v23, v24, 1.0);
 }
+TileEntity* TileEntity::loadStatic(CompoundTag* a2) {
+	TileEntity* te; // r0
 
+	std::string ss = a2->contains("id", 8) ? ((StringTag*)a2->get("id"))->value : ""; //Tag::NullString maybe?
+
+	const auto& id = TileEntity::idClassMap.find(ss);
+	if(id == TileEntity::idClassMap.end() || (te = TileEntityFactory::createTileEntity(id->second)) == 0) {
+		return 0;
+	}
+	te->load(a2);
+	return te;
+}
 void TileEntity::load(CompoundTag* a2) {
 	this->posX = a2->getInt("x");
 	this->posY = a2->getInt("y");
@@ -277,47 +291,18 @@ bool_t TileEntity::save(CompoundTag* a2) {
 	a2->putInt("z", this->posZ);
 	return 1;
 }
-
-bool_t TileEntity::isFinished() {
-	return 0;
-}
-void TileEntity::setLevelAndPos(Level* level, int32_t x, int32_t y, int32_t z) {
-	this->level = level;
-	this->posX = x;
-	this->posY = y;
-	this->posZ = z;
-	this->_resetAABB();
-	if(this->level){
-		this->block = Tile::tiles[level->getTile(x, y, z)];
+void TileEntity::setId(int32_t a1, const std::string& a2) {
+	if(TileEntity::idClassMap.find(a2) == TileEntity::idClassMap.end()) {
+		TileEntity::idClassMap.insert(std::pair<std::string, int32_t>(a2, a1));
+		TileEntity::classIdMap.insert(std::pair<int32_t, std::string>(a1, a2));
 	}
 }
-Packet* TileEntity::getUpdatePacket() {
-	return 0;
+void TileEntity::initTileEntities() {
+	TileEntity::setId(1, "Furnace");
+	TileEntity::setId(2, "Chest");
+	TileEntity::setId(3, "NetherReactor");
+	TileEntity::setId(4, "Sign");
 }
-
-void TileEntity::setRemoved(void) {
-	Level* level;			// r3
-	uint32_t isClientMaybe; // r5
-	Level* v5;				// r2
-
-	if(!this->removed) {
-		this->removed = 1;
-		level = this->level;
-		isClientMaybe = level->isClient;
-		if(!level->isClient) {
-			for(auto& player: level->players) {
-				player->tileEntityDestroyed(this->id);
-			}
-		}
-	}
-}
-void TileEntity::triggerEvent(int32_t, int32_t) {
-}
-void TileEntity::clearCache(void) {
-	this->block = 0;
-	this->blockMetadata = -1;
-}
-
 int partitionTileEntities(const std::vector<TileEntity*>& a1, std::vector<TileEntity*>& a2, std::vector<TileEntity*>& a3) {
 	std::map<TilePos, TileEntity*> v22;
 	for(unsigned int v5 = 0; v5 < a1.size(); ++v5) {

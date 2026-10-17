@@ -30,54 +30,30 @@ PathfinderMob::~PathfinderMob() {
 	if(this->path) delete this->path;
 }
 bool_t PathfinderMob::canSpawn() {
-	int32_t v3; // r7
-	int32_t v4; // r6
-	int32_t v5; // r0
-
 	if(Mob::canSpawn()) {
-		v3 = Mth::floor(this->posX);
-		v4 = Mth::floor(this->boundingBox.minY);
-		v5 = Mth::floor(this->posZ);
-		return this->getWalkTargetValue(v3, v4, v5) >= 0.0;
+		int x = Mth::floor(this->posX);
+		int y = Mth::floor(this->boundingBox.minY);
+		int z = Mth::floor(this->posZ);
+		return this->getWalkTargetValue(x, y, z) >= 0.0;
 	}
 	return 0;
 }
 void PathfinderMob::updateAi() {
-	int32_t inPanicTicksMaybe; // r3
-	int32_t attackTarget;	   // r7
 	Entity* v5;				   // r0
 	Entity* target;			   // r5
-	Entity* entity;			   // r0
-	int32_t v9;				   // s21
-	int32_t v10;			   // r9
-	int32_t v11;			   // r0
-	int32_t v12;			   // r10
-	int32_t v13;			   // r3
 	float v15;				   // s21
 	float v16;				   // s16
-	float v17;				   // s16
-	float v18;				   // s20
-	bool_t shouldHoldGround;   // r3
-	float v20;				   // s15
-	float v21;				   // s15
-	float v22;				   // s20
-	float v23;				   // s15
 	float v24;				   // s17
 	float v26;				   // r7
 	bool_t v27;				   // r0
 	float v30;				   // s15
-	float x;				   // s18
-	float y;				   // s16
-	float i;				   // s17
 
-	inPanicTicksMaybe = this->inPanicTicksMaybe;
-	if(inPanicTicksMaybe > 0) {
-		this->inPanicTicksMaybe = inPanicTicksMaybe - 1;
+	if(this->inPanicTicksMaybe > 0) {
+		this->inPanicTicksMaybe -= 1;
 	}
-	attackTarget = this->attackTarget;
 	this->_shouldHoldGround = this->shouldHoldGround();
-	if(attackTarget) {
-		entity = this->level->getEntity(attackTarget);
+	if(this->attackTarget) {
+		Entity* entity = this->level->getEntity(this->attackTarget);
 		target = entity;
 		if(entity && entity->isAlive()) {
 			this->attackTarget = target->entityId;
@@ -105,61 +81,62 @@ void PathfinderMob::updateAi() {
 			this->findRandomStrollLocation();
 		}
 	} else {
-		this->setPath(this->level->findPath(this, target, 16.0, 1, 0, 0, 1));
+		this->setPath(this->level->findPath(this, target, 16.0f, 1, 0, 0, 1));
 	}
-	v9 = Mth::floor(this->boundingBox.minY + 0.5);
-	v10 = this->isInWater();
-	v11 = this->isInLava();
+	int v9 = Mth::floor(this->boundingBox.minY + 0.5);
+	bool inWater = this->isInWater();
+	bool inLava = this->isInLava();
 	this->pitch = 0.0;
-	v12 = v11;
 	if(this->path && this->random.genrand_int32() % 100) {
+		bool isPathing;
 		Vec3 v34 = this->path->currentPos(this);
 		v30 = this->entityWidth + this->entityWidth;
+
+		float x;				   // s18
+		float y;				   // s16
+		float i;				   // s17
 		x = v34.x;
 		y = v34.y;
-		for(i = v34.z; (float)((float)((float)((float)(y - y) * (float)(y - y)) + (float)((float)(this->posX - x) * (float)(this->posX - x))) + (float)((float)(this->posZ - i) * (float)(this->posZ - i))) < (float)(v30 * v30); i = v34.z) {
+		for(i = v34.z; (float)((float)((float)((y - y) * (y - y)) + (float)((float)(this->posX - x) * (float)(this->posX - x))) + (float)((float)(this->posZ - i) * (float)(this->posZ - i))) < (float)(v30 * v30); i = v34.z) {
 			this->path->next();
 			if(this->path->isDone()) {
 				this->setPath(0);
-				v13 = 0;
+				isPathing = 0;
 				goto LABEL_62;
 			}
 			v34 = this->path->currentPos(this);
 			x = v34.x;
 			y = v34.y;
 		}
-		v13 = 1;
+		isPathing = 1;
 LABEL_62:
 		this->isJumping = 0;
-		if(v13) {
+		if(isPathing) {
 			v15 = y - (float)v9;
-			v16 = atan2((float)(i - this->posZ), (float)(x - this->posX));
-			v17 = (float)((float)((float)(v16 * 180.0) / 3.1416) - 90.0) - this->yaw;
+			v16 = atan2(i - this->posZ, x - this->posX);
+			float v17 = ((v16 * 180.0f / Mth::PI) - 90.0f) - this->yaw;
 			this->moveForward = this->getSpeed();
-			while(v17 < -180.0) {
-				v17 = v17 + 360.0;
+			while(v17 < -180.0f) {
+				v17 = v17 + 360.0f;
 			}
-			while(v17 >= 180.0) {
-				v17 = v17 - 360.0;
+			while(v17 >= 180.0f) {
+				v17 = v17 - 360.0f;
 			}
-			if(v17 > 30.0) {
-				v17 = 30.0;
-			} else if(v17 < -30.0) {
-				v17 = -30.0;
+			if(v17 > 30.0f) {
+				v17 = 30.0f;
+			} else if(v17 < -30.0f) {
+				v17 = -30.0f;
 			}
-			v18 = v17 + this->yaw;
-			shouldHoldGround = this->_shouldHoldGround;
-			this->yaw = v18;
-			if(shouldHoldGround) {
+			this->yaw = v17 + this->yaw;
+			if(this->_shouldHoldGround) {
 				if(target) {
-					v20 = atan2((float)(target->posZ - this->posZ), (float)(target->posX - this->posX));
-					v21 = (float)((float)(v20 * 180.0) / 3.1416) - 90.0;
-					v22 = v18 - v21;
+					float v20 = atan2(target->posZ - this->posZ, target->posX - this->posX);
+					float v21 = (v20 * 180.0f / Mth::PI) - 90.0f;
+					float v22 = this->yaw - v21;
 					this->yaw = v21;
-					v23 = this->moveForward;
-					v24 = (float)((float)((float)(v22 + 90.0) * 3.1416) / 180.0);
-					this->moveStrafe = -(float)(Mth::sin(v24) * this->moveForward);
-					this->moveForward = Mth::cos(v24) * v23;
+					v24 = (v22 + 90.0f * Mth::PI) / 180.0f;
+					this->moveStrafe = -(Mth::sin(v24) * this->moveForward);
+					this->moveForward = Mth::cos(v24) * this->moveForward;
 				}
 			}
 			if(v15 > 0.0) {
@@ -167,13 +144,13 @@ LABEL_62:
 			}
 		}
 		if(target) {
-			this->lookAt(target, 30.0, 30.0);
+			this->lookAt(target, 30.0f, 30.0f);
 		}
 		if(this->isCollidedHorizontally && !this->isPathFinding()) {
 			this->isJumping = 1;
 		}
 
-		if(this->random.nextFloat() < 0.8 && (v10 || v12)) {
+		if(this->random.nextFloat() < 0.8f && (inWater || inLava)) {
 			this->isJumping = 1;
 		}
 	} else {
@@ -202,11 +179,7 @@ Entity* PathfinderMob::getAttackTarget() {
 	return 0;
 }
 void PathfinderMob::setAttackTarget(Entity* entity) {
-	if(entity) {
-		this->attackTarget = entity->entityId;
-	} else {
-		this->attackTarget = 0;
-	}
+	this->attackTarget = entity ? entity->entityId : 0;
 }
 float PathfinderMob::getWalkTargetValue(int32_t, int32_t, int32_t) {
 	return 0.0;

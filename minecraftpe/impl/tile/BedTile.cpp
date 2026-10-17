@@ -7,7 +7,7 @@
 #include <tile/material/Material.hpp>
 #include <rendering/TextureAtlasTextureItem.hpp>
 
-int32_t BedTile::HEAD_DIRECTION_OFFSETS[] = {0, 1, -1, 0, 0, -1, 1, 0};
+const int32_t BedTile::HEAD_DIRECTION_OFFSETS[] = {0, 1, -1, 0, 0, -1, 1, 0};
 
 BedTile::BedTile(int32_t id)
 	: DirectionalTile(id, Material::cloth) {

@@ -7,8 +7,8 @@
 // and slightly changed function names?
 struct Base64
 {
-	static char_t reverse_table[128];
-	static char_t b64_table[65];
+	static const char_t b64_table[65];
+	static const char_t reverse_table[128];
 
 	static std::string base64Decode(const std::string&);
 	static std::string base64Encode(const std::string&);

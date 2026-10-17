@@ -12,7 +12,7 @@ struct ArmorItem: Item //armour*
 		int32_t getDefenseForSlot(int32_t) const; //defence* //>=< :wsndow0_angry:
 		int32_t getHealthForSlot(int32_t) const;
 	};
-	static int32_t healthPerSlot[];
+	static const int32_t healthPerSlot[];
 	static ArmorMaterial CLOTH, CHAIN, IRON, GOLD, DIAMOND; //armour*
 
 	int32_t armorSlot, defenseForSlot, field_50; //armour*, defence*

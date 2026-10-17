@@ -3,5 +3,4 @@
 
 struct MemoryChunkStorage : ChunkStorage
 {
-	virtual ~MemoryChunkStorage(){}
 };

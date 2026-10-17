@@ -2,7 +2,7 @@
 #include <entity/Mob.hpp>
 #include <math/HitResult.hpp>
 
-int StairTile::DEAD_SPACES[8][2] = {{2, 6}, {3, 7}, {2, 3}, {6, 7}, {0, 4}, {1, 5}, {0, 1}, {4, 5}};
+const  int StairTile::DEAD_SPACES[8][2] = {{2, 6}, {3, 7}, {2, 3}, {6, 7}, {0, 4}, {1, 5}, {0, 1}, {4, 5}};
 
 bool_t StairTile::setInnerPieceShape(LevelSource* level, int32_t x, int32_t y, int32_t z) {
 	float v5;			   // s17

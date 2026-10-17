@@ -1,7 +1,7 @@
 #pragma once
 #include <input/ITouchScreenModel.hpp>
 #include <vector>
-#include <input/MouseAction.hpp>
+#include <input/Mouse.hpp>
 #include <util/area/IArea.hpp>
 
 struct IArea;

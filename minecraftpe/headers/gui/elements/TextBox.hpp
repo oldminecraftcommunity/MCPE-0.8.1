@@ -10,8 +10,8 @@ namespace Touch {
 
 struct TextBox: GuiElement
 {
-	static char_t* numberChars; //"0123456789"
-	static char_t* extendedAcsii; //"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890?^" "~'-_.,;<>!",0x22,"#&()=` []{}",0
+	static char_t* extendedAcsii;
+	static char_t* numberChars;
 
 
 	int32_t key;

@@ -207,42 +207,19 @@ Path* PathNavigation::getPath() {
 	return this->path;
 }
 int32_t PathNavigation::getSurfaceY() {
-	int32_t v2;	  // r0
-	Mob* mob;	  // r6
-	Level* level; // r8
-	int32_t minY; // r4
-	int32_t v6;	  // r10
-	int32_t v7;	  // r9
-	int32_t v8;	  // r0
-	int32_t v9;	  // r0
-	Mob* v10;	  // r8
-	Level* v11;	  // r6
-	int32_t v12;  // r11
-	int32_t v13;  // r0
-
-	v2 = this->mob->isInWater();
-	mob = this->mob;
-	if(!v2 || !this->canFloat) {
-		return (int32_t)(mob->boundingBox.minY + 0.5);
+	if(!this->mob->isInWater() || !this->canFloat) {
+		return (int32_t)(this->mob->boundingBox.minY + 0.5f);
 	}
-	level = this->level;
-	minY = (int32_t)mob->boundingBox.minY;
-	v6 = minY + 17;
-	v7 = Mth::floor(mob->posX);
-	v8 = Mth::floor(mob->posZ);
-	v9 = level->getTile(v7, minY, v8);
-	while(v9 == Tile::water->blockID || v9 == Tile::calmWater->blockID) {
-		v10 = this->mob;
-		++minY;
-		v11 = this->level;
-		v12 = Mth::floor(this->mob->posX);
-		v13 = Mth::floor(v10->posZ);
-		v9 = v11->getTile(v12, minY, v13);
-		if(minY == v6) {
+	int y = (int32_t)this->mob->boundingBox.minY;
+	int maxY = y + 17;
+	int id = this->level->getTile(Mth::floor(this->mob->posX), y, Mth::floor(this->mob->posZ));
+	while(id == Tile::water->blockID || id == Tile::calmWater->blockID) {
+		id = this->level->getTile(Mth::floor(this->mob->posX), ++y, Mth::floor(this->mob->posZ));
+		if(y == maxY) {
 			return (int32_t)this->mob->boundingBox.minY;
 		}
 	}
-	return minY;
+	return y;
 }
 Vec3 PathNavigation::getTempMobPos() {
 	float x;   // s16

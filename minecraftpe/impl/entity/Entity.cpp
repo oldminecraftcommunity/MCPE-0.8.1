@@ -15,9 +15,9 @@
 #include <nbt/ListTag.hpp>
 #include <nbt/FloatTag.hpp>
 
-std::string Entity::RIDING_TAG = "Riding";
-Random Entity::sharedRandom(getEpochTimeS());
 int32_t Entity::entityCounter = 0;
+Random Entity::sharedRandom(getEpochTimeS());
+std::string Entity::RIDING_TAG = "Riding";
 
 Entity::Entity(Level* a2) :
 	somethingRelatedToRenderer(1.0), field_2C(0), field_30(0), field_34(0),

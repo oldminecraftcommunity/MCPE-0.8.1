@@ -4,10 +4,10 @@ struct Biome;
 struct PerlinNoise;
 struct BiomeSource
 {
-	static const float noiseScale;
-	static const float downfallScale;
-	static const float tempScale;
 	static const float zoom;
+	static const float tempScale;
+	static const float downfallScale;
+	static const float noiseScale;
 
 	float* rainfallNoises;
 	float* temperatureNoises;

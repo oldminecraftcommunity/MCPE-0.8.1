@@ -1,9 +1,13 @@
 #include <entity/particles/Particle.hpp>
 #include <rendering/Tesselator.hpp>
 #include <math/Mth.hpp>
-std::string Particle::ITEMS_ATLAS = "items-opaque.png", Particle::TERRAIN_ATLAS = "terrain-atlas.tga", Particle::PARTICLE_ATLAS = "particles.png";
+
+float Particle::xOff, Particle::yOff, Particle::zOff;
 Vec3 Particle::playerViewDir = Vec3::ZERO;
-float Particle::zOff, Particle::yOff, Particle::xOff;
+std::string
+	Particle::PARTICLE_ATLAS = "particles.png",
+	Particle::TERRAIN_ATLAS = "terrain-atlas.tga",
+	Particle::ITEMS_ATLAS = "items-opaque.png";
 
 Particle::Particle(Level* level, ParticleType a3, const std::string& a4)
 	: Entity(level),

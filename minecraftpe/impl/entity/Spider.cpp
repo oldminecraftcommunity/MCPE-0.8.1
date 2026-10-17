@@ -16,17 +16,14 @@ float Spider::getModelScale() {
 	return 1.0;
 }
 bool_t Spider::isClimbing() {
-	return this->synchedEntityData.getByte(16) & 1;
+	return this->synchedEntityData.get<int8_t>(16) & 1;
 }
 int32_t Spider::makeStepSound() {
 	return 0;
 }
 void Spider::setClimbing(bool_t a2) {
-	if(a2) {
-		this->synchedEntityData.set<int8_t>(16, this->synchedEntityData.getByte(16) | 1);
-	}else{
-		this->synchedEntityData.set<int8_t>(16, this->synchedEntityData.getByte(16) & 0xfe);
-	}
+	int8_t v = this->synchedEntityData.get<int8_t>(16);
+	this->synchedEntityData.set<int8_t>(16, a2 ? (v | 1) : (v & 0xfe));
 }
 
 void Spider::tick() {

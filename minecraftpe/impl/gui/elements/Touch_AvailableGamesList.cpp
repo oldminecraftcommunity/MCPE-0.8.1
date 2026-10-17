@@ -1,6 +1,6 @@
 #include <gui/elements/Touch_AvailableGamesList.hpp>
 #include <Minecraft.hpp>
-#include <input/MouseDevice.hpp>
+#include <input/Mouse.hpp>
 #include <input/Multitouch.hpp>
 #include <network/PingedCompatibleServer.hpp>
 #include <rendering/Textures.hpp>

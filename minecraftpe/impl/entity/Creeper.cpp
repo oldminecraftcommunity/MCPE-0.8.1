@@ -34,21 +34,19 @@ int32_t Creeper::getSwellDir() {
 	return this->synchedEntityData.getByte(16);
 }
 float Creeper::getSwelling(float a2) {
-	return (float)((float)this->prevSwellTime + (float)((float)(this->swellTime - this->prevSwellTime) * a2)) / 28.0;
+	return (this->prevSwellTime + ((this->swellTime - this->prevSwellTime) * a2)) / 28.0f;
 }
 void Creeper::setSwellDir(int32_t a2) {
-	this->synchedEntityData.set(16, a2);
+	this->synchedEntityData.set<int8_t>(16, a2);
 }
 
 void Creeper::tick() {
-	int32_t v3; // r3
-
 	this->prevSwellTime = this->swellTime;
 	if(this->level->isClient && this->getSwellDir() > 0) {
 		if(!this->swellTime) {
 			this->level->playSound(this, "random.fuse", 1.0, 0.5);
 		}
-		v3 = this->swellTime + 1;
+		int v3 = this->swellTime + 1;
 		if(v3 < 0) {
 			v3 = 0;
 		}
@@ -63,28 +61,18 @@ void Creeper::tick() {
 	}
 }
 bool_t Creeper::interactWithPlayer(Player* a2) {
-	ItemInstance* sel; // r0
-	ItemInstance* v5;  // r7
-	float v7;		   // s18
-	float v8;		   // s17
-	float v9;		   // s16
-	Level* level;	   // r8
-
-	sel = a2->inventory->getSelected();
-	v5 = sel;
+	ItemInstance* sel = a2->inventory->getSelected();
 	if(!sel || Item::flintAndSteel != sel->itemClass || !Item::flintAndSteel) {
 		return this->interactWithPlayer(a2);
 	}
 	if(!this->level->isClient && this->getSwellDir() != 2) {
-		v7 = a2->posX + 0.5;
-		v8 = a2->posY + 0.5;
-		v9 = a2->posZ + 0.5;
-		level = this->level;
-		level->playSound(v7, v8, v9, "fire.ignite", 1.0, (float)(level->random.nextFloat() * 0.4) + 0.8);
-		;
+		float x = a2->posX + 0.5f;
+		float y = a2->posY + 0.5f;
+		float z = a2->posZ + 0.5f;
+		this->level->playSound(x, y, z, "fire.ignite", 1.0f, level->random.nextFloat() * 0.4f + 0.8f);
 		this->setSwellDir(2);
 	}
-	v5->hurtAndBreak(1, a2);
+	sel->hurtAndBreak(1, a2);
 	return 1;
 }
 int32_t Creeper::getEntityTypeId() const {
@@ -107,42 +95,37 @@ bool_t Creeper::useNewAi() {
 	return 0;
 }
 void Creeper::checkHurtTarget(Entity* a2, float radius) {
-	int32_t v6;		  // r0
-	int32_t v7;		  // r5
-	int32_t swellDIr; // r5
-	int32_t v10;	  // r3
+	int32_t swellDir; // r5
 
 	if(!this->level->isClient) {
-		v6 = this->getSwellDir();
-		v7 = v6;
+		int v6 = this->getSwellDir();
 		if(v6 > 0) {
 			if(radius >= 7.0) {
 				if(v6 != 2) {
 LABEL_11:
-					swellDIr = -1;
+					swellDir = -1;
 					goto LABEL_13;
 				}
 LABEL_9:
-				swellDIr = 2;
+				swellDir = 2;
 				goto LABEL_13;
 			}
 		} else if(radius >= 3.0) {
 			goto LABEL_11;
 		}
-		if(!this->swellTime) {
+		if(this->swellTime == 0) {
 			this->level->playSound(this, "random.fuse", 1.0, 0.5);
 		}
-		if(v7 != 2) {
-			swellDIr = 1;
+		if(v6 != 2) {
+			swellDir = 1;
 LABEL_13:
-			this->setSwellDir(swellDIr);
-			if(swellDIr <= 0) {
+			this->setSwellDir(swellDir);
+			if(swellDir <= 0) {
 				this->checkCantSeeTarget(a2, radius);
 			} else {
-				v10 = this->swellTime + 1;
-				this->swellTime = v10;
-				if(v10 > 29) {
-					this->level->explode(this, this->posX, this->posY, this->posZ, 2.4);
+				this->swellTime += 1;
+				if(this->swellTime > 29) {
+					this->level->explode(this, this->posX, this->posY, this->posZ, 2.4f);
 					this->remove();
 				}
 				this->_shouldHoldGround = 1;
@@ -153,11 +136,9 @@ LABEL_13:
 	}
 }
 void Creeper::checkCantSeeTarget(Entity* a2, float a3) {
-	int32_t v4; // r3
-
 	if(!this->level->isClient && this->swellTime > 0 && this->getSwellDir() != 2) {
 		this->setSwellDir(-1);
-		v4 = this->swellTime - 1;
+		int v4 = this->swellTime - 1;
 		if(v4 < 0) {
 			v4 = 0;
 		}

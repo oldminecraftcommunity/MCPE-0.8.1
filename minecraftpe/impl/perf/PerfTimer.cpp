@@ -2,11 +2,11 @@
 #include <cpputils.hpp>
 #include <algorithm>
 
-std::map<std::string, float> PerfTimer::times;
-std::string PerfTimer::path = "";
-std::vector<double> PerfTimer::startTimes;
-std::vector<std::string> PerfTimer::paths;
 bool_t PerfTimer::enabled = 0;
+std::vector<std::string> PerfTimer::paths;
+std::vector<double> PerfTimer::startTimes;
+std::string PerfTimer::path = "";
+std::map<std::string, float> PerfTimer::times;
 
 std::vector<PerfTimer::ResultField> PerfTimer::getLog(const std::string& a2) {
 	if(PerfTimer::enabled) {

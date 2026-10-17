@@ -19,7 +19,16 @@ struct Item{
 		int32_t level, durability;
 		float efficienctMultiplier;
 		int32_t damageAgainstEntity;
+
+		Tier(int level, int durability, float eff, int dmg) : level(level), durability(durability), efficienctMultiplier(eff), damageAgainstEntity(dmg){
+
+		}
 	};
+	static std::string ICON_DESCRIPTION_PREFIX;
+	static Random random;
+	static std::shared_ptr<TextureAtlas> _itemTextureAtlas;
+	static Item* items[];
+
 	static Item* shovel_iron;
 	static Item* pickAxe_iron;
 	static Item* hatchet_iron;
@@ -94,6 +103,8 @@ struct Item{
 	static Item* door_iron;
 	static Item* redStone;
 	static Item* snowBall;
+	static Item* mobPlacer;
+	static Item* pumpkinPie;
 	static Item* leather;
 	static Item* brick;
 	static Item* clay;
@@ -105,30 +116,28 @@ struct Item{
 	static Item* compass;
 	static Item* clock;
 	static Item* yellowDust;
+	static Item* melon;
+	static Item* seeds_pumpkin;
+	static Item* seeds_melon;
 	static Item* dye_powder;
 	static Item* bone;
 	static Item* sugar;
 	static Item* cake;
 	static Item* bed;
+	static Item* potato;
+	static Item* potatoBaked;
+	static Item* carrot;
+	static Item* beetroot;
+	static Item* seeds_beetroot;
+	static Item* beetrootSoup;
 	static Item* shears;
-	static Item* melon;
-	static Item* seeds_pumpkin;
-	static Item* seeds_melon;
 	static Item* beef_raw;
 	static Item* beef_cooked;
 	static Item* chicken_raw;
 	static Item* chicken_cooked;
-	static Item* mobPlacer;
-	static Item* carrot;
-	static Item* potato;
-	static Item* potatoBaked;
-	static Item* pumpkinPie;
 	static Item* netherbrick;
 	static Item* netherQuartz;
 	static Item* camera;
-	static Item* beetroot;
-	static Item* seeds_beetroot;
-	static Item* beetrootSoup;
 
 	int32_t maxStackSize;
 	std::string itemTexture;
@@ -145,12 +154,6 @@ struct Item{
 	int8_t field_3F;
 	int32_t field_40;
 	std::string descriptionID;
-
-	static std::string ICON_DESCRIPTION_PREFIX;
-	static Random random;
-	static Item* items[];
-	static std::shared_ptr<TextureAtlas> _itemTextureAtlas;
-	static bool_t _D6E4C850_ItemsInitialized;
 
 	static void initItems(std::shared_ptr<struct TextureAtlas>);
 	static void teardownItems();

@@ -19,15 +19,15 @@ struct MeshBuffer{
 		}
 		void bindArrays(void) const;
 		void enableField(MeshBuffer::VertexFormat::Field f){
-			static int32_t FieldSize[] = {0xC, 0x8, 0x4, 0x4};
+			static const int32_t FieldSize[] = {0xC, 0x8, 0x4, 0x4};
 			if(this->offsets[f] == 255){
 				this->offsets[f] = stride;
 				this->stride += FieldSize[f];
 			}
 		}
 	};
-	int32_t arrayBuffer;
-	int32_t arrayElementsBuffer;
+	uint32_t arrayBuffer;
+	uint32_t arrayElementsBuffer;
 	int32_t arraysCount;
 	int32_t elementsCount;
 	float transformX, transformY, transformZ;

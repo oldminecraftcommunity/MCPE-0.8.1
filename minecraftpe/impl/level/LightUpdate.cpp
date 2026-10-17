@@ -4,16 +4,6 @@
 #include <level/chunk/LevelChunk.hpp>
 #include <tile/Tile.hpp>
 
-LightUpdate::LightUpdate(const LightLayer& ll, int32_t minX, int32_t minY, int32_t minZ, int32_t maxX, int32_t maxY, int32_t maxZ) {
-	this->layer = &ll;
-	this->minX = minX;
-	this->minY = minY;
-	this->minZ = minZ;
-	this->maxX = maxX;
-	this->maxY = maxY;
-	this->maxZ = maxZ;
-}
-LightUpdate::LightUpdate(const LightUpdate& a2) = default;
 LightUpdate::LightUpdate(const LightUpdate* a2) {
 	this->layer = a2->layer;
 	this->minX = a2->minX;
@@ -23,56 +13,17 @@ LightUpdate::LightUpdate(const LightUpdate* a2) {
 	this->maxY = a2->maxY;
 	this->maxZ = a2->maxZ;
 }
-bool_t LightUpdate::expandToContain(int32_t newMinX, int32_t newMinY, int32_t newMinZ, int32_t newMaxX, int32_t newMaxY, int32_t newMaxZ) {
-	if(newMinX >= this->minX && newMinY >= this->minY && newMinZ >= this->minZ && newMaxX <= this->maxX && newMaxY <= this->maxY && newMaxZ <= this->maxZ) {
-		return 1;
-	}
-	if(newMinX >= this->minX - 1) {
-		int minY = this->minY;
-		if(newMinY >= minY - 1) {
-			int minZ = this->minZ;
-			if(newMinZ >= minZ - 1) {
-				int maxX = this->maxX;
-				if(newMaxX <= maxX + 1) {
-					int maxY = this->maxY;
-					if(newMaxY <= maxY + 1) {
-						int maxZ = this->maxZ;
-						if(newMaxZ <= maxZ + 1) {
-							if(newMinX >= this->minX) {
-								newMinX = this->minX;
-							}
-							if(newMinY >= minY) {
-								newMinY = this->minY;
-							}
-							if(newMaxX < maxX) {
-								newMaxX = this->maxX;
-							}
-							if(newMaxY < maxY) {
-								newMaxY = this->maxY;
-							}
-							if(newMaxZ < maxZ) {
-								newMaxZ = this->maxZ;
-							}
-							if(newMinZ >= minZ) {
-								newMinZ = this->minZ;
-							}
-							if((newMaxZ - newMinZ) * (newMaxY - newMinY) * (newMaxX - newMinX) - (maxZ - minZ) * (maxY - minY) * (maxX - this->minX) <= 2) {
-								this->minX = newMinX;
-								this->minY = newMinY;
-								this->minZ = newMinZ;
-								this->maxX = newMaxX;
-								this->maxY = newMaxY;
-								this->maxZ = newMaxZ;
-								return 1;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	return 0;
+LightUpdate::LightUpdate(const LightUpdate& a2) = default;
+LightUpdate::LightUpdate(const LightLayer& ll, int32_t minX, int32_t minY, int32_t minZ, int32_t maxX, int32_t maxY, int32_t maxZ) {
+	this->layer = &ll;
+	this->minX = minX;
+	this->minY = minY;
+	this->minZ = minZ;
+	this->maxX = maxX;
+	this->maxY = maxY;
+	this->maxZ = maxZ;
 }
+
 LightUpdate& LightUpdate::operator=(const LightUpdate* a2) {
 	this->layer = a2->layer;
 	this->minX = a2->minX;
@@ -224,4 +175,55 @@ LABEL_20:
 			minX = x;
 		}
 	}
+}
+
+bool_t LightUpdate::expandToContain(int32_t newMinX, int32_t newMinY, int32_t newMinZ, int32_t newMaxX, int32_t newMaxY, int32_t newMaxZ) {
+	if(newMinX >= this->minX && newMinY >= this->minY && newMinZ >= this->minZ && newMaxX <= this->maxX && newMaxY <= this->maxY && newMaxZ <= this->maxZ) {
+		return 1;
+	}
+	if(newMinX >= this->minX - 1) {
+		int minY = this->minY;
+		if(newMinY >= minY - 1) {
+			int minZ = this->minZ;
+			if(newMinZ >= minZ - 1) {
+				int maxX = this->maxX;
+				if(newMaxX <= maxX + 1) {
+					int maxY = this->maxY;
+					if(newMaxY <= maxY + 1) {
+						int maxZ = this->maxZ;
+						if(newMaxZ <= maxZ + 1) {
+							if(newMinX >= this->minX) {
+								newMinX = this->minX;
+							}
+							if(newMinY >= minY) {
+								newMinY = this->minY;
+							}
+							if(newMaxX < maxX) {
+								newMaxX = this->maxX;
+							}
+							if(newMaxY < maxY) {
+								newMaxY = this->maxY;
+							}
+							if(newMaxZ < maxZ) {
+								newMaxZ = this->maxZ;
+							}
+							if(newMinZ >= minZ) {
+								newMinZ = this->minZ;
+							}
+							if((newMaxZ - newMinZ) * (newMaxY - newMinY) * (newMaxX - newMinX) - (maxZ - minZ) * (maxY - minY) * (maxX - this->minX) <= 2) {
+								this->minX = newMinX;
+								this->minY = newMinY;
+								this->minZ = newMinZ;
+								this->maxX = newMaxX;
+								this->maxY = newMaxY;
+								this->maxZ = newMaxZ;
+								return 1;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return 0;
 }

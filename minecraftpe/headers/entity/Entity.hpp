@@ -13,9 +13,9 @@ struct EntityPos; //TODO entitypos
 
 
 struct Entity{
-	static std::string RIDING_TAG;
-	static Random sharedRandom;
 	static int32_t entityCounter;
+	static Random sharedRandom;
+	static std::string RIDING_TAG;
 
 	SynchedEntityData synchedEntityData;
 	float posX;

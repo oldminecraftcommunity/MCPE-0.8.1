@@ -3,8 +3,8 @@
 
 struct Facing
 {
-	static int32_t OPPOSITE_FACING[];
-	static int32_t STEP_X[];
-	static int32_t STEP_Y[];
-	static int32_t STEP_Z[];
+	static const int32_t OPPOSITE_FACING[];
+	static const int32_t STEP_X[];
+	static const int32_t STEP_Y[];
+	static const int32_t STEP_Z[];
 };

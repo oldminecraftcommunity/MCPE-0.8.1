@@ -11,8 +11,8 @@ struct Keyboard
 	static int32_t _states[256];
 	static std::vector<KeyboardAction> _inputs;
 	static std::vector<KeyboardTextInput> _inputText;
-	static int32_t _textIndex;
 	static int32_t _index;
+	static int32_t _textIndex;
 
 	static void feed(uint8_t a1, int32_t a2) {
 		Keyboard::_inputs.push_back(KeyboardAction(a2, a1));

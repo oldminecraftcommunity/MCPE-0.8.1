@@ -5,7 +5,7 @@ struct BedTile : DirectionalTile{
 	TextureUVCoordinateSet field_80, field_98, field_B0;
 	TextureUVCoordinateSet field_C8, field_E0, field_F8;
 
-	static int32_t HEAD_DIRECTION_OFFSETS[];
+	static const int32_t HEAD_DIRECTION_OFFSETS[];
 
 	BedTile(int32_t);
 	void _setShape(void) {

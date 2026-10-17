@@ -1,25 +1,15 @@
 #include <math/noise/Synth.hpp>
 Synth::~Synth() = default;
 
+int32_t Synth::getDataSize(int32_t x, int32_t y){
+	return x * y * 4;
+}
+
 void Synth::create(int32_t x, int32_t y, float* arr){
-	int32_t v7;
-	int32_t i;
-	float v10, *v11;
-	int32_t j;
-
-	v7 = 4*x; //XXX ohno
-
-	for(i = 0; i < y; ++i){
-		for(j = 0; j < x; ++j){
-			v10 = this->getValue(j, i);
-			v11 = &arr[j];
-			*v11 = v10;
+	for(int i = 0; i < y; ++i){
+		for(int j = 0; j < x; ++j){
+			arr[i*x + j] = this->getValue(j, i);
 		}
-
-		arr = (float*)((char*)arr + v7);
 	}
 }
 
-int32_t Synth::getDataSize(int32_t x, int32_t y){
-	return x * y * 4; //TODO maybe needs *8?
-}

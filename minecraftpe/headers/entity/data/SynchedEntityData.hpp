@@ -71,5 +71,11 @@ struct SynchedEntityData{
 	static void writeDataItem(IDataOutput*, const DataItem*);
 
 	~SynchedEntityData();
+
+	 //may not exist - should always be inlined
+	template<typename T>
+	T get(int a2) {
+		return ((DataItem2<T>*)this->data[a2])->value;
+	}
 };
 

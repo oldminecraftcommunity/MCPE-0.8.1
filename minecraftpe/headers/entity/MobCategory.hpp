@@ -7,8 +7,11 @@ struct MobCategory{
 	static MobCategory monster;
 	static MobCategory creature;
 	static MobCategory waterCreature;
-	static int32_t numValues;
-	static MobCategory* values[];
+	static const int32_t numValues;
+	static constexpr MobCategory* values[] = {
+		&MobCategory::monster, &MobCategory::creature, &MobCategory::waterCreature
+	};
+
 
 	int32_t id;
 	int32_t minCountInChunkMaybe;

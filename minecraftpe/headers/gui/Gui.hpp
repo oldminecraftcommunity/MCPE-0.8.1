@@ -10,7 +10,7 @@
 struct Gui : GuiComponent, IConfigListener, AppPlatform::Listener{
 	static float InvGuiScale; //0.333333
 	static float GuiScale;
-	static float DropTicks; //40.0
+	static const float DropTicks; //40.0
 
 	float field_10;
 	std::string field_14;

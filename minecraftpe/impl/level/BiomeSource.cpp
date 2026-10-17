@@ -3,10 +3,10 @@
 #include <math/noise/PerlinNoise.hpp>
 #include <level/biome/Biome.hpp>
 #include <level/Level.hpp>
-const float BiomeSource::noiseScale = 0.25;
-const float BiomeSource::downfallScale = 0.05;
-const float BiomeSource::tempScale = 0.025;
 const float BiomeSource::zoom = 2.0;
+const float BiomeSource::tempScale = 0.025;
+const float BiomeSource::downfallScale = 0.05;
+const float BiomeSource::noiseScale = 0.25;
 
 BiomeSource::BiomeSource(struct Level* a2)
 	: randomInstance1(9871 * a2->getSeed())

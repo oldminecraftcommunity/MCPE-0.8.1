@@ -1,7 +1,7 @@
 #include <tile/material/Material.hpp>
 #include <tile/material/GasMaterial.hpp>
-#include <tile/material/DecorationMaterial.hpp>
 #include <tile/material/LiquidMaterial.hpp>
+#include <tile/material/DecorationMaterial.hpp>
 #include <tile/material/WebMaterial.hpp>
 #include <_types.h>
 

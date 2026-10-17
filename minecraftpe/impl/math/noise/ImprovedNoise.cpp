@@ -1,12 +1,5 @@
 #include <math/noise/ImprovedNoise.hpp>
 
-ImprovedNoise::ImprovedNoise(Random* random){
-	this->init(random);
-}
-ImprovedNoise::ImprovedNoise(void){
-	Random v2(1);
-	this->init(&v2);
-}
 void ImprovedNoise::init(Random* a2){
 	float xFloat, yFloat, zFloat;
 	int32_t index;
@@ -32,8 +25,30 @@ void ImprovedNoise::init(Random* a2){
 		this->permutations[index + 256] = this->permutations[index];
 	}
 }
+
+ImprovedNoise::ImprovedNoise(Random* random){
+	this->init(random);
+}
+ImprovedNoise::ImprovedNoise(void){
+	Random v2(1);
+	this->init(&v2);
+}
+
 float ImprovedNoise::lerp(float a2, float a3, float a4){
 	return a3 + (float)((float)(a4 - a3) * a2);
+}
+float ImprovedNoise::grad2(int32_t a2, float a3, float a4){
+	uint32_t v5;
+	float v6;
+
+	v5 = a2 & 0xF;
+	v6 = (float)(int32_t)(1 - (((uint32_t)a2 >> 3) & 1)) * a3;
+	if(v5 <= 3) a3 = 0.0;
+	else if(v5 != 12 && v5 != 14) a3 = a4;
+
+	if((a2 & 1) != 0) v6 = -v6;
+	if((a2 & 2) != 0) a3 = -a3;
+	return v6 + a3;
 }
 float ImprovedNoise::grad(int32_t a2, float a3, float a4, float a5){
 	uint32_t v6;
@@ -57,19 +72,6 @@ LABEL_8:
 	if((a2 & 2) != 0) a3 = -a3;
 
 	return v7 + a3;
-}
-float ImprovedNoise::grad2(int32_t a2, float a3, float a4){
-	uint32_t v5;
-	float v6;
-
-	v5 = a2 & 0xF;
-	v6 = (float)(int32_t)(1 - (((uint32_t)a2 >> 3) & 1)) * a3;
-	if(v5 <= 3) a3 = 0.0;
-	else if(v5 != 12 && v5 != 14) a3 = a4;
-
-	if((a2 & 1) != 0) v6 = -v6;
-	if((a2 & 2) != 0) a3 = -a3;
-	return v6 + a3;
 }
 float ImprovedNoise::noise(float x, float y, float z){
 	x += this->xCoord;

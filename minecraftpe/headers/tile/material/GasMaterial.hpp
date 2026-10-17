@@ -12,5 +12,4 @@ struct GasMaterial : Material{
 	virtual bool_t blocksMotion(void) const {
 		return 0;
 	}
-	virtual ~GasMaterial(){}
 };

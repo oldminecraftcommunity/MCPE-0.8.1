@@ -43,18 +43,18 @@ PlayScreen::PlayScreen(bool_t a2) : field_50(0), field_51(0), header(0),
 	this->setPlayScreenStateSetting(PlayScreenState::ELEVEN, 1, 0, 0, 0, 0, 1, PlayScreenPanel::LOCAL_SERVER_LIST, "");
 	this->setPlayScreenStateSetting(PlayScreenState::TWELVE, 1, 1, 0, 0, 1, 0, PlayScreenPanel::LOCAL_SERVER_LIST, "");
 }
-std::shared_ptr<PackedScrollContainer> PlayScreen::buildJoinRealmsScreen(bool_t a2) {
+std::shared_ptr<GuiElement> PlayScreen::buildJoinRealmsScreen(bool_t a2) {
 	std::shared_ptr<PackedScrollContainer> v33;
 	if(a2) {
 		if(!this->field_20C) {
 			this->field_20C = std::shared_ptr<PackedScrollContainer>(new PackedScrollContainer(0, 0, 0));
 		}
-		v33 = this->field_20C;
+		v33 = std::shared_ptr<PackedScrollContainer>((PackedScrollContainer*) this->field_20C.get());
 	} else {
 		if(this->field_204) {
 			this->field_204 = std::shared_ptr<PackedScrollContainer>(new PackedScrollContainer(0, 0, 0));
 		}
-		v33 = this->field_204;
+		v33 = std::shared_ptr<PackedScrollContainer>((PackedScrollContainer*) this->field_204.get());
 	}
 	std::shared_ptr<GuiElementContainer> v34(new GuiElementContainer(0, 1, 0, 0, 24, 24));
 	std::shared_ptr<Label> v35(new Label("Waiting for Minecraft Realms", this->minecraft, 0xffffff, 0, 0, 0, 1));
@@ -254,28 +254,23 @@ void PlayScreen::setMainPanel(PlayScreenPanel a2) {
 	this->elements.clear();
 	switch(a2) {
 		case PlayScreenPanel::MESSAGE:
-			this->field_1EC = this->buildMessageScreen();
-			this->field_214 = this->field_1EC;
+			this->field_214 = this->field_1EC = this->buildMessageScreen();
 			this->elements.push_back(this->field_1EC.get());
 			break;
 		case PlayScreenPanel::LOCAL_SERVER_LIST:
-			this->field_1F4 = this->buildLocalServerList();
-			this->field_214 = this->field_1F4;
+			this->field_214 = this->field_1F4 = this->buildLocalServerList();
 			this->elements.push_back(this->field_1F4.get());
 			break;
 		case PlayScreenPanel::MCO_SERVER_LIST:
-			this->field_1FC = this->buildMCOServerList();
-			this->field_214 = this->field_1FC;
+			this->field_214 = this->field_1FC = this->buildMCOServerList();
 			this->elements.push_back(this->field_1FC.get());
 			break;
 		case PlayScreenPanel::JOIN_REALMS_0:
-			this->field_204 = this->buildJoinRealmsScreen(0);
-			this->field_214 = this->field_204;
+			this->field_214 = this->field_204 = this->buildJoinRealmsScreen(0);
 			this->elements.push_back(this->field_204.get());
 			break;
 		case PlayScreenPanel::JOIN_REALMS_1:
-			this->field_20C = this->buildJoinRealmsScreen(1);
-			this->field_214 = this->field_20C;
+			this->field_214 = this->field_20C = this->buildJoinRealmsScreen(1);
 			this->elements.push_back(this->field_20C.get());
 			break;
 		default:
@@ -379,8 +374,8 @@ void PlayScreen::updateMCOStatus() {
 }
 void PlayScreen::updateRealmsState() {
 	bool createServersEnabled = this->minecraft->mojangConnector->isMCOCreateServersEnabled();
-	std::shared_ptr<std::unordered_map<long long, MCOServerListItem>> v6 = this->minecraft->mojangConnector->getMCOServerList();
-	if(!v6) {
+	std::shared_ptr<std::unordered_map<long long, MCOServerListItem>> servers = this->minecraft->mojangConnector->getMCOServerList();
+	if(!servers) {
 		if(createServersEnabled) {
 			this->setPlayScreenSate(FOUR, 1);
 		} else {
@@ -388,13 +383,13 @@ void PlayScreen::updateRealmsState() {
 		}
 	} else {
 		if(!createServersEnabled) {
-			if(v6->size()) {
+			if(servers->size()) {
 				this->setPlayScreenSate(SIX, 1);
 			}else{
 				this->setPlayScreenSate(SEVEN, 1);
 			}
 		}else{
-			if(v6->size()) {
+			if(servers->size()) {
 				this->setPlayScreenSate(THREE, 1);
 			}else{
 				this->setPlayScreenSate(FOUR, 1);

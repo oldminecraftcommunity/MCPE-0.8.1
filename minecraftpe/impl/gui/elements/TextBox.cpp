@@ -5,9 +5,8 @@
 #include <util/Util.hpp>
 #include <cpputils.hpp>
 #include <gui/Screen.hpp>
-
-char_t* TextBox::numberChars = "0123456789";
 char_t* TextBox::extendedAcsii = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890?^" "~'-_.,;<>!\"#&()=` []{}";
+char_t* TextBox::numberChars = "0123456789";
 
 TextBox::TextBox(Minecraft* a2, const Options::Option* a3, const std::string& a4)
 	: GuiElement(1, 1, 0, 0, 24, 24) {

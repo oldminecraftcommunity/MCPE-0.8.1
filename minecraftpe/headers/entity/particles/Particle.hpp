@@ -6,9 +6,9 @@
 struct Tesselator;
 struct Particle: Entity
 {
-	static std::string ITEMS_ATLAS, TERRAIN_ATLAS, PARTICLE_ATLAS;
+	static float xOff, yOff, zOff;
 	static Vec3 playerViewDir;
-	static float zOff, yOff, xOff;
+	static std::string PARTICLE_ATLAS, TERRAIN_ATLAS, ITEMS_ATLAS;
 
 	float coordMultiplier;
 	int32_t maxAliveTime;

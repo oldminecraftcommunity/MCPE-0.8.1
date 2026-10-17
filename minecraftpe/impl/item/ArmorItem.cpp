@@ -1,6 +1,6 @@
 #include <item/ArmorItem.hpp>
 
-int32_t ArmorItem::healthPerSlot[] = {0xB, 0x10, 0xF, 0xD};
+const int32_t ArmorItem::healthPerSlot[] = {0xB, 0x10, 0xF, 0xD};
 ArmorItem::ArmorMaterial ArmorItem::CLOTH(5, 1, 3, 2, 1);
 ArmorItem::ArmorMaterial ArmorItem::CHAIN(15, 2, 5, 4, 1);
 ArmorItem::ArmorMaterial ArmorItem::IRON(15, 2, 6, 5, 2);

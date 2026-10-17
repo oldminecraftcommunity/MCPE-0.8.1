@@ -3,7 +3,6 @@
 #include <cpputils.hpp>
 #include <sys/time.h>
 #include <util/Random.hpp>
-#include <stdio.h>
 #include <math/Mth.hpp>
 #include <AppPlatform.hpp>
 #include <App.hpp>
@@ -13,7 +12,7 @@
 #include <unigl.hpp>
 #include <RakNetTypes.h>
 
-AppPlatform_sdl appPlatform;
+static AppPlatform_sdl appPlatform;
 #ifdef __WIN32__
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd){
 #else

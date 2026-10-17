@@ -1,5 +1,5 @@
 #pragma once
-#include <input/MouseDevice.hpp>
+#include <input/Mouse.hpp>
 
 struct Multitouch
 {
@@ -11,9 +11,9 @@ struct Multitouch
 	static bool_t _wasReleasedThisUpdate[12];
 	static MouseDevice _pointers[12];
 	static std::vector<MouseAction> _inputs;
-	static int32_t _activePointerThisUpdateList[12];
-	static int32_t _activePointerList[12];
 	static int32_t _index;
+	static int32_t _activePointerList[12];
+	static int32_t _activePointerThisUpdateList[12];
 
 	static void commit() {
 		int32_t v1; // r4

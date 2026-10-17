@@ -40,18 +40,16 @@ bool_t MeshBuffer::_load(const MeshBuffer::VertexFormat* a2, void* a3, int32_t a
 	this->drawType = v11;
 	v12 = a2->stride * a4;
 	if(!this->arrayBuffer){
-		int32_t buf = glBufferPool.get();
-		this->arrayBuffer = buf;
-		if(!buf) return 0;
+		this->arrayBuffer = glBufferPool.get();
+		if(this->arrayBuffer == 0) return 0;
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, this->arrayBuffer);
 	glBufferData(GL_ARRAY_BUFFER, v12, a3, GL_STATIC_DRAW);
 	if(this->elementsCount && a7 && a5){
 		if(!this->arrayElementsBuffer){
-			int32_t v14 = glBufferPool.get();
-			this->arrayElementsBuffer = v14;
-			if(!v14) return 0;
+			this->arrayElementsBuffer = glBufferPool.get();
+			if(!this->arrayElementsBuffer) return 0;
 		}
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->arrayElementsBuffer);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->elementsCount*a7, a5, GL_STATIC_DRAW);

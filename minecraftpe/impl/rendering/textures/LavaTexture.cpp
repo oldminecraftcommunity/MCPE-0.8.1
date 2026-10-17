@@ -2,22 +2,6 @@
 #include <tile/Tile.hpp>
 #include <math/Mth.hpp>
 
-LavaTexture::LavaTexture()
-	: DynamicTexture(Tile::lava->textureUV, 1) {
-	this->field_28 = 0;
-	this->field_2C = 0;
-	this->field_30 = new float[256];
-	this->field_34 = new float[256];
-	this->field_38 = new float[256];
-	this->field_3C = new float[256];
-	for(int32_t i = 0; i != 256; ++i) {
-		this->field_30[i] = 0;
-		this->field_34[i] = 0;
-		this->field_38[i] = 0;
-		this->field_3C[i] = 0;
-	}
-}
-
 LavaTexture::~LavaTexture() {
 	if(this->field_30) delete[] this->field_30;
 	if(this->field_34) delete[] this->field_34;
@@ -102,4 +86,20 @@ void LavaTexture::tick() {
 		++v19;
 		v21[3] = -1;
 	} while(v19 != 256);
+}
+
+LavaTexture::LavaTexture()
+	: DynamicTexture(Tile::lava->textureUV, 1) {
+	this->field_28 = 0;
+	this->field_2C = 0;
+	this->field_30 = new float[256];
+	this->field_34 = new float[256];
+	this->field_38 = new float[256];
+	this->field_3C = new float[256];
+	for(int32_t i = 0; i != 256; ++i) {
+		this->field_30[i] = 0;
+		this->field_34[i] = 0;
+		this->field_38[i] = 0;
+		this->field_3C[i] = 0;
+	}
 }

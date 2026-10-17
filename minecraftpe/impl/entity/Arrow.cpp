@@ -32,7 +32,7 @@ Arrow::Arrow(Level* a2, Mob* a3, Mob* a4, float a5, float a6)
 	this->isInReverse = a3->isPlayer();
 	this->shooterEID = a3->entityId;
 	posY = a3->posY;
-	this->posY = (float)(posY + a3->getHeadHeight()) - 0.1;
+	this->posY = (float)(posY + a3->getHeadHeight()) - 0.1f;
 	v10 = a4->posY;
 	v11 = a4->posX - a3->posX;
 	v12 = a4->getHeadHeight();
@@ -40,7 +40,7 @@ Arrow::Arrow(Level* a2, Mob* a3, Mob* a4, float a5, float a6)
 	v14 = a4->posZ - a3->posZ;
 	v15 = v12;
 	v16 = Mth::sqrt((float)(v14 * v14) + (float)(v11 * v11));
-	if(v16 >= 0.0000001) {
+	if(v16 >= 0.0000001f) {
 		v17 = (float)((float)(v10 + v15) - 0.7) - v13;
 		v18 = atan2(v14, v11);
 		v19 = atan2(v17, v16);
@@ -51,55 +51,30 @@ Arrow::Arrow(Level* a2, Mob* a3, Mob* a4, float a5, float a6)
 }
 Arrow::Arrow(Level* a2, Mob* a3, float a4)
 	: Entity(a2) {
-	float posX; // r7
-	float posY; // s16
-	float v9;	// r0
-	float v10;	// s15
-	float v11;	// s16
-	float v12;	// s13
-	float posZ; // s15
-	float v15;	// s17
-	float v16;	// r1
-	float v17;	// s15
-	float v18;	// s15
-	float v19;	// s19
-	float v20;	// s15
-	float v21;	// s17
-	float v22;	// s16
-	float v23;	// s15
-
 	this->isInReverse = a3->isPlayer();
 	this->shooterEID = a3->entityId;
 	this->_init();
-	posX = a3->posX;
-	posY = a3->posY;
-	v9 = a3->getHeadHeight();
-	this->moveTo(posX, posY + v9, a3->posZ, a3->yaw, a3->pitch);
-	v10 = (float)(this->yaw * 0.017453);
-	v11 = Mth::cos(v10);
-	v12 = this->posY - 0.1;
-	posZ = this->posZ;
-	v15 = Mth::sin(v10);
-	v16 = this->posX - (float)(v11 * 0.16);
-	this->posX = v16;
-	v17 = posZ - (float)(v15 * 0.16);
-	this->posY = v12;
-	this->posZ = v17;
-	this->setPos(v16, v12, v17);
-	v18 = this->pitch / 180.0;
-	this->ridingHeight = 0.0;
-	v19 = (float)(v18 * 3.1416);
-	v20 = Mth::cos(v19);
-	v21 = -(float)(v15 * v20);
-	v22 = v11 * v20;
-	this->motionX = v21;
-	this->motionZ = v22;
-	v23 = -Mth::sin(v19);
-	this->motionY = v23;
-	this->shoot(v21, v23, v22, a4 * 1.5, 1.0);
+	this->moveTo(a3->posX, a3->posY + a3->getHeadHeight(), a3->posZ, a3->yaw, a3->pitch);
+	float v10 = Mth::deg2rad(this->yaw);
+	float v11 = Mth::cos(v10);
+	float v15 = Mth::sin(v10);
+	this->posX -= v11 * 0.16f;
+	this->posY -= 0.1f;
+	this->posZ -= v15 * 0.16f;
+	this->setPos(this->posX, this->posY, this->posZ);
+	this->ridingHeight = 0;
+	float v19 = (this->pitch / 180) * Mth::PI;
+	float v20 = Mth::cos(v19);
+	this->motionX = -(v15 * v20);
+	this->motionZ = v11 * v20;
+	this->motionY = -Mth::sin(v19);
+	this->shoot(this->motionX, this->motionY, this->motionZ, a4 * 1.5f, 1.0f);
 }
 Arrow::Arrow(Level* a2, float x, float y, float z)
-	: Arrow(a2) {
+	: Entity(a2) {
+	this->isInReverse = 0;
+	this->shooterEID = 0;
+	this->_init();
 	this->setPos(x, y, z);
 	this->ridingHeight = 0;
 }

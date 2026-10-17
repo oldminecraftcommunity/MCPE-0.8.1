@@ -18,8 +18,8 @@ struct AndroidRestRequestJob: RestRequestJob
 	bool started;
 
 	AndroidRestRequestJob(Minecraft*);
-	bool isRunning();
 	void onRequestComplete(int, int, const std::string&);
+	bool isRunning();
 
 	virtual ~AndroidRestRequestJob();
 	virtual void stop();

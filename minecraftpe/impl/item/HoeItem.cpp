@@ -5,8 +5,7 @@
 #include <entity/Player.hpp>
 
 HoeItem::HoeItem(int32_t id, Item::Tier t)
-	: Item(id) {
-	this->tier = t;
+	: Item(id), tier(t) {
 	this->maxStackSize = 1;
 	this->setMaxDamage(t.durability);
 }

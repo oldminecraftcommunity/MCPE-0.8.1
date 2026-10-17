@@ -13,13 +13,10 @@ struct CreeperRenderer: MobRenderer
 	virtual ~CreeperRenderer() {
 	}
 	virtual int32_t getOverlayColor(Mob* a2, float a3, float a4) {
-		float sw; // s15
-		int32_t result; // r0
-		int32_t v6; // r0
-		sw = ((Creeper*) (a2))->getSwelling(a4);
-		result = (int32_t) ((float) ((sw * 10.0))) & 1;
+		float sw = ((Creeper*) (a2))->getSwelling(a4);
+		int result = (int) (sw * 10.0f) & 1;
 		if (result) {
-			v6 = (int32_t) ((float) (((float) ((sw * 0.2)) * 255.0)));
+			int v6 = (int32_t) ((sw * 0.2f) * 255.0f);
 			if (v6 < 0) {
 				v6 = 0;
 			} else if (v6 >= 255) {
@@ -32,13 +29,17 @@ struct CreeperRenderer: MobRenderer
 	}
 	virtual void scale(Mob* a2, float a3) {
 		float sw = ((Creeper*) (a2))->getSwelling(a3);
-		float v4 = (float) (((float) ((Mth::sin(sw * 100.0) * sw)) * 0.01)) + 1.0;
-		if (sw < 0.0) {
-			sw = 0.0;
-		} else if (sw > 1.0) {
-			sw = 1.0;
+		float v4 = Mth::sin(sw * 100.0f) * sw * 0.01f + 1.0f;
+		if (sw < 0.0f) {
+			sw = 0.0f;
+		} else if (sw > 1.0f) {
+			sw = 1.0f;
 		}
 
-		glScalef((float) (((float) (((float) (((float) ((sw * sw)) * (float) ((sw * sw)))) * 0.4)) + 1.0)) * v4, (float) (((float) (((float) (((float) ((sw * sw)) * (float) ((sw * sw)))) * 0.1)) + 1.0)) / v4, (float) (((float) (((float) (((float) ((sw * sw)) * (float) ((sw * sw)))) * 0.4)) + 1.0)) * v4);
+		glScalef(
+			((sw * sw) * (sw * sw) * 0.4f + 1.0f) * v4,
+			((sw * sw) * (sw * sw) * 0.1f + 1.0f) / v4,
+			((sw * sw) * (sw * sw) * 0.4f + 1.0f) * v4
+		);
 	}
 };

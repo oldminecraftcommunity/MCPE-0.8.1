@@ -6,7 +6,7 @@ struct StairTile : Tile{
 	Tile* block;
 	int8_t field_84;
 	int32_t field_88, meta;
-	static int DEAD_SPACES[8][2];
+	static const  int DEAD_SPACES[8][2];
 	StairTile(int32_t a2, Tile* a3, int32_t a4) :
 			Tile(a2, a3->material) {
 		this->block = a3;

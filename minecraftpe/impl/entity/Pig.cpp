@@ -31,7 +31,9 @@ bool_t Pig::hasSaddle() {
 	return this->synchedEntityData.getByte(16) & 1;
 }
 void Pig::setSaddle(bool_t a2) {
-	this->synchedEntityData.set<int8_t>(16, a2);
+	//imagine using if here </3
+	if(a2) this->synchedEntityData.set<int8_t>(16, 1);
+	else this->synchedEntityData.set<int8_t>(16, 0);
 }
 
 bool_t Pig::interactWithPlayer(Player* a2) {

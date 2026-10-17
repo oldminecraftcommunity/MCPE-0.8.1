@@ -9,9 +9,9 @@ struct Packet;
 struct CompoundTag;
 struct TileEntity
 {
-	static int32_t _runningId;
-	static std::map<int32_t, std::string> classIdMap;
 	static std::map<std::string, int32_t> idClassMap;
+	static std::map<int32_t, std::string> classIdMap;
+	static int32_t _runningId;
 
 	struct Level* level;
 	int32_t posX, posY, posZ;

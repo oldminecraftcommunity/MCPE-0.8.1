@@ -1,5 +1,5 @@
 #pragma once
-#include <input/MouseAction.hpp>
+#include <input/Mouse.hpp>
 
 struct MouseAction;
 struct ITouchScreenModel

@@ -1,7 +1,9 @@
 #include <crafting/Recipes.hpp>
 #include <crafting/FurnaceRecipes.hpp>
-#include <crafting/ShapelessRecipe.hpp>
+
 #include <crafting/ShapedRecipe.hpp>
+#include <crafting/ShapelessRecipe.hpp>
+
 #include <crafting/ToolRecipes.hpp>
 #include <crafting/WeaponRecipes.hpp>
 #include <crafting/OreRecipes.hpp>

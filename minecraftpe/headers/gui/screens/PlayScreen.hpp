@@ -45,12 +45,12 @@ struct PlayScreen: Screen
 	std::shared_ptr<GuiElement> field_1EC;
 	std::shared_ptr<GuiElement> field_1F4;
 	std::shared_ptr<GuiElement> field_1FC;
-	std::shared_ptr<PackedScrollContainer> field_204;
-	std::shared_ptr<PackedScrollContainer> field_20C;
+	std::shared_ptr<GuiElement> field_204;
+	std::shared_ptr<GuiElement> field_20C;
 	std::shared_ptr<GuiElement> field_214;
 
 	PlayScreen(bool_t);
-	std::shared_ptr<PackedScrollContainer> buildJoinRealmsScreen(bool_t);
+	std::shared_ptr<GuiElement> buildJoinRealmsScreen(bool_t);
 	std::shared_ptr<GuiElement> buildLocalServerList();
 	std::shared_ptr<GuiElement> buildMCOServerList();
 	std::shared_ptr<GuiElement> buildMessageScreen();

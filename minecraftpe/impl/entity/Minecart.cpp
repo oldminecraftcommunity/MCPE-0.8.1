@@ -41,16 +41,15 @@ Minecart::Minecart(Level* a2, float a3, float a4, float a5)
 	this->prevZ = 0;
 }
 void Minecart::applyNaturalSlowdown() {
-	float v1; // s15
-
 	if(this->rider) {
-		v1 = 0.997;
+		this->motionX *= 0.997f;
+		this->motionY *= 0.0f;
+		this->motionZ *= 0.997f;
 	} else {
-		v1 = 0.96;
+		this->motionX *= 0.96f;
+		this->motionY *= 0.0f;
+		this->motionZ *= 0.96f;
 	}
-	this->motionX = this->motionX * v1;
-	this->motionY = this->motionY * 0.0;
-	this->motionZ = this->motionZ * v1;
 }
 void Minecart::comeOffTrack(float a2) {
 	float v2; // s14
@@ -147,18 +146,18 @@ int32_t Minecart::getHurtDir() {
 int32_t Minecart::getHurtTime() {
 	return this->synchedEntityData.getInt(17);
 }
-int32_t Minecart::EXITS[10][2][3] = {{{0, 0, -1}, {0, 0, 1}},
-									 {{-1, 0, 0}, {1, 0, 0}},
-									 {{-1, -1, 0}, {1, 0, 0}},
-									 {{-1, 0, 0},
-
-									  {1, -1, 0}},
-									 {{0, 0, -1}, {0, -1, 1}},
-									 {{0, -1, -1}, {0, 0, 1}},
-									 {{0, 0, 1}, {1, 0, 0}},
-									 {{0, 0, 1}, {-1, 0, 0}},
-									 {{0, 0, -1}, {-1, 0, 0}},
-									 {{0, 0, -1}, {1, 0, 0}}};
+const  int32_t Minecart::EXITS[10][2][3] = {
+	{{0, 0, -1}, {0, 0, 1}},
+	{{-1, 0, 0}, {1, 0, 0}},
+	{{-1, -1, 0}, {1, 0, 0}},
+	{{-1, 0, 0}, {1, -1, 0}},
+	{{0, 0, -1}, {0, -1, 1}},
+	{{0, -1, -1}, {0, 0, 1}},
+	{{0, 0, 1}, {1, 0, 0}},
+	{{0, 0, 1}, {-1, 0, 0}},
+	{{0, 0, -1}, {-1, 0, 0}},
+	{{0, 0, -1}, {1, 0, 0}}
+};
 bool_t Minecart::getPos(Vec3& result, float x, float y, float z) {
 	int blockX; // r6
 	int blockY; // r4
@@ -720,7 +719,7 @@ void Minecart::tick() {
 	}
 }
 float Minecart::getRideHeight() {
-	return (float)(this->entityHeight * 0.0) - 0.3;
+	return this->entityHeight * 0.0f - 0.3f;
 }
 float Minecart::getShadowRadius() {
 	return 0;

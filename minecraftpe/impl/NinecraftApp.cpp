@@ -31,9 +31,10 @@
 #include <unigl.hpp>
 #include <input/Multitouch.hpp>
 
-std::shared_ptr<TextureAtlas> NinecraftApp::_itemsTextureAtlas;
-std::shared_ptr<TextureAtlas> NinecraftApp::_terrainTextureAtlas;
 bool NinecraftApp::_hasInitedStatics = 0;
+std::shared_ptr<TextureAtlas> NinecraftApp::_terrainTextureAtlas;
+std::shared_ptr<TextureAtlas> NinecraftApp::_itemsTextureAtlas;
+
 
 NinecraftApp::NinecraftApp() : field_D48___(1), field_D4C(0), field_D50(0){
 #ifdef ANDROID

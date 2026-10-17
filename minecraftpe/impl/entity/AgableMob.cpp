@@ -45,5 +45,5 @@ bool_t AgableMob::isBaby() {
 	if(!this->level->isClient) {
 		return (uint32_t)this->age >> 31;
 	}
-	return this->synchedEntityData.getByte(14) & 1;
+	return this->synchedEntityData.get<int8_t>(14) & 1;
 }

@@ -22,9 +22,9 @@ bool contextWasLost;
 #include <input/Multitouch.hpp>
 
 std::string nativeUtf8Input;
-AppPlatform_android23 appPlatform;
+static AppPlatform_android23 appPlatform;
 static jobject mainActivity_ref;
-NinecraftApp* ninecraftApp;
+static NinecraftApp* ninecraftApp;
 
 static pthread_mutex_t _D6E04480; //TODO defined in the same file as engine?
 extern "C" {

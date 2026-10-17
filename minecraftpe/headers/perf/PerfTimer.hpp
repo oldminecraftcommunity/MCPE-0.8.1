@@ -37,11 +37,11 @@ struct PerfTimer
 		}
 	};
 
-	static std::map<std::string, float> times;
-	static std::string path;
-	static std::vector<double> startTimes;
-	static std::vector<std::string> paths;
 	static bool_t enabled;
+	static std::vector<std::string> paths;
+	static std::vector<double> startTimes;
+	static std::string path;
+	static std::map<std::string, float> times;
 
 
 	static std::vector<PerfTimer::ResultField> getLog(const std::string&);

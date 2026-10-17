@@ -169,7 +169,7 @@ Sensing* Mob::getSensing() {
 	return this->sensing;
 }
 bool_t Mob::getSharedFlag(int32_t a2) {
-	return (this->synchedEntityData.getByte(0) >> a2) & 1;
+	return (this->synchedEntityData.get<int8_t>(0) >> a2) & 1;
 }
 float Mob::getSpeed() {
 	if(this->useNewAi()) return this->speed;
@@ -233,15 +233,16 @@ void Mob::setYya(float a2) {
 	this->moveForward = a2;
 }
 void Mob::updateAttackAnim() {
-	int32_t v1; // r3
-
-	v1 = this->field_B68;
-	if(this->field_B68 && (v1 = this->field_B6C + 1, v1 > 7)) {
-		this->field_B6C = 0;
-		this->field_B68 = 0;
+	if(this->field_B68) {
+		this->field_B6C += 1;
+		if(this->field_B6C > 7) {
+			this->field_B6C = 0;
+			this->field_B68 = 0;
+		}
 	} else {
-		this->field_B6C = v1;
+		this->field_B6C = 0;
 	}
+
 	this->field_138 = vcvts_n_f32_s32(this->field_B6C, 3u);
 }
 Mob* Mob::updateMobId(int32_t* a2) {

@@ -9,7 +9,7 @@ struct Entity;
 struct Path
 {
 	Node** nodes;
-	int32_t pathSizeMaybe, currentIndex, size;
+	int32_t pathSize, currentIndex, size;
 
 	Path(arrayWithLength<Node*>);
 	Vec3 currentPos(const Entity*);

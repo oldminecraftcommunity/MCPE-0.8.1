@@ -54,17 +54,19 @@ void ModelPart::compile(float a2) {
 	this->meshBuffer = Tesselator::instance.end();
 }
 void ModelPart::draw(float a2) {
-	if(!this->meshBuffer.arrayBuffer || this->meshBuffer.arraysCount <= 3 || !this->meshBuffer.drawMode || !this->meshBuffer.vertexFormat) {
+	MeshBuffer* mb = &this->meshBuffer;
+
+	if(mb->arrayBuffer == 0 || mb->arraysCount <= 3 || mb->drawMode == 0 || mb->vertexFormat == 0) {
 		this->compile(a2);
 	}
 	if(this->noFaceCull) {
 		glDisable(GL_CULL_FACE);
 		glEnable(GL_ALPHA_TEST);
-		this->meshBuffer.render();
+		mb->render();
 		glDisable(GL_ALPHA_TEST);
 		glEnable(GL_CULL_FACE);
 	} else {
-		this->meshBuffer.render();
+		mb->render();
 	}
 }
 void ModelPart::drawSlow(float) {

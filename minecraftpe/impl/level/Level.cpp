@@ -84,25 +84,6 @@ void Level::_init(const std::string& levelName, const struct LevelSettings& a3, 
 	this->updateSkyBrightness();
 }
 
-bool_t Level::addEntity(struct Entity* e) {
-	Entity* ent = this->getEntity(e->entityId);
-	if(ent) {
-		this->removeEntity(ent);
-	}
-	int v4 = Mth::floor(e->posX * 0.0625);
-	int v5 = Mth::floor(e->posZ * 0.0625);
-	if(e->isPlayer()) {
-		auto&& player = std::find(this->players.begin(), this->players.end(), e);
-		if(player == this->players.end()) {
-			this->players.push_back((Player*) e);
-		}
-	}
-	this->getChunk(v4, v5)->addEntity(e);
-	this->entities.push_back(e);
-	this->eid2entity[e->entityId] = e; //cant believe mojang used [] somewhere
-	this->entityAdded(e);
-	return 1;
-}
 void Level::addListener(struct LevelListener* ll) {
 	this->levelListeners.push_back(ll);
 }
@@ -1476,40 +1457,7 @@ void Level::lightColumnChanged(int32_t a2, int32_t a3, int32_t a4, int32_t a5) {
 void Level::loadEntities() {
 	if(this->levelStoragePtr) this->levelStoragePtr->loadEntities(this, 0);
 }
-void Level::loadPlayer(struct Player* player, bool_t a3) {
-	CompoundTag* tag; // r0
-	CompoundTag* v8;  // r5
-	Entity* entity;	  // r0
-	Entity* v11;	  // r5
-	CompoundTag* v12; // r5
 
-	if(player) {
-		tag = this->levelData.getLoadedPlayerTag();
-		v8 = tag;
-		if(tag) {
-			player->load(tag);
-			if(v8->contains(Entity::RIDING_TAG)) {
-				if(tag->get(Entity::RIDING_TAG)->getId() == 10) {
-					v12 = (CompoundTag*)v8->get(Entity::RIDING_TAG);
-				} else {
-					v12 = new CompoundTag(Entity::RIDING_TAG);
-				}
-				entity = EntityFactory::loadEntity(v12, this);
-				v11 = entity;
-				if(entity) {
-					this->addEntity(entity);
-					player->ride(v11);
-				}
-			}
-			this->levelData.setLoadedPlayerTag(0);
-		} else {
-			this->levelData.setLoadedPlayerTo(player);
-		}
-		if(a3) {
-			this->addEntity(player);
-		}
-	}
-}
 bool_t Level::mayInteract(struct Player*, int32_t, int32_t, int32_t) {
 	return 1;
 }
@@ -2211,33 +2159,6 @@ void Level::validateSpawn() {
 	this->levelData.setZSpawn(zSpawn);
 }
 
-Level::~Level() {
-	if(this->chunkSource) delete this->chunkSource;
-	this->chunkSource = 0;
-	if(this->dimensionPtr) delete this->dimensionPtr;
-	this->dimensionPtr = 0;
-
-	std::set<Entity*> v27;
-	v27.insert(this->entities.begin(), this->entities.end());
-	v27.insert(this->players.begin(), this->players.end());
-	for(auto&& p: this->field_B6C) {
-		v27.insert(p.entity);
-	}
-	for(auto&& e: v27) {
-		if(e) {
-			delete e;
-		}
-	}
-
-	std::set<TileEntity*> v29;
-	v29.insert(this->tileEntities.begin(), this->tileEntities.end());
-	v29.insert(this->field_50.begin(), this->field_50.end());
-	for(auto&& te: v29) {
-		if(te) {
-			delete te;
-		}
-	}
-}
 int32_t Level::getTile(int32_t x, int32_t y, int32_t z) {
 	int8_t v5 = x;
 	int8_t v6 = z;
@@ -2509,6 +2430,88 @@ void Level::tickTiles() {
 			if(Tile::shouldTick[v21]) {
 				Tile::tiles[v21]->tick(this, x + wx, y, z + wz, &this->random);
 			}
+		}
+	}
+}
+
+Level::~Level() {
+	if(this->chunkSource) delete this->chunkSource;
+	this->chunkSource = 0;
+	if(this->dimensionPtr) delete this->dimensionPtr;
+	this->dimensionPtr = 0;
+
+	std::set<Entity*> v27;
+	v27.insert(this->entities.begin(), this->entities.end());
+	v27.insert(this->players.begin(), this->players.end());
+	for(auto&& p: this->field_B6C) {
+		v27.insert(p.entity);
+	}
+	for(auto&& e: v27) {
+		if(e) {
+			delete e;
+		}
+	}
+
+	std::set<TileEntity*> v29;
+	v29.insert(this->tileEntities.begin(), this->tileEntities.end());
+	v29.insert(this->field_50.begin(), this->field_50.end());
+	for(auto&& te: v29) {
+		if(te) {
+			delete te;
+		}
+	}
+}
+
+bool_t Level::addEntity(struct Entity* e) {
+	Entity* ent = this->getEntity(e->entityId);
+	if(ent) {
+		this->removeEntity(ent);
+	}
+	int v4 = Mth::floor(e->posX * 0.0625);
+	int v5 = Mth::floor(e->posZ * 0.0625);
+	if(e->isPlayer()) {
+		auto&& player = std::find(this->players.begin(), this->players.end(), e);
+		if(player == this->players.end()) {
+			this->players.push_back((Player*) e);
+		}
+	}
+	this->getChunk(v4, v5)->addEntity(e);
+	this->entities.push_back(e);
+	this->eid2entity[e->entityId] = e; //cant believe mojang used [] somewhere
+	this->entityAdded(e);
+	return 1;
+}
+void Level::loadPlayer(struct Player* player, bool_t a3) {
+	CompoundTag* tag; // r0
+	CompoundTag* v8;  // r5
+	Entity* entity;	  // r0
+	Entity* v11;	  // r5
+	CompoundTag* v12; // r5
+
+	if(player) {
+		tag = this->levelData.getLoadedPlayerTag();
+		v8 = tag;
+		if(tag) {
+			player->load(tag);
+			if(v8->contains(Entity::RIDING_TAG)) {
+				if(tag->get(Entity::RIDING_TAG)->getId() == 10) {
+					v12 = (CompoundTag*)v8->get(Entity::RIDING_TAG);
+				} else {
+					v12 = new CompoundTag(Entity::RIDING_TAG);
+				}
+				entity = EntityFactory::loadEntity(v12, this);
+				v11 = entity;
+				if(entity) {
+					this->addEntity(entity);
+					player->ride(v11);
+				}
+			}
+			this->levelData.setLoadedPlayerTag(0);
+		} else {
+			this->levelData.setLoadedPlayerTo(player);
+		}
+		if(a3) {
+			this->addEntity(player);
 		}
 	}
 }

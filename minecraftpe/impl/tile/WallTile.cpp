@@ -31,11 +31,11 @@ bool_t WallTile::connectsTo(LevelSource* level, int32_t x, int32_t y, int32_t z)
 	return 0;
 }
 
-bool_t WallTile::isCubeShaped() {
-	return 0;
-}
 int32_t WallTile::getRenderShape() {
 	return 32;
+}
+bool_t WallTile::isCubeShaped() {
+	return 0;
 }
 void WallTile::updateShape(LevelSource* level, int32_t x, int32_t y, int32_t z) {
 	bool_t zNeg; // r11

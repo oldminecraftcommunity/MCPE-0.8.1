@@ -27,6 +27,10 @@ struct Options{
 		std::string name;
 		int32_t field_8;
 
+		Option(int f0, std::string s, int f8) : field_0(f0), name(s), field_8(f8){
+
+		}
+
 		static Options::Option DIFFICULTY;
 		static Options::Option FANCY_SKIES;
 		static Options::Option LEFT_HANDED;

@@ -9,7 +9,7 @@ struct Minecart: Entity
 	float field_134, field_138, field_13C;
 	Entity* linkedEntity;
 	float field_144, field_148, field_14C, field_150, field_154;
-	static int32_t EXITS[10][2][3];
+	const static int32_t EXITS[10][2][3];
 
 	Minecart(Level*);
 	Minecart(Level*, float, float, float);

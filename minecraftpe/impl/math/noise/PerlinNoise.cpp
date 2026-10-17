@@ -2,52 +2,6 @@
 #include <math/noise/ImprovedNoise.hpp>
 #include <util/Random.hpp>
 
-PerlinNoise::PerlinNoise(int32_t octaves){
-	this->randomPtr = &this->randomSelf;
-	this->init(octaves);
-}
-PerlinNoise::PerlinNoise(Random* random, int32_t octaves){
-	this->randomPtr = random;
-	this->init(octaves);
-}
-PerlinNoise::~PerlinNoise(void){
-	int32_t v2 = 0;
-
-	while(1){
-		if(v2 >= this->octavesAmount) break;
-
-		ImprovedNoise* noise = this->octaves[v2];
-		if(noise) delete noise;
-		++v2;
-	}
-
-	if(this->octaves) delete[] this->octaves;
-}
-int32_t PerlinNoise::hashCode(void){
-	int32_t index, hashCode;
-
-	index = 0;
-	hashCode = 4711;
-
-	while(index < this->octavesAmount){
-		ImprovedNoise* n = this->octaves[index];
-		++index;
-		hashCode *= n->hashCode();
-	}
-
-	return hashCode;
-}
-void PerlinNoise::init(int32_t octaves){
-	this->octavesAmount = octaves;
-	int32_t cntr = 0;
-	this->octaves = new ImprovedNoise* [octavesAmount];
-
-	while(cntr < octaves){
-		ImprovedNoise* noise = new ImprovedNoise(this->randomPtr);
-		this->octaves[cntr] = noise;
-		++cntr;
-	}
-}
 
 float PerlinNoise::getValue(float x, float y){
 	float v4;
@@ -64,13 +18,44 @@ float PerlinNoise::getValue(float x, float y){
 		++v6;
 
 		v10 = noise->getValue(x * v8, y * v8) / v8;
-		v8 = v8 * 0.5;
+		v8 = v8 * 0.5f;
 		v4 = v4 + v10;
 	}
 
 	return v4;
 }
+PerlinNoise::~PerlinNoise(void){
+	int32_t v2 = 0;
 
+	while(1){
+		if(v2 >= this->octavesAmount) break;
+
+		ImprovedNoise* noise = this->octaves[v2];
+		if(noise) delete noise;
+		++v2;
+	}
+
+	if(this->octaves) delete[] this->octaves;
+}
+void PerlinNoise::init(int32_t octaves){
+	this->octavesAmount = octaves;
+	int32_t cntr = 0;
+	this->octaves = new ImprovedNoise* [octavesAmount];
+
+	while(cntr < octaves){
+		ImprovedNoise* noise = new ImprovedNoise(this->randomPtr);
+		this->octaves[cntr] = noise;
+		++cntr;
+	}
+}
+PerlinNoise::PerlinNoise(int32_t octaves){
+	this->randomPtr = &this->randomSelf;
+	this->init(octaves);
+}
+PerlinNoise::PerlinNoise(Random* random, int32_t octaves){
+	this->randomPtr = random;
+	this->init(octaves);
+}
 float PerlinNoise::getValue(float x, float y, float z){
 	float v5;
 	int32_t index;
@@ -120,4 +105,18 @@ float* PerlinNoise::getRegion(float* array, float a3, float a4, float a5, int32_
 }
 float* PerlinNoise::getRegion(float* a2, int32_t a3, int32_t a4, int32_t a5, int32_t a6, float a7, float a8, float a9){
 	return this->getRegion(a2, a3, 10, a4, a5, 1, a6, a7, 1.0, a8);
+}
+int32_t PerlinNoise::hashCode(void){
+	int32_t index, hashCode;
+
+	index = 0;
+	hashCode = 4711;
+
+	while(index < this->octavesAmount){
+		ImprovedNoise* n = this->octaves[index];
+		++index;
+		hashCode *= n->hashCode();
+	}
+
+	return hashCode;
 }

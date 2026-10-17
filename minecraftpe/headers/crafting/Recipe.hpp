@@ -4,7 +4,7 @@
 struct CraftingContainer;
 struct Recipe
 {
-	static int32_t SIZE_2X2, SIZE_3X3;
+	static const int32_t SIZE_2X2, SIZE_3X3;
 
 	ItemPack items;
 

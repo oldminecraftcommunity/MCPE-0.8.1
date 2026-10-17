@@ -1,23 +1,6 @@
 #include <rendering/textures/LavaSideTexture.hpp>
 #include <math/Mth.hpp>
 
-LavaSideTexture::LavaSideTexture(const TextureUVCoordinateSet& a2)
-	: DynamicTexture(a2, 2) {
-	this->field_28 = 0;
-	this->field_2C = 0;
-	this->field_30 = 0;
-	this->field_34 = new float[256];
-	this->field_38 = new float[256];
-	this->field_3C = new float[256];
-	this->field_40 = new float[256];
-	for(int32_t i = 0; i != 256; ++i){
-		this->field_34[i] = 0.0;
-		this->field_38[i] = 0.0;
-		this->field_3C[i] = 0.0;
-		this->field_40[i] = 0.0;
-	}
-}
-
 LavaSideTexture::~LavaSideTexture() {
 	if(this->field_34) delete[] this->field_34;
 	if(this->field_38) delete[] this->field_38;
@@ -102,4 +85,21 @@ void LavaSideTexture::tick(){
 		v19 += 4;
 		v23[2] = -1;
 	} while(v20 != 256);
+}
+
+LavaSideTexture::LavaSideTexture(const TextureUVCoordinateSet& a2)
+	: DynamicTexture(a2, 2) {
+	this->field_28 = 0;
+	this->field_2C = 0;
+	this->field_30 = 0;
+	this->field_34 = new float[256];
+	this->field_38 = new float[256];
+	this->field_3C = new float[256];
+	this->field_40 = new float[256];
+	for(int32_t i = 0; i != 256; ++i){
+		this->field_34[i] = 0.0;
+		this->field_38[i] = 0.0;
+		this->field_3C[i] = 0.0;
+		this->field_40[i] = 0.0;
+	}
 }

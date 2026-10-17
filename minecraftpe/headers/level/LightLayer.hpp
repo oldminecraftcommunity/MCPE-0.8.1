@@ -3,8 +3,12 @@
 
 struct LightLayer
 {
-	static const LightLayer Block;
-	static const LightLayer Sky;
+	static LightLayer Sky;
+	static LightLayer Block;
 
 	int32_t baseLight;
+
+	LightLayer(int baseLight)
+		: baseLight(baseLight) {
+	}
 };

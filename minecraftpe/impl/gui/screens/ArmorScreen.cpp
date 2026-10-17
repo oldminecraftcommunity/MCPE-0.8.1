@@ -12,6 +12,7 @@
 #include <rendering/Textures.hpp>
 #include <rendering/entity/ItemRenderer.hpp>
 #include <rendering/entity/MobRenderer.hpp>
+#include <rendering/states/EnableState.hpp>
 #include <cpputils.hpp>
 #include <gui/NinePatchFactory.hpp>
 

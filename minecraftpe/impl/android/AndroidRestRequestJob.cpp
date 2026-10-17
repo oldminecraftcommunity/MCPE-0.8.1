@@ -7,20 +7,14 @@ AndroidRestRequestJob::AndroidRestRequestJob(Minecraft* a2) : field_58(0), field
 	this->started = 0;
 	this->platform = (AppPlatform_android*) a2->platform();
 }
-bool AndroidRestRequestJob::isRunning(){
-	std::unique_lock<std::mutex> v3(this->mutex);
-	return this->started;
-}
 void AndroidRestRequestJob::onRequestComplete(int a2, int a3, const std::string& a4){
 	this->httpStatusOrNegativeError = a3;
 	this->content = a4;
 	this->field_60.notify_one();
 }
-
-AndroidRestRequestJob::~AndroidRestRequestJob(){
-	if(this->isRunning()){
-		this->stop();
-	}
+bool AndroidRestRequestJob::isRunning(){
+	std::unique_lock<std::mutex> v3(this->mutex);
+	return this->started;
 }
 void AndroidRestRequestJob::stop(){
 	{
@@ -34,6 +28,12 @@ void AndroidRestRequestJob::stop(){
 		}
 	}
 	this->field_60.notify_one();
+}
+
+AndroidRestRequestJob::~AndroidRestRequestJob(){
+	if(this->isRunning()){
+		this->stop();
+	}
 }
 static std::mutex _run_counter_mut;
 static int _run_counter = 1;

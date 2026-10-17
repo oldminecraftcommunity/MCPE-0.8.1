@@ -27,7 +27,7 @@
 
 float Gui::InvGuiScale = 0.333333;
 float Gui::GuiScale;
-float Gui::DropTicks = 40.0;
+const float Gui::DropTicks = 40.0;
 
 Gui::Gui(Minecraft* mc) {
 	this->field_10 = 0;

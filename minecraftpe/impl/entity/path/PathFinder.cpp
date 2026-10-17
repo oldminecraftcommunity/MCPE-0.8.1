@@ -271,13 +271,13 @@ LABEL_17:
 	return 0;
 }
 Node* PathFinder::getNode(int32_t x, int32_t y, int32_t z) {
-	uint32_t hash = Node::createHash(x, y, z);
+	const uint32_t hash = Node::createHash(x, y, z);
 	auto&& p = this->nodes.find(hash);
 	if(p != this->nodes.end()) {
 		return p->second;
 	}
 	Node* r = new Node(x, y, z);
-	this->nodes.insert(std::pair<uint32_t, Node*>(hash, r));
+	this->nodes.insert(std::pair<const int32_t, Node*>(hash, r));
 	return r;
 }
 int32_t PathFinder::isFree(Entity* a2, int32_t x, int32_t y, int32_t z, Node* a6) {
