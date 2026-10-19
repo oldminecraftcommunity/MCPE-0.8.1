@@ -85,10 +85,13 @@ void Screen::updateEvents(){
 			this->mouseEvent();
 		}
 
-		while ( Keyboard::_index++ < Keyboard::_inputs.size() ){
+		while((Keyboard::_index + 1) < Keyboard::_inputs.size()) {
+			++Keyboard::_index;
 			this->keyboardEvent();
 		}
-		while ( Keyboard::_textIndex++ < Keyboard::_inputText.size() ){
+
+		while((Keyboard::_textIndex + 1) < Keyboard::_inputText.size()) {
+			++Keyboard::_textIndex;
 			this->keyboardTextEvent();
 		}
 	}

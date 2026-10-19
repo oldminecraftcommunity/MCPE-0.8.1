@@ -146,7 +146,7 @@ struct Item{
 	int32_t itemID;
 	int32_t maxItemdamage;
 	TextureUVCoordinateSet iconUV;
-	int32_t field_34;
+	int32_t creativeTabIndex;
 	int32_t field_38;
 	int8_t handEquipped_;
 	int8_t stackedByData;

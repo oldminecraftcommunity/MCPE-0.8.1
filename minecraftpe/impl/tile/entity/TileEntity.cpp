@@ -32,8 +32,8 @@ void TileEntity::setRemoved(void) {
 	if(!this->removed) {
 		this->removed = 1;
 		if(!this->level->isClient) {
-			for(auto& player: this->level->players) {
-				player->tileEntityDestroyed(this->id);
+			for(int i = 0; i < this->level->players.size(); ++i) {
+				this->level->players[i]->tileEntityDestroyed(this->id);
 			}
 		}
 	}
@@ -70,9 +70,6 @@ TileEntity::TileEntity(int32_t a2) {
 	TileEntity::_runningId = v2 + 1;
 	this->id = v2 + 1;
 	this->field_44 = 0.0;
-	this->field_48 = 0.0;
-	this->field_4C = 0.0;
-	this->field_50 = 0.0;
 	this->field_54 = 0.0;
 }
 int32_t TileEntity::getData(void) {
@@ -121,16 +118,9 @@ float TileEntity::getBrightness(float a2) {
 	return this->level->getBrightness(this->posX, this->posY, this->posZ);
 }
 void TileEntity::destroyTick(const Mob* a2, float a3) {
-	float y; // r1
-	float z; // r2
-
 	this->field_54 = a3;
 	Vec3 v6 = a2->getLookAngle();
-	y = v6.y;
-	z = v6.z;
-	this->field_48 = v6.x;
-	this->field_4C = y;
-	this->field_50 = z;
+	this->field_48 = v6;
 }
 void TileEntity::_destructionWobble(float& x, float& y, float& z) {
 	float v4; // s14
@@ -147,10 +137,10 @@ void TileEntity::_destructionWobble(float& x, float& y, float& z) {
 
 	v4 = this->field_54;
 	if(v4 > 0.0) {
-		v9 = this->field_44 + 0.016667;
+		v9 = this->field_44 + 0.016667f;
 		this->field_44 = v9;
 		if(v9 > 0.2) {
-			Vec3 v19((float)((float)(v4 * 0.05) + 0.01) * this->field_48, (float)((float)(v4 * 0.05) + 0.01) * this->field_4C, (float)((float)(v4 * 0.05) + 0.01) * this->field_50);
+			Vec3 v19((float)((float)(v4 * 0.05) + 0.01) * this->field_48.x, (float)((float)(v4 * 0.05) + 0.01) * this->field_48.y, (float)((float)(v4 * 0.05) + 0.01) * this->field_48.z);
 			double _v10 = (float)((float)((float)(Mth::random() - 0.5) * 6.2832) * 0.15);
 			v11 = cos(_v10);
 			v12 = sin(_v10);

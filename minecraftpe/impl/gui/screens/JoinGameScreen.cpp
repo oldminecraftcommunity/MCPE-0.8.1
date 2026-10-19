@@ -72,22 +72,20 @@ void JoinGameScreen::tick() {
 	std::vector<PingedCompatibleServer>* v3 = this->minecraft->rakNetInstance->getServerList();
 	std::vector<PingedCompatibleServer> v14;
 	while(v2 < v3->size()) {
-		if(v3->at(v2).field_0.GetLength()) {
-			v14.push_back(v3->at(v2));
+		if((*v3)[v2].field_0.GetLength()) {
+			v14.push_back((*v3)[v2]);
 		}
 		++v2;
 	}
 	if(v14.size() == this->availableGameList->servers.size()) {
 		int32_t v11 = v14.size() - 1;
-		int32_t v12 = v11;
 		while(v11 >= 0) {
 			for(int32_t i = 0; i < v14.size(); ++i) {
-				if(v14[i].field_4 == this->availableGameList->servers[v12].field_4) {
-					this->availableGameList->servers[v12].field_0 = v14[i].field_0;
+				if(v14[i].field_4 == this->availableGameList->servers[v11].field_4) {
+					this->availableGameList->servers[v11].field_0 = v14[i].field_0;
 				}
 			}
 			--v11;
-			--v12;
 		}
 	} else {
 		PingedCompatibleServer v15;

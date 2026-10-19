@@ -36,8 +36,8 @@ struct Level : LevelSource{
 	std::vector<Entity*> entities;
 	std::map<int32_t, Entity*> eid2entity; //TODO check type
 	std::vector<TileEntity*> tileEntities;
-	std::vector<TileEntity*> field_50;
-	bool field_5C;
+	std::vector<TileEntity*> scheduledTileEntityAdds;
+	bool tickingTileEntities;
 	std::vector<Player*> players;
 	int32_t skyDarken;
 	Dimension* dimensionPtr;
@@ -64,7 +64,7 @@ struct Level : LevelSource{
 	int32_t lightUpdatesCnt;
 	bool field_B64; //something related to light
 	bool nightMode;
-	double field_B64_;
+	double lastSavedAt;
 	std::vector<PRInfo> field_B6C;
 	int32_t prevTimeSent;
 	std::set<_TickPtr*> tickPtrSetImpl;

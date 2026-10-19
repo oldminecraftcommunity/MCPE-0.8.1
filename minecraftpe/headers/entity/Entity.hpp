@@ -21,9 +21,9 @@ struct Entity{
 	float posX;
 	float posY;
 	float posZ;
-	int32_t field_2C;
+	int32_t chunkX;
 	int32_t field_30;
-	int32_t field_34;
+	int32_t chunkZ;
 	int32_t entityId;
 	float somethingRelatedToRenderer;
 	Level* level;
@@ -66,7 +66,7 @@ struct Entity{
 	Entity* ridingAt;
 	float fallDistance;
 	int8_t field_FC;
-	int8_t field_FD;
+	bool addedToChunk;
 	bool_t onGround;
 	bool_t isCollidedHorizontally;
 	int8_t field_100;
@@ -77,7 +77,7 @@ struct Entity{
 	bool_t noclip;
 	int8_t field_106;
 	int8_t field_107;
-	int8_t field_108;
+	bool field_108;
 	int8_t field_109;
 	int8_t field_10A;
 	int8_t field_10B;

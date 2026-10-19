@@ -30,5 +30,4 @@ struct NinecraftApp : Minecraft{
 	virtual void handleBack(void);
 	virtual void init(void);
 	virtual void teardown(void);
-
 };

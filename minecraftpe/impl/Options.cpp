@@ -49,6 +49,173 @@ const char* Options::DIFFICULTY_NAMES[] = {"options.difficulty.peaceful", "optio
 const char* Options::GUI_SCALE[] = {"options.guiScale.auto", "options.guiScale.small", "options.guiScale.normal", "options.guiScale.large"};
 
 
+
+void Options::load(void) {
+}
+std::string Options::getMessage(const Options::Option*) {
+	return "Options::getMessage - Not implemented"; //actual mcpe code
+}
+void Options::notifyOptionUpdate(const Options::Option* a2, bool_t a3) {
+	this->minecraft->optionUpdated(a2, a3);
+}
+void Options::notifyOptionUpdate(const Options::Option* a2, float a3) {
+	this->minecraft->optionUpdated(a2, a3);
+}
+void Options::notifyOptionUpdate(const Options::Option* a2, int32_t a3) {
+	this->minecraft->optionUpdated(a2, a3);
+}
+std::string Options::formatDescriptionString(const char_t* a3, const char_t** a4, int32_t a5) {
+	char_t v9[100];
+	std::string v8 = I18n::get(a4[a5]);
+	sprintf(v9, a3, v8.c_str());
+	return v9;
+}
+bool_t Options::canModify(const Options::Option* a2) {
+	return &Options::Option::NAME != a2 || this->minecraft->mojangConnector->getConnectionStatus() == STATUS_0;
+}
+std::string Options::getDescription(const Options::Option*, std::string a4) {
+	return a4;
+}
+float Options::getProgrssMax(const Options::Option* a2) {
+	if(a2 == &Options::Option::MUSIC || a2 == &Options::Option::SOUND || a2 == &Options::Option::SENSITIVITY) {
+		return 1;
+	}
+	if(a2 == &Options::Option::PIXELS_PER_MILLIMETER) {
+		return 12;
+	}
+	return 1;
+}
+float Options::getProgrssMin(const Options::Option* a2) {
+	if(a2 == &Options::Option::MUSIC || a2 == &Options::Option::SOUND || a2 == &Options::Option::SENSITIVITY) {
+		return 0;
+	}
+	if(a2 == &Options::Option::PIXELS_PER_MILLIMETER) {
+		return 3;
+	}
+	return 0;
+}
+bool_t Options::getBooleanValue(const Options::Option* a2) {
+	if(a2 == &Options::Option::INVERT_MOUSE) return this->invertMouse;
+	if(a2 == &Options::Option::VIEW_BOBBING) return this->viewBobbing;
+	if(a2 == &Options::Option::LIMIT_FRAMERATE) return this->limitFramerate;
+	if(a2 == &Options::Option::THIRD_PERSON) return this->thirdPerson;
+	if(a2 == &Options::Option::HIDE_GUI) return this->hideGUI;
+	if(a2 == &Options::Option::SERVER_VISIBLE) return this->serverVisible;
+	if(a2 == &Options::Option::LEFT_HANDED) return this->leftHanded;
+	if(a2 == &Options::Option::USE_TOUCHSCREEN) return this->useTouchscreen;
+	if(a2 == &Options::Option::USE_TOUCH_JOYPAD) return this->useJoypad;
+	if(a2 == &Options::Option::DESTROY_VIBRATION) return this->destroyVibration;
+	if(a2 == &Options::Option::FANCY_SKIES) return this->fancySkies;
+	if(a2 == &Options::Option::ANIMATE_TEXTURES) return this->animateTextures;
+	if(a2 == &Options::Option::GRAPHICS) return this->graphics;
+	return 0;
+}
+std::string Options::getStringValue(const Options::Option* a2) {
+	if(&Options::Option::NAME == a2) return this->username;
+	return "";
+}
+
+float Options::getProgressValue(const Options::Option* a2) {
+	if(a2 == &Options::Option::MUSIC) return this->musicVolume;
+	if(a2 == &Options::Option::SOUND) return this->soundVolume;
+	if(a2 == &Options::Option::SENSITIVITY) return this->sensitity;
+	if(a2 == &Options::Option::PIXELS_PER_MILLIMETER) return this->pixelDensity;
+	return 0;
+}
+int32_t Options::getIntValue(const Options::Option* a2) {
+	if(a2 == &Options::Option::DIFFICULTY) {
+		return this->difficulty;
+	}
+	if(a2 == &Options::Option::RENDER_DISTANCE) {
+		return this->renderDistance;
+	}
+	return 0;
+}
+void Options::set(const Options::Option* a2, std::string a3) {
+	if(&Options::Option::NAME == a2) {
+		if(a3.size() == 0) {
+			a3 = "Steve";
+		}
+		this->username = a3;
+		if(this->minecraft->user) {
+			this->minecraft->user->username = a3;
+		}
+	}
+}
+void Options::set(const Options::Option* a2, int32_t a3) {
+	if(a2 == &Options::Option::DIFFICULTY) {
+		this->difficulty = a3;
+	} else if(a2 == &Options::Option::RENDER_DISTANCE) {
+		this->renderDistance = a3;
+	}
+	this->notifyOptionUpdate(a2, a3);
+}
+void Options::set(const Options::Option* a2, float a3) {
+	if(a2 == &Options::Option::MUSIC) {
+		this->musicVolume = a3;
+	} else if(a2 == &Options::Option::SOUND) {
+		this->soundVolume = a3;
+	} else if(a2 == &Options::Option::SENSITIVITY) {
+		this->sensitity = a3;
+	} else if(a2 == &Options::Option::PIXELS_PER_MILLIMETER) {
+		this->pixelDensity = a3;
+	}
+	this->notifyOptionUpdate(a2, a3);
+}
+std::string Options::getKeyMessage(int32_t) {
+	return "Options::getKeyMessage not implemented"; //actual mcpe code
+}
+std::string Options::getKeyDescription(int32_t) {
+	return "Options::getKeyDescription not implemented"; //yes
+}
+bool_t Options::hideOption(const Options::Option* a2) {
+	if(a2 == &Options::Option::USE_TOUCHSCREEN && !this->minecraft->supportNonTouchScreen()) {
+		return 1;
+	}
+	for(int32_t i = 0; i < this->hiddenOptionsVec.size(); ++i) {
+		if(this->hiddenOptionsVec[i] == a2) {
+			return 1;
+		}
+	}
+	return 0;
+}
+bool_t Options::readFloat(const std::string& a1, float& a2) {
+	if(a1 == "true" || a1 == "YES") {
+		a2 = 1;
+		return 1;
+	} else {
+		if(a1 == "false" || a1 == "NO") {
+			a2 = 0;
+			return 1;
+		}
+		return sscanf(a1.c_str(), "%f", &a2) != 0;
+	}
+}
+bool_t Options::readInt(const std::string& a1, int32_t& a2) {
+	if(a1 == "true" || a1 == "YES") {
+		a2 = 1;
+		return 1;
+	} else {
+		if(a1 == "false" || a1 == "NO") {
+			a2 = 0;
+			return 1;
+		}
+		return sscanf(a1.c_str(), "%d", &a2) != 0;
+	}
+}
+bool_t Options::readBool(const std::string& r0, bool_t& a2) {
+	std::string a1 = Util::stringTrim(r0);
+	if(a1 == "true" || a1 == "1" || a1 == "YES") {
+		a2 = 1;
+		return 1;
+	} else {
+		if(a1 == "false" || a1 == "0" || a1 == "NO") {
+			a2 = 0;
+			return 1;
+		}
+		return 0;
+	}
+}
 void Options::update() {
 	std::vector<std::string> v13 = this->settingFolderPath.getOptionStrings();
 	for(int i = 0;; i += 2) {
@@ -136,16 +303,50 @@ void Options::update() {
 		}
 	}
 }
-
-void Options::validateVersion(void) {
-	if(this->major || this->minor != 8 || this->patch != 1 || this->beta) {
-		this->minecraft->onUpdatedClient(this->major, this->minor, this->patch, this->beta);
-		this->major = 0;
-		this->minor = 8;
-		this->beta = 0;
-		this->patch = 1;
-		this->save();
-	}
+void Options::addOptionToSaveOutput(std::vector<std::string>& a2, std::string a3, bool a4) {
+	std::stringstream v11;
+	v11 << a3 << ":" << a4;
+	a2.push_back(v11.str());
+}
+void Options::addOptionToSaveOutput(std::vector<std::string>& a2, std::string a3, float a4) {
+	std::stringstream v11;
+	v11 << a3 << ":" << a4;
+	a2.push_back(v11.str());
+}
+void Options::addOptionToSaveOutput(std::vector<std::string>& a2, std::string a3, int32_t a4) {
+	std::stringstream v11;
+	v11 << a3 << ":" << a4;
+	a2.push_back(v11.str());
+}
+void Options::addOptionToSaveOutput(std::vector<std::string>& a2, std::string a3, std::string a4) {
+	std::stringstream v11;
+	v11 << a3 << ":" << a4;
+	a2.push_back(v11.str());
+}
+void Options::save(void) {
+	std::vector<std::string> v4;
+	this->addOptionToSaveOutput(v4, OptionStrings::Multiplayer_Username, this->username);
+	this->addOptionToSaveOutput(v4, OptionStrings::Game_DifficultyLevel, this->difficulty);
+	this->addOptionToSaveOutput(v4, OptionStrings::Game_ThirdPerson, this->thirdPerson);
+	this->addOptionToSaveOutput(v4, OptionStrings::Graphics_PixelsPerMilimeter, this->pixelDensity);
+	this->addOptionToSaveOutput(v4, OptionStrings::Multiplayer_ServerVisible, this->serverVisible);
+	this->addOptionToSaveOutput(v4, OptionStrings::Controls_Sensitivity, this->sensitity);
+	this->addOptionToSaveOutput(v4, OptionStrings::Controls_InvertMouse, this->invertMouse);
+	this->addOptionToSaveOutput(v4, OptionStrings::Controls_IsLefthanded, this->leftHanded);
+	this->addOptionToSaveOutput(v4, OptionStrings::Controls_UseTouchScreen, this->useTouchscreen);
+	this->addOptionToSaveOutput(v4, OptionStrings::Controls_UseTouchJoypad, this->useJoypad);
+	this->addOptionToSaveOutput(v4, OptionStrings::Controls_FeedbackVibration, this->destroyVibration);
+	this->addOptionToSaveOutput(v4, OptionStrings::Graphics_RenderDistance, this->renderDistance);
+	this->addOptionToSaveOutput(v4, OptionStrings::Graphics_FancyGraphics, this->graphics);
+	this->addOptionToSaveOutput(v4, OptionStrings::Graphics_FancySkies, this->fancySkies);
+	this->addOptionToSaveOutput(v4, OptionStrings::Graphics_AnimateTextures, this->animateTextures);
+	this->addOptionToSaveOutput(v4, OptionStrings::Graphics_HideGUI, this->hideGUI);
+	this->addOptionToSaveOutput(v4, OptionStrings::AUDIO_Sound, this->soundVolume);
+	this->addOptionToSaveOutput(v4, OptionStrings::Last_Game_Version_Major, this->major);
+	this->addOptionToSaveOutput(v4, OptionStrings::Last_Game_Version_Minor, this->minor);
+	this->addOptionToSaveOutput(v4, OptionStrings::Last_Game_Version_Patch, this->patch);
+	this->addOptionToSaveOutput(v4, OptionStrings::Last_Game_Version_Beta, this->beta);
+	this->settingFolderPath.save(v4);
 }
 
 void Options::toggle(const Options::Option* a2, int32_t a3) {
@@ -192,112 +393,18 @@ void Options::setKey(int32_t a2, int32_t a3) {
 	this->keys[a2]->keyCode = a3;
 	this->save();
 }
+void Options::validateVersion(void) {
+	if(this->major || this->minor != 8 || this->patch != 1 || this->beta) {
+		this->minecraft->onUpdatedClient(this->major, this->minor, this->patch, this->beta);
+		this->major = 0;
+		this->minor = 8;
+		this->beta = 0;
+		this->patch = 1;
+		this->save();
+	}
+}
 void Options::setAdditionalHiddenOptions(const std::vector<const Options::Option*>& a2) {
 	this->hiddenOptionsVec = a2;
-}
-void Options::set(const Options::Option* a2, std::string a3) {
-	if(&Options::Option::NAME == a2) {
-		if(a3.size() == 0) {
-			a3 = "Steve";
-		}
-		this->username = a3;
-		if(this->minecraft->user) {
-			this->minecraft->user->username = a3;
-		}
-	}
-}
-void Options::set(const Options::Option* a2, int32_t a3) {
-	if(a2 == &Options::Option::DIFFICULTY) {
-		this->difficulty = a3;
-	} else if(a2 == &Options::Option::RENDER_DISTANCE) {
-		this->renderDistance = a3;
-	}
-	this->notifyOptionUpdate(a2, a3);
-}
-void Options::set(const Options::Option* a2, float a3) {
-	if(a2 == &Options::Option::MUSIC) {
-		this->musicVolume = a3;
-	} else if(a2 == &Options::Option::SOUND) {
-		this->soundVolume = a3;
-	} else if(a2 == &Options::Option::SENSITIVITY) {
-		this->sensitity = a3;
-	} else if(a2 == &Options::Option::PIXELS_PER_MILLIMETER) {
-		this->pixelDensity = a3;
-	}
-	this->notifyOptionUpdate(a2, a3);
-}
-void Options::save(void) {
-	std::vector<std::string> v4;
-	this->addOptionToSaveOutput(v4, OptionStrings::Multiplayer_Username, this->username);
-	this->addOptionToSaveOutput(v4, OptionStrings::Game_DifficultyLevel, this->difficulty);
-	this->addOptionToSaveOutput(v4, OptionStrings::Game_ThirdPerson, this->thirdPerson);
-	this->addOptionToSaveOutput(v4, OptionStrings::Graphics_PixelsPerMilimeter, this->pixelDensity);
-	this->addOptionToSaveOutput(v4, OptionStrings::Multiplayer_ServerVisible, this->serverVisible);
-	this->addOptionToSaveOutput(v4, OptionStrings::Controls_Sensitivity, this->sensitity);
-	this->addOptionToSaveOutput(v4, OptionStrings::Controls_InvertMouse, this->invertMouse);
-	this->addOptionToSaveOutput(v4, OptionStrings::Controls_IsLefthanded, this->leftHanded);
-	this->addOptionToSaveOutput(v4, OptionStrings::Controls_UseTouchScreen, this->useTouchscreen);
-	this->addOptionToSaveOutput(v4, OptionStrings::Controls_UseTouchJoypad, this->useJoypad);
-	this->addOptionToSaveOutput(v4, OptionStrings::Controls_FeedbackVibration, this->destroyVibration);
-	this->addOptionToSaveOutput(v4, OptionStrings::Graphics_RenderDistance, this->renderDistance);
-	this->addOptionToSaveOutput(v4, OptionStrings::Graphics_FancyGraphics, this->graphics);
-	this->addOptionToSaveOutput(v4, OptionStrings::Graphics_FancySkies, this->fancySkies);
-	this->addOptionToSaveOutput(v4, OptionStrings::Graphics_AnimateTextures, this->animateTextures);
-	this->addOptionToSaveOutput(v4, OptionStrings::Graphics_HideGUI, this->hideGUI);
-	this->addOptionToSaveOutput(v4, OptionStrings::AUDIO_Sound, this->soundVolume);
-	this->addOptionToSaveOutput(v4, OptionStrings::Last_Game_Version_Major, this->major);
-	this->addOptionToSaveOutput(v4, OptionStrings::Last_Game_Version_Minor, this->minor);
-	this->addOptionToSaveOutput(v4, OptionStrings::Last_Game_Version_Patch, this->patch);
-	this->addOptionToSaveOutput(v4, OptionStrings::Last_Game_Version_Beta, this->beta);
-	this->settingFolderPath.save(v4);
-}
-bool_t Options::readInt(const std::string& a1, int32_t& a2) {
-	if(a1 == "true" || a1 == "YES") {
-		a2 = 1;
-		return 1;
-	} else {
-		if(a1 == "false" || a1 == "NO") {
-			a2 = 0;
-			return 1;
-		}
-		return sscanf(a1.c_str(), "%d", &a2) != 0;
-	}
-}
-bool_t Options::readFloat(const std::string& a1, float& a2) {
-	if(a1 == "true" || a1 == "YES") {
-		a2 = 1;
-		return 1;
-	} else {
-		if(a1 == "false" || a1 == "NO") {
-			a2 = 0;
-			return 1;
-		}
-		return sscanf(a1.c_str(), "%f", &a2) != 0;
-	}
-}
-bool_t Options::readBool(const std::string& r0, bool_t& a2) {
-	std::string a1 = Util::stringTrim(r0);
-	if(a1 == "true" || a1 == "1" || a1 == "YES") {
-		a2 = 1;
-		return 1;
-	} else {
-		if(a1 == "false" || a1 == "0" || a1 == "NO") {
-			a2 = 0;
-			return 1;
-		}
-		return 0;
-	}
-}
-void Options::notifyOptionUpdate(const Options::Option* a2, int32_t a3) {
-	this->minecraft->optionUpdated(a2, a3);
-}
-void Options::notifyOptionUpdate(const Options::Option* a2, float a3) {
-	this->minecraft->optionUpdated(a2, a3);
-}
-void Options::notifyOptionUpdate(const Options::Option* a2, bool_t a3) {
-	this->minecraft->optionUpdated(a2, a3);
-}
-void Options::load(void) {
 }
 void Options::initDefaultValues(void) {
 	this->beta = 0;
@@ -385,16 +492,10 @@ void Options::initDefaultValues(void) {
 	this->keyMenuNext.keyCode = 20;
 	this->setAdditionalHiddenOptions({});
 }
-bool_t Options::hideOption(const Options::Option* a2) {
-	if(a2 == &Options::Option::USE_TOUCHSCREEN && !this->minecraft->supportNonTouchScreen()) {
-		return 1;
-	}
-	for(int32_t i = 0; i < this->hiddenOptionsVec.size(); ++i) {
-		if(this->hiddenOptionsVec[i] == a2) {
-			return 1;
-		}
-	}
-	return 0;
+void Options::init(Minecraft* mc, std::string a3) {
+	this->minecraft = mc;
+	this->settingFolderPath.setSettingsFolderPath(a3);
+	this->initDefaultValues();
 }
 std::vector<int> Options::getValues(const Options::Option* a2) {
 	if(a2 == &Options::Option::DIFFICULTY) {
@@ -405,140 +506,4 @@ std::vector<int> Options::getValues(const Options::Option* a2) {
 	}
 	return {};
 }
-std::string Options::getStringValue(const Options::Option* a2) {
-	if(&Options::Option::NAME == a2) {
-		return this->username;
-	}
-	return "";
-}
-float Options::getProgrssMin(const Options::Option* a2) {
-	if(a2 == &Options::Option::MUSIC || a2 == &Options::Option::SOUND || a2 == &Options::Option::SENSITIVITY) {
-		return 0;
-	}
-	if(a2 == &Options::Option::PIXELS_PER_MILLIMETER) {
-		return 3;
-	}
-	return 0;
-}
-float Options::getProgrssMax(const Options::Option* a2) {
-	if(a2 == &Options::Option::MUSIC || a2 == &Options::Option::SOUND || a2 == &Options::Option::SENSITIVITY) {
-		return 1;
-	}
-	if(a2 == &Options::Option::PIXELS_PER_MILLIMETER) {
-		return 12;
-	}
-	return 1;
-}
-float Options::getProgressValue(const Options::Option* a2) {
-	if(a2 == &Options::Option::MUSIC) {
-		return this->musicVolume;
-	}
-	if(a2 == &Options::Option::SOUND) {
-		return this->soundVolume;
-	}
-	if(a2 == &Options::Option::SENSITIVITY) {
-		return this->sensitity;
-	}
-	if(a2 == &Options::Option::PIXELS_PER_MILLIMETER) {
-		return this->pixelDensity;
-	}
-	return 0;
-}
-std::string Options::getMessage(const Options::Option*) {
-	return "Options::getMessage - Not implemented"; //actual mcpe code
-}
-std::string Options::getKeyMessage(int32_t) {
-	return "Options::getKeyMessage not implemented"; //actual mcpe code
-}
-std::string Options::getKeyDescription(int32_t) {
-	return "Options::getKeyDescription not implemented"; //yes
-}
-int32_t Options::getIntValue(const Options::Option* a2) {
-	if(a2 == &Options::Option::DIFFICULTY) {
-		return this->difficulty;
-	}
-	if(a2 == &Options::Option::RENDER_DISTANCE) {
-		return this->renderDistance;
-	}
-	return 0;
-}
-std::string Options::getDescription(const Options::Option*, std::string a4) {
-	return a4;
-}
-bool_t Options::getBooleanValue(const Options::Option* a2) {
-	if(a2 == &Options::Option::INVERT_MOUSE) {
-		return this->invertMouse;
-	}
-	if(a2 == &Options::Option::VIEW_BOBBING) {
-		return this->viewBobbing;
-	}
-	if(a2 == &Options::Option::LIMIT_FRAMERATE) {
-		return this->limitFramerate;
-	}
-	if(a2 == &Options::Option::THIRD_PERSON) {
-		return this->thirdPerson;
-	}
-	if(a2 == &Options::Option::HIDE_GUI) {
-		return this->hideGUI;
-	}
-	if(a2 == &Options::Option::SERVER_VISIBLE) {
-		return this->serverVisible;
-	}
-	if(a2 == &Options::Option::LEFT_HANDED) {
-		return this->leftHanded;
-	}
-	if(a2 == &Options::Option::USE_TOUCHSCREEN) {
-		return this->useTouchscreen;
-	}
-	if(a2 == &Options::Option::USE_TOUCH_JOYPAD) {
-		return this->useJoypad;
-	}
-	if(a2 == &Options::Option::DESTROY_VIBRATION) {
-		return this->destroyVibration;
-	}
-	if(a2 == &Options::Option::FANCY_SKIES) {
-		return this->fancySkies;
-	}
-	if(a2 == &Options::Option::ANIMATE_TEXTURES) {
-		return this->animateTextures;
-	}
-	if(a2 == &Options::Option::GRAPHICS) {
-		return this->graphics;
-	}
-	return 0;
-}
-std::string Options::formatDescriptionString(const char_t* a3, const char_t** a4, int32_t a5) {
-	char_t v9[100];
-	std::string v8 = I18n::get(a4[a5]);
-	sprintf(v9, a3, v8.c_str());
-	return v9;
-}
-bool_t Options::canModify(const Options::Option* a2) {
-	return &Options::Option::NAME != a2 || this->minecraft->mojangConnector->getConnectionStatus() == STATUS_0;
-}
-void Options::addOptionToSaveOutput(std::vector<std::string>& a2, std::string a3, std::string a4) {
-	std::stringstream v11;
-	v11 << a3 << ":" << a4;
-	a2.push_back(v11.str());
-}
-void Options::addOptionToSaveOutput(std::vector<std::string>& a2, std::string a3, int32_t a4) {
-	std::stringstream v11;
-	v11 << a3 << ":" << a4;
-	a2.push_back(v11.str());
-}
-void Options::addOptionToSaveOutput(std::vector<std::string>& a2, std::string a3, float a4) {
-	std::stringstream v11;
-	v11 << a3 << ":" << a4;
-	a2.push_back(v11.str());
-}
-void Options::addOptionToSaveOutput(std::vector<std::string>& a2, std::string a3, bool a4) {
-	std::stringstream v11;
-	v11 << a3 << ":" << a4;
-	a2.push_back(v11.str());
-}
 
-void Options::init(Minecraft* mc, std::string a3) {
-	this->minecraft = mc;
-	this->settingFolderPath.setSettingsFolderPath(a3);
-	this->initDefaultValues();
-}

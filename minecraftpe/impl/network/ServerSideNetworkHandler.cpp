@@ -169,7 +169,7 @@ void ServerSideNetworkHandler::onReady_ClientGeneration(const RakNet::RakNetGUID
 
 		for(auto e: this->level->entities) {
 			if(e->isRiding()) {
-				SetEntityLinkPacket pk(0, e->entityId, e->ridingAt ? e->ridingAt->entityId : 0);
+				SetEntityLinkPacket pk(0, e, e->ridingAt);
 				this->raknetInstance->send(pk);
 			}
 		}

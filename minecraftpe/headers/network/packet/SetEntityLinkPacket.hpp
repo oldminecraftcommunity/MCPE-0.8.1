@@ -1,14 +1,15 @@
 #pragma once
 #include <network/Packet.hpp>
 #include <network/NetEventCallback.hpp>
+#include <entity/Entity.hpp>
 
 struct SetEntityLinkPacket : Packet{
 	int32_t typeMaybe, rider, riding;
 
-	SetEntityLinkPacket(int32_t type, int32_t rider, int32_t riding) {
+	SetEntityLinkPacket(int32_t type, Entity* rider, Entity* riding) {
 		this->typeMaybe = type;
-		this->rider = rider;
-		this->riding = riding;
+		this->rider = rider ? rider->entityId : 0;
+		this->riding = riding ? riding->entityId : 0;
 	}
 	SetEntityLinkPacket() {
 	}

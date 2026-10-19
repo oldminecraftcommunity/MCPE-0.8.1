@@ -24,8 +24,9 @@ struct TileEntity
 	struct Tile* block;
 	bool_t removed;
 	int8_t field_41, field_42, field_43;
-	float field_44, field_48, field_4C;
-	float field_50, field_54;
+	float field_44;
+	Vec3 field_48;
+	float field_54;
 
 	static void initTileEntities();
 	static void teardownTileEntities();

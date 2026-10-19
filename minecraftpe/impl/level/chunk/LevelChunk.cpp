@@ -317,10 +317,10 @@ void LevelChunk::addEntity(struct Entity* a2) {
 	int32_t v5 = Mth::floor(v2);
 	if(v5 < 0) v5 = 0;
 	else if(v5 >= 7) v5 = 7;
-	a2->field_FD = 1;
+	a2->addedToChunk = 1;
 	a2->field_30 = v5;
-	a2->field_2C = this->chunkX;
-	a2->field_34 = this->chunkZ;
+	a2->chunkX = this->chunkX;
+	a2->chunkZ = this->chunkZ;
 	this->miniChunkEntities[v5].push_back(a2);
 }
 void LevelChunk::removeEntity(struct Entity* a2) {

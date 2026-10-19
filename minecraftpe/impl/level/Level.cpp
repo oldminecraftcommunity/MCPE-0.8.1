@@ -39,7 +39,7 @@
 Level::Level(struct LevelStorage* a2, const std::string& a3, const struct LevelSettings& a4, bool_t a5, int32_t a6, struct Dimension* a7) : random(1){
 	this->isClient = a5;
 	this->instantTick = 0;
-	this->field_5C = 0;
+	this->tickingTileEntities = 0;
 	this->skyDarken = 0;
 	this->rakNetInstance = 0;
 	this->searchingSpawn = 0;
@@ -54,7 +54,7 @@ Level::Level(struct LevelStorage* a2, const std::string& a3, const struct LevelS
 	this->lightUpdatesCnt = 0;
 	this->field_B64 = 0;
 	this->nightMode = 0;
-	this->field_B64_ = 0.0;
+	this->lastSavedAt = 0.0;
 	this->prevTimeSent = 0;
 	this->_init(a3, a4, a6, a7);
 }
@@ -899,8 +899,9 @@ int32_t Level::getEntitiesOfType(int32_t a2, const AABB& a3, std::vector<struct 
 	return a4.size() - v16;
 }
 struct Entity* Level::getEntity(int32_t a2) {
-	if(this->eid2entity.count(a2) == 0) return 0;
-	return this->eid2entity.at(a2);
+	auto&& e = this->eid2entity.find(a2);
+	if(e == this->eid2entity.end()) return 0;
+	return e->second;
 }
 
 Color4 Level::getFogColor(float a3) {
@@ -934,8 +935,10 @@ int32_t Level::getLightsToUpdate() {
 }
 struct Mob* Level::getMob(int32_t a2) {
 	Entity* e = this->getEntity(a2);
-	if(!e || !e->isMob()) return 0;
-	return (Mob*)e;
+	if(e) {
+		if(e->isMob()) return (Mob*)e;
+	}
+	return 0;
 }
 
 int32_t Level::getMoonPhase() {
@@ -1247,7 +1250,7 @@ TileEntity* Level::getTileEntity(int32_t x, int32_t y, int32_t z) {
 	}
 	res = chunk->getTileEntity(x & 0xF, y, z & 0xF);
 	if(!res) {
-		for(auto te: this->field_50) {
+		for(auto te: this->scheduledTileEntityAdds) {
 			if(!te->isRemoved() && te->posX == x && te->posY == y && te->posZ == z) {
 				return te;
 			}
@@ -1536,9 +1539,9 @@ void Level::removeTileEntity(int32_t x, int32_t y, int32_t z) {
 	te = this->getTileEntity(x, y, z);
 	if(te) {
 		te->setRemoved();
-		auto&& a6 = std::find(this->field_50.begin(), this->field_50.end(), te);
-		if(a6 != this->field_50.end()) {
-			this->field_50.erase(a6);
+		auto&& a6 = std::find(this->scheduledTileEntityAdds.begin(), this->scheduledTileEntityAdds.end(), te);
+		if(a6 != this->scheduledTileEntityAdds.end()) {
+			this->scheduledTileEntityAdds.erase(a6);
 		}
 	}
 }
@@ -1713,12 +1716,12 @@ void Level::setTileEntity(int32_t x, int32_t y, int32_t z, struct TileEntity* te
 
 	if(te) {
 		if(!te->isRemoved()) {
-			if(this->field_5C) {
+			if(this->tickingTileEntities) {
 				v9 = te;
 				te->posX = x;
 				v9->posY = y;
 				v9->posZ = z;
-				this->field_50.push_back(te);
+				this->scheduledTileEntityAdds.push_back(te);
 			} else {
 				this->tileEntities.push_back(te);
 				chunk = this->getChunk(x >> 4, z >> 4);
@@ -1787,19 +1790,12 @@ void Level::tick(struct Entity* e) {
 void Level::tick(struct Entity* ent, bool_t a3) {
 	int32_t v6;		   // r6
 	int32_t v7;		   // r0
-	float posX;		   // t1
-	float posY;		   // s15
-	float posZ;		   // s15
-	float pitch;	   // s15
-	float yaw;		   // s15
 	int32_t v14;	   // r6
 	int32_t v15;	   // r9
 	int32_t v16;	   // r0
 	int32_t v17;	   // r7
-	int32_t field_2C;  // r1
 	LevelChunk* v19;   // r0
 	Entity* rider;	   // r1
-	double TimeS;	   // d8
 	LevelChunk* chunk; // r0
 
 	v6 = Mth::floor(ent->posX);
@@ -1811,7 +1807,7 @@ void Level::tick(struct Entity* ent, bool_t a3) {
 		ent->prevYaw = ent->yaw;
 		ent->prevPitch = ent->pitch;
 		if(a3) {
-			if(ent->field_FD) {
+			if(ent->addedToChunk) {
 				if(ent->ridingAt) {
 					ent->rideTick();
 				} else {
@@ -1819,35 +1815,29 @@ void Level::tick(struct Entity* ent, bool_t a3) {
 				}
 			}
 		}
-		posX = ent->posX;
-		posY = ent->posY;
-		posZ = ent->posZ;
-		pitch = ent->pitch;
-		yaw = ent->yaw;
-		v14 = Mth::floor(posX * 0.0625);
-		v15 = Mth::floor(ent->posY * 0.0625);
-		v16 = Mth::floor(ent->posZ * 0.0625);
+		v14 = Mth::floor(ent->posX * 0.0625f);
+		v15 = Mth::floor(ent->posY * 0.0625f);
+		v16 = Mth::floor(ent->posZ * 0.0625f);
 		v17 = v16;
-		if(ent->field_FD) {
-			field_2C = ent->field_2C;
-			if(field_2C == v14 && ent->field_30 == v15 && ent->field_34 == v16) {
+		if(ent->addedToChunk) {
+			if(ent->chunkX == v14 && ent->field_30 == v15 && ent->chunkZ == v16) {
 				goto LABEL_17;
 			}
-			if(this->hasChunk(field_2C, ent->field_34)) {
-				chunk = this->getChunk(ent->field_2C, ent->field_34);
+			if(this->hasChunk(ent->chunkX, ent->chunkZ)) {
+				chunk = this->getChunk(ent->chunkX, ent->chunkZ);
 				chunk->removeEntity(ent, ent->field_30);
 			}
 		}
 		if(this->hasChunk(v14, v17)) {
-			ent->field_FD = 1;
+			ent->addedToChunk = 1;
 			v19 = this->getChunk(v14, v17);
 			v19->addEntity(ent);
 		} else {
-			ent->field_FD = 0;
+			ent->addedToChunk = 0;
 		}
 LABEL_17:
 		if(a3) {
-			if(ent->field_FD) {
+			if(ent->addedToChunk) {
 				rider = ent->rider;
 				if(rider) {
 					if(!rider->isDead && rider->ridingAt == ent) {
@@ -1859,10 +1849,10 @@ LABEL_17:
 				}
 			}
 		}
-		TimeS = getTimeS();
-		if(TimeS - this->field_B64_ >= 30.0) {
+		double TimeS = getTimeS();
+		if(TimeS - this->lastSavedAt >= 30) {
 			this->saveLevelData();
-			this->field_B64_ = TimeS;
+			this->lastSavedAt = TimeS;
 		}
 	}
 }
@@ -1893,9 +1883,9 @@ void Level::tickEntities() {
 			this->tick(v9);
 		}
 		if(v9->isDead && (!v9->isPlayer() || v9->field_108)) {
-			if(v9->field_FD) {
-				if(this->hasChunk(v9->field_2C, v9->field_34)) {
-					LevelChunk* chunk = this->getChunk(v9->field_2C, v9->field_34);
+			if(v9->addedToChunk) {
+				if(this->hasChunk(v9->chunkX, v9->chunkZ)) {
+					LevelChunk* chunk = this->getChunk(v9->chunkX, v9->chunkZ);
 					chunk->removeEntity(v9);
 				}
 			}
@@ -1919,7 +1909,7 @@ void Level::tickEntities() {
 		--v26;
 	}
 
-	this->field_5C = 1;
+	this->tickingTileEntities = 1;
 	for(int32_t v36 = 0; v36 < this->tileEntities.size(); ++v36) {
 		TileEntity* v37 = this->tileEntities[v36];
 		if(!v37->isRemoved()) {
@@ -1942,11 +1932,11 @@ void Level::tickEntities() {
 			delete v37;
 		}
 	}
-	this->field_5C = 0;
+	this->tickingTileEntities = 0;
 
-	if(!this->field_50.empty()) {
-		for(int32_t v42 = 0; v42 < this->field_50.size(); ++v42) {
-			TileEntity* v9 = this->field_50[v42];
+	if(!this->scheduledTileEntityAdds.empty()) {
+		for(int32_t v42 = 0; v42 < this->scheduledTileEntityAdds.size(); ++v42) {
+			TileEntity* v9 = this->scheduledTileEntityAdds[v42];
 			if(!v9->isRemoved()) {
 				bool v46 = 0;
 				for(int32_t i = 0; i < this->tileEntities.size(); ++i) {
@@ -1979,7 +1969,7 @@ void Level::tickEntities() {
 				this->sendTileUpdated(v47, v49, v48);
 			}
 		}
-		this->field_50.clear();
+		this->scheduledTileEntityAdds.clear();
 	}
 }
 void Level::tickTemporaryPointers() {
@@ -2454,7 +2444,7 @@ Level::~Level() {
 
 	std::set<TileEntity*> v29;
 	v29.insert(this->tileEntities.begin(), this->tileEntities.end());
-	v29.insert(this->field_50.begin(), this->field_50.end());
+	v29.insert(this->scheduledTileEntityAdds.begin(), this->scheduledTileEntityAdds.end());
 	for(auto&& te: v29) {
 		if(te) {
 			delete te;

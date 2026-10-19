@@ -5,21 +5,21 @@ SheepModel::SheepModel(bool_t a2)
 	: QuadrupedModel(12, 0, 64, 64) {
 	if(a2) {
 		this->field_118 = ModelPart(28, 8, 64, 64);
-		this->field_118.addBox(-4.0, -10.0, -7.0, 8, 16, 6, 0.0);
+		this->field_118.addBox(-4.0f, -10.0f, -7.0f, 8, 16, 6, 0);
 	} else {
 		this->field_118 = ModelPart(this, 28, 40, 64, 64);
-		this->field_118.addBox(-4.0, -10.0, -7.0, 8, 16, 6, 1.75);
+		this->field_118.addBox(-4.0f, -10.0f, -7.0f, 8, 16, 6, 1.75f);
 	}
 	this->field_118.setPos(0.0, 5.0, 2.0);
 	this->field_18 = ModelPart(this, 0, 0, 64, 64);
-	this->field_18.addBox(-3.0, -4.0, -6.0, 6, 6, 8, 0.0);
-	this->field_18.setPos(0.0, 6.0, -8.0);
+	this->field_18.addBox(-3.0f, -4.0f, -6.0f, 6, 6, 8, 0);
+	this->field_18.setPos(0.0f, 6.0f, -8.0f);
 	if(!a2) {
-		this->field_18.texOffs(0, 32)->addBox(-3.0, -4.0, -4.0, 6, 6, 6, 0.6);
-		this->field_198.texOffs(0, 48)->addBox(-2.0, 0.0, -2.0, 4, 6, 4, 0.5);
-		this->field_218.texOffs(0, 48)->addBox(-2.0, 0.0, -2.0, 4, 6, 4, 0.5);
-		this->field_298.texOffs(0, 48)->addBox(-2.0, 0.0, -2.0, 4, 6, 4, 0.5);
-		this->field_318.texOffs(0, 48)->addBox(-2.0, 0.0, -2.0, 4, 6, 4, 0.5);
+		this->field_18.texOffs(0, 32)->addBox(-3.0f, -4.0f, -4.0f, 6, 6, 6, 0.6f);
+		this->field_198.texOffs(0, 48)->addBox(-2.0f, 0.0f, -2.0f, 4, 6, 4, 0.5f);
+		this->field_218.texOffs(0, 48)->addBox(-2.0f, 0.0f, -2.0f, 4, 6, 4, 0.5f);
+		this->field_298.texOffs(0, 48)->addBox(-2.0f, 0.0f, -2.0f, 4, 6, 4, 0.5f);
+		this->field_318.texOffs(0, 48)->addBox(-2.0f, 0.0f, -2.0f, 4, 6, 4, 0.5f);
 	}
 }
 

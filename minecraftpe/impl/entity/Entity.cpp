@@ -20,7 +20,7 @@ Random Entity::sharedRandom(getEpochTimeS());
 std::string Entity::RIDING_TAG = "Riding";
 
 Entity::Entity(Level* a2) :
-	somethingRelatedToRenderer(1.0), field_2C(0), field_30(0), field_34(0),
+	somethingRelatedToRenderer(1.0), chunkX(0), field_30(0), chunkZ(0),
 	posX(0), posY(0), posZ(0), level(a2), prevX(0), prevY(0), prevZ(0),
 	motionX(0), motionY(0), motionZ(0), yaw(0), pitch(0), prevYaw(0), prevPitch(0),
 	field_6C(0), field_70(0), field_74(0), field_78(0), field_7C(0), field_80(0),
@@ -35,7 +35,7 @@ Entity::Entity(Level* a2) :
 	this->rider = 0;
 	this->ridingAt = 0;
 	this->field_FC = 0;
-	this->field_FD = 0;
+	this->addedToChunk = 0;
 	this->onGround = 0;
 	this->isCollidedHorizontally = 0;
 	this->field_100 = 0;

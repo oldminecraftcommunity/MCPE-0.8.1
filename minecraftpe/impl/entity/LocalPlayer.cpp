@@ -256,7 +256,7 @@ void LocalPlayer::tick() {
 	Player::tick();
 	if(this->isJumping && this->isRiding()) {
 		this->ride(0);
-		SetEntityLinkPacket v24(0, this->entityId, this->ridingAt ? this->ridingAt->entityId : 0);
+		SetEntityLinkPacket v24(0, this, this->ridingAt);
 		this->minecraft->rakNetInstance->send(v24);
 	}
 
@@ -348,7 +348,7 @@ void LocalPlayer::ride(Entity* a2) {
 	Player::ride(a2);
 	level = this->level;
 	if(!level->isClient) {
-		SetEntityLinkPacket v9(0, this->entityId, this->ridingAt ? this->ridingAt->entityId : 0); // [sp+8h] [bp-30h] BYREF
+		SetEntityLinkPacket v9(0, this, this->ridingAt);
 		this->minecraft->rakNetInstance->send(v9);
 	}
 }

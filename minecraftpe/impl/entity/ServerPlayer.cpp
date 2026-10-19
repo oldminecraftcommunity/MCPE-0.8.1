@@ -95,7 +95,7 @@ void ServerPlayer::tick() {
 }
 void ServerPlayer::ride(Entity* a2) {
 	Player::ride(a2);
-	SetEntityLinkPacket v6(0, this ? this->entityId : 0, this->ridingAt ? this->ridingAt->entityId : 0);
+	SetEntityLinkPacket v6(0, this, this->ridingAt);
 	this->minecraft->rakNetInstance->send(v6);
 }
 void ServerPlayer::aiStep() {
@@ -103,6 +103,7 @@ void ServerPlayer::aiStep() {
 	Player::aiStep();
 }
 void ServerPlayer::hurtArmor(int32_t a2) {
+	Player::hurtArmor(a2);
 	HurtArmorPacket v4(a2);
 	this->minecraft->rakNetInstance->send(this->rakNetGUID, v4);
 }
@@ -128,7 +129,7 @@ void ServerPlayer::openContainer(ChestTileEntity* a2) {
 	int32_t posY = a2->posY;
 	int8_t v9 = v5;
 	ContainerOpenPacket v14(v4, 0, v9, posX, posY, posZ);
-	this->minecraft->rakNetInstance->send(v14);
+	this->minecraft->rakNetInstance->send(this->rakNetGUID, v14);
 	this->setContainerMenu(new ChestMenu(a2));
 }
 void ServerPlayer::openFurnace(FurnaceTileEntity* a2) {
@@ -144,11 +145,13 @@ void ServerPlayer::displayClientMessage(const std::string& a2) {
 void ServerPlayer::stopSleepInBed(bool_t a2, bool_t a3, bool_t a4) {
 	if(this->isSleeping()) {
 		AnimatePacket v8(this->entityId, 3);
+		this->minecraft->rakNetInstance->send(this->rakNetGUID, v8);
 	}
 	Player::stopSleepInBed(a2, a3, a4);
 }
 void ServerPlayer::closeContainer() {
 	ContainerClosePacket v3(this->currentContainer->field_0);
+	v3.packetReliabilityMaybe = PacketReliability::RELIABLE_ORDERED;
 	this->minecraft->rakNetInstance->send(this->rakNetGUID, v3);
 	this->doCloseContainer();
 }
@@ -157,17 +160,13 @@ void ServerPlayer::setContainerData(BaseContainerMenu* a2, int32_t a3, int32_t a
 	this->minecraft->rakNetInstance->send(this->rakNetGUID, v10);
 }
 void ServerPlayer::slotChanged(BaseContainerMenu* a2, int32_t a3, const ItemInstance& a4, bool_t a5){
-	int32_t v8; // r8
-
-	if ( !a5 )
-	{
-		v8 = a2->field_0;
-		ContainerSetSlotPacket v9(0, v8, a3, a4); // [sp+4h] [bp-44h] BYREF
+	if ( !a5 ){
+		ContainerSetSlotPacket v9(0, a2->field_0, a3, a4);
 		this->minecraft->rakNetInstance->send(this->rakNetGUID, v9);
 	}
 }
 void ServerPlayer::refreshContainer(BaseContainerMenu* a2, const std::vector<ItemInstance>& a3) {
-	//TODO check
+	//TODO it uses different ContainerSetContentPacket contructor (that is probably not implemented)
 	ContainerSetContentPacket v10(a2->field_0, a2->getItems(), 0); //inlined
 	this->minecraft->rakNetInstance->send(v10);
 }

@@ -713,7 +713,7 @@ void Minecart::tick() {
 		if ( this->linkedEntity != v43 )
 		{
 			this->linkedEntity = v43;
-			SetEntityLinkPacket *v48 = new SetEntityLinkPacket(0, this->rider ? this->rider->entityId : 0, this->entityId); // r5
+			SetEntityLinkPacket *v48 = new SetEntityLinkPacket(0, this->rider, this); // r5
 			this->level->rakNetInstance->send(v48);
 		}
 	}

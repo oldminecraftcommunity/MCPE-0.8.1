@@ -178,7 +178,7 @@ struct Tile{
 	const Material* material;
 	float slipperiness;
 	float blockHardness, blockResistance;
-	int32_t field_50, field_54;
+	int32_t field_50, creativeTabIndex;
 	bool_t goodGraphics;
 	int8_t field_59, field_5A, field_5B;
 	uint32_t field_5C;

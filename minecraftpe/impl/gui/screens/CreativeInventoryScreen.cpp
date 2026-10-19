@@ -78,12 +78,7 @@ ItemInstance CreativeInventoryScreen::getItemFromType(int32_t a3) {
 }
 void CreativeInventoryScreen::populateFilteredItems() {
 	for(auto&& it: CreativeInventoryScreen::items) {
-		int32_t f54;
-		if(it.tileClass) {
-			f54 = it.tileClass->field_54;
-		} else {
-			f54 = it.itemClass->field_34;
-		}
+		int32_t f54 = it.tileClass ? it.tileClass->creativeTabIndex : it.itemClass->creativeTabIndex;
 		CreativeInventoryScreen::filteredItems[f54-1].push_back(it);
 	}
 }

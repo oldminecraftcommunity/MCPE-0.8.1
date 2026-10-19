@@ -11,7 +11,9 @@ ServerLevel::ServerLevel(LevelStorage* a2, const std::string& a3, const LevelSet
 
 void ServerLevel::awakenAllPlayers() {
 	this->_allPlayersSleeping = 0;
-	for(auto&& p: this->players) {
+	for(std::vector<Player*>::iterator i = this->players.begin(); i != this->players.end(); ++i) {
+		Player* p = (*i);
+
 		if(p->isSleeping()) {
 			p->stopSleepInBed(0, 0, 1);
 			p->health = p->prevHealthMaybe = 20;
@@ -44,7 +46,8 @@ void ServerLevel::tick() {
 void ServerLevel::updateSleepingPlayerList() {
 	bool allPlayersSleeping = this->_allPlayersSleeping;
 	this->_allPlayersSleeping = !this->players.empty();
-	for(auto&& p: this->players) {
+	for(std::vector<Player*>::iterator i = this->players.begin(); i != this->players.end(); ++i) {
+		Player* p = (*i);
 		if(!p->isSleeping()) {
 			this->_allPlayersSleeping = 0;
 			break;
@@ -54,7 +57,8 @@ void ServerLevel::updateSleepingPlayerList() {
 	if(!allPlayersSleeping) {
 		if(this->_allPlayersSleeping) {
 			this->levelEvent(0, 9800, 0, 0, 0, 0);
-			for(auto&& p: this->players) {
+			for(std::vector<Player*>::iterator i = this->players.begin(); i != this->players.end(); ++i) {
+				Player* p = (*i);
 				p->setAllPlayersSleeping();
 			}
 		}

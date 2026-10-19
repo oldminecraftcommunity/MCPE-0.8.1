@@ -18,7 +18,7 @@ Skeleton::Skeleton(Level* a2)
 	: Monster(a2)
 	, heldItem(Item::bow, 1) {
 	this->entityRenderId = SKELETON;
-	this->field_C9C = 0;
+	this->skyCheckCounter = 0;
 	this->skin = "mob/skeleton.png";
 	this->goalSelector.addGoal(1, new FloatGoal(this), 1);
 	this->goalSelector.addGoal(2, new RestrictSunGoal(this), 1);
@@ -39,37 +39,9 @@ int32_t Skeleton::getMaxHealth() {
 	return 10;
 }
 void Skeleton::aiStep() {
-	int32_t v2;	 // r3
-	float posX;	 // s15
-	int32_t v4;	 // r1
-	bool_t v5;	 // fnf
-	float posY;	 // s15
-	int32_t v7;	 // r2
-	bool_t v8;	 // fnf
-	float posZ;	 // s15
-	int32_t v10; // r3
-
-	v2 = this->field_C9C + 1;
-	this->field_C9C = v2;
-	if((v2 & 1) != 0 && this->level->isDay() && !this->level->isClient && this->getBrightness(1.0) > 0.5 && !this->isOnFire()) {
-		posX = this->posX;
-		v4 = (int32_t)posX;
-		v5 = posX < (float)(int32_t)posX;
-		posY = this->posY;
-		v7 = (int32_t)posY;
-		if(v5) {
-			--v4;
-		}
-		v8 = posY < (float)(int32_t)posY;
-		posZ = this->posZ;
-		v10 = (int32_t)posZ;
-		if(v8) {
-			--v7;
-		}
-		if(posZ < (float)(int32_t)posZ) {
-			--v10;
-		}
-		if(this->level->canSeeSky(v4, v7, v10)) {
+	this->skyCheckCounter += 1;
+	if((this->skyCheckCounter & 1) != 0 && this->level->isDay() && !this->level->isClient && this->getBrightness(1.0) > 0.5f && !this->isOnFire()) {
+		if(this->level->canSeeSky(Mth::floor(this->posX), Mth::floor(this->posY), Mth::floor(this->posZ))) {
 			this->setOnFire(8);
 		}
 	}

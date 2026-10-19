@@ -337,7 +337,7 @@ TextureUVCoordinateSet Item::getTextureUVCoordinateSet(const std::string& a2, in
 	return *Item::_itemTextureAtlas->getTextureItem(a2)->getUV(a3);
 }
 Item* Item::setCategory(int32_t a2, int32_t a3) {
-	this->field_34 = a2;
+	this->creativeTabIndex = a2;
 	this->field_38 = a3;
 	return this;
 }

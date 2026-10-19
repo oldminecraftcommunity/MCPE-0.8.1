@@ -8,11 +8,17 @@ MouseHandler::MouseHandler(ITurnInput* turnInput){
 MouseHandler::MouseHandler(){
 	this->turnInput = 0;
 }
+MouseHandler::~MouseHandler(){
+}
+void MouseHandler::setTurnInput(ITurnInput* turnInp){
+	this->turnInput = turnInp;
+}
 
 void MouseHandler::grab(){
 	this->field_0 = 0;
 	this->field_4 = 0;
 }
+void MouseHandler::release(){}
 
 void MouseHandler::poll(){
 	if(this->turnInput){
@@ -20,13 +26,5 @@ void MouseHandler::poll(){
 		this->field_0 = xy.x;
 		this->field_4 = xy.y;
 	}
-	//TODO check
 }
 
-void MouseHandler::release(){}
-void MouseHandler::setTurnInput(ITurnInput* turnInp){
-	this->turnInput = turnInp;
-}
-MouseHandler::~MouseHandler(){
-	//no delete this->turnInput for some reason??
-}

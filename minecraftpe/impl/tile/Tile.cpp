@@ -363,7 +363,7 @@ void Tile::initTiles(std::shared_ptr<TextureAtlas> a1) {
 			if(!Item::items[bid]) {
 				Item::items[bid] = new TileItem(actualItemID);
 				Item::items[bid]->field_38 = Tile::tiles[bid]->field_50;
-				Item::items[bid]->field_34 = Tile::tiles[bid]->field_54;
+				Item::items[bid]->creativeTabIndex = Tile::tiles[bid]->creativeTabIndex;
 			}
 			if(Item::items[bid]) {
 				Tile::tiles[bid]->getDescriptionId();
@@ -557,7 +557,7 @@ void Tile::popResource(Level* level, int32_t x, int32_t y, int32_t z, const stru
 }
 Tile* Tile::setCategory(int32_t a2, int32_t a3) {
 	this->field_50 = a3;
-	this->field_54 = a2;
+	this->creativeTabIndex = a2;
 	return this;
 }
 int32_t Tile::transformToValidBlockId(int32_t a1) {

@@ -4,7 +4,7 @@
 struct Skeleton: Monster
 {
 	ItemInstance heldItem;
-	int32_t field_C9C;
+	int32_t skyCheckCounter;
 
 	Skeleton(Level*);
 
