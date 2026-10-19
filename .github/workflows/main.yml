@@ -87,4 +87,5 @@ jobs:
           build/minecraftpe08decomp.exe
           build/SDL.dll
           build/libcurl-4.dll
+          build/zlib1.dll
           
