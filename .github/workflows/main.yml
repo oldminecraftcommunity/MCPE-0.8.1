@@ -76,6 +76,8 @@ jobs:
 
         cp minecraftpe/build/minecraftpe08decomp.exe .
         cp curl-8.20.0/build-win64/bin/libcurl-4.dll .
+        cp /usr/x86_64-w64-mingw32/lib/zlib1.dll .
+        
         
     - name: upload stuff
       uses: actions/upload-artifact@v4
