@@ -149,15 +149,17 @@ bool_t RegionFile::writeChunk(int32_t chunkX, int32_t chunkZ, RakNet::BitStream&
 		for(i = v8 - v14; v22 < i; i = v28) {
 			v28 = i;
 			fwrite(this->bytes4096_2, 4u, 0x400u, this->fileRaw);
+			int ind = v22 + v16;
 			++v22;
-			this->stdMap[v22 + v16] = 1;
+			this->stdMap[ind] = 1;
 		}
 LABEL_25:
 		v24 = 0;
 		this->locTable[regionIndex] = v8 | (v16 << 8);
 		do {
+			int ind = v24 + v16;
 			++v24;
-			this->stdMap[v24 + v16] = 0;
+			this->stdMap[ind] = 0;
 		}
 		while ( v24 < v8 );
 		this->write(v16, a4);
