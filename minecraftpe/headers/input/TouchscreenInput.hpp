@@ -41,13 +41,13 @@ struct TouchscreenInput: IMoveInput, GuiComponent
 	int8_t field_AA;
 	int8_t field_AB;
 	float field_AC;
-	int8_t field_B0[8];
+	bool field_B0[8];
 
 	TouchscreenInput(Minecraft*, Options*);
 	void clear();
 	RectangleArea* getPauseRectangleArea();
 	RectangleArea* getRectangleArea();
-	bool_t isButtonDown(int32_t);
+	bool isButtonDown(int32_t);
 	void rebuild();
 
 	virtual ~TouchscreenInput();

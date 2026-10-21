@@ -149,12 +149,9 @@ int32_t WorldSelectionList::getNumberOfItems() {
 	return this->field_74.size();
 }
 void WorldSelectionList::selectItem(int32_t a2, bool_t a3) {
-	int32_t v3; // r3
-
-	v3 = this->field_6C;
-	if(v3 >= 0 && v3 == a2 && !this->field_98) {
+	if(this->field_6C >= 0 && this->field_6C == a2 && !this->field_98) {
 		this->field_98 = 1;
-		this->field_9C = this->field_74[v3];
+		this->field_9C = this->field_74[this->field_6C];
 	}
 }
 bool_t WorldSelectionList::isSelectedItem(int32_t a2) {

@@ -1410,15 +1410,13 @@ Particle* LevelRenderer::addParticle(ParticleType a2, float x, float y, float z,
 		return minecraft->particleEngine->instance(a2, x, y, z, a6, a7, a8, a9);
 	}
 }
-void LevelRenderer::playSound(const std::string& a2, float x, float y, float z, float a6, float a7) {
-	float v12; // s17
-
-	v12 = 16.0f;
-	if(a6 > 1.0) {
-		v12 = a6 * 16.0f;
+void LevelRenderer::playSound(const std::string& sound, float x, float y, float z, float distMultiplier, float a7) {
+	float dist = 16.0f;
+	if(distMultiplier > 1.0) {
+		dist = distMultiplier * 16.0f;
 	}
-	if(this->minecraft->viewEntity->distanceToSqr(x, y, z) < (v12 * v12)) {
-		this->minecraft->soundEngine->play(a2, x, y, z, a6, a7);
+	if(this->minecraft->viewEntity->distanceToSqr(x, y, z) < (dist * dist)) {
+		this->minecraft->soundEngine->play(sound, x, y, z, distMultiplier, a7);
 	}
 }
 void LevelRenderer::entityAdded(Entity* a2) {

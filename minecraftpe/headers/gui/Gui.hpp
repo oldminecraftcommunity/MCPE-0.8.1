@@ -3,7 +3,7 @@
 #include <gui/GuiComponent.hpp>
 #include <util/Random.hpp>
 #include <rendering/MeshBuffer.hpp>
-#include <util/area/RectangleArea.hpp>
+#include <input/ITurnInput.hpp>
 #include <AppPlatform.hpp>
 #include <util/GuiMessage.hpp>
 
@@ -44,7 +44,7 @@ struct Gui : GuiComponent, IConfigListener, AppPlatform::Listener{
 	void displayClientMessage(const std::string&);
 	void flashSlot(int32_t);
 	int32_t getNumSlots();
-	RectangleArea getRectangleArea(int32_t);
+	struct RectangleArea getRectangleArea(int32_t);
 	int32_t getSlotIdAt(int32_t, int32_t);
 	int32_t getSlotPos(int32_t, int32_t&, int32_t&);
 	void handleClick(int32_t, int32_t, int32_t);

@@ -1,10 +1,11 @@
 #pragma once
+#include <input/TouchAreaModel.hpp>
+#include <util/area/IncludeExcludeArea.hpp>
+
 #include <gui/GuiComponent.hpp>
 #include <input/ITurnInput.hpp>
 #include <input/IBuildInput.hpp>
 #include <util/area/RectangleArea.hpp>
-#include <input/TouchAreaModel.hpp>
-#include <util/area/IncludeExcludeArea.hpp>
 #include <input/Multitouch.hpp>
 #include <input/BuildActionIntention.hpp>
 #include <entity/Player.hpp>
@@ -121,8 +122,8 @@ struct UnifiedTurnBuild: GuiComponent, ITurnInput, IBuildInput
 		float maxY; // s13
 		float v13; // s10
 		float v14; // s15
-		v2 = (float) (a2.field_4);
-		v3 = a2.field_0;
+		v2 = (float) (a2.height);
+		v3 = a2.width;
 		maxX = this->moveButtonsArea.maxX;
 		minX = this->moveButtonsArea.minX;
 		this->field_34.field_4 = 1;

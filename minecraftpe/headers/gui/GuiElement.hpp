@@ -4,7 +4,6 @@
 
 struct GuiElement : GuiComponent{
 	bool_t active, visible;
-	char field_6, field_7;
 	int32_t posX, posY, width, height;
 	uint32_t color;
 	struct NinePatchLayer* field_1C;

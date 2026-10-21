@@ -4,12 +4,11 @@
 #include <item/ShovelItem.hpp>
 #include <item/PickaxeItem.hpp>
 #include <item/HatchetItem.hpp>
-#include <item/FlintAndSteelItem.hpp>
 #include <item/FoodItem.hpp>
+#include <item/FlintAndSteelItem.hpp>
 #include <item/BowItem.hpp>
 #include <item/CoalItem.hpp>
 #include <item/WeaponItem.hpp>
-#include <item/BowlFoodItem.hpp>
 #include <item/HoeItem.hpp>
 #include <item/SeedItem.hpp>
 #include <tile/Tile.hpp>
@@ -21,6 +20,7 @@
 #include <item/BucketItem.hpp>
 #include <item/MinecartItem.hpp>
 #include <item/SaddleItem.hpp>
+#include <item/SnowballItem.hpp>
 #include <item/TilePlanterItem.hpp>
 #include <item/EggItem.hpp>
 #include <item/CompassItem.hpp>
@@ -30,8 +30,8 @@
 #include <item/ShearsItem.hpp>
 #include <item/MonsterPlacerItem.hpp>
 #include <item/SeedFoodItem.hpp>
-#include <item/SnowballItem.hpp>
 #include <item/CameraItem.hpp>
+#include <item/BowlFoodItem.hpp>
 #include <entity/Player.hpp>
 #include <level/Level.hpp>
 #include <math/Mth.hpp>

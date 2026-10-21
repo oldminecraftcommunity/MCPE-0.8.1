@@ -103,7 +103,7 @@ void ImageButton::render(struct Minecraft* mc, int32_t x, int32_t y){
 
 		if(this->active){
 			int32_t v35, v36, a5, v37;
-			if(active || this->text){
+			if(active || this->highlight){
 				v35 = this->width + ((uint32_t)this->width >> 31);
 				v36 = this->posX;
 				a5 = this->posY + this->yOffset + 1;
@@ -114,9 +114,9 @@ void ImageButton::render(struct Minecraft* mc, int32_t x, int32_t y){
 				a5 = this->posY + this->yOffset;
 				v37 = 0xe0e0e0;
 			}
-			this->drawCenteredString(mc->font, this->maybeTextOnButton, v36+(v35>>1), a5, v37);
+			this->drawCenteredString(mc->font, this->text, v36+(v35>>1), a5, v37);
 		}else{
-			this->drawCenteredString(mc->font, this->maybeTextOnButton, this->posY+this->width/2, this->posY+this->yOffset, 0xffa0a0a0);
+			this->drawCenteredString(mc->font, this->text, this->posY+this->width/2, this->posY+this->yOffset, 0xffa0a0a0);
 		}
 	}
 }

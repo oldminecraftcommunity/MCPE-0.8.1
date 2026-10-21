@@ -13,8 +13,7 @@
 #include <tile/Tile.hpp>
 
 Touch::InventoryPane::InventoryPane(Touch::IInventoryPaneCallback* a2, Minecraft* a3, const IntRectangle& a4, int32_t a5, float a6, int32_t a7, int32_t a8, int32_t a9, bool_t a10)
-	: ScrollingPane(1537, a4, {0, 0, a8, a8}, 0, a7, Gui::GuiScale, {0, 0, 0, 0}) {
-	this->field_228 = a4;
+	: ScrollingPane(1537, a4, {0, 0, a8, a8}, 0, a7, Gui::GuiScale, {0, 0, 0, 0}), field_228(a4) {
 	this->callback = a2;
 	this->minecraft = a3;
 	this->field_238 = a5;

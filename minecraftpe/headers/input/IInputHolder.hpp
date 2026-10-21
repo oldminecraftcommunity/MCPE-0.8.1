@@ -1,7 +1,7 @@
 #pragma once
 #include <IConfigListener.hpp>
-#include <input/Mouse.hpp>
 #include <input/ITurnInput.hpp>
+#include <input/Mouse.hpp>
 #include <input/IBuildInput.hpp>
 
 struct IInputHolder : IConfigListener{

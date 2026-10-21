@@ -770,7 +770,7 @@ void Mob::causeFallDamage(float a2) {
 		v11 = v7->getTile(v8, v9, v10);
 		if(v11 > 0) {
 			soundType = Tile::tiles[v11]->soundType;
-			this->level->playSound(this, soundType->field_C, soundType->field_0 * 0.5, soundType->field_4 * 0.75);
+			this->level->playSound(this, soundType->soundName, soundType->field_0 * 0.5, soundType->field_4 * 0.75);
 		}
 	}
 }

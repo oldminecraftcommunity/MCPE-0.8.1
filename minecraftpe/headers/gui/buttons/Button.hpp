@@ -3,12 +3,11 @@
 #include <gui/GuiElement.hpp>
 
 struct Button : GuiElement{
-	std::string maybeTextOnButton;
+	std::string text;
 	int32_t buttonID;
-	bool_t text;
+	bool_t highlight;
 	bool_t pressed;
 	bool_t overridingScreenRendering;
-	bool_t field_2B;
 
 	Button(int32_t, int32_t, int32_t, int32_t, int32_t, const std::string&);
 	Button(int32_t, int32_t, int32_t, const std::string&);

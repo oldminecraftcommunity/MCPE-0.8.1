@@ -1,6 +1,5 @@
 #include <rendering/TileEntityRenderDispatcher.hpp>
 #include <entity/Mob.hpp>
-#include <rendering/tileentity/TileEntityRenderer.hpp>
 #include <tile/entity/TileEntity.hpp>
 #include <level/Level.hpp>
 #include <unigl.hpp>

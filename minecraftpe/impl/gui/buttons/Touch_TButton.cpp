@@ -31,17 +31,8 @@ Touch::TButton::TButton(int32_t id, int32_t x, int32_t y, int32_t w, int32_t h, 
 
 void Touch::TButton::init(struct Minecraft* mc){
 	NinePatchFactory npf(mc->texturesPtr, "gui/spritesheet.png");
-	IntRectangle r;
-	r.minY = 32;
-	r.minX = 8;
-	r.width = 8;
-	r.height = 8;
-	this->field_2C = npf.createSymmetrical(r, 2, 2, this->width, this->height);
-	r.minX = 0;
-	r.minY = 32;
-	r.width = 8;
-	r.height = 8;
-	this->field_30 = npf.createSymmetrical(r, 2, 2, this->width, this->height);
+	this->field_2C = npf.createSymmetrical(IntRectangle(8, 32, 8, 8), 2, 2, this->width, this->height);
+	this->field_30 = npf.createSymmetrical(IntRectangle(0, 32, 8, 8), 2, 2, this->width, this->height);
 }
 void Touch::TButton::init(struct Minecraft* mc, const std::string& s, const struct IntRectangle& r1, const struct IntRectangle& r2, int32_t a, int32_t b, int32_t c, int32_t d){
 	this->width = c;

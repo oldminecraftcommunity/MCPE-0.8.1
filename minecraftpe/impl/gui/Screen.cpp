@@ -25,7 +25,7 @@ static char_t* panorama_images[] = {
 Screen::Screen(){
 	this->width = 1;
 	this->height = 1;
-	this->field_C = 0;
+	this->dontPreventGameInput = 0;
 	this->minecraft = 0;
 	this->field_44 = 0;
 	this->font = 0;
@@ -36,7 +36,7 @@ void Screen::updateTabButtonSelection(){
 	if(!this->minecraft->useTouchscreen()){
 		for(int32_t i = 0; i < this->field_2C.size(); ++i) {
 			Button* b = this->field_2C[i];
-			b->text = (i - this->field_44) == 0;
+			b->highlight = (i - this->field_44) == 0;
 		}
 	}
 }
@@ -80,7 +80,7 @@ void Screen::setupPositions(void){
 	}
 }
 void Screen::updateEvents(){
-	if(!this->field_C){
+	if(!this->dontPreventGameInput){
 		while(Mouse::next()){
 			this->mouseEvent();
 		}

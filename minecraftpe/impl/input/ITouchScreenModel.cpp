@@ -1,2 +1,0 @@
-#include <input/ITouchScreenModel.hpp>
-

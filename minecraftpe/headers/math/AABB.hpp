@@ -7,6 +7,16 @@ struct HitResult;
 struct AABB{
 	float minX, minY, minZ, maxX, maxY, maxZ;
 	//TODO missing constructor
+	AABB(float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
+		: minX(minX)
+		, minY(minY)
+		, minZ(minZ)
+		, maxX(maxX)
+		, maxY(maxY)
+		, maxZ(maxZ) {
+	}
+	AABB() {
+	}
 
 	HitResult clip(const Vec3& a3, const Vec3& a4) {
 		Vec3 minXvec(0, 0, 0);

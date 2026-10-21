@@ -19,19 +19,20 @@ struct Material;
 
 struct Tile{
 	struct SoundType{
-		float field_0, field_4;
-		std::string field_8, field_C;
-		SoundType(const std::string& f8, const std::string& s, float a, float b) {
-			this->field_4 = b;
-			this->field_0 = a;
-			this->field_8 = f8;
-			this->field_C = "step." + s;
+		/**
+		 * should make the sound hearable from larger distances(and also increase its volume?)
+		 */
+		float field_0;
+		/**
+		 * i believe this is sound pitch but it is unused in 0.8
+		 */
+		float field_4;
+		std::string field_8, soundName;
+		SoundType(const std::string& f8, const std::string& s, float a, float b) : field_4(b), field_0(a), field_8(f8), soundName("step." + s) {
+
 		}
-		SoundType(const std::string& s, float a, float b) {
-			this->field_4 = b;
-			this->field_0 = a;
-			this->field_8 = "step." + s;
-			this->field_C = "step." + s;
+		SoundType(const std::string& s, float a, float b) :  field_4(b), field_0(a), field_8("step." + s), soundName("step." + s){
+
 		}
 		//not needed? ~SoundType();
 	};

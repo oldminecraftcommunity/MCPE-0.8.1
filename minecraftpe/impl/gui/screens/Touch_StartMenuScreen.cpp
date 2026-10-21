@@ -426,20 +426,11 @@ void Touch::StartMenuScreen::init(){
 	this->playButton.init(this->minecraft);
 	this->playOnRealmsButton.init(this->minecraft);
 	this->settingsButtonMaybe = new ImageWithBackground(4);
-	IntRectangle v8, v12;
 	ImageDef v13;
 	//v13.field_0 = 120; wat *(_QWORD *)&v13.field_0 = 120i64;
-	v12.width = 8;
-	v12.height = 67; //:scream:
 	v13.field_8 = 8;
 	v13.width = 67;
-	v12.minX = 112;
-	v12.minY = 0;
-	v8.minX = 0x78;
-	v8.minY = 0;
-	v8.width = 8;
-	v8.height = 0x43;
-	this->settingsButtonMaybe->init(this->minecraft->texturesPtr, 32, 32, v12, v8, 2, 2, "gui/spritesheet.png");
+	this->settingsButtonMaybe->init(this->minecraft->texturesPtr, 32, 32, IntRectangle(112, 0, 8, 67), IntRectangle(0x78, 0, 8, 0x43), 2, 2, "gui/spritesheet.png");
 	v13.field_1C = 1;
 	v13.field_20 = 1;
 	v13.field_0 = ""; //*(_QWORD *)&v13.field_0 = (unsigned int)&_used_as_empty_string__[8];

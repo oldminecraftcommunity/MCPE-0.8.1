@@ -14,14 +14,7 @@ Touch::IngameBlockSelectionScreen::IngameBlockSelectionScreen()
 	, backButton(3, "Back", 0)
 	, craftButton(1, "Craft", 0)
 	, armorButton(4, "Armor", 0)
-	, menuButton(2, "Menu", 0) {
-	this->field_58 = 0;
-	this->field_5C = 0;
-	this->field_60 = 0;
-	this->field_178 = 0;
-	this->field_17C = 0;
-	this->field_180 = 1;
-	this->field_184 = 1;
+	, menuButton(2, "Menu", 0), field_58(0), field_5C(0), field_60(0), field_178(0, 0, 1, 1) {
 };
 int32_t Touch::IngameBlockSelectionScreen::getSlotPosX(int32_t a2) {
 	return -10 * this->field_190 + this->width / 2 + 20 * a2 + 2;
@@ -62,7 +55,7 @@ void Touch::IngameBlockSelectionScreen::init() {
 	Touch::InventoryPane* v10; // r6
 	int v11;				   // r0
 	int v12;				   // r1
-	IntRectangle r3_0;		   // [sp+20h] [bp-28h] BYREF
+	//IntRectangle r3_0;		   // [sp+20h] [bp-28h] BYREF
 
 	this->armorButton.width = 38;
 	this->craftButton.width = 38;
@@ -75,7 +68,7 @@ void Touch::IngameBlockSelectionScreen::init() {
 	this->menuButton.init(this->minecraft);
 	this->craftButton.init(this->minecraft);
 	minecraft = this->minecraft;
-	r3_0.minY = 30;
+	//r3_0.minY = 30;
 	inventory = minecraft->player->inventory;
 	width = this->width;
 	v5 = width - 20;
@@ -84,13 +77,13 @@ void Touch::IngameBlockSelectionScreen::init() {
 	}
 	v6 = v5 >> 5;
 	this->field_190 = v6;
-	r3_0.width = 32 * v6;
+	//r3_0.width = 32 * v6;
 	v7 = width - 32 * v6;
 	height = this->height;
-	r3_0.minX = v7 / 2;
-	r3_0.height = height - 56;
+	//r3_0.minX = v7 / 2;
+	//r3_0.height = height - 56;
 	v9 = inventory->getContainerSize();
-	v10 = new Touch::InventoryPane(this, this->minecraft, r3_0, this->width, 4.0, v9 - 9, 32, 4, 1);
+	v10 = new Touch::InventoryPane(this, this->minecraft, IntRectangle(v7/2, 30, 32*v6, height - 56), this->width, 4.0, v9 - 9, 32, 4, 1);
 	this->field_60 = v10;
 	v10->field_248 = v7 / 2;
 	v11 = inventory->getContainerSize();
@@ -109,8 +102,6 @@ void Touch::IngameBlockSelectionScreen::setupPositions() {
 	int32_t v2;			  // r2
 	int32_t v3;			  // r2
 	int32_t v4;			  // r4
-	Minecraft* minecraft; // r2
-	int32_t v6;			  // r2
 
 	width = this->width;
 	this->armorButton.posY = 4;
@@ -124,14 +115,9 @@ void Touch::IngameBlockSelectionScreen::setupPositions() {
 	v3 -= 4;
 	this->armorButton.posX = v3;
 	this->craftButton.posX = v3 - v4 - 4;
-	minecraft = this->minecraft;
 	this->selectBlocksHeader.posY = 0;
 	this->selectBlocksHeader.posX = 0;
-	this->field_178 = 0;
-	v6 = minecraft->width;
-	this->field_17C = 0;
-	this->field_180 = v6;
-	this->field_184 = (int32_t)(float)(Gui::GuiScale * 24.0);
+	this->field_178 = IntRectangle(0, 0, this->minecraft->width, (int32_t)(float)(Gui::GuiScale * 24.0));
 }
 void Touch::IngameBlockSelectionScreen::tick() {
 	this->field_60->tick();
@@ -141,10 +127,7 @@ void Touch::IngameBlockSelectionScreen::removed() {
 	this->minecraft->gui.inventoryUpdated();
 }
 bool_t Touch::IngameBlockSelectionScreen::hasClippingArea(IntRectangle& a2) {
-	a2.minX = this->field_178;
-	a2.minY = this->field_17C;
-	a2.width = this->field_180;
-	a2.height = this->field_184;
+	a2 = this->field_178;
 	return 1;
 }
 void Touch::IngameBlockSelectionScreen::buttonClicked(Button* a2) {
@@ -202,10 +185,8 @@ bool_t Touch::IngameBlockSelectionScreen::addItem(const InventoryPane* a2, int32
 }
 
 bool_t Touch::IngameBlockSelectionScreen::isAllowed(int32_t a2) {
-	if(a2 >= 0) {
-		if(a2 < this->minecraft->player->inventory->getContainerSize()) {
-			return 1;
-		}
+	if(a2 >= 0 && a2 < this->minecraft->player->inventory->getContainerSize()) {
+		return 1;
 	}
 	return 0;
 }

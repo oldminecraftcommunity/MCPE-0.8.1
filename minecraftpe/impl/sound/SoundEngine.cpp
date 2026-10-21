@@ -143,12 +143,9 @@ void SoundEngine::init(struct Minecraft* a2, struct Options* a3) {
 	this->sounds.add("random.fuse", SA_fuse);
 }
 void SoundEngine::play(const std::string& a2, float a3, float a4, float a5, float a6, float a7) {
-	float v8;  // s16
-	float v12; // s16
-
-	v8 = a6 * this->options->soundVolume;
+	float v8 = a6 * this->options->soundVolume;
 	if(v8 > 0.0) {
-		v12 = v8 * this->_getVolumeMult(a3, a4, a5);
+		float v12 = v8 * this->_getVolumeMult(a3, a4, a5);
 		if(v12 > 1.0) {
 			v12 = 1.0;
 		} else if(v12 <= 0.0) {

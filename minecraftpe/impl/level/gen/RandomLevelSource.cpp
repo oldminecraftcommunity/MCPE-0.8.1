@@ -3,12 +3,6 @@
 #include <level/Level.hpp>
 #include <level/MobSpawner.hpp>
 #include <level/chunk/LevelChunk.hpp>
-#include <level/gen/feature/CactusFeature.hpp>
-#include <level/gen/feature/ClayFeature.hpp>
-#include <level/gen/feature/FlowerFeature.hpp>
-#include <level/gen/feature/OreFeature.hpp>
-#include <level/gen/feature/ReedsFeature.hpp>
-#include <level/gen/feature/SpringFeature.hpp>
 #include <math.h>
 #include <tile/HeavyTile.hpp>
 #include <tile/material/Material.hpp>

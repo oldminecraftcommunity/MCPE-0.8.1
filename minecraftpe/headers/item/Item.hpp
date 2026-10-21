@@ -23,6 +23,7 @@ struct Item{
 		Tier(int level, int durability, float eff, int dmg) : level(level), durability(durability), efficienctMultiplier(eff), damageAgainstEntity(dmg){
 
 		}
+
 	};
 	static std::string ICON_DESCRIPTION_PREFIX;
 	static Random random;

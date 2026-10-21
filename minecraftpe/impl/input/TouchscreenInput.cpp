@@ -60,8 +60,8 @@ RectangleArea* TouchscreenInput::getPauseRectangleArea() {
 RectangleArea* TouchscreenInput::getRectangleArea() {
 	return &this->field_1C;
 }
-bool_t TouchscreenInput::isButtonDown(int32_t a2) {
-	return this->field_B0[a2 - 100]; //TODO check
+bool TouchscreenInput::isButtonDown(int32_t a2) {
+	return this->field_B0[a2 - 100];
 }
 
 static void sub_D6604D0C(RectangleArea* a1, int a2, int a3, float a4) { //XXX usercall r0,r1,r2,s0
@@ -407,11 +407,11 @@ void TouchscreenInput::releaseAllKeys() {
 }
 void TouchscreenInput::onConfigChanged(const Config& a2) {
 	this->clear();
-	float v4 = (float)a2.field_0;
-	float v5 = this->minecraft->field_C84 * 16.0;
+	float v4 = (float)a2.width;
+	float v5 = this->minecraft->pixelsPerMillimeter * 16.0;
 	float v6 = 8.0;
 	float v7 = v5 * 3.0;
-	float v8 = (float)((float)a2.field_4 - 8.0) - (float)(v5 * 3.0);
+	float v8 = (float)((float)a2.height - 8.0) - (float)(v5 * 3.0);
 	if(this->options->leftHanded) {
 		v6 = (float)(v4 - 8.0) - v7;
 	}
@@ -438,8 +438,8 @@ void TouchscreenInput::onConfigChanged(const Config& a2) {
 	this->rightArrow = new RectangleArea(1, v13, v10, v13 + v5, v16);
 	this->touchAreaModel.addArea(103, this->rightArrow);
 	float v21 = Gui::GuiScale * 18.0;
-	if((float)(Gui::GuiScale * 18.0) > (float)(this->minecraft->field_C84 * 10.0)) {
-		v21 = this->minecraft->field_C84 * 10.0;
+	if((float)(Gui::GuiScale * 18.0) > (float)(this->minecraft->pixelsPerMillimeter * 10.0)) {
+		v21 = this->minecraft->pixelsPerMillimeter * 10.0;
 	}
 	float v23 = v4 - (float)((float)(v21 + 4.0) + 0.0);
 	this->chatButton = new RectangleArea(1, v23, 4, v23 + v21, v21 + 4);

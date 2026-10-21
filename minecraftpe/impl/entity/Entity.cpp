@@ -1451,7 +1451,7 @@ void Entity::playStepSound(int32_t x, int32_t y, int32_t z, int32_t id) {
 			return;
 		}
 	}
-	this->level->playSound(this, soundType->field_C, soundType->field_0 * 0.25, soundType->field_4);
+	this->level->playSound(this, soundType->soundName, soundType->field_0 * 0.25, soundType->field_4);
 }
 void Entity::checkInsideTiles() {
 	int32_t minX; // r6

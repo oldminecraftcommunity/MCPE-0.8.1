@@ -87,10 +87,6 @@ bool_t RegionFile::write(int32_t a2, RakNet::BitStream& a3) {
 	return 1;
 }
 bool_t RegionFile::writeChunk(int32_t chunkX, int32_t chunkZ, RakNet::BitStream& a4) {
-	int32_t regionIndex; // r10
-	int32_t locTableEntry; // r7
-	int32_t v8; // r5
-	int32_t firstByteOfLocTableEntry; // r8
 	int32_t v10; // r7
 	int32_t v11; // r6
 	int32_t v13; // r2
@@ -104,12 +100,12 @@ bool_t RegionFile::writeChunk(int32_t chunkX, int32_t chunkZ, RakNet::BitStream&
 	int32_t v28; // [sp+8h] [bp-38h]
 	int32_t off; // [sp+Ch] [bp-34h]
 
-	regionIndex = chunkX + 32 * chunkZ;
+	int32_t regionIndex = chunkX + 32 * chunkZ;
 	off = regionIndex;
-	locTableEntry = this->locTable[regionIndex];
-	v8 = ((int32_t)(a4.GetNumberOfBytesUsed() + 4) >> 12) + 1;
+	int32_t locTableEntry = this->locTable[regionIndex];
+	int32_t v8 = ((int32_t)(a4.GetNumberOfBytesUsed() + 4) >> 12) + 1;
 	if(v8 <= 256) {
-		firstByteOfLocTableEntry = (uint8_t)locTableEntry;
+		int32_t firstByteOfLocTableEntry = (uint8_t)locTableEntry;
 		v10 = locTableEntry >> 8;
 		if(v10) {
 			if(firstByteOfLocTableEntry == v8) {

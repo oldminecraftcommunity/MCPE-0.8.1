@@ -1,6 +1,14 @@
 #pragma once
 #include <level/gen/ChunkSource.hpp>
 #include <level/gen/feature/LargeCaveFeature.hpp>
+
+#include <level/gen/feature/ClayFeature.hpp>
+#include <level/gen/feature/OreFeature.hpp>
+#include <level/gen/feature/FlowerFeature.hpp>
+#include <level/gen/feature/ReedsFeature.hpp>
+#include <level/gen/feature/CactusFeature.hpp>
+#include <level/gen/feature/SpringFeature.hpp>
+
 #include <map>
 #include <math/noise/PerlinNoise.hpp>
 struct RandomLevelSource : ChunkSource{

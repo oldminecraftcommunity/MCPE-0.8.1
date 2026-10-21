@@ -84,6 +84,46 @@ std::shared_ptr<GuiElement> PlayScreen::buildJoinRealmsScreen(bool_t a2) {
 	this->buttons.push_back(this->field_B4);
 	return v33;
 }
+
+std::shared_ptr<GuiElement> PlayScreen::buildMCOServerList() {
+	struct _sorter
+	{
+		bool operator()(const std::pair<long long, MCOServerListItem>& a, const std::pair<long long, MCOServerListItem>& b) {
+			if(a.first == b.first) return Util::compareNoCase(a.second.worldName, b.second.worldName);
+			return a.first < b.first;
+		}
+	};
+	if(!this->field_1FC) {
+		this->field_1FC = std::shared_ptr<PackedScrollContainer>(new PackedScrollContainer(0, 0, 0));
+	}
+	std::shared_ptr<PackedScrollContainer> v23(*(std::shared_ptr<PackedScrollContainer>*)&this->field_1FC);
+	v23->clearAll();
+	if(this->minecraft->mojangConnector->getConnectionStatus() == STATUS_CONNECTED) {
+		this->field_54 = this->minecraft->mojangConnector->getMCOServerList();
+		if(this->field_54) {
+			if(this->field_54->size()) {
+				std::vector<std::pair<long long, MCOServerListItem>> v26;
+				for(auto&& p: *this->field_54) {
+					v26.push_back(p);
+				}
+				std::sort(v26.begin(), v26.end(), _sorter());
+				bool em = this->isEditMode();
+				for(auto&& p: v26) {
+					MCOServerListItemElement* v16 = new MCOServerListItemElement(this->minecraft, p.second, em, [this](MCOServerListItem& a2, bool_t a3) {
+						if(a3) {
+							this->joinMCOServer(a2);
+						} else {
+							this->field_C4 = "You need to be connected through Wifi to play on Realms";
+						}
+					});
+					v23->addChild(std::shared_ptr<MCOServerListItemElement>(v16));
+				}
+			}
+		}
+	}
+	return this->field_1FC;
+}
+
 std::shared_ptr<GuiElement> PlayScreen::buildLocalServerList() {
 	this->field_50 = 0;
 	bool isEditMode = this->isEditMode();
@@ -125,44 +165,7 @@ std::shared_ptr<GuiElement> PlayScreen::buildLocalServerList() {
 	return this->field_1F4;
 }
 
-std::shared_ptr<GuiElement> PlayScreen::buildMCOServerList() {
-	struct _sorter
-	{
-		bool operator()(const std::pair<long long, MCOServerListItem>& a, const std::pair<long long, MCOServerListItem>& b) {
-			if(a.first == b.first) return Util::compareNoCase(a.second.worldName, b.second.worldName);
-			return a.first < b.first;
-		}
-	};
-	if(!this->field_1FC) {
-		this->field_1FC = std::shared_ptr<PackedScrollContainer>(new PackedScrollContainer(0, 0, 0));
-	}
-	std::shared_ptr<PackedScrollContainer> v23(*(std::shared_ptr<PackedScrollContainer>*)&this->field_1FC);
-	v23->clearAll();
-	if(this->minecraft->mojangConnector->getConnectionStatus() == STATUS_CONNECTED) {
-		this->field_54 = this->minecraft->mojangConnector->getMCOServerList();
-		if(this->field_54) {
-			if(this->field_54->size()) {
-				std::vector<std::pair<long long, MCOServerListItem>> v26;
-				for(auto&& p: *this->field_54) {
-					v26.push_back(p);
-				}
-				std::sort(v26.begin(), v26.end(), _sorter());
-				bool em = this->isEditMode();
-				for(auto&& p: v26) {
-					MCOServerListItemElement* v16 = new MCOServerListItemElement(this->minecraft, p.second, em, [this](MCOServerListItem& a2, bool_t a3) {
-						if(a3) {
-							this->joinMCOServer(a2);
-						} else {
-							this->field_C4 = "You need to be connected through Wifi to play on Realms";
-						}
-					});
-					v23->addChild(std::shared_ptr<MCOServerListItemElement>(v16));
-				}
-			}
-		}
-	}
-	return this->field_1FC;
-}
+
 std::shared_ptr<GuiElement> PlayScreen::buildMessageScreen() {
 	//TODO check
 	std::shared_ptr<PackedScrollContainer> v4(new PackedScrollContainer(0, 0, 0));

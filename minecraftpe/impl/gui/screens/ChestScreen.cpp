@@ -22,14 +22,10 @@
 ChestScreen::ChestScreen(Player* a2, ChestTileEntity* a3)
 	: field_60(4, "")
 	, field_D0(5, "Inventory")
-	, field_104(6, a3->pair ? "Large Chest" : "Chest") {
+	, field_104(6, a3->pair ? "Large Chest" : "Chest"), field_140(0, 0, 1, 1) {
 	this->field_50 = new ChestMenu(a3);
 	this->field_138 = 0;
-	this->field_140.width = 1;
-	this->field_140.height = 1;
 	this->field_13C = 0;
-	this->field_140.minX = 0;
-	this->field_140.minY = 0;
 	this->needsSetup = 0;
 	this->field_16C = -1;
 	this->field_170 = 0;

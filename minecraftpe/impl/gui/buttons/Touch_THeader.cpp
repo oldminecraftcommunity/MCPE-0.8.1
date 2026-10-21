@@ -30,7 +30,7 @@ void Touch::THeader::render(Minecraft* mc, int32_t x, int32_t y) {
 	int32_t v6 = this->field_30;
 	if(v6 == -99999) v6 = this->posX + this->width / 2;
 
-	this->drawCenteredString(mc->font, this->maybeTextOnButton, v6, this->posY + (this->height - 8) / 2, 0xe0e0e0);
+	this->drawCenteredString(mc->font, this->text, v6, this->posY + (this->height - 8) / 2, 0xe0e0e0);
 }
 
 void Touch::THeader::renderBg(Minecraft* mc, int32_t x, int32_t y) {

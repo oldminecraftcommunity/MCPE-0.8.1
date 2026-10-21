@@ -23,19 +23,15 @@
 static NinePatchLayer* _D6E06298;
 PaneCraftingScreen::PaneCraftingScreen(int32_t a2)
 	: closeButton(2, "")
-	, craftButton(1) {
+	, craftButton(1), field_184(0, 0, 1, 1) {
 	this->field_78 = -1;
 	this->field_7C = 0;
 	this->scrollingPane = 0;
-	this->field_184.minX = 0;
-	this->field_184.minY = 0;
 	this->field_1B0 = 0;
 	this->field_1B4 = 0;
 	this->field_1B8 = 0;
 	this->field_1BC = 0;
 	this->field_17C = a2;
-	this->field_184.width = 1;
-	this->field_184.height = 1;
 	this->field_194 = 4;
 	for(int v7 = 0; v7 < this->field_194; ++v7) {
 		this->intvec1.push_back(1 << v7);

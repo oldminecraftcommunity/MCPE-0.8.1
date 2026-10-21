@@ -381,13 +381,13 @@ LABEL_23:
 }
 
 extern "C" {
-JNIEXPORT void JNICALL Java_com_mojang_minecraftpe_MainActivity_nativeReturnKeyPressed(JNIEnv* env, jobject dis){
-	Keyboard::feed(13, 1);
-	Keyboard::feed(13, 0);
-}
 JNIEXPORT void JNICALL Java_com_mojang_minecraftpe_MainActivity_nativeBackSpacePressed(JNIEnv* env, jobject dis){
 	Keyboard::feed(8, 1);
 	Keyboard::feed(8, 0);
+}
+JNIEXPORT void JNICALL Java_com_mojang_minecraftpe_MainActivity_nativeReturnKeyPressed(JNIEnv* env, jobject dis){
+	Keyboard::feed(13, 1);
+	Keyboard::feed(13, 0);
 }
 
 JNIEXPORT void JNICALL Java_com_mojang_minecraftpe_MainActivity_nativeTypeCharacter(JNIEnv* env, jobject dis, jstring s){

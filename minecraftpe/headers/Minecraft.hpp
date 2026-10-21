@@ -1,7 +1,13 @@
 #pragma once
 #include <gui/Gui.hpp>
 #include <input/MouseHandler.hpp>
+
+#include <input/ITouchScreenModel.hpp>
+#include <util/area/IArea.hpp>
+#include <input/TouchAreaModel.hpp>
+#include <util/area/IncludeExcludeArea.hpp>
 #include <App.hpp>
+#include <network/Packet.hpp>
 #include <memory>
 #include <rendering/TextureAtlas.hpp>
 #include <rendering/TextureAtlasId.hpp>
@@ -46,7 +52,7 @@ struct Minecraft : App{
 	Screen* currentScreen;
 	std::shared_ptr<Screen> field_C7C;
 	bool mouseGrabbed;
-	float field_C84;
+	float pixelsPerMillimeter;
 	float field_C88;
 	float field_C8C;
 	float field_C90;

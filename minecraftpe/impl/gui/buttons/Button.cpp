@@ -2,25 +2,22 @@
 #include <Minecraft.hpp>
 #include <rendering/Textures.hpp>
 
-Button::Button(int32_t a2, int32_t a3, int32_t a4, int32_t a5, int32_t a6, const std::string& s) : GuiElement(1, 1, a3, a4, a5, a6){
-	this->maybeTextOnButton = s;
+Button::Button(int32_t a2, int32_t a3, int32_t a4, int32_t a5, int32_t a6, const std::string& s) : GuiElement(1, 1, a3, a4, a5, a6), text(s){
 	this->buttonID = a2;
-	this->text = 0;
+	this->highlight = 0;
 	this->pressed = 0;
 	this->overridingScreenRendering = 0;
 }
-Button::Button(int32_t a2, int32_t a3, int32_t a4, const std::string& s) : GuiElement(1, 1, a3, a4, 200, 24){
-	this->maybeTextOnButton = s;
+Button::Button(int32_t a2, int32_t a3, int32_t a4, const std::string& s) : GuiElement(1, 1, a3, a4, 200, 24), text(s){
 	this->buttonID = a2;
-	this->text = 0;
+	this->highlight = 0;
 	this->pressed = 0;
 	this->overridingScreenRendering = 0;
 }
 
-Button::Button(int32_t a2, const std::string& s) : GuiElement(1, 1, 0, 0, 200, 24){
-	this->maybeTextOnButton = s;
+Button::Button(int32_t a2, const std::string& s) : GuiElement(1, 1, 0, 0, 200, 24), text(s){
 	this->buttonID = a2;
-	this->text = 0;
+	this->highlight = 0;
 	this->pressed = 0;
 	this->overridingScreenRendering = 0;
 }
@@ -43,7 +40,7 @@ bool_t Button::isPressed(int32_t x, int32_t y){
 	return this->pressed;
 }
 void Button::setMsg(const std::string& s){
-	this->maybeTextOnButton = s;
+	this->text = s;
 }
 void Button::setOverrideScreenRendering(bool_t a2){
 	this->overridingScreenRendering = a2;
@@ -78,21 +75,22 @@ void Button::renderBg(struct Minecraft* mc, int32_t x, int32_t y){
 	int32_t v11;
 	mc->texturesPtr->loadAndBindTexture("gui/gui.png");
 	glColor4f(1, 1, 1, 1);
-	if(this->text) v10 = 1;
+	if(this->highlight) v10 = 1;
 	else v10 = this->hovered(mc, x, y);
 	v11 = 20*this->getYImage(v10) + 46;
 	this->blit(this->posX, this->posY, 0, v11, this->width/2, this->height, 0, 20);
 	this->blit(this->width/2 + this->posX, this->posY, 200-this->width/2, v11, this->width/2, this->height, 0, 20);
 }
 
-void Button::renderFace(struct Minecraft* mc, int32_t x, int32_t y){
-	if(this->active){
-		if(this->hovered(mc, x, y) || this->text){
-			this->drawCenteredString(mc->font, this->maybeTextOnButton, this->posX+this->width/2, this->posY+(this->height-8)/2, 0xFFFFA0);
-		}else{
-			this->drawCenteredString(mc->font, this->maybeTextOnButton, this->posX+this->width/2, this->posY+(this->height-8)/2, 0xE0E0E0);
-		}
+void Button::renderFace(struct Minecraft* mc, int32_t x, int32_t y) {
+	if(!this->active) {
+		this->drawCenteredString(mc->font, this->text, this->posX + this->width / 2, this->posY + (this->height - 8) / 2, 0xFFA0A0A0);
+		return;
+	}
+
+	if(this->hovered(mc, x, y) || this->highlight){
+		this->drawCenteredString(mc->font, this->text, this->posX+this->width/2, this->posY+(this->height-8)/2, 0xFFFFA0);
 	}else{
-		this->drawCenteredString(mc->font, this->maybeTextOnButton, this->posX+this->width/2, this->posY+(this->height-8)/2, 0xFFA0A0A0);
+		this->drawCenteredString(mc->font, this->text, this->posX+this->width/2, this->posY+(this->height-8)/2, 0xE0E0E0);
 	}
 }

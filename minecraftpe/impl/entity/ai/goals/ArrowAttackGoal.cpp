@@ -17,6 +17,18 @@ ArrowAttackGoal::ArrowAttackGoal(Mob* a2, float a3, int32_t a4, int32_t a5)
 	this->delayBetweenAttack = a5;
 	this->setRequiredControlFlags(3);
 }
+
+bool_t ArrowAttackGoal::canContinueToUse() {
+	if(this->target.lock()) {
+		if(this->canUse()) {
+			return 1;
+		} else {
+			return !this->holder->getNavigation()->isDone();
+		}
+	}
+	return 0;
+}
+
 void ArrowAttackGoal::fireAtTarget() {
 	Mob* v2;			// r0
 	int32_t attackType; // r3
@@ -67,16 +79,6 @@ bool_t ArrowAttackGoal::canUse() {
 			this->target.locked = 0;
 		}
 		return 1;
-	}
-	return 0;
-}
-bool_t ArrowAttackGoal::canContinueToUse() {
-	if(this->target.lock()) {
-		if(this->canUse()) {
-			return 1;
-		} else {
-			return !this->holder->getNavigation()->isDone();
-		}
 	}
 	return 0;
 }

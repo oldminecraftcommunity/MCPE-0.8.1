@@ -7,6 +7,7 @@
 #include <rendering/ItemInHandRenderer.hpp>
 #include <rendering/entity/ItemRenderer.hpp>
 #include <rendering/entity/HumanoidMobRenderer.hpp>
+#include <rendering/model/ZombieModel.hpp>
 #include <rendering/entity/PigRenderer.hpp>
 #include <rendering/model/PigModel.hpp>
 #include <rendering/model/CowModel.hpp>

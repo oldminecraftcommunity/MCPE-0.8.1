@@ -52,7 +52,7 @@ SelectWorldScreen::~SelectWorldScreen() {
 }
 void SelectWorldScreen::render(int32_t a2, int32_t a3, float a4) {
 	this->renderBackground(0);
-	this->selectionList->setComponentSelected(this->field_EC.text);
+	this->selectionList->setComponentSelected(this->field_EC.highlight);
 	if(this->field_120) {
 		this->selectionList->render(a2, a3, a4);
 	} else {
@@ -197,7 +197,7 @@ void SelectWorldScreen::buttonClicked(Button* a2) {
 	}
 }
 void SelectWorldScreen::keyPressed(int32_t a2) {
-	if(this->field_EC.text) {
+	if(this->field_EC.highlight) {
 		if(a2 == this->minecraft->options.keyLeft.keyCode) {
 			this->selectionList->stepLeft();
 		}

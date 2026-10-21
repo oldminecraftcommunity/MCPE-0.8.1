@@ -29,7 +29,7 @@ bool_t HoeItem::useOn(ItemInstance* item, Player* player, Level* level, int32_t 
 	}
 	if(v14 == Tile::grass->blockID || v14 == Tile::dirt->blockID) {
 		v16 = Tile::farmland;
-		level->playSound((float)x + 0.5, (float)y + 0.5, (float)z + 0.5, Tile::farmland->soundType->field_C, (float)(Tile::farmland->soundType->field_0 + 1.0) * 0.5, Tile::farmland->soundType->field_4 * 0.8);
+		level->playSound((float)x + 0.5, (float)y + 0.5, (float)z + 0.5, Tile::farmland->soundType->soundName, (float)(Tile::farmland->soundType->field_0 + 1.0) * 0.5, Tile::farmland->soundType->field_4 * 0.8);
 		item->hurtAndBreak(1, player);
 		if(!level->isClient) {
 			level->setTile(x, y, z, v16->blockID, 3);

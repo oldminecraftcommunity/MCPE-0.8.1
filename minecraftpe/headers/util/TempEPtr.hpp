@@ -1,7 +1,13 @@
 #pragma once
 #include <_types.h>
-#include <util/_TickPtr.hpp>
 #include <level/Level.hpp>
+
+struct _TickPtr
+{
+	virtual void invalidate() = 0;
+	virtual ~_TickPtr() {
+	}
+};
 
 //templates is the worst thing in C++
 //(except std)

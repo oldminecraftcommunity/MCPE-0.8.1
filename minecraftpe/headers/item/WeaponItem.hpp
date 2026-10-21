@@ -4,11 +4,11 @@
 
 struct WeaponItem: Item
 {
-	Item::Tier tier;
+	const Item::Tier* tier;
 	int32_t damage;
 
 	WeaponItem(int32_t a2, const Item::Tier& a3) :
-		Item(a2), tier(a3) {
+		Item(a2), tier(&a3) {
 		this->maxStackSize = 1;
 		this->setMaxDamage(a3.durability);
 		this->damage = a3.damageAgainstEntity + 4;

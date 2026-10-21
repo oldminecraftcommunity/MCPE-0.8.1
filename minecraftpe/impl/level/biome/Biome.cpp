@@ -1,17 +1,19 @@
 #include <level/biome/Biome.hpp>
-#include <util/Color4.hpp>
-#include <entity/MobCategory.hpp>
-#include <vector>
-#include <string>
+#include <level/gen/feature/BirchFeature.hpp>
 #include <level/gen/feature/TreeFeature.hpp>
-#include <util/Random.hpp>
-#include <tile/Tile.hpp>
-#include <level/gen/feature/TallgrassFeature.hpp>
+#include <level/gen/feature/PineFeature.hpp>
+#include <level/gen/feature/SpruceFeature.hpp>
 #include <level/biome/RainforestBiome.hpp>
 #include <level/biome/SwampBiome.hpp>
 #include <level/biome/ForestBiome.hpp>
-#include <level/biome/FlatBiome.hpp>
 #include <level/biome/TaigaBiome.hpp>
+#include <level/biome/FlatBiome.hpp>
+#include <level/gen/feature/TallgrassFeature.hpp>
+
+#include <util/Color4.hpp>
+#include <entity/MobCategory.hpp>
+#include <util/Random.hpp>
+#include <tile/Tile.hpp>
 
 Biome* Biome::rainForest;
 Biome* Biome::swampland;

@@ -99,8 +99,8 @@ void XperiaPlayInput::onConfigChanged(const Config& a2) {
 	float v9;		 // s11
 	float v10;		 // s15
 
-	v2 = a2.field_0;
-	field_C84 = this->mc->field_C84;
+	v2 = a2.width;
+	field_C84 = this->mc->pixelsPerMillimeter;
 	v4 = Gui::GuiScale;
 	this->field_28.field_4 = 1;
 	this->field_40.field_4 = 1;

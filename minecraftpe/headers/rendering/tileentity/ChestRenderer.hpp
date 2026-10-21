@@ -1,5 +1,4 @@
 #pragma once
-#include <_types.h>
 #include <rendering/tileentity/TileEntityRenderer.hpp>
 #include <rendering/model/ChestModel.hpp>
 

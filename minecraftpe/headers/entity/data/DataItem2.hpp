@@ -42,10 +42,7 @@ struct DataItem2: DataItem
 {
 	T value;
 
-	DataItem2(int32_t id, T v) {
-		this->typeId = DataType<T>::typeId;
-		this->value = v;
-		this->dirty = 1;
+	DataItem2(int32_t id, T v) : DataItem(DataType<T>::typeId, id), value(v){
 	}
 	virtual ~DataItem2() {
 	}

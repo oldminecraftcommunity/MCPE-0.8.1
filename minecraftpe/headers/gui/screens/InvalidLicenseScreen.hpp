@@ -46,7 +46,7 @@ struct InvalidLicenseScreen: Screen
 		this->okButton->init(this->minecraft);
 		this->buyButton->init(this->minecraft);
 		if (this->field_6C) {
-			this->okButton->maybeTextOnButton = "Quit";
+			this->okButton->text = "Quit";
 		}
 		err = this->err;
 		if (err > 1) {

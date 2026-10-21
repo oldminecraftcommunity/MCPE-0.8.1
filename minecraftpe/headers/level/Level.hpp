@@ -103,7 +103,7 @@ struct Level : LevelSource{
 	struct ChunkSource* getChunkSource();
 	Color4 getCloudColor(float);
 	std::vector<AABB>* getCubes(const struct Entity*, const AABB&, float*);
-	int32_t getDirectSignal(int32_t, int32_t, int32_t, int32_t);
+	int getDirectSignal(int32_t, int32_t, int32_t, int32_t);
 	std::vector<struct Entity*>* getEntities(struct Entity*, const AABB&);
 	int32_t getEntitiesOfClass(int32_t, const AABB&, std::vector<struct Entity*>&);
 	int32_t getEntitiesOfType(int32_t, const AABB&, std::vector<struct Entity*>&);

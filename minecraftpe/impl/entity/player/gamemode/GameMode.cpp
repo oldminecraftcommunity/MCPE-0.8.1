@@ -15,38 +15,6 @@
 #include <tile/material/Material.hpp>
 #include <inventory/Inventory.hpp>
 
-GameMode::GameMode(Minecraft* a2) {
-	this->minecraft = a2;
-	this->field_4 = 0;
-	this->field_8 = 0;
-	this->field_C = 0;
-	this->delay = 0;
-}
-
-void GameMode::startDestroyBlock(int32_t x, int32_t y, int32_t z, int32_t a5) {
-	if(!this->minecraft->player->getCarriedItem() || Item::bow != this->minecraft->player->getCarriedItem()->itemClass || !Item::bow) {
-		this->destroyBlock(x, y, z, a5);
-	}
-}
-
-bool_t GameMode::handleInventoryMouseClick(int32_t, int32_t, int32_t, Player*) {
-	return 0;
-}
-void GameMode::handleCloseInventory(int32_t, Player*) {
-}
-
-float GameMode::getPickRange() {
-	return 5.0f;
-}
-void GameMode::initPlayer(Player* a2) {
-	this->initAbilities(a2->abilities);
-}
-
-void GameMode::tick() {
-	this->field_4 = this->field_8;
-}
-
-
 void GameMode::releaseUsingItem(Player* a2) {
 	if(this->minecraft->level->isClient) {
 		PlayerActionPacket pk(a2->entityId, 0, 0, 0, 0, 5);
@@ -54,7 +22,8 @@ void GameMode::releaseUsingItem(Player* a2) {
 	}
 	a2->releaseUsingItem();
 }
-bool_t GameMode::destroyBlock(int32_t x, int32_t y, int32_t z, int32_t side) {
+
+bool GameMode::destroyBlock(int32_t x, int32_t y, int32_t z, int32_t side) {
 	Level* level; // r5
 	Tile* tile; // r11
 	bool_t v11; // r10
@@ -88,20 +57,19 @@ bool_t GameMode::destroyBlock(int32_t x, int32_t y, int32_t z, int32_t side) {
 	}
 	return v11;
 }
+
 void GameMode::interact(Player* a2, Entity* a3) {
 	a2->interact(a3);
 }
+
 Player* GameMode::createPlayer(Level* a2) {
 	return new LocalPlayer(this->minecraft, a2, this->minecraft->user, a2->dimensionPtr->id, this->isCreativeType());
 }
 
 void GameMode::render(float a2) {
-	float v2; // s14
-	float v3; // s15
-
-	v2 = this->field_8;
+	float v2 = this->field_8;
 	if(v2 > 0.0) {
-		v3 = this->field_4 + (float)((float)(v2 - this->field_4) * a2);
+		float v3 = this->field_4 + (float)((float)(v2 - this->field_4) * a2);
 		this->minecraft->gui.field_10 = v3;
 		this->minecraft->levelRenderer->destroyProgress = v3;
 	} else {
@@ -115,6 +83,7 @@ void GameMode::attack(Player* a2, Entity* a3) {
 		a2->attack(a3);
 	}
 }
+
 bool_t GameMode::useItemOn(Player* player, Level* level, ItemInstance* a4, int32_t x, int32_t y, int32_t z, int32_t face, const Vec3& a9) {
 	float faceX = a9.x - (float)x;
 	float faceY = a9.y - (float)y;
@@ -151,3 +120,36 @@ bool_t GameMode::useItem(Player* a2, Level* a3, ItemInstance* a4) {
 	}
 	return v9 != a4 || v9->count != count;
 }
+
+GameMode::GameMode(Minecraft* a2) {
+	this->minecraft = a2;
+	this->field_4 = 0;
+	this->field_8 = 0;
+	this->field_C = 0;
+	this->delay = 0;
+}
+
+void GameMode::startDestroyBlock(int32_t x, int32_t y, int32_t z, int32_t a5) {
+	if(!this->minecraft->player->getCarriedItem() || Item::bow != this->minecraft->player->getCarriedItem()->itemClass || !Item::bow) {
+		this->destroyBlock(x, y, z, a5);
+	}
+}
+
+bool_t GameMode::handleInventoryMouseClick(int32_t, int32_t, int32_t, Player*) {
+	return 0;
+}
+void GameMode::handleCloseInventory(int32_t, Player*) {
+}
+
+float GameMode::getPickRange() {
+	return 5.0f;
+}
+void GameMode::initPlayer(Player* a2) {
+	this->initAbilities(a2->abilities);
+}
+
+void GameMode::tick() {
+	this->field_4 = this->field_8;
+}
+
+

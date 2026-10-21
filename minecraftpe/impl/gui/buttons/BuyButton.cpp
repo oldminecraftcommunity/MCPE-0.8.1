@@ -38,7 +38,7 @@ void BuyButton::render(Minecraft* mc, int32_t x, int32_t y){
 	if(mc->texturesPtr->loadAndBindTexture(s)){
 		Tesselator::instance.begin(4);
 		if(this->active){
-			if(sel || this->text) color = 0xFFCCCCCC;
+			if(sel || this->highlight) color = 0xFFCCCCCC;
 			else color = 0xFFFFFFFF;
 		}else{
 			color = 0xFF808080;

@@ -38,46 +38,41 @@ struct Vec3{
 
 		return dx*dx + dy*dy + dz*dz;
 	}
+
 	bool_t clipX(const Vec3& a2, float a3, Vec3& a4) const{
 		float dx = a2.x - this->x;
-		float dy = a2.y - this->y;
-		float dz = a2.z - this->z;
 
 		if(dx*dx < MINCLIPVAL) return 0;
 		float v10 = (a3 - this->x) / dx;
 		if((v10 < 0) || (v10 > 1)) return 0;
 
-		a4.x = this->x + (dx*v10);
-		a4.y = this->y + (dy*v10);
-		a4.z = this->z + (dz*v10);
+		a4.x = x + (dx*v10);
+		a4.y = y + ((a2.y - this->y)*v10);
+		a4.z = z + ((a2.z - this->z)*v10);
 		return 1;
 	}
 	bool_t clipY(const Vec3& a2, float a3, Vec3& a4) const{
-		float dx = a2.x - this->x;
 		float dy = a2.y - this->y;
-		float dz = a2.z - this->z;
 
 		if(dy*dy < MINCLIPVAL) return 0;
 		float v9 = (a3 - this->y) / dy;
 		if((v9 < 0) || (v9 > 1)) return 0;
 
 		a4.y = this->y + (dy*v9);
-		a4.x = this->x + (dx*v9);
-		a4.z = this->z + (dz*v9);
+		a4.x = this->x + ((a2.x - this->x)*v9);
+		a4.z = this->z + ((a2.z - this->z)*v9);
 		return 1;
 	}
 	bool_t clipZ(const Vec3& a2, float a3, Vec3& a4) const{
-		float dx = a2.x - this->x;
-		float dy = a2.y - this->y;
 		float dz = a2.z - this->z;
 
 		if(dz*dz < MINCLIPVAL) return 0;
 		float v9 = (a3 - this->z) / dz;
 		if((v9 < 0) || (v9 > 1)) return 0;
 
-		a4.x = this->x + (dx * v9);
 		a4.z = this->z + (dz * v9);
-		a4.y = this->y + (dy * v9);
+		a4.x = this->x + ((a2.x - this->x) * v9);
+		a4.y = this->y + ((a2.y - this->y) * v9);
 		return 1;
 	}
 	void yRot(float v){
@@ -100,7 +95,7 @@ struct Vec3{
 	Vec3 normalized(void) const {
 		float length;
 		length = sqrt((this->y * this->y) + (this->x * this->x) + (this->z * this->z));
-		if (length >= 0.0001) {
+		if (length >= 0.0001f) {
 			return Vec3(this->x / length, this->y / length, this->z / length);
 		}
 		return Vec3::ZERO;

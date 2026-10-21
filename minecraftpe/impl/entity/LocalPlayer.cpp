@@ -12,25 +12,27 @@
 #include <math/SmoothFloat.hpp>
 #include <nbt/CompoundTag.hpp>
 #include <network/RakNetInstance.hpp>
-#include <network/packet/AnimatePacket.hpp>
-#include <network/packet/ContainerSetSlotPacket.hpp>
-#include <network/packet/MovePlayerPacket.hpp>
-#include <network/packet/PlayerArmorEquipmentPacket.hpp>
-#include <network/packet/PlayerInputPacket.hpp>
+
 #include <network/packet/SetEntityLinkPacket.hpp>
+#include <network/packet/EntityEventPacket.hpp>
+#include <network/packet/PlayerEquipmentPacket.hpp>
+#include <network/packet/ContainerClosePacket.hpp>
+#include <network/packet/AnimatePacket.hpp>
+#include <network/packet/DropItemPacket.hpp>
 #include <network/packet/SetHealthPacket.hpp>
+#include <network/packet/PlayerArmorEquipmentPacket.hpp>
+#include <network/packet/MovePlayerPacket.hpp>
+#include <network/packet/PlayerInputPacket.hpp>
+
+#include <network/packet/ContainerSetSlotPacket.hpp>
 #include <tile/Tile.hpp>
 #include <tile/entity/TileEntity.hpp>
 #include <tile/material/Material.hpp>
 #include <item/Item.hpp>
 #include <input/Keyboard.hpp>
-#include <network/packet/DropItemPacket.hpp>
 #include <network/packet/PlayerActionPacket.hpp>
-#include <network/packet/ContainerClosePacket.hpp>
 #include <entity/player/User.hpp>
-#include <network/packet/EntityEventPacket.hpp>
 #include <perf/Stopwatch.hpp>
-#include <network/packet/PlayerEquipmentPacket.hpp>
 #include <level/Level.hpp>
 
 LocalPlayer::LocalPlayer(Minecraft* a2, Level* a3, User* a4, int32_t a5, bool_t a6)
@@ -404,7 +406,7 @@ void LocalPlayer::aiStep() {
 	moveInput = this->moveInput;
 	currentScreen = minecraft->currentScreen;
 	jumpingMaybe = moveInput->jumping;
-	if(!currentScreen || currentScreen->field_C) {
+	if(!currentScreen || currentScreen->dontPreventGameInput) {
 		moveInput->tick(this);
 	}
 	if(this->moveInput->sneaking && this->ySize < 0.2) {

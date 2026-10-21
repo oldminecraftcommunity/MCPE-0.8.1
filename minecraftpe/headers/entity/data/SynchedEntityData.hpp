@@ -28,7 +28,7 @@ struct SynchedEntityData{
 	template<typename T> //exists only for int in 0.8
 	void define(int32_t a2, const T& a3) {
 		if(a2 > 31) return;
-		if(this->data.end() == this->data.find(a2)){
+		if(this->data.find(a2) == this->data.end()){
 			this->data.insert(std::pair<int, DataItem*>(a2, new DataItem2<T>(a2, a3)));
 		}
 	}

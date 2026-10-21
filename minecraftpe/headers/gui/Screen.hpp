@@ -7,7 +7,7 @@ struct TextBox;
 struct Button;
 struct Screen : public GuiComponent{
 	int32_t width, height;
-	int8_t field_C, field_D, field_E, field_F;
+	bool dontPreventGameInput;
 	struct Minecraft* minecraft;
 	std::vector<Button*> buttons;
 	std::vector<TextBox*> field_20; //TODO check

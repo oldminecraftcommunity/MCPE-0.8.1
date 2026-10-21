@@ -57,7 +57,7 @@ struct TilePlanterItem: Item
 				if (v20) {
 					v22 = v20->getPlacementDataValue(level, x, v13, v14, v15, fx, fy, fz, (Mob*) (player), item->getAuxValue());
 					if (level->setTileAndData(x, v13, v14, this->blockID, v22, 3)) {
-						level->playSound((float) (x) + 0.5, (float) (v13) + 0.5, (float) (v14) + 0.5, v20->soundType->field_C, (float) ((v20->soundType->field_0 + 1.0)) * 0.5, v20->soundType->field_4 * 0.8);
+						level->playSound((float) (x) + 0.5, (float) (v13) + 0.5, (float) (v14) + 0.5, v20->soundType->soundName, (float) ((v20->soundType->field_0 + 1.0)) * 0.5, v20->soundType->field_4 * 0.8);
 						--item->count;
 					}
 				}

@@ -3,9 +3,8 @@
 #include <level/Level.hpp>
 
 AgableMob::AgableMob(Level* a2)
-	: PathfinderMob(a2) {
-	this->age = -1;
-	this->synchedEntityData.define<int8_t>(14, 0); //signed char
+	: PathfinderMob(a2), age(-1) {
+	this->synchedEntityData.define<int8_t>(14, 0);
 
 	this->setAge(0);
 }

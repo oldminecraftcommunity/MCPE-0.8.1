@@ -54,7 +54,7 @@ Player::Player(Level* a2, bool_t a3)
 	this->field_E8 = 20;
 	this->skin = "mob/char.png";
 	this->synchedEntityData.define<int8_t>(16, 0);
-	this->synchedEntityData.define<Pos>(17, {0, 0, 0});
+	this->synchedEntityData.define<Pos>(17, Pos{0, 0, 0});
 }
 void Player::_init() {
 	this->field_C78 = 0;
@@ -941,50 +941,25 @@ static float _BED_OFFS_X[] = {0.5f, 0.1f, 0.5f, 0.9f};
 static float _BED_OFFS_Z[] = {0.9f, 0.5f, 0.1f, 0.5f};
 
 int32_t Player::startSleepInBed(int32_t x, int32_t y, int32_t z) {
-	float v8;	  // s17
-	float v9;	  // s18
-	Level* level; // r0
-	int8_t v12;	  // r0
-	float v14;	  // s17
-	float v15;	  // s16
-	Level* v17;	  // r0
-	float v19;	  // s16
-
+	//i think java has enum with sleep states, maybe the same thing was used here?
 	if(!this->level->isClient) {
-		if(this->isSleeping() || !this->isAlive()) {
-			return 4;
-		}
-		v19 = (float)x;
-		if(fabsf(this->posX - (float)x) > 3.0f) {
-			return 3;
-		}
-		v8 = (float)y;
-		if(fabsf(this->posY - (float)y) > 4.0f) {
-			return 3;
-		}
-		v9 = (float)z;
-		if(fabsf(this->posZ - (float)z) > 3.0f) {
-			return 3;
-		}
-		if(this->level->dimensionPtr->isNaturalDimension()) {
-			return 1;
-		}
-		if(this->level->isDay()) {
-			return 2;
-		}
+		if(this->isSleeping() || !this->isAlive()) return 4;
+		if(fabsf(this->posX - x) > 3.0f || fabsf(this->posY - y) > 4.0f || fabsf(this->posZ - z) > 3.0f) return 3;
 
-		std::vector<struct Entity*> v20;																							  // [sp+4h] [bp-4Ch] BYREF
-		AABB v21{.minX = v19 - 8.0f, .minY = v8 - 5.0f, .minZ = v9 - 8.0f, .maxX = v19 + 8.0f, .maxY = v8 + 5.0f, .maxZ = v9 + 8.0f}; // [sp+10h] [bp-40h] BYREF
-		level = this->level;
-		level->getEntitiesOfClass(1, v21, v20);
+		if(this->level->dimensionPtr->isNaturalDimension()) return 1;
+		if(this->level->isDay()) return 2;
+
+		std::vector<Entity*> v20;
+		this->level->getEntitiesOfClass(1, AABB(x, y, z, x, y, z).grow(8, 5, 8), v20);
 		if(!v20.empty()) return 5;
 	}
+
 	this->setSize(0.2f, 0.2f);
 	this->ridingHeight = 0.2f;
 	if(this->level->hasChunkAt(x, y, z)) {
-		v12 = this->level->getData(x, y, z);
-		v14 = _BED_OFFS_X[v12 & 3];
-		v15 = _BED_OFFS_Z[v12 & 3];
+		int8_t v12 = this->level->getData(x, y, z);
+		float v14 = _BED_OFFS_X[v12 & 3];
+		float v15 = _BED_OFFS_Z[v12 & 3];
 		this->setBedOffset(v12 & 3);
 		this->setPos((float)x + v14, (float)y + 0.9375f, (float)z + v15);
 	} else {
@@ -993,13 +968,13 @@ int32_t Player::startSleepInBed(int32_t x, int32_t y, int32_t z) {
 
 	this->sleeping = 1;
 	this->sleepingCounter = 0;
-	this->bedPosition = {x, y, z};
-	v17 = this->level;
+	this->bedPosition = Pos(x, y, z);
+
 	this->motionY = 0.0f;
 	this->motionZ = 0.0f;
 	this->motionX = 0.0f;
-	if(!v17->isClient) {
-		v17->updateSleepingPlayerList();
+	if(!this->level->isClient) {
+		this->level->updateSleepingPlayerList();
 	}
 	this->synchedEntityData.set<Pos>(17, this->bedPosition);
 	this->synchedEntityData.setFlag<char>(16, 1);

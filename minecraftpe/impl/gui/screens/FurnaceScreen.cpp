@@ -21,14 +21,10 @@
 #include <I18n.hpp>
 #include <inventory/FurnaceMenu.hpp>
 
-FurnaceScreen::FurnaceScreen(Player* a2, FurnaceTileEntity* a3): field_84(4, ""), field_F4(0), field_124(1), field_154(2), field_184(5, "Furnace") {
+FurnaceScreen::FurnaceScreen(Player* a2, FurnaceTileEntity* a3): field_84(4, ""), field_F4(0), field_124(1), field_154(2), field_184(5, "Furnace"), field_1BC(0, 0, 1, 1) {
 	this->field_50 = new FurnaceMenu(a3);
 	this->field_80 = 90.0;
 	this->field_1B8 = 0;
-	this->field_1BC.minX = 0;
-	this->field_1BC.minY = 0;
-	this->field_1BC.width = 1;
-	this->field_1BC.height = 1;
 	this->field_1FC = 0;
 	this->field_200 = 0;
 	this->resultIdMaybe = 0;

@@ -3,25 +3,22 @@
 #include <level/Level.hpp>
 #include <tile/DoorTile.hpp>
 
-BreakDoorGoal::BreakDoorGoal(Mob* a2) : DoorInteractGoal(a2){
-
-}
-
-bool_t BreakDoorGoal::canUse() {
-	if(DoorInteractGoal::canUse()) {
-		return !DoorTile::isOpen(this->holder->level, this->doorX, this->doorY, this->doorZ);
-	}
-	return 0;
-}
 bool_t BreakDoorGoal::canContinueToUse(){
 	float v2; // s16
 
 	v2 = this->holder->distanceToSqr((float)this->doorX, (float)this->doorY, (float)this->doorZ);
 	return this->ticksLeft >= 0 && !DoorTile::isOpen(this->holder->level, this->doorX, this->doorY, this->doorZ) && v2 < 4.0;
 }
+
 void BreakDoorGoal::start() {
 	DoorInteractGoal::start();
 	this->ticksLeft = 240;
+}
+bool_t BreakDoorGoal::canUse() {
+	if(DoorInteractGoal::canUse()) {
+		return !DoorTile::isOpen(this->holder->level, this->doorX, this->doorY, this->doorZ);
+	}
+	return 0;
 }
 void BreakDoorGoal::tick() {
 	int32_t v2;	  // r3
@@ -39,3 +36,8 @@ void BreakDoorGoal::tick() {
 		}
 	}
 }
+
+BreakDoorGoal::BreakDoorGoal(Mob* a2) : DoorInteractGoal(a2){
+
+}
+

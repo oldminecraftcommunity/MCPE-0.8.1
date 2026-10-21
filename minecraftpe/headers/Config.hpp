@@ -4,8 +4,8 @@ struct Minecraft;
 struct Options;
 
 struct Config{
-	int32_t field_0;
-	int32_t field_4;
+	int32_t width;
+	int32_t height;
 	float guiScale;
 	float guiScaleNorm;
 	int32_t field_10;

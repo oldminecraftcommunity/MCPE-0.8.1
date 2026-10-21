@@ -78,7 +78,7 @@ void OptionsScreen::selectCategory(int32_t a2) {
 		if(v5) {
 			this->field_5C = p;
 		}
-		p->text = v5;
+		p->highlight = v5;
 	}
 	if(a2 < this->optionPanes.size()) {
 		this->selectedCategory = this->optionPanes[a2];

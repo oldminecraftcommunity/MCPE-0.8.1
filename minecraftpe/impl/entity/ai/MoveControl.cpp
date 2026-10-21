@@ -14,11 +14,11 @@ MoveControl::MoveControl(Mob* a2) {
 	this->speedMultiplier = 0;
 	this->_hasWanted = 0;
 }
-float MoveControl::getSpeed() {
-	return this->speedMultiplier;
-}
 bool_t MoveControl::hasWanted() {
 	return this->_hasWanted;
+}
+float MoveControl::getSpeed() {
+	return this->speedMultiplier;
 }
 void MoveControl::setWantedPosition(float x, float y, float z, float speed) {
 	this->posX = x;

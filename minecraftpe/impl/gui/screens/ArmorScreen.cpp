@@ -25,11 +25,7 @@ ArmorScreen::ArmorScreen()
 	, field_118(2)
 	, field_148(3)
 	, header(5, "Armor")
-	, inventoryPane(0){
-	this->field_1C0.minX = 0;
-	this->field_1C0.minY = 0;
-	this->field_1C0.width = 1;
-	this->field_1C0.height = 1;
+	, inventoryPane(0), field_1C0(0, 0, 1, 1){
 	this->field_1D0 = 0;
 	this->field_1D4 = 0;
 	this->field_1D8 = 1;

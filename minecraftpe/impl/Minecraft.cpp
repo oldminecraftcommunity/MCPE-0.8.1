@@ -1,9 +1,10 @@
 #include <Minecraft.hpp>
-#include <input/CustomInputHolder.hpp>
 #include <input/TouchInputHolder.hpp>
+#include <input/CustomInputHolder.hpp>
+
+#include <network/packet/RespawnPacket.hpp>
 #include <network/packet/InteractPacket.hpp>
 #include <input/ControllerTurnInput.hpp>
-#include <network/packet/RespawnPacket.hpp>
 #include <ICreator.hpp>
 #include <ExternalServer.hpp>
 #include <ExternalServerFile.hpp>
@@ -98,7 +99,7 @@ Minecraft::Minecraft()
 	this->prepareLevelThread = 0;
 	this->currentScreen = 0;
 	this->field_C7C = 0;
-	this->field_C84 = 1;
+	this->pixelsPerMillimeter = 1;
 	this->field_C88 = 1;
 	this->field_C8C = 1;
 	this->field_C90 = 1;
@@ -591,7 +592,7 @@ void Minecraft::optionUpdated(const Options::Option* a2, float a3) {
 		v4 = a3 * Gui::InvGuiScale;
 		this->field_C8C = a3 * Gui::InvGuiScale;
 		this->field_C90 = 1.0 / v4;
-		this->field_C84 = a3;
+		this->pixelsPerMillimeter = a3;
 		this->field_C88 = 1.0 / a3;
 		Config v6 = createConfig(this);
 		this->gui.onConfigChanged(v6);
@@ -861,7 +862,7 @@ void Minecraft::setSize(int32_t a2, int32_t a3) {
 	Gui::InvGuiScale = 1.0f / Gui::GuiScale;
 	if(this->platform()) {
 		float pv = this->options.getProgressValue(&Options::Option::PIXELS_PER_MILLIMETER);
-		this->field_C84 = pv;
+		this->pixelsPerMillimeter = pv;
 		this->field_C88 = 1.0f / pv;
 		this->field_C8C = pv * Gui::InvGuiScale;
 		this->field_C90 = 1.0f / this->field_C8C;
@@ -1062,7 +1063,7 @@ DONT_TICK_GAME:
 }
 void Minecraft::tickInput(void) {
 	if(this->currentScreen) {
-		if(!this->currentScreen->field_C) {
+		if(!this->currentScreen->dontPreventGameInput) {
 			this->field_D14 = 1;
 			this->currentScreen->updateEvents();
 			this->field_D14 = 0;

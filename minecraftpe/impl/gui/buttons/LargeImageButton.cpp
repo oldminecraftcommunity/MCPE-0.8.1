@@ -100,7 +100,7 @@ void LargeImageButton::render(struct Minecraft* mc, int32_t x, int32_t y){
 		}
 		if(this->active){
 			int32_t v40, v41, a5, v42;
-			if(this->active || this->text){
+			if(this->active || this->highlight){
 				v40 = this->posX;
 				v41 = this->width + ((uint32_t)this->width >> 31);
 				a5 = this->posY+11;
@@ -111,9 +111,9 @@ void LargeImageButton::render(struct Minecraft* mc, int32_t x, int32_t y){
 				v42 = 0xe0e0e0;
 				v41 = this->width + ((uint32_t)this->width >> 31);
 			}
-			this->drawCenteredString(mc->font, this->maybeTextOnButton, v40+(v41>>1), a5, v42);
+			this->drawCenteredString(mc->font, this->text, v40+(v41>>1), a5, v42);
 		}else{
-			this->drawCenteredString(mc->font, this->maybeTextOnButton, this->posX + this->width/2, this->posY+11, 0xffa0a0a0);
+			this->drawCenteredString(mc->font, this->text, this->posX + this->width/2, this->posY+11, 0xffa0a0a0);
 		}
 	}
 }

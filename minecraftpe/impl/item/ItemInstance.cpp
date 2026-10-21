@@ -19,7 +19,6 @@ ItemInstance::ItemInstance(const Item* a2, int32_t a3, int32_t a4) {
 ItemInstance::ItemInstance(const ItemInstance& a2) {
 	this->init(a2.getId(), a2.count, a2.metadata);
 }
-
 ItemInstance::ItemInstance(const Tile* a2) {
 	this->init(a2->blockID, 1, 0);
 }

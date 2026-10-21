@@ -41,7 +41,7 @@ void CraftButton::renderBg(Minecraft* mc, int32_t x, int32_t y) {
 	v5 = this->field_70;
 	if(v5) {
 		if(this->field_74) {
-			if(this->active && this->pressed && (v6 = this->posX, x >= v6) && (v7 = this->posY, y >= v7) && x < v6 + this->width && y < v7 + this->height || this->text) {
+			if(this->active && this->pressed && (v6 = this->posX, x >= v6) && (v7 = this->posY, y >= v7) && x < v6 + this->width && y < v7 + this->height || this->highlight) {
 				posX = this->posX;
 				posY = this->posY;
 				v5 = this->field_74;

@@ -32,7 +32,7 @@
 #include <tile/entity/TileEntity.hpp>
 #include <tile/material/Material.hpp>
 #include <util/DistanceEntitySorter.hpp>
-#include <util/_TickPtr.hpp>
+#include <util/TempEPtr.hpp>
 #include <cpputils.hpp>
 #include <sstream>
 
@@ -623,20 +623,20 @@ void Level::dispatchEntityData(struct Entity* a2) {
 		this->eid2entity2.insert(std::pair<int,Entity*>(a2->entityId, a2));
 	}
 }
-void Level::entityAdded(struct Entity* a2) {
-	for(auto&& l: this->levelListeners) {
-		l->entityAdded(a2);
+void Level::entityAdded(struct Entity* e) {
+	for(unsigned int i = 0; i < this->levelListeners.size(); ++i) {
+		this->levelListeners[i]->entityAdded(e);
 	}
 }
-void Level::entityRemoved(struct Entity* a2) {
-	if(a2->rider) {
-		a2->rider->ride(0);
+void Level::entityRemoved(struct Entity* e) {
+	if(e->rider) {
+		e->rider->ride(0);
 	}
-	if(a2->ridingAt) {
-		a2->ride(0);
+	if(e->ridingAt) {
+		e->ride(0);
 	}
-	for(auto&& l: this->levelListeners) {
-		l->entityRemoved(a2);
+	for(unsigned int i = 0; i < this->levelListeners.size(); ++i) {
+		this->levelListeners[i]->entityRemoved(e);
 	}
 }
 void Level::explode(struct Entity* a2, float a3, float a4, float a5, float a6) {
@@ -814,7 +814,7 @@ std::vector<AABB>* Level::getCubes(const struct Entity* a2, const AABB& a3, floa
 	}
 	return &this->aabbVec;
 }
-int32_t Level::getDirectSignal(int32_t x, int32_t y, int32_t z, int32_t a5) {
+int Level::getDirectSignal(int32_t x, int32_t y, int32_t z, int32_t a5) {
 	int32_t id = this->getTile(x, y, z);
 	if(id) {
 		return Tile::tiles[id]->getDirectSignal(this, x, y, z, a5);
@@ -1067,16 +1067,14 @@ TilePos Level::getSharedSpawnPos() {
 	return {this->levelData.getXSpawn(), this->levelData.getYSpawn(), this->levelData.getZSpawn()};
 }
 int32_t Level::getSignal(int32_t x, int32_t y, int32_t z, int32_t side) {
-	int32_t result; // r0
-
 	if(this->isSolidBlockingTile(x, y, z)) {
 		return this->hasDirectSignal(x, y, z);
 	}
-	result = this->getTile(x, y, z);
-	if(result) {
-		return Tile::tiles[result]->getSignal(this, x, y, z, side);
+	int id = this->getTile(x, y, z);
+	if(id) {
+		return Tile::tiles[id]->getSignal(this, x, y, z, side);
 	}
-	return result;
+	return 0;
 }
 Color4 Level::getSkyColor(struct Entity* a3, float a4) {
 	return this->getSkyColor(Mth::floor(a3->posX), Mth::floor(a3->posZ), a4);
@@ -1238,41 +1236,29 @@ int32_t Level::getTileCubesCount(const AABB& aabb) {
 	return v4;
 }
 TileEntity* Level::getTileEntity(int32_t x, int32_t y, int32_t z) {
-	LevelChunk* chunk;		  // r0
-	TileEntity* res;		  // r0
-	uint32_t i;				  // r5
-	TileEntity* te;			  // r4
-	TileEntity** vecStartPtr; // r3
-
-	chunk = this->getChunk(x >> 4, z >> 4);
+	LevelChunk* chunk = this->getChunk(x >> 4, z >> 4);
 	if(!chunk) {
 		return 0;
 	}
-	res = chunk->getTileEntity(x & 0xF, y, z & 0xF);
-	if(!res) {
-		for(auto te: this->scheduledTileEntityAdds) {
-			if(!te->isRemoved() && te->posX == x && te->posY == y && te->posZ == z) {
-				return te;
-			}
+	TileEntity* res = chunk->getTileEntity(x & 0xF, y, z & 0xF);
+	if(res) return res;
+	for(unsigned int i = 0; i < this->scheduledTileEntityAdds.size(); ++i) {
+		TileEntity* te = this->scheduledTileEntityAdds[i];
+		if(!te->isRemoved() && te->posX == x && te->posY == y && te->posZ == z) {
+			return te;
 		}
-		return 0;
 	}
-	return res;
+	return 0;
 }
 
 bool_t Level::getTileObstructsChests(int32_t x, int32_t y, int32_t z) {
-	Tile* tile;	   // r4
-	bool_t result; // r0
-
-	tile = Tile::tiles[this->getTile(x, y, z)];
-	result = tile->isCubeShaped();
-	if(result) {
+	Tile* tile = Tile::tiles[this->getTile(x, y, z)];
+	if(tile->isCubeShaped()) {
 		return 1;
 	}
-	if(tile == Tile::stoneSlabHalf || tile == Tile::woodSlabHalf) {
-		return ((SlabTile*)tile)->isBottomSlab(this, x, y, z);
-	}
-	return result;
+	if(tile == Tile::stoneSlabHalf) return ((SlabTile*)tile)->isBottomSlab(this, x, y, z);
+	if(tile == Tile::woodSlabHalf) return ((SlabTile*)tile)->isBottomSlab(this, x, y, z);
+	return 0;
 }
 int32_t Level::getTime() {
 	return this->levelData.getTime();
@@ -1384,7 +1370,7 @@ bool_t Level::hasNeighborSignal(int32_t x, int32_t y, int32_t z) {
 	}
 }
 bool_t Level::inRange(int32_t x, int32_t y, int32_t z) {
-	return (uint32_t)x <= 0xff && y <= 127 && z >= 0 && z <= 255;
+	return x >= 0 && x <= 0xff && y >= 0 && y <= 127 && z >= 0 && z <= 255;
 }
 bool_t Level::isDay() {
 	return this->skyDarken <= 3;
@@ -2150,11 +2136,10 @@ void Level::validateSpawn() {
 }
 
 int32_t Level::getTile(int32_t x, int32_t y, int32_t z) {
-	int8_t v5 = x;
-	int8_t v6 = z;
-	if(y < 0 || y > 127) return 0;
+	if(y < 0) return 0;
+	if(y > 127) return 0;
 	LevelChunk* chunk = this->getChunk(x >> 4, z >> 4);
-	return chunk->getTile(v5 & 0xf, y, v6 & 0xf);
+	return chunk->getTile(x & 0xf, y, z & 0xf);
 }
 bool_t Level::isEmptyTile(int32_t x, int32_t y, int32_t z) {
 	return this->getTile(x, y, z) == 0;
@@ -2272,17 +2257,11 @@ float Level::getBrightness(int32_t x, int32_t y, int32_t z) {
 	return this->dimensionPtr->lightRamp[this->getRawBrightness(x, y, z)];
 }
 int32_t Level::getData(int32_t x, int32_t y, int32_t z) {
-	int8_t xx;		   // r4
-	int8_t zz;		   // r5
-	LevelChunk* chunk; // r0
+	if(y < 0) return 0;
+	if(y > 127) return 0;
 
-	xx = x;
-	zz = z;
-	if(y < 0 || y > 127) {
-		return 0;
-	}
-	chunk = this->getChunk(x >> 4, z >> 4);
-	return chunk->getData(xx & 0xF, y, zz & 0xF);
+	LevelChunk* chunk = this->getChunk(x >> 4, z >> 4);
+	return chunk->getData(x & 0xF, y, z & 0xF);
 }
 static int32_t _D6E4DF90 = 0;
 void Level::tick() {

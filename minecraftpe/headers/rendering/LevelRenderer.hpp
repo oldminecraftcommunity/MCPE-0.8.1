@@ -120,7 +120,7 @@ struct LevelRenderer: LevelListener, AppPlatform::Listener
 	virtual void allChanged();
 	virtual void takePicture(TripodCamera*, Entity*);
 	virtual Particle* addParticle(ParticleType, float, float, float, float, float, float, int32_t);
-	virtual void playSound(const std::string&, float, float, float, float, float);
+	virtual void playSound(const std::string& sound, float, float, float, float distMultiplier, float);
 	virtual void entityAdded(Entity*);
 	virtual void levelEvent(Player*, int32_t, int32_t, int32_t, int32_t, int32_t);
 	virtual void onAppSuspended();

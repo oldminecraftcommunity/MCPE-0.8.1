@@ -99,7 +99,7 @@ void SurvivalMode::continueDestroyBlock(int32_t x, int32_t y, int32_t z, int32_t
 				if ( (v14 & 3) == 1 )
 				{
 					this->minecraft->soundEngine->play(
-						v11->soundType->field_C,
+						v11->soundType->soundName,
 						(float)x + 0.5,
 						(float)y + 0.5,
 						(float)z + 0.5,

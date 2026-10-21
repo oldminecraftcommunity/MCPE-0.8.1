@@ -105,7 +105,7 @@ void ImageWithBackground::render(struct Minecraft* mc, int32_t x, int32_t y){
 
 		if(this->active){
 			int32_t v39, v40, a5, v41;
-			if(active || this->text){
+			if(active || this->highlight){
 				v39 = this->posX;
 				v40 = this->width;
 				a5 = this->posY+11;
@@ -116,9 +116,9 @@ void ImageWithBackground::render(struct Minecraft* mc, int32_t x, int32_t y){
 				a5 = this->posY+11;
 				v41 = 0xffffa0;
 			}
-			this->drawCenteredString(mc->font, this->maybeTextOnButton, v39+(v40>>1), a5, v41);
+			this->drawCenteredString(mc->font, this->text, v39+(v40>>1), a5, v41);
 		}else{
-			this->drawCenteredString(mc->font, this->maybeTextOnButton, this->posX+this->width/2, this->posY+11, 0xFFA0A0A0);
+			this->drawCenteredString(mc->font, this->text, this->posX+this->width/2, this->posY+11, 0xFFA0A0A0);
 		}
 	}
 }
@@ -131,7 +131,7 @@ void ImageWithBackground::renderBg(struct Minecraft* mc, int32_t x, int32_t y){
 		NinePatchLayer* l = this->field_74;
 		if(l){
 			int32_t posX, posY;
-			if(this->active && this->pressed && x >= this->posX && y >= this->posY && x < (this->posX+this->width) && y < (this->posY+this->height) || this->text){
+			if(this->active && this->pressed && x >= this->posX && y >= this->posY && x < (this->posX+this->width) && y < (this->posY+this->height) || this->highlight){
 				posX = this->posX;
 				posY = this->posY;
 			}else{

@@ -70,7 +70,7 @@ struct TileItem: Item
 		meta = this->getLevelDataForAuxValue(auxValue);
 		v23 = v20->getPlacementDataValue(level, x, yNew, zNew, sideNew, faceX, faceY, faceZ, (Mob*) (player), meta);
 		if (level->setTileAndData(x, yNew, zNew, this->blockID, v23, 3)) {
-			level->playSound((float) (x) + 0.5, (float) (yNew) + 0.5, (float) (zNew) + 0.5, v20->soundType->field_C, (float) ((v20->soundType->field_0 + 1.0)) * 0.5, v20->soundType->field_4 * 0.8);
+			level->playSound((float) (x) + 0.5, (float) (yNew) + 0.5, (float) (zNew) + 0.5, v20->soundType->soundName, (float) ((v20->soundType->field_0 + 1.0)) * 0.5, v20->soundType->field_4 * 0.8);
 			--item->count;
 		}
 		return 1;

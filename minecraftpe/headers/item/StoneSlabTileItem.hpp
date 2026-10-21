@@ -37,7 +37,7 @@ struct StoneSlabTileItem: TileItem
 				if (v17 == item->getAuxValue()) {
 					if (level->isUnobstructed(*Tile::stoneSlab->getAABB(level, x, y, z))) {
 						if (level->setTileAndData(x, y, z, Tile::stoneSlab->blockID, v17, 3)) {
-							level->playSound((float) (x) + 0.5, (float) (y) + 0.5, (float) (z) + 0.5, Tile::stoneSlab->soundType->field_C, (float) ((Tile::stoneSlab->soundType->field_0 + 1.0)) * 0.5, Tile::stoneSlab->soundType->field_4 * 0.8);
+							level->playSound((float) (x) + 0.5, (float) (y) + 0.5, (float) (z) + 0.5, Tile::stoneSlab->soundType->soundName, (float) ((Tile::stoneSlab->soundType->field_0 + 1.0)) * 0.5, Tile::stoneSlab->soundType->field_4 * 0.8);
 							--item->count;
 						}
 					}

@@ -12,7 +12,9 @@ TickNextTickData::TickNextTickData(int32_t x, int32_t y, int32_t z, int32_t a5){
 }
 bool_t TickNextTickData::operator==(const TickNextTickData& a2) const{
 	if(this->x == a2.x && this->y == a2.y && this->z == a2.z){
-		return this->field_10-a2.field_10 + (this->field_10 == a2.field_10) + a2.field_10 - this->field_10;
+		if(this->field_10 == a2.field_10) return 0;
+		if(this->field_10 < a2.field_10) return -1;
+		return 1;
 	}
 	return 0;
 }

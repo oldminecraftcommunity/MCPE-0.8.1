@@ -202,7 +202,7 @@ void Touch::SelectWorldScreen::buttonClicked(Button* a2) {
 	}
 }
 void Touch::SelectWorldScreen::keyPressed(int32_t a2) {
-	if(this->field_168.text) {
+	if(this->field_168.highlight) {
 		if(a2 == this->minecraft->options.keyLeft.keyCode) {
 			this->selectionList->stepLeft();
 		}

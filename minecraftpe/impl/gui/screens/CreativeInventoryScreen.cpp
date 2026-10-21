@@ -34,13 +34,6 @@ void CreativeInventoryScreen::_putItemInToolbar(const ItemInstance*) {
 void CreativeInventoryScreen::closeWindow() {
 	this->minecraft->setScreen(0);
 }
-std::shared_ptr<ImageButton> CreativeInventoryScreen::createInventoryTabButton(int32_t a3, int32_t a4) {
-	std::shared_ptr<ImageButton> res(new CategoryButton(a3, this->field_70.get(), this->field_70.get(), &this->field_A4));
-	res->height = this->field_58;
-	res->width = this->field_58;
-	res->setOverrideScreenRendering(1);
-	return res;
-}
 void CreativeInventoryScreen::drawIcon(int a2, std::shared_ptr<ImageButton> a3, bool_t a4, bool_t a5) {
 	ItemInstance v14 = this->getItemFromType(a2);
 	float v8 = 0.0;
@@ -337,13 +330,13 @@ void CreativeInventoryScreen::setupPositions()
 	if(!this->field_78[0].get()) {
 		int v14 = (int)this->field_68->width2 - 14;
 		int v15 = this->field_A8;
-		IntRectangle r3_0;
-		r3_0.minY = this->field_AC + 8;
-		r3_0.width = 26 * (v14 / 26);
+		IntRectangle r3_0(
+			v14 % 26 / 2 + v15 + 7,
+			this->field_AC + 8,
+			26 * (v14 / 26),
+			(int)this->field_68->height2 - 16
+		);
 		this->field_B8 = v14 % 26 / 2;
-		int height2 = (int)this->field_68->height2;
-		r3_0.minX = v14 % 26 / 2 + v15 + 7;
-		r3_0.height = height2 - 16;
 		int v17 = CreativeInventoryScreen::filteredItems[0].size();
 
 		this->field_78[0] = std::shared_ptr<Touch::InventoryPane>(new Touch::InventoryPane(this, this->minecraft, r3_0, r3_0.width, 1, v17, 26, 1, 0));
@@ -355,6 +348,16 @@ void CreativeInventoryScreen::setupPositions()
 		this->field_78[3] = std::shared_ptr<Touch::InventoryPane>(new Touch::InventoryPane(this, this->minecraft, r3_0, r3_0.width, 1, v21, 26, 1, 0));
 	}
 }
+
+
+std::shared_ptr<ImageButton> CreativeInventoryScreen::createInventoryTabButton(int32_t a3, int32_t a4) {
+	std::shared_ptr<ImageButton> res(new CategoryButton(a3, this->field_70.get(), this->field_70.get(), &this->field_A4));
+	res->height = this->field_58;
+	res->width = this->field_58;
+	res->setOverrideScreenRendering(1);
+	return res;
+}
+
 bool_t CreativeInventoryScreen::handleBackEvent(bool_t a2) {
 	if(!a2) {
 		this->closeWindow();

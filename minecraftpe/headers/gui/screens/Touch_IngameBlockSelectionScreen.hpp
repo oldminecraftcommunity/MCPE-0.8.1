@@ -3,6 +3,8 @@
 #include <gui/buttons/Touch_THeader.hpp>
 #include <gui/buttons/Touch_TButton.hpp>
 #include <gui/pane/Touch_IInventoryPaneCallback.hpp>
+#include <util/IntRectangle.hpp>
+
 namespace Touch {
 	struct InventoryPane;
 
@@ -13,7 +15,7 @@ namespace Touch {
 		Touch::InventoryPane* field_60;
 		Touch::THeader selectBlocksHeader;
 		Touch::TButton backButton, craftButton, armorButton, menuButton;
-		int32_t field_178, field_17C, field_180, field_184;
+		IntRectangle field_178;
 		int32_t field_188, field_18C, field_190, field_194;
 
 		IngameBlockSelectionScreen();

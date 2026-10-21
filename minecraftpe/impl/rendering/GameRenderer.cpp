@@ -28,7 +28,7 @@
 int32_t _t_keepPic = -1;
 GameRenderer::GameRenderer(struct Minecraft* a2)
 	: field_74(0, 0, 0, 0)
-	, field_84(0, 0, 0, 0) {
+	, field_84(0, 0, 0, 0), scissorRect(0, 0, 1, 1) {
 	this->minecraft = a2;
 	this->field_C = 0;
 	this->viewVector.x = 1;
@@ -58,11 +58,7 @@ GameRenderer::GameRenderer(struct Minecraft* a2)
 	this->field_6C = 0;
 	this->field_70 = 0;
 	this->enableScissorTest = 0;
-	this->scissorRect.minX = 0;
-	this->scissorRect.minY = 0;
 	this->field_150 = 0;
-	this->scissorRect.width = 1;
-	this->scissorRect.height = 1;
 	this->field_94 = 0;
 	this->field_98 = 0;
 	this->field_9C = 0;
@@ -381,13 +377,20 @@ void GameRenderer::pick(float a2) {
 							float v51 = v47->boundingBox.maxY;
 							float v52 = v47->boundingBox.minX;
 							float v53 = v47->boundingBox.minY - v48;
-							AABB v83;
-							v83.maxZ = v48 + v47->boundingBox.maxZ;
-							v83.minY = v53;
-							v83.minZ = v49 - v48;
-							v83.maxX = v48 + v50;
-							v83.maxY = v48 + v51;
-							v83.minX = v52 - v48;
+							AABB v83(
+								v52 - v48,
+								v53,
+								v49 - v48,
+								v48 + v50,
+								v48 + v51,
+								v48 + v47->boundingBox.maxZ
+							);
+							/*v83.maxZ = ;
+							v83.minY = ;
+							v83.minZ = ;
+							v83.maxX = ;
+							v83.maxY = ;
+							v83.minX = ;*/
 
 							HitResult result = v83.clip(mobpos, v75);
 							if(mobpos.x > v83.minX && mobpos.x < v83.maxX && mobpos.y > v83.minY && mobpos.y < v83.maxY && mobpos.z > v83.minZ && mobpos.z < v83.maxZ) {
@@ -472,7 +475,7 @@ void GameRenderer::render(float pt) {
 				v13 = -1;
 			}
 			Screen* currentScreen = v5->currentScreen;
-			if(!currentScreen || currentScreen->field_C) {
+			if(!currentScreen || currentScreen->dontPreventGameInput) {
 				v5->player->turn(v11 * this->field_A4, (float)(v11 * this->field_A8) * (float)v13);
 			}
 		}

@@ -10,8 +10,8 @@ void Touch::PromotionStartMenuScreen::init() {
 	Touch::StartMenuScreen::init();
 	this->playButton2 = &this->playButton;
 	this->realmsButton2 = &this->playOnRealmsButton;
-	this->playButton.maybeTextOnButton = "Creative";
-	this->realmsButton2->maybeTextOnButton = "Survival";
+	this->playButton.text = "Creative";
+	this->realmsButton2->text = "Survival";
 	this->settingsButtonMaybe->setActiveAndVisibility(0, 0);
 }
 void Touch::PromotionStartMenuScreen::buttonClicked(Button* a2) {

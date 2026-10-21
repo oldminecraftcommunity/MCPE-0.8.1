@@ -14,11 +14,9 @@ struct Bush : Tile{
 			Bush(a2, a3, Material::plant) {
 	}
 	bool_t checkAlive(Level* level, int32_t x, int32_t y, int32_t z) {
-		if (!this->canSurvive(level, x, y, z)) {
-			this->spawnResources(level, x, y, z, level->getData(x, y, z));
-			return level->setTile(x, y, z, 0, 3);
-		}
-		return 1;
+		if(this->canSurvive(level, x, y, z)) return 1;
+		this->spawnResources(level, x, y, z, level->getData(x, y, z));
+		return level->setTile(x, y, z, 0, 3);
 	}
 	virtual ~Bush() {
 	}
@@ -48,10 +46,9 @@ struct Bush : Tile{
 		return 1;
 	}
 	virtual bool_t canSurvive(Level* level, int32_t x, int32_t y, int32_t z) {
-		if (level->getRawBrightness(x, y, z) > 7 || level->canSeeSky(x, y, z)) {
-			return this->mayPlaceOn(level->getTile(x, y - 1, z));
-		}
-		return 0;
+		if(level->getRawBrightness(x, y, z) <= 7 || !level->canSeeSky(x, y, z)) return 0;
+
+		return this->mayPlaceOn(level->getTile(x, y - 1, z));
 	}
 	virtual bool_t mayPlaceOn(int32_t a2) {
 		return a2 == Tile::grass->blockID || a2 == Tile::dirt->blockID || a2 == Tile::farmland->blockID;

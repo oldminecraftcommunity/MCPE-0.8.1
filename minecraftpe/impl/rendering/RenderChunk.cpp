@@ -18,7 +18,7 @@ RenderChunk::RenderChunk(Level* level, int32_t x, int32_t y, int32_t z, int32_t 
 	, zSize(chunkSize)
 	, level(level)
 	, isInFrustumMaybe(0)
-	, frustumBB{0, 0, 0, 1, 1, 1},
+	, frustumBB(0, 0, 0, 1, 1, 1),
 	field_4D(1),
 	field_4E(0)
 {

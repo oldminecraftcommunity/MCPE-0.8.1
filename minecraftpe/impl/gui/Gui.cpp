@@ -123,11 +123,11 @@ void Gui::onConfigChanged(const Config& a2) {
 			v22 = 6;
 		} else {
 			v22 = 6;
-			if(a2.field_0 > 480) {
+			if(a2.width > 480) {
 				do {
 					this->getSlotPos(0, v23, v25);
 					sp = this->getSlotPos(v22, v24, v25);
-					if((float)((float)((float)a2.field_0 - (float)((float)(v24 - v23) * a2.guiScale)) * a2.field_1C) < 80.0) {
+					if((float)((float)((float)a2.width - (float)((float)(v24 - v23) * a2.guiScale)) * a2.field_1C) < 80.0) {
 						break;
 					}
 					++v22;
