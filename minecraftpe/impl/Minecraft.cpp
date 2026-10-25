@@ -819,7 +819,7 @@ void Minecraft::setScreen(Screen* screen) {
 		if(screen->isErrorScreen()) return;
 	} else if(!this->currentScreen) return;
 
-	if(this->currentScreen == 0) this->currentScreen->removed();
+	if(this->currentScreen) this->currentScreen->removed();
 	this->currentScreen.reset(screen);
 	if(this->currentScreen) {
 		this->releaseMouse();

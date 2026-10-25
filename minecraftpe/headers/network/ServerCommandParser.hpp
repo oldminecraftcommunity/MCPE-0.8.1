@@ -68,8 +68,8 @@ struct ServerCommandParser
 		int v2 = 0;
 		int v5 = 1;
 		while (1) {
-			const char* data = msg.field_8.data();
-			int v8 = msg.field_8.length();
+			const char* data = msg.message.data();
+			int v8 = msg.message.length();
 			if (v5 > v8) break;
 
 			if (v5 >= v8) {
@@ -114,7 +114,7 @@ struct ServerCommandParser
 		}
 		std::string v19 = v24[0].isEmpty ? Util::EMPTY_STRING : v24[0].field_0;
 		auto&& cmd = this->commands.find(v19);
-		v24[0] = ServerCommandParser::Token(msg.field_C); //inlined
+		v24[0] = ServerCommandParser::Token(msg.author); //inlined
 		if (cmd == this->commands.end()) {
 			std::string v21 = "Error: Command " + v19 + " not found";
 			this->retStr = v21;

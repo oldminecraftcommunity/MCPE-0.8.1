@@ -28,14 +28,14 @@ void ChatScreen::closeWindow() {
 void ChatScreen::drawChatMessages(int32_t a2) {
 	int32_t v20 = a2;
 	for(auto& msg: this->chatMessages) {
-		Util::stringSplit(msg.field_10, this->width, this->font->charLength, [&v20](const std::string&, float) {
+		Util::stringSplit(msg.fullMessage, this->width, this->font->charLength, [&v20](const std::string&, float) {
 			v20 -= 9;
 		});
 
-		if(msg.field_8[0] == '/') {
-			this->font->drawWordWrap(msg.field_10, 2.0, v20, this->width, Color4::GREY.toARGB(), 1, 0);
+		if(msg.message[0] == '/') {
+			this->font->drawWordWrap(msg.fullMessage, 2.0, v20, this->width, Color4::GREY.toARGB(), 1, 0);
 		} else {
-			this->font->drawWordWrap(msg.field_10, 2.0, v20, this->width, Color4::WHITE.toARGB(), 1, 0);
+			this->font->drawWordWrap(msg.fullMessage, 2.0, v20, this->width, Color4::WHITE.toARGB(), 1, 0);
 		}
 	}
 }
@@ -45,7 +45,7 @@ bool_t ChatScreen::guiMessagesUpdated() {
 		return 1;
 	}
 	for(int32_t i = 0; i != sz; ++i) {
-		if(!(this->minecraft->gui.chatMessages[i].field_10 == this->chatMessages[i].field_10)) {
+		if(!(this->minecraft->gui.chatMessages[i].fullMessage == this->chatMessages[i].fullMessage)) {
 			return 1;
 		}
 	}

@@ -20,8 +20,8 @@ struct Gui : GuiComponent, IConfigListener, AppPlatform::Listener{
 	struct Minecraft* minecraftInst;
 	int32_t field_9FC;
 	float field_A00;
-	std::string field_A04;
-	int32_t field_A08;
+	std::string nowPlayingMessage;
+	int32_t nowPlayingLeft;
 	bool field_A0C;
 	float field_A10;
 	bool invUpdated;
@@ -30,8 +30,8 @@ struct Gui : GuiComponent, IConfigListener, AppPlatform::Listener{
 	int32_t field_A28;
 	int32_t slotsAmount;
 	MeshBuffer outerBreakRingMesh, innerBreakRingMesh;
-	float field_A80;
-	int32_t field_A84;
+	float slotDropCounter;
+	int32_t slotToDrop;
 	std::string tipMessage;
 	float tipTimeLeft, tipMessageLength;
 	bool field_A94;
