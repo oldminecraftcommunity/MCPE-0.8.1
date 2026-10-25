@@ -69,6 +69,7 @@ Minecraft::Minecraft()
 	this->width = 1;
 	this->field_24 = 4711;
 	this->height = 1;
+
 	this->field_18 = 0;
 	this->field_28 = 0;
 	this->field_2C = 0;
@@ -97,7 +98,6 @@ Minecraft::Minecraft()
 	this->inputHolder = 0;
 	this->viewEntity = 0;
 	this->prepareLevelThread = 0;
-	this->currentScreen = 0;
 	this->pixelsPerMillimeter = 1;
 	this->field_C88 = 1;
 	this->field_C8C = 1;
@@ -819,9 +819,8 @@ void Minecraft::setScreen(Screen* screen) {
 		if(screen->isErrorScreen()) return;
 	} else if(!this->currentScreen) return;
 
-	if(this->currentScreen) this->currentScreen->removed();
-	this->currentScreen = screen;
-	this->field_C7C = std::shared_ptr<Screen>(screen);
+	if(this->currentScreen == 0) this->currentScreen->removed();
+	this->currentScreen.reset(screen);
 	if(this->currentScreen) {
 		this->releaseMouse();
 		this->currentScreen->init(this, this->width * Gui::InvGuiScale, this->height * Gui::InvGuiScale);

@@ -474,7 +474,7 @@ void GameRenderer::render(float pt) {
 			} else {
 				v13 = -1;
 			}
-			Screen* currentScreen = v5->currentScreen;
+			Screen* currentScreen = v5->currentScreen.get();
 			if(!currentScreen || currentScreen->dontPreventGameInput) {
 				v5->player->turn(v11 * this->field_A4, (float)(v11 * this->field_A8) * (float)v13);
 			}

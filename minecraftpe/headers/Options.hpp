@@ -58,18 +58,14 @@ struct Options{
 	float soundVolume;
 	float sensitity;
 	bool_t invertMouse;
-	char_t field_D;
-	char_t field_E;
-	char_t field_F;
 	int32_t renderDistance;
 	bool_t viewBobbing;
 	bool_t limitFramerate;
 	bool_t graphics;
-	char_t field_17;
+	bool_t field_17;
+
 	bool_t leftHanded;
 	bool_t destroyVibration;
-	char_t field_1A;
-	char_t field_1B;
 	KeyMapping keyForward;
 	KeyMapping keyLeft;
 	KeyMapping keyBack;
@@ -96,8 +92,6 @@ struct Options{
 	char_t enableNoclipMaybe;
 	char_t field_F0;
 	char_t field_F1;
-	char_t field_F2;
-	char_t field_F3;
 	float field_F4;
 	float field_F8;
 	int32_t guiScale;

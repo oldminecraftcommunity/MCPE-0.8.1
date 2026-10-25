@@ -67,25 +67,27 @@ void XperiaPlayInput::tick(Player* player){
 }
 void XperiaPlayInput::render(float a2) {
 
-	if(!this->options->hideGUI && !this->mc->currentScreen) {
-		Tesselator::instance.begin(0);
-		int32_t v3;
-		if(this->chatScreenPressed) {
-			v3 = _col_D6E06628;
-		} else {
-			v3 = _col_D6E0662C;
+	if(!this->options->hideGUI) {
+		if(this->mc->currentScreen == 0){
+			Tesselator::instance.begin(0);
+			int32_t v3;
+			if(this->chatScreenPressed) {
+				v3 = _col_D6E06628;
+			} else {
+				v3 = _col_D6E0662C;
+			}
+			Tesselator::instance.colorABGR(v3);
+			float v4 = Gui::InvGuiScale * this->field_28.minX;
+			float v5 = Gui::InvGuiScale * this->field_28.maxY;
+			float v6 = Gui::InvGuiScale * this->field_28.maxX;
+			float v7 = Gui::InvGuiScale * this->field_28.minY;
+			Tesselator::instance.vertexUV(v4, v5, 0.0f, 0.78125f, 0.39062f);
+			Tesselator::instance.vertexUV(v6, v5, 0.0f, 0.85156f, 0.39062f);
+			Tesselator::instance.vertexUV(v6, v7, 0.0f, 0.85156f, 0.32031f);
+			Tesselator::instance.vertexUV(v4, v7, 0.0f, 0.78125f, 0.32031f);
+			this->mc->texturesPtr->loadAndBindTexture("gui/gui.png");
+			Tesselator::instance.draw(1);
 		}
-		Tesselator::instance.colorABGR(v3);
-		float v4 = Gui::InvGuiScale * this->field_28.minX;
-		float v5 = Gui::InvGuiScale * this->field_28.maxY;
-		float v6 = Gui::InvGuiScale * this->field_28.maxX;
-		float v7 = Gui::InvGuiScale * this->field_28.minY;
-		Tesselator::instance.vertexUV(v4, v5, 0.0f, 0.78125f, 0.39062f);
-		Tesselator::instance.vertexUV(v6, v5, 0.0f, 0.85156f, 0.39062f);
-		Tesselator::instance.vertexUV(v6, v7, 0.0f, 0.85156f, 0.32031f);
-		Tesselator::instance.vertexUV(v4, v7, 0.0f, 0.78125f, 0.32031f);
-		this->mc->texturesPtr->loadAndBindTexture("gui/gui.png");
-		Tesselator::instance.draw(1);
 	}
 }
 void XperiaPlayInput::onConfigChanged(const Config& a2) {

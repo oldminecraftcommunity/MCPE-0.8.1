@@ -12,7 +12,7 @@ struct App : AppPlatform::Listener{
 	int field_30;
 	int field_34;
 
-	noinline void init(AppContext& ctx){
+	void init(AppContext& ctx){
 		this->context = ctx;
 		this->init();
 		this->initialized = 1;

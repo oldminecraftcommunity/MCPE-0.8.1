@@ -49,8 +49,7 @@ struct Minecraft : App{
 	struct IInputHolder *inputHolder;
 	struct Mob* viewEntity;
 	CThread* prepareLevelThread;
-	Screen* currentScreen;
-	std::shared_ptr<Screen> field_C7C;  //TODO not shared_ptr?
+	std::shared_ptr<Screen> currentScreen;
 	bool mouseGrabbed;
 	float pixelsPerMillimeter;
 	float field_C88;

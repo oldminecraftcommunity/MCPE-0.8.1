@@ -376,9 +376,7 @@ void LocalPlayer::addAdditonalSaveData(CompoundTag* a2) {
 	a2->putInt("Score", this->score);
 }
 void LocalPlayer::actuallyHurt(int32_t a2) {
-	Screen* currentScreen; // r0
-
-	currentScreen = this->minecraft->currentScreen;
+	Screen* currentScreen = this->minecraft->currentScreen.get();
 	if(currentScreen) {
 		if(currentScreen->closeOnPlayerHurt()) {
 			if(this->currentContainer) {
@@ -391,65 +389,47 @@ void LocalPlayer::actuallyHurt(int32_t a2) {
 	Mob::actuallyHurt(a2);
 }
 void LocalPlayer::aiStep() {
-	Minecraft* minecraft;	  // r3
-	IMoveInput* moveInput; // r0
-	Screen* currentScreen;	  // r3
-	bool_t jumpingMaybe;	  // r5
-	bool_t flying;			  // r2
-	float strafeInput;		  // s14
-	float forwardInput;		  // s15
 
 	--this->flyToggleCounter;
 	--this->field_D84;
 	--this->field_D88;
-	minecraft = this->minecraft;
-	moveInput = this->moveInput;
-	currentScreen = minecraft->currentScreen;
-	jumpingMaybe = moveInput->jumping;
+	Minecraft* minecraft = this->minecraft;
+	IMoveInput* moveInput = this->moveInput;
+	Screen* currentScreen = minecraft->currentScreen.get();
+	bool jumping = moveInput->jumping;
 	if(!currentScreen || currentScreen->dontPreventGameInput) {
 		moveInput->tick(this);
 	}
-	if(this->moveInput->sneaking && this->ySize < 0.2) {
-		this->ySize = 0.2;
+	if(this->moveInput->sneaking && this->ySize < 0.2f) {
+		this->ySize = 0.2f;
 	}
-	this->field_B7C = 1.0;
+	this->field_B7C = 1.0f;
 	if(this->abilities.mayfly) {
-		if(!jumpingMaybe && this->moveInput->jumping) // enable/disable flying
+		if(!jumping && this->moveInput->jumping) // enable/disable flying
 		{
 			if(this->flyToggleCounter > 0) {
-				flying = this->abilities.flying;
 				this->flyToggleCounter = 0;
-				this->abilities.flying = !flying;
+				this->abilities.flying = !this->abilities.flying;
 			} else {
 				this->flyToggleCounter = 7;
 			}
 		}
 		if(this->abilities.flying) {
-			strafeInput = this->moveInput->strafeInput;
-			forwardInput = this->moveInput->forwardInput;
-			if(strafeInput < 0.0) {
-				strafeInput = -strafeInput;
-			}
-			if(forwardInput < 0.0) {
-				forwardInput = -forwardInput;
-			}
-			if(strafeInput > forwardInput) {
-				forwardInput = strafeInput;
-			}
-			if(forwardInput < 0.01) {
-				this->field_B7C = 0.75;
-			}
-			if(this->moveInput->flyUpPressed) {
-				this->motionY = this->motionY + 0.15;
-			}
-			if(this->moveInput->flyDownPressed) {
-				this->motionY = this->motionY - 0.15;
-			}
+			float strafeInput = this->moveInput->strafeInput;
+			float forwardInput = this->moveInput->forwardInput;
+
+			if(strafeInput < 0.0f) strafeInput = -strafeInput;
+			if(forwardInput < 0.0f) forwardInput = -forwardInput;
+			if(strafeInput > forwardInput) forwardInput = strafeInput;
+			if(forwardInput < 0.01f) this->field_B7C = 0.75f;
+
+			if(this->moveInput->flyUpPressed) this->motionY += 0.15f;
+			if(this->moveInput->flyDownPressed) this->motionY -= 0.15f;
 		}
 	}
 	if(this->isUsingItem()) {
-		this->moveInput->strafeInput = this->moveInput->strafeInput * 0.35;
-		this->moveInput->forwardInput = this->moveInput->forwardInput * 0.35;
+		this->moveInput->strafeInput *= 0.35f;
+		this->moveInput->forwardInput *= 0.35f;
 	}
 	Mob::aiStep();
 	Player::aiStep();

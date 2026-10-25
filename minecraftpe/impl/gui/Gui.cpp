@@ -259,7 +259,6 @@ void Gui::handleClick(int32_t a2, int32_t a3, int32_t a4) {
 	int32_t SlotIdAt;		  // r5
 	bool_t v6;				  // zf
 	Minecraft* minecraftInst; // r0
-	Screen* currentScreen;	  // r1
 	Minecraft** p_minecraft;  // r0
 	ScreenId v10;			  // r1
 
@@ -269,7 +268,7 @@ void Gui::handleClick(int32_t a2, int32_t a3, int32_t a4) {
 			v6 = SlotIdAt == this->getNumSlots() - 1;
 			minecraftInst = this->minecraftInst;
 			if(v6) {
-				currentScreen = minecraftInst->currentScreen;
+				Screen* currentScreen = minecraftInst->currentScreen.get();
 				if(currentScreen) {
 					v10 = ScreenId::NONE_SCREEN;
 				} else {
