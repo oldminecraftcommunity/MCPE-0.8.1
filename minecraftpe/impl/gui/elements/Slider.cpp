@@ -4,6 +4,7 @@
 #include <rendering/Textures.hpp>
 #include <algorithm>
 #include <gui/Screen.hpp>
+#include <math/Mth.hpp>
 
 Slider::Slider(Minecraft* a2, const Options::Option* a3, float a4, float a5)
 	: GuiElement(1, 1, 0, 0, 24, 24) {
@@ -18,9 +19,8 @@ Slider::Slider(Minecraft* a2, const Options::Option* a3, float a4, float a5)
 	}
 }
 Slider::Slider(Minecraft* a2, const Options::Option* a3, const std::vector<int32_t>& a4)
-	: GuiElement(1, 1, 0, 0, 24, 24) {
+	: GuiElement(1, 1, 0, 0, 24, 24), field_28(a4) {
 	this->isStepSliderMaybe = 1;
-	this->field_28 = a4;
 	this->field_34 = 0;
 	this->field_3C = 0;
 	this->field_40 = 0;
@@ -119,32 +119,19 @@ void Slider::mouseClicked(Minecraft* a2, int32_t a3, int32_t a4, int32_t a5) {
 	}
 }
 void Slider::mouseReleased(Minecraft* a2, int32_t a3, int32_t a4, int32_t a5) {
-	int32_t v5;		// r2
-	float progress; // s13
-	int32_t v7;		// r2
-	float v9;		// s14
-	float v10;		// s15
-	int32_t v11;	// r3
-	int32_t v12;	// s12
-
 	if(this->field_34 && this->isStepSliderMaybe == 1) {
-		v5 = this->field_44;
-		progress = this->progress;
 		this->field_34 = 0;
-		v7 = v5 - 1;
-		v9 = (float)v7;
-		v10 = (float)((float)v7 * progress) + 0.5;
-		v11 = (int32_t)v10;
-		if(v10 < (float)(int32_t)v10) {
-			--v11;
+		int v7 = this->field_44 - 1;
+		float v9 = (float)v7;
+		float v10 = (v7 * this->progress) + 0.5f;
+
+		this->field_40 = Mth::floor(v10);
+		if(this->field_40 < v7) {
+			v7 = this->field_40;
 		}
-		this->field_40 = v11;
-		if(v11 < v7) {
-			v7 = v11;
-		}
-		v12 = v11;
+
 		this->field_3C = this->field_28[v7];
-		this->progress = (float)v12 / v9;
+		this->progress = (float)this->field_40 / v9;
 		this->setOption(a2);
 	} else {
 		this->field_34 = 0;

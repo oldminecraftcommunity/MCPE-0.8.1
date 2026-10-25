@@ -1,7 +1,6 @@
 #pragma once
 #include <_types.h>
 #include <level/LevelSource.hpp>
-#include <level/AdventureSettings.hpp>
 #include <vector>
 #include <map>
 #include <set>
@@ -26,11 +25,23 @@ struct TileEntity;
 struct _TickPtr;
 struct PRInfo;
 struct Particle;
+
+struct AdventureSettings{
+	bool daylightCycle;
+	bool enablePVP;
+	bool enablePVE;
+	bool field_3;
+	bool allowInteract;
+	bool field_5;
+
+	AdventureSettings();
+};
+
 struct Level : LevelSource{
 	std::vector<AABB> aabbVec;
 	bool_t instantTick;
 	bool_t isClient;
-	bool field_12;
+	bool isDecorating;
 	int32_t difficulty;
 	AdventureSettings adventureSettings;
 	std::vector<Entity*> entities;
@@ -49,8 +60,8 @@ struct Level : LevelSource{
 	LevelStorage* levelStoragePtr;
 	LevelData levelData;
 	bool field_AF0;
-	bool spawnAnimalsMaybe;
-	bool spawnMonstersMaybe;
+	bool spawnAnimals;
+	bool spawnMonsters;
 
 	int32_t prevRandomNumber;
 	int32_t constRandom;
@@ -59,8 +70,7 @@ struct Level : LevelSource{
 	std::set<ChunkPos> somethingRelatedToChunkPos;
 	std::vector<LightUpdate> lightsToUpdate;
 	std::map<int32_t, struct Entity*> eid2entity2;
-	int8_t _updateLights;
-	int8_t field_B5D, field_B5E, field_B5F;
+	bool _updateLights;
 	int32_t lightUpdatesCnt;
 	bool field_B64; //something related to light
 	bool nightMode;

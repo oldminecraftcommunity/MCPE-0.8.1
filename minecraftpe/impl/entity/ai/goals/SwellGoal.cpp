@@ -40,33 +40,14 @@ void SwellGoal::stop() {
 	}
 }
 void SwellGoal::tick() {
-	Level* level;	  // r0
-	int32_t entityId; // r1
-	Entity* e;		  // r0
-	Mob* v5;		  // r5
-	Creeper* holder;  // r0
-	float v7;		  // s14
-	Sensing* sensing; // r0
-	int32_t v9;		  // r1
-
 	this->target.lock();
 
-	v5 = this->target.entity;
-	holder = this->holder;
+	Mob* v5 = this->target.entity;
+	int sd = -1;
 	if(v5) {
-		v7 = holder->distanceToSqr(this->target.entity);
-		holder = this->holder;
-		if(v7 <= 49.0) {
-			sensing = holder->getSensing();
-			if(sensing->canSee(v5)) {
-				holder = this->holder;
-				v9 = 1;
-				goto LABEL_13;
-			}
-			holder = this->holder;
+		if(this->holder->distanceToSqr(this->target.entity) > 49 || !this->holder->getSensing()->canSee(v5)) {
+			sd = 1;
 		}
 	}
-	v9 = -1;
-LABEL_13:
-	holder->setSwellDir(v9);
+	this->holder->setSwellDir(sd);
 }

@@ -27,12 +27,7 @@ struct PerfTimer
 			return this->field_0 > a2.field_0;
 		}
 
-		PerfTimer::ResultField& operator=(PerfTimer::ResultField&& a2) {
-			this->field_0 = a2.field_0;
-			this->field_4 = a2.field_4;
-			this->sectionName = a2.sectionName;
-			return *this;
-		}
+		PerfTimer::ResultField& operator=(PerfTimer::ResultField&& a2) = default;
 		~ResultField() {
 		}
 	};

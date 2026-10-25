@@ -6,9 +6,8 @@ struct Dimension{
 	struct Level* levelPtr;
 	struct BiomeSource* biomeSourcePtr;
 	bool_t field_C;
-	int8_t isOverworldMaybe;
-	int8_t hasNoSkyMaybe;
-	int8_t field_F;
+	bool isOverworldMaybe;
+	bool hasNoSkyMaybe;
 	float lightRamp[16];
 	int32_t id;
 

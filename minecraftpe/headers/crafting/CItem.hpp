@@ -24,7 +24,7 @@ struct CItem
 	std::string field_18, field_1C;
 	int32_t field_20, field_24;
 	std::vector<CItem::ReqItem> field_28;
-	int8_t field_34, field_35, field_36, field_37;
+	bool field_34;
 
 	CItem(const ItemInstance& a2, Recipe* a3, const std::string& a4)
 		: field_0(a2) {

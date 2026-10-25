@@ -520,7 +520,7 @@ bool_t Tile::isFaceVisible(Level* level, int32_t x, int32_t y, int32_t z, int32_
 			--y;
 			break;
 		case 1:
-			++x;
+			++y;
 			break;
 		case 2:
 			--z;
@@ -535,21 +535,16 @@ bool_t Tile::isFaceVisible(Level* level, int32_t x, int32_t y, int32_t z, int32_
 			++x;
 			break;
 	}
-	return 0; //TODO !level->isSolidRenderTile(x, y, z);
+	return !level->isSolidRenderTile(x, y, z);
 }
 void Tile::popResource(Level* level, int32_t x, int32_t y, int32_t z, const struct ItemInstance& a6) {
-	float xOffset;	 // s19
-	float yOffset;	 // s18
-	float zOffset;	 // s16
-	ItemEntity* v13; // r5
-
 	if(!level->isClient) {
-		if(level->levelData.getGameType() != 1) {
-			xOffset = level->random.nextFloat();
-			yOffset = level->random.nextFloat();
-			zOffset = level->random.nextFloat();
+		if(level->getLevelData()->getGameType() != 1) {
+			float xx = level->random.nextFloat() * 0.7f + 0.15f;
+			float yy = level->random.nextFloat() * 0.7f + 0.15f;
+			float zz = level->random.nextFloat() * 0.7f + 0.15f;
 
-			v13 = new ItemEntity(level, (float)x + (float)((float)(xOffset * 0.7) + 0.15), (float)y + (float)((float)(yOffset * 0.7) + 0.15), (float)z + (float)((float)(zOffset * 0.7) + 0.15), a6);
+			ItemEntity* v13 = new ItemEntity(level, x + xx, y + yy, z + zz, a6);
 			v13->delayBeforePickup = 10;
 			level->addEntity(v13);
 		}
@@ -1006,7 +1001,7 @@ Tile* Tile::setLightBlock(int32_t a2) {
 	return this;
 }
 Tile* Tile::setLightEmission(float a2) {
-	Tile::lightEmission[this->blockID] = (a2 * 15.0);
+	Tile::lightEmission[this->blockID] = (a2 * 15.0f);
 	return this;
 }
 Tile* Tile::setExplodeable(float a2) {

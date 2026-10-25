@@ -1,6 +1,16 @@
 #pragma once
 #include <_types.h>
 
+//see comment in AABB.hpp (if i didnt remove it)
+static const float& min2(const float& x, const float& y) {
+	if(y < x) return y;
+	return x;
+}
+static const float& max2(const float& x, const float& y) {
+	if(x < y) return y;
+	return x;
+}
+
 struct Color4{
 
 	static Color4 WHITE;
@@ -40,17 +50,10 @@ struct Color4{
 			(a4 * a3.a) + ((1.0f - a4) * a2.a));
 	}
 	static Color4 fromHSB(float, float, float);
-	void clamp(void){
-		if(this->a > 1.0) this->a = 1.0;
-		else if(this->a <= 0.0) this->a = 0.0;
-
-		if(this->r > 1.0) this->r = 1.0;
-		else if(this->r <= 0.0) this->r = 0.0;
-
-		if(this->g > 1.0) this->g = 1.0;
-		else if(this->g <= 0.0) this->g = 0.0;
-
-		if(this->b > 1.0) this->b = 1.0;
-		else if(this->b <= 0.0) this->b = 0.0;
+	void clamp(void) {
+		this->r = max2(0.0f, min2(this->r, 1.0f));
+		this->g = max2(0.0f, min2(this->g, 1.0f));
+		this->b = max2(0.0f, min2(this->b, 1.0f));
+		this->a = max2(0.0f, min2(this->a, 1.0f));
 	}
 };

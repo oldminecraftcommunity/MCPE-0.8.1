@@ -4,7 +4,7 @@
 
 struct AnimatePacket : Packet{
 	int32_t eid;
-	int8_t action;
+	char action;
 
 	AnimatePacket() {
 	}
@@ -18,11 +18,11 @@ struct AnimatePacket : Packet{
 
 	virtual void write(RakNet::BitStream* stream){
 		stream->Write<uint8_t>(PID_ANIMATE_PACKET);
-		stream->Write<int8_t>(this->action);
+		stream->Write<char>(this->action);
 		stream->Write<int32_t>(this->eid);
 	}
 	virtual void read(RakNet::BitStream* stream){
-		stream->Read<int8_t>(this->action);
+		stream->Read<char>(this->action);
 		stream->Read<int32_t>(this->eid);
 	}
 	virtual void handle(const RakNet::RakNetGUID& a2, NetEventCallback* a3) {

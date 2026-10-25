@@ -46,9 +46,9 @@ Level::Level(struct LevelStorage* a2, const std::string& a3, const struct LevelS
 	this->chunkSource = 0;
 	this->levelStoragePtr = a2;
 	this->field_AF0 = 0;
-	this->spawnAnimalsMaybe = 1;
+	this->spawnAnimals = 1;
 	this->prevRandomNumber = 0x283AE83;
-	this->spawnMonstersMaybe = 1;
+	this->spawnMonsters = 1;
 	this->constRandom = 0x3C6EF35F;
 	this->_updateLights = 1;
 	this->lightUpdatesCnt = 0;
@@ -63,7 +63,7 @@ void Level::_init(const std::string& levelName, const struct LevelSettings& a3, 
 	ChunkSource* v10; // r0
 	//LevelData v11; // [sp+0h] [bp-B0h] BYREF
 
-	this->field_12 = 0;
+	this->isDecorating = 0;
 	v9 = this->levelStoragePtr->prepareLevel(this);
 	this->field_B64 = v9 == 0;
 	if(v9) {
@@ -153,7 +153,6 @@ bool_t Level::checkAndHandleWater(const struct AABB& a2, const struct Material* 
 	int32_t v21;	   // [sp+14h] [bp-5Ch]
 	int32_t v22;	   // [sp+18h] [bp-58h]
 	int32_t v23;	   // [sp+1Ch] [bp-54h]
-	Vec3 v25{0, 0, 0}; // [sp+2Ch] [bp-44h] BYREF
 
 	v7 = Mth::floor(a2.minX);
 	v21 = Mth::floor(a2.maxX + 1.0);
@@ -165,6 +164,7 @@ bool_t Level::checkAndHandleWater(const struct AABB& a2, const struct Material* 
 		return 0;
 	}
 	v9 = 0;
+	Vec3 v25{0, 0, 0}; // [sp+2Ch] [bp-44h] BYREF
 	//memset(&v25, 0, sizeof(v25));
 	while(v7 < v21) {
 		for(i = v8; i < v20; ++i) {
@@ -484,40 +484,22 @@ LABEL_12:
 	return 1;
 }
 bool_t Level::containsFireTile(const struct AABB& aabb) {
-	int32_t v4;	 // r5
-	int32_t v5;	 // r9
-	int32_t v6;	 // r10
-	int32_t v7;	 // r11
-	int32_t v9;	 // r0
-	int32_t i;	 // r7
-	int32_t v11; // r4
-	int32_t v12; // [sp+10h] [bp-38h]
-	int32_t v13; // [sp+14h] [bp-34h]
-
-	v4 = Mth::floor(aabb.minX);
-	v12 = Mth::floor(aabb.maxX + 1.0f);
-	v5 = Mth::floor(aabb.minY);
-	v13 = Mth::floor(aabb.maxY + 1.0f);
-	v6 = Mth::floor(aabb.minZ);
-	v7 = Mth::floor(aabb.maxZ + 1.0f);
+	int v4 = Mth::floor(aabb.minX);
+	int v12 = Mth::floor(aabb.maxX + 1.0f);
+	int v5 = Mth::floor(aabb.minY);
+	int v13 = Mth::floor(aabb.maxY + 1.0f);
+	int v6 = Mth::floor(aabb.minZ);
+	int v7 = Mth::floor(aabb.maxZ + 1.0f);
 	if(this->hasChunksAt(v4, v5, v6, v12, v13, v7)) {
-		while(v4 < v12) {
-			v11 = v5;
-LABEL_9:
-			if(v11 < v13) {
-				for(i = v6;; ++i) {
-					if(i >= v7) {
-						++v11;
-						goto LABEL_9;
-					}
-					v9 = this->getTile(v4, v11, i);
-					if(v9 == Tile::fire->blockID || v9 == Tile::lava->blockID || v9 == Tile::calmLava->blockID) {
-						break;
+		for(int x = v4; x < v12; ++x) {
+			for(int y = v5; y < v13; ++y) {
+				for(int z = v6; z < v7; ++z) {
+					int id = this->getTile(x, y, z);
+					if(id == Tile::fire->blockID || id == Tile::lava->blockID || id == Tile::calmLava->blockID) {
+						return 1;
 					}
 				}
-				return 1;
 			}
-			++v4;
 		}
 	}
 	return 0;
@@ -943,6 +925,15 @@ struct Mob* Level::getMob(int32_t a2) {
 
 int32_t Level::getMoonPhase() {
 	return this->dimensionPtr->getMoonPhase(this->getTime());
+}
+
+AdventureSettings::AdventureSettings(){
+	this->daylightCycle = 1;
+	this->enablePVP = 0;
+	this->enablePVE = 0;
+	this->field_3 = 0;
+	this->allowInteract = 0;
+	this->field_5 = 0;
 }
 
 struct Player* Level::getPlayer(const std::string& a2) {
@@ -1450,16 +1441,11 @@ void Level::loadEntities() {
 bool_t Level::mayInteract(struct Player*, int32_t, int32_t, int32_t) {
 	return 1;
 }
-bool_t Level::mayPlace(int32_t blockID, int32_t x, int32_t y, int32_t z, bool_t a6, uint8_t side) { //uchar
-	int32_t idAtXYZ;																				// r0
-	Tile* v12;																						// r5
-	Tile* v13;																						// r10
-	const AABB* v14;																				// r0
-
-	idAtXYZ = this->getTile(x, y, z);
-	v12 = Tile::tiles[blockID];
-	v13 = Tile::tiles[idAtXYZ];
-	v14 = v12->getAABB(this, x, y, z);
+bool_t Level::mayPlace(int32_t blockID, int32_t x, int32_t y, int32_t z, bool_t a6, uint8_t side) {
+	int idAtXYZ = this->getTile(x, y, z);
+	Tile* v12 = Tile::tiles[blockID];
+	Tile* v13 = Tile::tiles[idAtXYZ];
+	const AABB* v14 = v12->getAABB(this, x, y, z);
 	if((a6 || !v14 || this->isUnobstructed(*v14)) && (!v13 || v13->replaceable) && blockID > 0) {
 		return v12->mayPlace(this, x, y, z, side);
 	} else {
@@ -2269,9 +2255,9 @@ void Level::tick() {
 		if(this->levelData.getSpawnMobs()) {
 			if(_D6E4DF90 + 1 > 1) {
 				_D6E4DF90 = 0;
-				bool spawnMonsters = this->spawnMonstersMaybe;
+				bool spawnMonsters = this->spawnMonsters;
 				if(spawnMonsters) spawnMonsters = this->difficulty > 0;
-				bool spawnAnimals = this->spawnAnimalsMaybe;
+				bool spawnAnimals = this->spawnAnimals;
 				if(spawnAnimals) spawnAnimals = (this->getTime() % 400) <= 1;
 				MobSpawner::tick(this, spawnMonsters, spawnAnimals);
 			} else {

@@ -523,7 +523,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID&, struct ChunkDat
 					for(uint32_t v23 = 0; v23 < this->field_28.size(); ++v23) {
 						SBufferedBlockUpdate* v25 = &this->field_28[v23];
 						int v26 = Tile::transformToValidBlockId(v25->id, v25->x, v25->y, v25->z);
-						if(v25->field_B) {
+						if(v25->hasMeta) {
 							this->level->setTileAndData(v25->x, v25->y, v25->z, v26, v25->meta, 3);
 						} else {
 							this->level->setTile(v25->x, v25->y, v25->z, v26, 3);

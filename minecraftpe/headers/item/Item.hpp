@@ -143,16 +143,14 @@ struct Item{
 	int32_t maxStackSize;
 	std::string itemTexture;
 	int32_t field_C;
-	int8_t field_10, field_11, field_12, field_13;
+	bool field_10;
 	int32_t itemID;
 	int32_t maxItemdamage;
 	TextureUVCoordinateSet iconUV;
 	int32_t creativeTabIndex;
 	int32_t field_38;
-	int8_t handEquipped_;
-	int8_t stackedByData;
-	int8_t field_3E;
-	int8_t field_3F;
+	bool handEquipped_;
+	bool stackedByData;
 	int32_t field_40;
 	std::string descriptionID;
 

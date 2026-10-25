@@ -41,7 +41,7 @@ LevelRenderer::LevelRenderer(Minecraft* minecraft, std::shared_ptr<TextureAtlas>
 	this->field_C = -9999.0;
 	this->field_10 = -9999.0;
 	this->field_20 = 0;
-	this->field_18 = 2;
+	this->dontRenderEntitiesCounter = 2;
 	this->field_24 = 0;
 	this->totalLoaded = 0;
 	this->frustrumClippedCnt = 0;
@@ -117,7 +117,7 @@ void LevelRenderer::_buildShadowVolume() {
 		Vec3 result{0.25, 0, 0}; // [sp+10h] [bp-68h] BYREF
 		v3 = (float)v2;
 		++v2;
-		v4 = (float)(v3 / 13.0) * 6.2832;
+		v4 = (float)(v3 / 13.0) * Mth::TAU;
 		v6.yRot(v4);
 		result.yRot(v4);
 		vc = Tesselator::instance.getVertexCount();
@@ -241,75 +241,62 @@ void LevelRenderer::_renderShadow(float a2, const Vec3& a3, float a4) {
 	glPopMatrix();
 }
 void LevelRenderer::_renderStars(float a2) {
-	float sb;		// s16
-	float SunAngle; // r0
-
-	sb = this->level->getStarBrightness(a2);
+	float sb = this->level->getStarBrightness(a2);
 	if(sb > 0.0) {
-		DisableState v6(2884);
-		DisableState v7(3553);
+		DisableState v6(GL_CULL_FACE);
+		DisableState v7(GL_TEXTURE_2D);
 		glPushMatrix();
 		{
-			BlendFunctionState v5(0x307u, 1);
-			SunAngle = this->minecraft->level->getSunAngle(1.0);
-			glRotatef((float)(SunAngle / 6.2832) * 360.0, 1.0, 0.0, 0.0);
-			glColor4f(sb, sb, sb, 1.0);
+			BlendFunctionState v5(GL_ONE_MINUS_DST_COLOR, GL_ONE);
+			glRotatef((this->minecraft->level->getSunAngle(1.0) / Mth::TAU) * 360.0f, 1.0f, 0.0f, 0.0f);
+			glColor4f(sb, sb, sb, 1.0f);
 			this->starsMesh.render();
 			//~v5
 		}
 		glPopMatrix();
-		//~v7
-		//~v6
 	}
 }
 void LevelRenderer::_renderSunOrMoon(float a2, bool_t a3) {
-
-
-	float sunAngle = this->minecraft->level->getSunAngle(a2);
-	float v6 = 0.0f;
-	if(!a3) {
-		v6 = 180.0f;
-	}
-	float v7 = fmodf(v6 + (float)((float)(sunAngle / 6.2832f) * 360.0f), 360.0f);
+	float v = this->minecraft->level->getSunAngle(a2) / Mth::TAU * 360.0f;
+	float v6 = a3 ? 0 : 180.0f;
+	float v7 = fmodf(v6 + v, 360.0f);
 	if(v7 <= 105.0f || v7 >= 255.0f) {
-		float v9;		   // s16
-		float v10;		   // s17
+		float vMin;		   // s16
+		float vMax;		   // s17
 		float v11;		   // r4
-		float v12;		   // s18
-		float v13;		   // s19
+		float uMax;		   // s18
+		float uMin;		   // s19
 		if(a3) {
-			v9 = 1.0f;
-			v10 = 0.0f;
+			vMin = 1.0f;
+			vMax = 0.0f;
 			v11 = 30.0f;
-			v12 = 1.0f;
-			v13 = 0.0f;
+			uMax = 1.0f;
+			uMin = 0.0f;
 		} else {
 			int moonPhase = this->level->getMoonPhase();
 			int v17 = moonPhase / 4 % 2;
 			v11 = 20.0f;
-			v13 = (float)(moonPhase % 4) * 0.25f;
-			v10 = (float)v17 * 0.5f;
-			v12 = (float)(moonPhase % 4 + 1) * 0.25f;
-			v9 = (float)(v17 + 1) * 0.5f;
+			uMin = (moonPhase % 4) * 0.25f;
+			vMax = v17 * 0.5f;
+			uMax = (moonPhase % 4 + 1) * 0.25f;
+			vMin = (v17 + 1) * 0.5f;
 		}
 		Tesselator::instance.begin(4);
-		Tesselator::instance.vertexUV(-v11, 120.0, -v11, v12, v10);
-		Tesselator::instance.vertexUV(v11, 120.0, -v11, v13, v10);
-		Tesselator::instance.vertexUV(v11, 120.0, v11, v13, v9);
-		Tesselator::instance.vertexUV(-v11, 120.0, v11, v12, v9);
+		Tesselator::instance.vertexUV(-v11, 120.0f, -v11, uMax, vMax);
+		Tesselator::instance.vertexUV(v11, 120.0f, -v11, uMin, vMax);
+		Tesselator::instance.vertexUV(v11, 120.0f, v11, uMin, vMin);
+		Tesselator::instance.vertexUV(-v11, 120.0f, v11, uMax, vMin);
 
 		this->textures->loadAndBindTexture(a3 ? "environment/sun.png" : "environment/moon_phases.png");
-		DisableState v19(2884);
+		DisableState v19(GL_CULL_FACE);
 		glPushMatrix();
 		{
-			BlendFunctionState v18(1u, 1u);
+			BlendFunctionState v18(GL_ONE, GL_ONE);
 			glColor4f(1.0, 1.0, 1.0, 1.0);
 			glRotatef(v7, 1.0, 0.0, 0.0);
 			Tesselator::instance.draw(1);
-			//BlendFunctionState::~BlendFunctionState((BlendFunctionState *)v18);
 		}
 		glPopMatrix();
-		//DisableState::~DisableState((DisableState *)&v19);
 	}
 }
 void LevelRenderer::cullAndSort(FrustumCuller* a2, float a3, float a4) {
@@ -372,25 +359,15 @@ void LevelRenderer::cullAndSort(FrustumCuller* a2, float a3, float a4) {
 	this->totalRendered = this->nearChunks.size() + this->farChunks.size();
 }
 void LevelRenderer::deleteChunks() {
-	RenderChunk* v2;	  // r6
-	MeshBuffer* j;		  // r7
-	int32_t i;			  // r5
-	RenderChunk** chunks; // r0
-
 	if(this->chunks) {
-		for(i = 0;; ++i) {
-			chunks = this->chunks;
+		for(int i = 0; i < this->chunksToRenderSize; ++i) {
 			if(i >= this->chunksToRenderSize) {
 				break;
 			}
-			v2 = chunks[i];
-			if(v2) {
-				delete v2;
-			}
+			RenderChunk* rc = this->chunks[i];
+			if(rc) delete rc;
 		}
-		if(chunks) {
-			delete[] chunks;
-		}
+		if(this->chunks) delete[] this->chunks;
 		this->chunks = 0;
 	}
 }
@@ -405,7 +382,7 @@ void LevelRenderer::generateSky() {
 	Tesselator::instance.vertex(0.0, 128.0, 0.0);
 	do {
 		Vec3 v4(2000.0, 0, 0);
-		v4.yRot((float)((float)v2 / 10.0f) * 6.2832f);
+		v4.yRot((float)((float)v2 / 10.0f) * Mth::TAU);
 		++v2;
 		Tesselator::instance.vertex(v4.x, 128.0f, v4.z);
 	} while(v2 != 11);
@@ -633,102 +610,74 @@ void LevelRenderer::renderDebug(const AABB& a2, float a3) const{
 	Tesselator::instance.offset(0.0, 0.0, 0.0);
 	Tesselator::instance.draw(1);
 }
-void LevelRenderer::renderEntities(Vec3 a2, FrustumCuller* a3, bool_t a4, float a5)
+void LevelRenderer::renderEntities(Vec3 a2, FrustumCuller* a3, bool_t fancyGraphics, float a5)
 {
 	TileEntityRenderDispatcher::getInstance()->prepare(this->level, this->textures, this->minecraft->font, this->minecraft->viewEntity, a5);
 	EntityRenderDispatcher::getInstance()->prepare(this->level, this->minecraft->font, this->minecraft->viewEntity, &this->minecraft->options, a5);
-	this->field_178.clear(); //TODO check
-	int v8 = this->field_18;
-	if(v8 <= 0) {
-		Minecraft* minecraft = this->minecraft;
-		this->field_1C = 0;
-		this->field_20 = 0;
-		Mob* viewEntityMaybe = minecraft->viewEntity;
-		float posY = viewEntityMaybe->posY;
-		TileEntityRenderDispatcher::xOff = viewEntityMaybe->prevPosX + (float)((float)(viewEntityMaybe->posX - viewEntityMaybe->prevPosX) * a5);
-		EntityRenderDispatcher::xOff = TileEntityRenderDispatcher::xOff;
-		float v12 = viewEntityMaybe->prevPosY + (float)((float)(posY - viewEntityMaybe->prevPosY) * a5);
-		float posZ = viewEntityMaybe->posZ;
-		TileEntityRenderDispatcher::yOff = v12;
-		EntityRenderDispatcher::yOff = v12;
-		TileEntityRenderDispatcher::zOff = viewEntityMaybe->prevPosZ + (float)((float)(posZ - viewEntityMaybe->prevPosZ) * a5);
-		EntityRenderDispatcher::zOff = TileEntityRenderDispatcher::zOff;
-		{
-			EnableClientState v47(0x8078u);
-			EnableState v48(0xB60u);
-			EnableClientState v49(0);
-			EnableState v53(0);
-			EnableState v54(0);
-			EnableState v55(0);
-			if(this->minecraft->options.graphics) {
-				{
-					EnableState v51(2896);
-					v53.enabled = v51.enabled;
-					v51.enabled = 0;
-				}
-				{
-					EnableState v51(0x4000);
-					v54.enabled = v51.enabled;
-					v51.enabled = 0;
-				}
-				{
-					EnableState v51(2977);
-					v55.enabled = v51.enabled;
-					v51.enabled = 0;
-				}
-				{
-					EnableClientState v51(32885);
-					v49.enabled = v51.enabled;
-					v51.enabled = 0;
-				}
-			}
-			std::vector<struct Entity*>* ents = this->level->getAllEntities();
-			int v21 = ents->size();
-			this->field_1C = v21;
-			if(v21 > 0) {
-				for(int i = 0; i < this->field_1C; ++i) {
-					Entity* v25 = ents->at(i);
-					if(v25->shouldRender(a2)) {
-						if(a3->isVisible(v25->boundingBox) || v25->rider == this->minecraft->player) {
-							Minecraft* v43 = this->minecraft;
-							if(v25 != v43->viewEntity || v43->options.thirdPerson || !v25->isPlayer() || this->minecraft->viewEntity->isSleeping()) {
-								Minecraft* v26 = this->minecraft;
-								if(v25 != v26->viewEntity || v26->options.thirdPerson) {
-									int x = Mth::floor(v25->posX);
-									int v27 = Mth::floor(v25->posY);
-									int v28 = Mth::floor(v25->posZ);
-									if(this->level->hasChunkAt(x, v27, v28)) {
-										this->field_178.insert(std::move<std::pair<int, Entity*>>({v25->entityRenderId, v25})); //TODO check
-									}
+	this->field_178.clear();
+	if(this->dontRenderEntitiesCounter > 0) {
+		this->dontRenderEntitiesCounter -= 1;
+		return;
+	}
+
+	this->field_1C = 0;
+	this->field_20 = 0;
+	Mob* ve = this->minecraft->viewEntity;
+	EntityRenderDispatcher::xOff = TileEntityRenderDispatcher::xOff = ve->prevPosX + (ve->posX - ve->prevPosX) * a5;
+	EntityRenderDispatcher::yOff = TileEntityRenderDispatcher::yOff = ve->prevPosY + (ve->posY - ve->prevPosY) * a5;
+	EntityRenderDispatcher::zOff = TileEntityRenderDispatcher::zOff = ve->prevPosZ + (ve->posZ - ve->prevPosZ) * a5;
+
+	{
+		EnableClientState v47(GL_TEXTURE_COORD_ARRAY);
+		EnableState v48(0xB60u);
+		EnableClientState v49;
+		EnableState v53(0);
+		EnableState v54(0);
+		EnableState v55(0);
+		if(this->minecraft->options.graphics) {
+			v53 = std::move(EnableState(GL_LIGHTING));
+			v54 = std::move(EnableState(GL_LIGHT0));
+			v55 = std::move(EnableState(GL_NORMALIZE));
+			v49 = std::move(EnableClientState(GL_NORMAL_ARRAY));
+		}
+		std::vector<struct Entity*>* ents = this->level->getAllEntities();
+		this->field_1C = ents->size();
+		if(this->field_1C > 0) {
+			for(int i = 0; i < this->field_1C; ++i) {
+				Entity* e = (*ents)[i];
+				if(e->shouldRender(a2)) {
+					if(a3->isVisible(e->boundingBox) || e->rider == this->minecraft->player) {
+						if(e != this->minecraft->viewEntity || this->minecraft->options.thirdPerson || !e->isPlayer() || this->minecraft->viewEntity->isSleeping()) {
+							if(e != this->minecraft->viewEntity || this->minecraft->options.thirdPerson) {
+								int x = Mth::floor(e->posX);
+								int y = Mth::floor(e->posY);
+								int z = Mth::floor(e->posZ);
+								if(this->level->hasChunkAt(x, y, z)) {
+									this->field_178.insert(std::pair<int, Entity*>(e->entityRenderId, e));
 								}
 							}
 						}
 					}
 				}
-
-				for(auto&& p: this->field_178) {
-					EntityRenderDispatcher::getInstance()->render(p.second, a5);
-				}
 			}
-			this->field_190.clear();
-			Level* level = this->level;
-			for(auto&& v40: level->tileEntities) {
-				if(a3->isVisible(v40->aabb)) {
-					if(v40->getShadowRadius() != 0.0) {
-						this->field_190.push_back(v40);
-					}
-					TileEntityRenderDispatcher::getInstance()->render(v40, a5);
-				}
+
+			for(auto&& p: this->field_178) {
+				EntityRenderDispatcher::getInstance()->render(p.second, a5);
 			}
 		}
-		if ( a4 )
-		{
-			this->renderShadows(this->field_178, this->field_190, a5);
+		this->field_190.clear();
+		Level* level = this->level;
+		for(auto&& v40: level->tileEntities) {
+			if(a3->isVisible(v40->aabb)) {
+				if(v40->getShadowRadius() != 0.0) {
+					this->field_190.push_back(v40);
+				}
+				TileEntityRenderDispatcher::getInstance()->render(v40, a5);
+			}
 		}
 	}
-	else
-	{
-		this->field_18 = v8 - 1;
+	if (fancyGraphics){
+		this->renderShadows(this->field_178, this->field_190, a5);
 	}
 }
 
@@ -737,9 +686,9 @@ int32_t LevelRenderer::renderFarChunks(float a2) {
 
 	glPushMatrix();
 	{
-		EnableClientState v11(32886);
-		EnableClientState v12(32888);
-		EnableState v13(2912);
+		EnableClientState v11(GL_COLOR_ARRAY);
+		EnableClientState v12(GL_TEXTURE_COORD_ARRAY);
+		EnableState v13(GL_FOG);
 		v4 = 0;
 		Mob* ve = this->minecraft->viewEntity;
 		glTranslatef(-(ve->prevPosX + (ve->posX - ve->prevPosX) * a2), -(ve->prevPosY + (ve->posY - ve->prevPosY) * a2), -(ve->prevPosZ + (ve->posZ - ve->prevPosZ) * a2));
@@ -754,9 +703,6 @@ int32_t LevelRenderer::renderFarChunks(float a2) {
 				glPopMatrix();
 			}
 		}
-		//EnableState::~EnableState((EnableState*)&v13);
-		//EnableClientState::~EnableClientState(&v12);
-		//EnableClientState::~EnableClientState(&v11);
 	}
 	glPopMatrix();
 	return v4;
@@ -1372,7 +1318,7 @@ void LevelRenderer::allChanged() {
 		}
 		++x;
 	}
-	this->field_18 = 2;
+	this->dontRenderEntitiesCounter = 2;
 }
 
 static char _D6E06888[256];

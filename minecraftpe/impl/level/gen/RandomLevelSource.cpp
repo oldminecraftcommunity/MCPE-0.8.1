@@ -559,7 +559,7 @@ struct LevelChunk* RandomLevelSource::create(int32_t x, int32_t z) {
 }
 static double _D6E52C58 = 0;
 void RandomLevelSource::postProcess(struct ChunkSource* a2, int32_t chunkX, int32_t chunkZ) {
-	this->level->field_12 = 1;
+	this->level->isDecorating = 1;
 	int32_t chunkXStart = 16 * chunkX;
 	int32_t chunkZStart = 16 * chunkZ;
 	HeavyTile::instaFall = 1;
@@ -777,7 +777,7 @@ void RandomLevelSource::postProcess(struct ChunkSource* a2, int32_t chunkX, int3
 	}
 	_D6E52C58 = _D6E52C58 + getTimeS() - timeS;
 	HeavyTile::instaFall = 0;
-	this->level->field_12 = 0;
+	this->level->isDecorating = 0;
 }
 bool_t RandomLevelSource::tick() {
 	return 0;

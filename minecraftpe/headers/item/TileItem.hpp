@@ -82,9 +82,7 @@ struct TileItem: Item
 		return Tile::tiles[this->blockID]->getDescriptionId(a3);
 	}
 	virtual bool_t isEmissive(int32_t a2) const {
-		int32_t blockID; // r2
-		blockID = this->blockID;
-		return blockID == Tile::torch->blockID || blockID == Tile::glowingObsidian->blockID || blockID == Tile::lightGem->blockID;
+		return this->blockID == Tile::torch->blockID || this->blockID == Tile::glowingObsidian->blockID || this->blockID == Tile::lightGem->blockID;
 	}
 
 };

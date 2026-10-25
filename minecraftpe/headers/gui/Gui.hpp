@@ -22,19 +22,19 @@ struct Gui : GuiComponent, IConfigListener, AppPlatform::Listener{
 	float field_A00;
 	std::string field_A04;
 	int32_t field_A08;
-	int8_t field_A0C;
-	int8_t al1, al2, al3;
+	bool field_A0C;
 	float field_A10;
-	int8_t invUpdated;
-	int8_t al4, al5, al6;
-	int32_t field_A18, field_A1C, field_A20, field_A28;
+	bool invUpdated;
+	int32_t field_A18, field_A1C;
+	double field_A20;
+	int32_t field_A28;
 	int32_t slotsAmount;
 	MeshBuffer outerBreakRingMesh, innerBreakRingMesh;
 	float field_A80;
 	int32_t field_A84;
 	std::string tipMessage;
 	float tipTimeLeft, tipMessageLength;
-	int8_t field_A94, field_A95, field_A96, field_A97;
+	bool field_A94;
 
 	static float floorAlignToScreenPixel(float);
 

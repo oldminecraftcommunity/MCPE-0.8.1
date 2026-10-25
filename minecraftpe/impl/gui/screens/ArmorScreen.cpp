@@ -15,6 +15,9 @@
 #include <rendering/states/EnableState.hpp>
 #include <cpputils.hpp>
 #include <gui/NinePatchFactory.hpp>
+#include <rendering/states/EnableClientState.hpp>
+#include <rendering/states/DisableState.hpp>
+#include <rendering/states/EnableState.hpp>
 
 ArmorScreen::ArmorScreen()
 	: Screen(),
@@ -77,110 +80,73 @@ void ArmorScreen::handleRenderPane(Touch::InventoryPane* a2, Tesselator& a3, int
 	}
 }
 void ArmorScreen::renderPlayer(float a2, float a3) {
-	bool_t graphics;				  // r3
-	GLenum state;					  // r3
-	GLenum v10;						  // r3
-	LocalPlayer* player;			  // r4
-	float v12;						  // s20
-	float yaw;						  // r11
-	float pitch;					  // r10
-	float headYaw;					  // r9
-	float TimeS;					  // s15
-	float v17;						  // s16
-	float v18;						  // s19
-	float v19;						  // s16
-	float v20;						  // s16
-	float v21;						  // s18
-	GLfloat v22;					  // s18
-	float v23;						  // s16
-	GLfloat ridingHeight;			  // r1
-	float v25;						  // s18
-	float v26;						  // s16
-	float v27;						  // s19
 	EntityRenderDispatcher* Instance; // r0
-	int32_t v33;					  // [sp+1Ch] [bp-5Ch] BYREF
-	int32_t v34;					  // [sp+20h] [bp-58h] BYREF
-	int32_t v35;					  // [sp+24h] [bp-54h] BYREF
 
 	//TODO use rendering/states/
+	EnableClientState v32(GL_TEXTURE_COORD_ARRAY);
+	DisableState blend(GL_BLEND); //this thing should not create destructor
+	EnableState v33(GL_DEPTH_TEST);
+	EnableClientState v34(0);
+	EnableState v35(0), v36(0), v37(0);
+	if(this->minecraft->options.graphics) {
+		v35 = std::move(EnableState(GL_LIGHTING));
+		v36 = std::move(EnableState(GL_LIGHT0));
+		v37 = std::move(EnableState(GL_NORMALIZE));
+		v34 = std::move(EnableClientState(GL_NORMAL_ARRAY));
 
-	glEnableClientState(0x8078u);
-	glDisable(0xBE2u);
-	glEnable(0xB71u);
-	int32_t v32_state = 0;
-	v33 = 0;
-	graphics = this->minecraft->options.graphics;
-	v34 = 0;
-	v35 = 0;
-	if(graphics) {
-		glEnable(v33 = 0xB50u);
-		glEnable(v34 = 0x4000u);
-		glEnable(v35 = 0xBA1u);
-		glEnableClientState(v32_state = 0x8075u);
-		glLightfv(0x4000u, 0x1201u, &Color4::WHITE.r);
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, &Color4::WHITE.r);
 		float vals[] = {3.4f, 3.7f, 4.0f, 1.0f};
-		glLightfv(0x4000u, 0x1200u, vals);
-		vals[0] = -0.2;
-		vals[1] = -0.7;
-		vals[2] = 0.6;
-		vals[3] = 0.0;
-		glLightfv(0x4000u, 0x1203u, vals);
+		glLightfv(GL_LIGHT0, GL_AMBIENT, vals);
+		vals[0] = -0.2f;
+		vals[1] = -0.7f;
+		vals[2] = 0.6f;
+		vals[3] = 0.0f;
+		glLightfv(GL_LIGHT0, GL_POSITION, vals);
 	} else {
 		glColor4f(1.0, 1.0, 1.0, 1.0);
 	}
 	glPushMatrix();
-	glTranslatef(a2, a3, -200.0);
-	glScalef(-45.0, 45.0, 45.0);
-	glRotatef(180.0, 0.0, 0.0, 1.0);
-	player = this->minecraft->player;
-	v12 = player->field_124;
-	yaw = player->yaw;
-	pitch = player->pitch;
-	headYaw = player->headYaw;
-	TimeS = getTimeS();
-	v17 = Mth::sin(TimeS) * 10.0;
-	v18 = Mth::cos((float)(TimeS * 0.05)) * 10.0;
-	glRotatef(135.0, 0.0, 1.0, 0.0);
-	glRotatef(-135.0, 0.0, 1.0, 0.0);
-	v19 = atan((float)(v17 / 40.0));
-	v20 = v19 * 20.0;
-	v21 = atan((float)(v18 / 40.0));
-	v22 = v21 * -20.0;
-	glRotatef(v22, 1.0, 0.0, 0.0);
+	glTranslatef(a2, a3, -200.0f);
+	glScalef(-45.0f, 45.0f, 45.0f);
+	glRotatef(180.0f, 0.0f, 0.0f, 1.0f);
+	LocalPlayer* player = this->minecraft->player;
+	float savThingy = player->field_124;
+	float savYaw = player->yaw;
+	float savPitch = player->pitch;
+	float savHadYaw = player->headYaw;
+	float time = getTimeS();
+	float v17 = Mth::sin(time) * 10.0f;
+	float v18 = Mth::cos(time * 0.05f) * 10.0f;
+	glRotatef(135.0f, 0.0f, 1.0f, 0.0f);
+	glRotatef(-135.0f, 0.0f, 1.0f, 0.0f);
+	float v20 = atan(v17 / 40.0f) * 20.0f;
+	float v22 = atan(v18 / 40.0f) * -20.0f;
+	glRotatef(v22, 1.0f, 0.0f, 0.0f);
 	player->field_124 = v20;
-	v23 = v20 + v20;
+	float v23 = v20 * 2;
 	player->pitch = v22;
-	ridingHeight = player->ridingHeight;
-	player->yaw = v23;
-	player->headYaw = v23;
-	glTranslatef(0.0, ridingHeight, 0.0);
-	v25 = player->field_16C;
-	v26 = player->field_168;
-	player->field_16C = 0.25;
-	v27 = player->field_170;
-	player->field_168 = 0.25;
-	player->field_170 = (float)(getTimeS() * player->field_16C) * 20.0;
+	player->headYaw = player->yaw = v23;
+	glTranslatef(0.0, player->ridingHeight, 0.0);
+	float v25 = player->field_16C;
+	float v26 = player->field_168;
+	player->field_16C = 0.25f;
+	float v27 = player->field_170;
+	player->field_168 = 0.25f;
+	player->field_170 = (getTimeS() * player->field_16C) * 20.0f;
 	Instance = EntityRenderDispatcher::getInstance();
-	Instance->field_14 = 180.0;
+	Instance->field_14 = 180.0f;
 	MobRenderer::menuMode = 1;
 	Instance->render(player, 0.0, 0.0, 0.0, 0.0, 1.0);
 	player->field_170 = v27;
 	MobRenderer::menuMode = 0;
 	player->field_16C = v25;
 	player->field_168 = v26;
-	player->field_124 = v12;
-	player->yaw = yaw;
-	player->pitch = pitch;
-	player->headYaw = headYaw;
+	player->field_124 = savThingy;
+	player->yaw = savYaw;
+	player->pitch = savPitch;
+	player->headYaw = savHadYaw;
 	glColor4f(1.0, 1.0, 1.0, 1.0);
 	glPopMatrix();
-	if(v35) glDisable(v35);
-	if(v34) glDisable(v34);
-	if(v33) glDisable(v33);
-	if(v32_state) glDisableClientState(v32_state);
-	glDisable(0xB71u);
-	glEnable(0xBE2u);
-	glDisableClientState(0x8078u);
 }
 bool_t ArmorScreen::takeAndClearSlot(int32_t a2) {
 	ItemInstance* item = this->player->getArmor(a2);

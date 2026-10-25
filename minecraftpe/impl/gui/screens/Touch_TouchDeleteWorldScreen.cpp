@@ -3,7 +3,7 @@
 #include <level/storage/LevelStorageSource.hpp>
 #include <gui/screens/PlayScreen.hpp>
 
-Touch::TouchDeleteWorldScreen::TouchDeleteWorldScreen(const LevelSummary& a2)	: ConfirmScreen(0, "Are you sure you want to delete this world?", std::string() + "'" + a2.levelName + "' will be lost forever!", "Delete", "Cancel", 0), levelSummary(a2) {
+Touch::TouchDeleteWorldScreen::TouchDeleteWorldScreen(const LevelSummary& a2)	: ConfirmScreen(0, "Are you sure you want to delete this world?", "'" + a2.levelName + "' will be lost forever!", "Delete", "Cancel", 0), levelSummary(a2) {
 	this->field_44 = 1;
 }
 

@@ -8,28 +8,8 @@
 Tesselator Tesselator::instance(0x800000);
 
 Tesselator::Tesselator(int32_t size)
-	: field_4C(0), field_50(0), tmat4x4_2(1.0f)
-	, vec(0, 0, 0) {
-	this->textureU = 0.0;
-	this->textureV = 0.0;
-	this->color_int = 0;
-	this->normX = this->normY = this->normZ = this->field_7B = 0;
-	this->scale2 = 1.0;
-	this->scale1 = 1.0;
-	this->scale3 = 1.0;
-	this->scale4 = 1.0;
-	this->scale5 = 1.0;
-	this->isTilted = 0;
-	this->isColorDisabled = 0;
-	this->accessMode = 2;
-	this->field_D6 = 0;
-	this->vertexCount = 0;
-	this->maxVertextNumber = 0;
-	this->isDrawing = 0;
-	this->bufSize = size;
-	this->field_E8 = 0;
-	this->drawMode = 0;
-
+	: tmat4x4_2(1.0f)
+	, vec(0, 0, 0), textureU(0), textureV(0), color_int(0), normX(0), normY(0), normZ(0), field_7B(0),  scale2(1), scale1(1), scale3(1), scale4(1), scale5(1), isTilted(0), isColorDisabled(0), accessMode(2), field_D6(0), vertexCount(0), maxVertextNumber(0), isDrawing(0), bufSize(size), field_E8(0), drawMode(0){
 	this->tmat4x4_2 = glm::rotate<float>(glm::mat4x4(1.0f), 210.0, glm::vec3(1, 0, 0));
 	this->tmat4x4_2 = glm::rotate<float>(this->tmat4x4_2, 45.0, glm::vec3(0, 1, 0));
 }
@@ -68,16 +48,9 @@ void Tesselator::begin(int32_t mode, int32_t a3) {
 			this->field_D4 = 1;
 			this->drawMode = mode;
 			this->isColorDisabled = 0; //=v6
-			MeshBuffer::VertexFormat v8;
-			uint8_t* uu = v8.offsets;
-			this->meshBuffer_vf2.offsets[0] = uu[0];
-			this->meshBuffer_vf2.offsets[1] = uu[1];
-			this->meshBuffer_vf2.offsets[2] = uu[2];
-			this->meshBuffer_vf2.offsets[3] = uu[3];
-
-			this->meshBuffer_vf2.stride = v8.stride;
+			this->meshBuffer_vf2 = MeshBuffer::VertexFormat();
 			this->meshBuffer_vf2.enableField(MeshBuffer::VertexFormat::Field::FIELD0);
-			this->someSIzeMaybe = 0;
+			this->someSizeMaybe = 0;
 			this->vertexFormat = a3;
 			this->useDrawElementsOrDrawArrays = 0;
 		}
@@ -122,20 +95,15 @@ void Tesselator::color(int32_t r, int32_t g, int32_t b) {
 	this->color(r, g, b, 255);
 }
 
+static inline int _cclamp(int v) {
+	//should compile into USAT instruction in armv7 build
+	if(v < 0) return 0;
+	if(v > 255) return 255;
+	return v;
+}
 void Tesselator::color(int32_t r, int32_t g, int32_t b, int32_t a) {
 	if(this->isColorDisabled) return;
-
-	//uses USAT instruction for rgba
-	if(r < 0) r = 0;
-	if(r > 255) r = 255;
-	if(g < 0) g = 0;
-	if(g > 255) g = 255;
-	if(b < 0) b = 0;
-	if(b > 255) b = 255;
-	if(a < 0) a = 0;
-	if(a > 255) a = 255;
-
-	this->color_int = (r & 0xff) | (g << 8) | (b << 16) | (a << 24);
+	this->color_int = (_cclamp(r) & 0xff) | (_cclamp(g) << 8) | (_cclamp(b) << 16) | (_cclamp(a) << 24);
 	if(this->field_D4) {
 		this->meshBuffer_vf2.enableField(MeshBuffer::VertexFormat::Field::FIELD2);
 	}
@@ -151,7 +119,7 @@ void Tesselator::draw(bool_t a2) {
 	if(this->field_D6) return;
 	this->isDrawing = 0;
 	if(this->getVertexCount() > 0) {
-		EnableClientState v9, v10, v11;
+		EnableClientState texCoordArr, colorArr, normArr;
 		if(this->drawMode == 7) {
 			this->_buildQuadIndexBuffer();
 			this->drawMode = GL_TRIANGLES;
@@ -159,38 +127,26 @@ void Tesselator::draw(bool_t a2) {
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		//TODO replace with gl constants
+
 		Tesselator::CurrentVertexPointers v13(this->field_14.data(), this->meshBuffer_vf2);
 		if(v13.hasTexture) {
 			glTexCoordPointer(2, GL_FLOAT, this->meshBuffer_vf2.stride, v13.hasTexture);
-			if(a2) {
-				EnableClientState cs(GL_TEXTURE_COORD_ARRAY);
-				v9 = cs;
-				cs.enabled = 0;
-			}
+			if(a2) texCoordArr = std::move(EnableClientState(GL_TEXTURE_COORD_ARRAY));
 		}
 
 		if(v13.hasColor) {
 			glColorPointer(4, GL_UNSIGNED_BYTE, this->meshBuffer_vf2.stride, v13.hasColor);
-			if(a2) {
-				EnableClientState cs(GL_COLOR_ARRAY);
-				v10 = cs;
-				cs.enabled = 0;
-			}
+			if(a2) colorArr = std::move(EnableClientState(GL_COLOR_ARRAY));
 		}
 
 		if(v13.hasNormals) {
 			glNormalPointer(0x1400, this->meshBuffer_vf2.stride, v13.hasNormals);
-			if(a2) {
-				EnableClientState cs(GL_NORMAL_ARRAY);
-				v11 = cs;
-				cs.enabled = 0;
-			}
+			if(a2) normArr = std::move(EnableClientState(GL_NORMAL_ARRAY));
 		}
 
 		glVertexPointer(3, GL_FLOAT, this->meshBuffer_vf2.stride, v13.field_0);
 		if(this->useDrawElementsOrDrawArrays) {
-			glDrawElements(this->drawMode, this->useDrawElementsOrDrawArrays, this->someSIzeMaybe != 2 ? 5121 : 5123, this->vertexes.data());
+			glDrawElements(this->drawMode, this->useDrawElementsOrDrawArrays, this->someSizeMaybe != 2 ? 5121 : 5123, this->vertexes.data());
 		} else {
 			glDrawArrays(this->drawMode, 0, this->field_14.size() / this->meshBuffer_vf2.stride);
 		}
@@ -202,24 +158,29 @@ void Tesselator::enableColor() {
 }
 
 MeshBuffer Tesselator::end(void) {
-	int32_t drawMode; // r2
+	if(!this->isDrawing || this->field_D6) return MeshBuffer();
 
-	if(!this->isDrawing || this->field_D6 || (this->isDrawing = 0, !this->maxVertextNumber) || this->field_D4) {
-		return MeshBuffer();
-	} else {
+	this->isDrawing = 0;
+	if(this->maxVertextNumber != 0 && !this->field_D4) {
 		if(this->drawMode == 7) {
 			this->_buildQuadIndexBuffer();
 		}
 
-		drawMode = this->drawMode;
+		int drawMode = this->drawMode;
 		if(drawMode == 7) {
-			drawMode = 4;
+			drawMode = GL_TRIANGLES;
 		}
-		MeshBuffer v7(this->_genVertexFormat(), this->field_14.data(), (this->field_14.size()) / (uint32_t)this->meshBuffer_vf2.stride, this->vertexes.data(), this->useDrawElementsOrDrawArrays, this->someSIzeMaybe, drawMode);
+		MeshBuffer v7(this->_genVertexFormat(), this->field_14.data(), (this->field_14.size()) / (uint32_t)this->meshBuffer_vf2.stride, this->vertexes.data(), this->useDrawElementsOrDrawArrays, this->someSizeMaybe, drawMode);
 		this->field_E8 += this->field_14.size();
 		this->clear();
-		return v7; //TODO must copy?
+		return v7;
 	}
+	/*if(!this->isDrawing || this->field_D6 || (this->isDrawing = 0, !this->maxVertextNumber) || this->field_D4) {
+		return MeshBuffer();
+	} else {
+
+	}*/
+	return MeshBuffer();
 }
 
 int32_t Tesselator::getColor(void) {
@@ -244,7 +205,9 @@ void Tesselator::normal(float x, float y, float z) {
 	}
 }
 void Tesselator::offset(const Vec3& v) {
-	this->vec = v;
+	this->vec.x = v.x;
+	this->vec.y = v.y;
+	this->vec.z = v.z;
 }
 void Tesselator::offset(float x, float y, float z) {
 	this->vec.x = x;
@@ -263,13 +226,13 @@ void Tesselator::quad(uint16_t a2, uint16_t a3, uint16_t a4, uint16_t a5) { //TO
 	uint8_t* v11;															// r0
 	uint16_t* v12;															// r0
 
-	if(!this->someSIzeMaybe) {
-		this->someSIzeMaybe = 2;
+	if(!this->someSizeMaybe) {
+		this->someSizeMaybe = 2;
 	}
-	this->vertexes.resize((this->useDrawElementsOrDrawArrays + 6) * this->someSIzeMaybe);
+	this->vertexes.resize((this->useDrawElementsOrDrawArrays + 6) * this->someSizeMaybe);
 	useDrawElementsOrDrawArrays = this->useDrawElementsOrDrawArrays;
 	vecStartPtr = this->vertexes.data();
-	if(this->someSIzeMaybe == 1) {
+	if(this->someSizeMaybe == 1) {
 		v11 = &vecStartPtr[useDrawElementsOrDrawArrays];
 		vecStartPtr[useDrawElementsOrDrawArrays] = a2;
 		v11[1] = a3;
@@ -310,8 +273,8 @@ void Tesselator::setAccessMode(int32_t a) {
 
 void Tesselator::setMaxVertexNumber(int32_t n) {
 	this->vertexFormat = n;
-	if(!this->someSIzeMaybe) {
-		this->someSIzeMaybe = 2;
+	if(!this->someSizeMaybe) {
+		this->someSizeMaybe = 2;
 		this->vertexes.reserve(12 * (n / 4));
 	}
 }

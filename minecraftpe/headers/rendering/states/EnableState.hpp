@@ -9,6 +9,11 @@ struct EnableState{
 		this->enabled = s;
 		if(s) glEnable(this->enabled);
 	}
+	EnableState& operator=(EnableState&& s) {
+		this->enabled = s.enabled;
+		s.enabled = 0;
+		return *this;
+	}
 	~EnableState() {
 		if (this->enabled) glDisable(this->enabled);
 	}

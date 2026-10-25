@@ -1,5 +1,8 @@
 #pragma once
 #define UNK
+//this should not be used for anything other than testing
+#define noinline __attribute__((noinline))
+
 #if defined(PCTWEAKS) && defined(ANDROID)
 #error PCTWEAKS and ANDROID are defined at the same time.
 #endif

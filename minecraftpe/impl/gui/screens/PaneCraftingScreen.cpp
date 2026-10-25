@@ -39,8 +39,8 @@ PaneCraftingScreen::PaneCraftingScreen(int32_t a2)
 	}
 }
 
-static bool _D65FAB7C(CItem* a1, CItem* a2) {
-	if((uint8_t)a2->field_34 == (uint8_t)a1->field_34) {
+static bool _D65FAB7C(const CItem* a1, const CItem* a2) {
+	if(a2->field_34 == a1->field_34) {
 		return a1->field_1C.compare(a2->field_1C) >> 31; //TODO check
 	}
 	return a1->field_34;

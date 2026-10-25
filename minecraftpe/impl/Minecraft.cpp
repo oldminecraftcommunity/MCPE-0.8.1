@@ -98,7 +98,6 @@ Minecraft::Minecraft()
 	this->viewEntity = 0;
 	this->prepareLevelThread = 0;
 	this->currentScreen = 0;
-	this->field_C7C = 0;
 	this->pixelsPerMillimeter = 1;
 	this->field_C88 = 1;
 	this->field_C8C = 1;
@@ -467,7 +466,7 @@ bool_t Minecraft::isOnlineClient(void) {
 
 void Minecraft::joinMultiplayer(const struct PingedCompatibleServer& a2, bool_t a3) {
 	RakNetInstance* rakNetInstance; // r4
-	if(1 || this->field_18) {
+	if(this->field_18) {
 		if(this->serverSideNetworkHandler) {
 			this->field_18 = 0;
 			if(a3) {

@@ -181,11 +181,9 @@ struct Tile{
 	float blockHardness, blockResistance;
 	int32_t field_50, creativeTabIndex;
 	bool_t goodGraphics;
-	int8_t field_59, field_5A, field_5B;
 	uint32_t field_5C;
 	AABB aabb;
 	bool_t replaceable;
-	int8_t field_79, field_7A, field_7B;
 	std::string descriptionId;
 
 

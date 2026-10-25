@@ -6,7 +6,7 @@ struct Mob;
 struct Color4;
 struct MobRenderer: EntityRenderer
 {
-	static int8_t menuMode;
+	static bool menuMode;
 
 	Model* model;
 	Model* armorModel;

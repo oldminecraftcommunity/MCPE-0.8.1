@@ -1,9 +1,22 @@
 #pragma once
 #include <math/HitResult.hpp>
 
+//these methods can be replaced by std::min/std::max but including <algorithm> here
+//results in 2 float vector destructors being not generatied for some reason
+//(i love std)
+//maybe there is a fix?
+//make sure to change Color4.hpp if some fix will be found
+static const float& min(const float& x, const float& y) {
+	if(y < x) return y;
+	return x;
+}
+static const float& max(const float& x, const float& y) {
+	if(x < y) return y;
+	return x;
+}
+
 struct Vec3;
 struct HitResult;
-
 struct AABB{
 	float minX, minY, minZ, maxX, maxY, maxZ;
 	//TODO missing constructor
@@ -159,15 +172,15 @@ struct AABB{
 		this->maxZ += z;
 		return this;
 	}
-	AABB merge(const AABB& bb) const{
-		float minX = bb.minX < this->minX ? bb.minX : this->minX;
-		float minY = bb.minY < this->minY ? bb.minY : this->minY;
-		float minZ = bb.minZ < this->minZ ? bb.minZ : this->minZ;
-		float maxX = this->maxX < bb.maxX ? bb.maxX : this->maxX;
-		float maxY = this->maxY < bb.maxY ? bb.maxY : this->maxY;
-		float maxZ = this->maxZ < bb.maxZ ? bb.maxZ : this->maxZ;
-
-		return AABB{minX, minY, minZ, maxX, maxY, maxZ};
+	AABB merge(const AABB& bb) const {
+		return AABB(
+			min(this->minX, bb.minX),
+			min(this->minY, bb.minY),
+			min(this->minZ, bb.minZ),
+			max(this->maxX, bb.maxX),
+			max(this->maxY, bb.maxY),
+			max(this->maxZ, bb.maxZ)
+		);
 	}
 
 	//the method names was taken from b1.2, should always be inlined

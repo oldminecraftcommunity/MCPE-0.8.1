@@ -26,7 +26,7 @@ struct LevelRenderer: LevelListener, AppPlatform::Listener
 	float field_C;
 	float field_10;
 	float destroyProgress;
-	int32_t field_18;
+	int32_t dontRenderEntitiesCounter;
 	int32_t field_1C;
 	int32_t field_20;
 	int32_t field_24;

@@ -16,7 +16,6 @@ bool contextWasLost;
 #include <unigl.hpp>
 #include <android/AndroidRestRequestJob.hpp>
 #include <network/mco/MojangConnector.hpp>
-#include <RakNetTypes.h>
 #include <input/Controller.hpp>
 #include <input/Mouse.hpp>
 #include <input/Multitouch.hpp>
@@ -418,8 +417,10 @@ void android_main(struct android_app* state) {
 
 	{ //some inlined method?
 		JVMAttacher v25(appPlatform.jvm);
-		appPlatform.screenWidth = v25.env->CallIntMethod(appPlatform.mainActivityRef, v25.env->GetMethodID(appPlatform.mainActivityReference, "getScreenWidth", "()I"));
-		appPlatform.screenHeight = v25.env->CallIntMethod(appPlatform.mainActivityRef, v25.env->GetMethodID(appPlatform.mainActivityReference, "getScreenHeight", "()I"));
+		jmethodID getScreenWidth = v25.env->GetMethodID(appPlatform.mainActivityReference, "getScreenWidth", "()I");
+		jmethodID getScreenHeight = v25.env->GetMethodID(appPlatform.mainActivityReference, "getScreenHeight", "()I");
+		appPlatform.screenWidth = v25.env->CallIntMethod(appPlatform.mainActivityRef, getScreenWidth);
+		appPlatform.screenHeight = v25.env->CallIntMethod(appPlatform.mainActivityRef, getScreenHeight);
 	}
 
 	NinecraftApp* mc = new NinecraftApp();
@@ -489,8 +490,6 @@ void android_main(struct android_app* state) {
 
 		if ( state->destroyRequested )
 		{
-			__android_log_write(ANDROID_LOG_ERROR, "MCPE081DECOMP",
-								"cro...");
 			break;
 		}
 		if ( !hasInit )
@@ -501,8 +500,6 @@ void android_main(struct android_app* state) {
 				sleepMs(50);
 				goto LABEL_32;
 			}
-			//TODO actually calls App::init(&engine->appCtx);
-			/*???????????????????*/
 			mc->App::init(engine.appCtx);
 
 			hasInit = 1;

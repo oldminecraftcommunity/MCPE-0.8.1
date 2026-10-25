@@ -13,49 +13,31 @@ Throwable::Throwable(Level* a2)
 	this->setSize(0.25, 0.25);
 }
 Throwable::Throwable(Level* a2, Mob* a3)
-	: Throwable(a2) {
-	float posY; // s16
-	float posX; // r7
-	float v7; // r0
-	float v8; // s15
-	float v9; // s20
-	float v10; // s13
-	float posZ; // s15
-	float v13; // s21
-	float v14; // r1
-	float v15; // r3
-	float pitch; // s19
-	float v18; // s15
-	float v19; // s16
-
+	: Entity(a2) {
+	this->_init();
+	this->setSize(0.25f, 0.25f);
 	this->auxData = a3->entityId;
-	posY = a3->posY;
-	posX = a3->posX;
-	v7 = a3->getHeadHeight();
-	this->moveTo(posX, posY + v7, a3->posZ, a3->yaw, a3->pitch);
-	v8 = (float)((float)(this->yaw / 180.0) * 3.1416);
-	v9 = Mth::cos(v8);
-	v10 = this->posY - 0.1;
-	posZ = this->posZ;
-	v13 = Mth::sin(v8);
-	v14 = this->posX - (float)(v9 * 0.16);
-	this->posX = v14;
-	this->posY = v10;
-	v15 = posZ - (float)(v13 * 0.16);
-	this->posZ = v15;
-	this->setPos(v14, v10, v15);
+	this->moveTo(a3->posX, a3->posY + a3->getHeadHeight(), a3->posZ, a3->yaw, a3->pitch);
+	float v8 = (this->yaw / 180.0f) * Mth::PI;
+	float v9 = Mth::cos(v8);
+	float v13 = Mth::sin(v8);
+	this->posX -= v9 * 0.16f;
+	this->posY -= 0.1f;
+	this->posZ -= v13 * 0.16f;
+	this->setPos(this->posX, this->posY, this->posZ);
 	this->ridingHeight = 0.0;
 	if(a3->isPlayer()) {
 		this->shoot(a3->field_174, this->getThrowPower(), 1.0);
 	} else {
-		pitch = this->pitch;
-		v18 = Mth::sin(((float)((float)(pitch / 180.0) * 3.1416) * 10430.0));
-		v19 = Mth::sin(((float)((float)(pitch + this->getThrowUpAngleOffset()) / 180.0) * 3.1416));
-		this->shoot(-(float)(v13 * v18), -v19, v9 * v18, this->getThrowPower(), 1.0);
+		float v18 = Mth::cos((this->pitch / 180.0f) * Mth::PI);
+		float v19 = Mth::sin(((this->pitch + this->getThrowUpAngleOffset()) / 180.0f) * Mth::PI);
+		this->shoot(-(v13 * v18), -v19, v9 * v18, this->getThrowPower(), 1.0f);
 	}
 }
 Throwable::Throwable(Level* a2, float x, float y, float z)
-	: Throwable(a2) {
+	: Entity(a2) {
+	this->_init();
+	this->setSize(0.25, 0.25);
 	this->setPos(x, y, z);
 	this->ridingHeight = 0;
 }
@@ -75,65 +57,42 @@ void Throwable::shoot(const Vec3& a2, float a3, float a4) {
 	this->shoot(a2.x, a2.y, a2.z, a3, a4);
 }
 void Throwable::shoot(float x, float y, float z, float a5, float a6) {
-	float v10; // r0
-	float v11; // s17
-	float v12; // s21
-	float v13; // s16
-	float v14; // s17
-	float v15; // s21
-	float g; // r0
-	float v17; // s17
-	float v18; // s16
-	float v19; // r5
-	float v20; // s15
-	float v21; // r0
-	float v22; // s16
+	float nrmX; // s17
+	float nrmY; // s21
+	float nrmZ; // s16
 
-	v10 = Mth::sqrt((float)((float)(y * y) + (float)(x * x)) + (float)(z * z));
-	if(v10 < 0.001) {
-		v13 = 0.0;
-		v12 = 0.0;
-		v11 = 0.0;
+	float v10 = Mth::sqrt((x * x) + (y * y) + (z * z));
+	if(v10 < 0.001f) {
+		nrmX = 0.0;
+		nrmY = 0.0;
+		nrmZ = 0.0;
 	} else {
-		v11 = x / v10;
-		v12 = y / v10;
-		v13 = z / v10;
+		nrmX = x / v10;
+		nrmY = y / v10;
+		nrmZ = z / v10;
 	}
-	v14 = v11 + (float)((float)(Entity::sharedRandom.nextGaussian() * 0.0075) * a6);
-	v15 = v12 + (float)((float)(Entity::sharedRandom.nextGaussian() * 0.0075) * a6);
-	g = Entity::sharedRandom.nextGaussian();
-	v17 = v14 * a5;
-	this->motionX = v17;
-	v18 = (float)(v13 + (float)((float)(g * 0.0075) * a6)) * a5;
-	this->motionZ = v18;
-	this->motionY = v15 * a5;
-	v19 = Mth::sqrt((float)(v18 * v18) + (float)(v17 * v17));
-	v20 = (float)(Mth::atan2(v17, v18) * 180.0) / 3.1416;
-	this->yaw = v20;
-	this->prevYaw = v20;
-	v21 = Mth::atan2(v15 * a5, v19);
+	float mx = nrmX + Entity::sharedRandom.nextGaussian() * 0.0075f * a6 * a5;
+	float my = nrmY + Entity::sharedRandom.nextGaussian() * 0.0075f * a6 * a5;
+	float mz = nrmZ + Entity::sharedRandom.nextGaussian() * 0.0075f * a6 * a5;
+
+	this->motionX = mx;
+	this->motionZ = mz;
+	this->motionY = my;
+	float v19 = Mth::sqrt(this->motionX * this->motionX + this->motionZ * this->motionZ);
+	this->prevYaw = this->yaw = (Mth::atan2(this->motionX, this->motionZ) * 180.0f) / Mth::PI;
 	this->ticksInGround = 0;
-	v22 = (float)(v21 * 180.0) / 3.1416;
-	this->pitch = v22;
-	this->prevPitch = v22;
+	this->prevPitch = this->pitch = (Mth::atan2(my * a5, v19) * 180.0f) / Mth::PI;
 }
 
 void Throwable::lerpMotion(float x, float y, float z) {
-	float v8; // r7
-	float v9; // s15
-	float v10; // s16
-
 	this->motionX = x;
 	this->motionY = y;
 	this->motionZ = z;
-	if(this->prevPitch == 0.0 && this->prevYaw == 0.0) {
-		v8 = Mth::sqrt((float)(z * z) + (float)(x * x));
-		v9 = (float)(Mth::atan2(x, z) * 180.0) / 3.1416;
-		this->yaw = v9;
-		this->prevYaw = v9;
-		v10 = (float)(Mth::atan2(y, v8) * 180.0) / 3.1416;
-		this->pitch = v10;
-		this->prevPitch = v10;
+
+	if(this->prevPitch == 0 && this->prevYaw == 0) {
+		float v8 = Mth::sqrt((x * x) + (z * z));
+		this->prevYaw = this->yaw = (Mth::atan2(x, z) * 180.0f) / Mth::PI;
+		this->prevPitch = this->pitch = (Mth::atan2(y, v8) * 180.0f) / Mth::PI;
 	}
 }
 void Throwable::tick() {
@@ -403,10 +362,8 @@ float Throwable::getShadowHeightOffs() {
 	return 0;
 }
 bool_t Throwable::shouldRenderAtSqrDistance(float a2){
-	float v2; // s15
-
-	v2 = ((this->boundingBox.maxX - this->boundingBox.minX) + (this->boundingBox.maxY - this->boundingBox.minY) + (this->boundingBox.maxZ - this->boundingBox.minZ)) / 3.0 * 4.0 * 64.0;
-	return a2 < (float)(v2 * v2);
+	float v2 = ((this->boundingBox.maxX - this->boundingBox.minX) + (this->boundingBox.maxY - this->boundingBox.minY) + (this->boundingBox.maxZ - this->boundingBox.minZ)) / 3.0f * 4.0f * 64.0f;
+	return a2 < (v2 * v2);
 }
 int32_t Throwable::getAuxData() {
 	return this->auxData;

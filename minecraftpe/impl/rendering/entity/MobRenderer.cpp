@@ -6,7 +6,7 @@
 #include <rendering/EntityRenderDispatcher.hpp>
 #include <rendering/model/Model.hpp>
 #include <rendering/states/DisableState.hpp>
-int8_t MobRenderer::menuMode = 0;
+bool MobRenderer::menuMode = 0;
 
 MobRenderer::MobRenderer(Model* a2, float a3) {
 	this->model = a2;

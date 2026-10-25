@@ -19,11 +19,9 @@ struct TileEntity
 	int32_t blockMetadata;
 	int32_t type, id;
 	bool_t field_34;
-	int8_t field_35, field_36, field_37;
 	TileEntityRendererId renderId;
 	struct Tile* block;
 	bool_t removed;
-	int8_t field_41, field_42, field_43;
 	float field_44;
 	Vec3 field_48;
 	float field_54;

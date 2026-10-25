@@ -17,6 +17,7 @@ struct MeshBuffer{
 			this->stride = 0;
 			for(auto&& p : this->offsets) p = -1;
 		}
+
 		void bindArrays(void) const;
 		void enableField(MeshBuffer::VertexFormat::Field f){
 			static const uint8_t FieldSize[] = {0xC, 0x8, 0x4, 0x4};

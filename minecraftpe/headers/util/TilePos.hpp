@@ -1,7 +1,7 @@
 #pragma once
 #include <_types.h>
 #include <stdlib.h>
-#include <bitset>
+
 struct TilePos{
 	int32_t x, y, z;
 	TilePos(TilePos&& p) {

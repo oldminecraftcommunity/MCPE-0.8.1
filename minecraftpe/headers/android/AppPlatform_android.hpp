@@ -606,7 +606,6 @@ struct AppPlatform_android : AppPlatform{
 				this->_jniAbortWebRequest, a2);
 	}
 
-
 	virtual bool_t supportsVibration(void) {
 		return 1;
 	}

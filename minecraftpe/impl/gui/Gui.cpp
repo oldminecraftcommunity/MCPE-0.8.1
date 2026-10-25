@@ -25,9 +25,9 @@
 #include <network/ServerCommandParser.hpp>
 #include <input/TouchscreenInput.hpp>
 
-float Gui::InvGuiScale = 0.333333;
+float Gui::InvGuiScale = 0.333333f;
 float Gui::GuiScale;
-const float Gui::DropTicks = 40.0;
+const float Gui::DropTicks = 40.0f;
 
 Gui::Gui(Minecraft* mc) {
 	this->field_10 = 0;
@@ -58,6 +58,9 @@ Gui::~Gui() {
 }
 
 void Gui::onAppSuspended() {
+	this->innerBreakRingMesh.reset();
+	this->outerBreakRingMesh.reset();
+	this->inventoryUpdated();
 }
 void Gui::onConfigChanged(const Config& a2) {
 	int v4;			   // r8
@@ -164,7 +167,7 @@ void Gui::addMessage(const std::string& a2, const std::string& a3, int32_t a4) {
 	char* v8;		// r0
 
 	if(this->minecraftInst->font) {
-		GuiMessage v13(a2, a3, a4);
+		const GuiMessage v13(a2, a3, a4);
 		this->chatMessages.emplace(this->chatMessages.begin(), v13);
 
 		if(!this->minecraftInst->isOnlineClient() && v13.field_8[0] == '/') {
@@ -190,7 +193,7 @@ void Gui::flashSlot(int32_t a2) {
 	this->field_A20 = getTimeS();
 }
 float Gui::floorAlignToScreenPixel(float a1) {
-	return (float)(int32_t)(float)(a1 * Gui::GuiScale) * Gui::InvGuiScale;
+	return (int32_t)(a1 * Gui::GuiScale) * Gui::InvGuiScale;
 }
 int32_t Gui::getNumSlots() {
 	return this->slotsAmount;
@@ -226,31 +229,16 @@ RectangleArea Gui::getRectangleArea(int32_t a3) {
 	return RectangleArea(1, v8 - v10, v12 - v11, v13, v12);
 }
 int32_t Gui::getSlotIdAt(int32_t a2, int32_t a3) {
-	int32_t v5;	 // r6
-	int32_t v6;	 // r3
-	int32_t v7;	 // s14
-	int32_t v8;	 // r2
-	int32_t v9;	 // r4
-	int32_t v10; // r0
-
-	v5 = (int32_t)(float)((float)this->minecraftInst->width * Gui::InvGuiScale);
-	v6 = (int32_t)(float)((float)this->minecraftInst->height * Gui::InvGuiScale);
-	v8 = (int32_t)(float)((float)a3 * Gui::InvGuiScale);
-	if(v8 < v6 - 19) {
-		return -1;
-	}
-	if(v8 > v6) {
-		return -1;
-	}
-	v7 = (int32_t)(float)((float)a2 * Gui::InvGuiScale);
-	v10 = v7 - (v5 / 2 + 2 - 10 * this->getNumSlots());
-	if(v10 < 0) {
-		return -1;
-	}
-	v9 = v10 / 20;
-	if(v10 / 20 >= this->getNumSlots()) {
-		return -1;
-	}
+	int32_t v5 = (int32_t)(this->minecraftInst->width * Gui::InvGuiScale);
+	int32_t v6 = (int32_t)(this->minecraftInst->height * Gui::InvGuiScale);
+	int32_t v8 = (int32_t)(a3 * Gui::InvGuiScale);
+	if(v8 < v6 - 19) return -1;
+	if(v8 > v6) return -1;
+	int32_t v7 = (int32_t)(a2 * Gui::InvGuiScale);
+	int32_t v10 = v7 - (v5 / 2 + 2 - 10 * this->getNumSlots());
+	if(v10 < 0) return -1;
+	int32_t v9 = v10 / 20;
+	if(v9 >= this->getNumSlots()) return -1;
 	return v9;
 }
 int32_t Gui::getSlotPos(int32_t slot, int32_t& x, int32_t& y) {
@@ -298,8 +286,6 @@ void Gui::handleClick(int32_t a2, int32_t a3, int32_t a4) {
 void Gui::handleKeyPressed(int32_t a2) {
 	Inventory* inventory; // r3
 	int32_t selectedSlot; // r2
-	int32_t v5;			  // r2
-	int32_t v6;			  // r5
 
 	switch(a2) {
 		case 99:
@@ -308,18 +294,15 @@ void Gui::handleKeyPressed(int32_t a2) {
 			if(selectedSlot <= 0) {
 				return;
 			}
-			v5 = selectedSlot - 1;
-LABEL_7:
-			inventory->selectedSlot = v5;
+			inventory->selectedSlot = selectedSlot - 1;
 			return;
 		case 4:
-			v6 = this->minecraftInst->player->inventory->selectedSlot;
-			if(v6 >= this->getNumSlots() - 2) {
+			if(this->minecraftInst->player->inventory->selectedSlot >= this->getNumSlots() - 2) {
 				return;
 			}
 			inventory = this->minecraftInst->player->inventory;
-			v5 = inventory->selectedSlot + 1;
-			goto LABEL_7;
+			inventory->selectedSlot = inventory->selectedSlot + 1;
+			break;
 		case 100:
 			this->minecraftInst->screenChooser.setScreen(ScreenId::INVENTORY_SCREEN);
 			break;
@@ -345,13 +328,11 @@ void Gui::onLevelGenerated() {
 }
 void Gui::postError(int32_t a2) {
 	static std::set<int> _D6E05BAC;
-	if(_D6E05BAC.find(a2) != _D6E05BAC.end()) {
+	if(_D6E05BAC.find(a2) == _D6E05BAC.end()) {
 		_D6E05BAC.insert(a2); //TODO check
 
 		std::stringstream v11;
-		v11 << "Something went wrong! (errcode ";
-		v11 << a2;
-		v11 << ")\n";
+		v11 << "Something went wrong! (errcode " << a2 << ")\n";
 		this->addMessage("error", v11.str(), 200);
 	}
 }
@@ -430,19 +411,17 @@ void Gui::render(float a2, bool_t a3, int32_t a4, int32_t a5) {
 	}
 }
 void Gui::renderBubbles() {
-	int32_t relatedToBubbleRendering; // r4
+	int32_t air; // r4
 	int32_t v3;						  // r10
-	int32_t v4;						  // s14
 	int32_t v5;						  // r4
 	int32_t v6;						  // r3
 	int32_t v7;						  // r9
 
 	if(this->minecraftInst->player->isUnderLiquid(Material::water)) {
-		relatedToBubbleRendering = this->minecraftInst->player->air;
-		v3 = (int32_t)ceilf((float)((float)(relatedToBubbleRendering - 2) * 10.0) / 300.0);
-		v4 = relatedToBubbleRendering;
+		air = this->minecraftInst->player->air;
+		v3 = (int32_t)ceilf((float)((float)(air - 2) * 10.0f) / 300.0f);
 		v5 = 0;
-		v7 = (int32_t)ceilf((float)((float)v4 * 10.0) / 300.0);
+		v7 = (int32_t)ceilf((float)((float)air * 10.0) / 300.0f);
 		while(v5 < v7) {
 			if(v5 < v3) {
 				v6 = 16;
@@ -706,8 +685,8 @@ LABEL_21:
 void Gui::renderSleepAnimation(int32_t a2, int32_t a3) {
 	int32_t v6 = this->minecraftInst->player->getSleepTimer();
 	float v7 = (float)v6 / 100;
-	if(v7 > 1) v7 = 1 - (float)(v6 - 100) / 10.0;
-	this->fill(0, 0, a2, a3, ((int32_t)(float)(v7 * 220.0) << 24) | 0x101020);
+	if(v7 > 1) v7 = 1 - (float)(v6 - 100) / 10.0f;
+	this->fill(0, 0, a2, a3, ((int32_t)(v7 * 220.0f) << 24) | 0x101020);
 }
 void Gui::renderSlot(int32_t a2, int32_t a3, int32_t a4, float a5) {
 	LocalPlayer* player; // r0

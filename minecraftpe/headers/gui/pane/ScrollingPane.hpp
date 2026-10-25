@@ -13,7 +13,7 @@ struct ScrollingPane: GuiComponent
 	{
 		int32_t field_0, field_4, field_8;
 		float field_C, field_10;
-		bool_t field_14, field_15, field_16, field_17;
+		bool field_14;
 		GridItem() {
 		}
 		GridItem(int32_t f0, int32_t f4, int32_t f8, float fc, float f10) {

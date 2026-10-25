@@ -9,10 +9,7 @@ char_t* TextBox::extendedAcsii = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrst
 char_t* TextBox::numberChars = "0123456789";
 
 TextBox::TextBox(Minecraft* a2, const Options::Option* a3, const std::string& a4)
-	: GuiElement(1, 1, 0, 0, 24, 24) {
-	this->key = -1;
-	this->field_30 = 0;
-	this->option = a3;
+	: GuiElement(1, 1, 0, 0, 24, 24), key(-1), field_30(0), option(a3), field_3C(a4) {
 	this->field_40 = 0;
 	this->field_58 = 0;
 	this->field_5C = 1;
@@ -74,11 +71,11 @@ TextBox::~TextBox() {
 	this->field_2C = 0;
 }
 void TextBox::tick(Minecraft* a2) {
-	Options::Option* option; // r1
-
-	if(this->field_40 && !a2->options.canModify(this->option)) {
-		this->field_40 = 0;
-		a2->platform()->hideKeyboard();
+	if(this->field_40) {
+		if(!a2->options.canModify(this->option)){
+			this->field_40 = 0;
+			a2->platform()->hideKeyboard();
+		}
 	}
 
 	if(this->option) {
@@ -184,7 +181,7 @@ LABEL_8:
 }
 bool_t TextBox::backPressed(Minecraft* a2, bool_t a3) {
 	if(!this->field_40) {
-		return this->field_40;
+		return 0;
 	}
 	this->loseFocus(a2);
 	this->updateText(a2);

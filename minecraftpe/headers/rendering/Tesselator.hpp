@@ -41,11 +41,9 @@ struct Tesselator{
 	Tesselator::CurrentVertexPointers currentVertexPointers;
 	std::vector<uint8_t> field_14;
 	std::vector<uint8_t> vertexes;
-	int32_t someSIzeMaybe;
+	int32_t someSizeMaybe;
 	int32_t useDrawElementsOrDrawArrays;
 	std::unordered_map<uint32_t, std::unique_ptr<MeshBuffer::VertexFormat>> field_34;
-	int32_t field_4C;
-	int32_t field_50;
 	MeshBuffer::VertexFormat meshBuffer_vf2;
 	int32_t vertexFormat;
 	Vec3 vec;
@@ -61,21 +59,14 @@ struct Tesselator{
 	float scale3;
 	float scale4;
 	float scale5;
-	int8_t isTilted;
-	int8_t field_91;
-	int8_t field_92;
-	int8_t field_93;
+	bool isTilted;
 	glm::mat4x4 tmat4x4_2;
-	uint8_t field_D4;
-	int8_t isColorDisabled;
-	uint8_t field_D6;
-	int8_t field_D7;
+	bool field_D4;
+	bool isColorDisabled;
+	bool field_D6;
 	int32_t vertexCount;
 	int32_t maxVertextNumber;
-	int8_t isDrawing;
-	int8_t field_E1;
-	int8_t field_E2;
-	int8_t field_E3;
+	bool isDrawing;
 	int32_t bufSize;
 	int32_t field_E8;
 	int32_t drawMode;
@@ -92,6 +83,7 @@ struct Tesselator{
 		}
 
 		MeshBuffer::VertexFormat* v7 = new MeshBuffer::VertexFormat(this->meshBuffer_vf2);
+		//this->field_34.insert(std::pair<uint32_t, std::unique_ptr<MeshBuffer::VertexFormat>>(offsets, std::unique_ptr<MeshBuffer::VertexFormat>(v7)));
 		this->field_34[offsets] = std::unique_ptr<MeshBuffer::VertexFormat>(v7);
 		return v7;
 	}
@@ -150,15 +142,15 @@ struct Tesselator{
 		uint8_t* v13;												   // r3
 		uint16_t* v14;												   // r3
 
-		if(!this->someSIzeMaybe) {
-			this->someSIzeMaybe = 2;
+		if(!this->someSizeMaybe) {
+			this->someSizeMaybe = 2;
 		}
-		v8 = (this->useDrawElementsOrDrawArrays + 3) * this->someSIzeMaybe;
+		v8 = (this->useDrawElementsOrDrawArrays + 3) * this->someSizeMaybe;
 		this->vertexes.resize(v8); //TODO check
 
 		useDrawElementsOrDrawArrays = this->useDrawElementsOrDrawArrays;
 		v12 = this->vertexes.data();
-		if(this->someSIzeMaybe == 1) {
+		if(this->someSizeMaybe == 1) {
 			v13 = &v12[useDrawElementsOrDrawArrays];
 			v12[useDrawElementsOrDrawArrays] = a2;
 			v13[1] = a3;

@@ -15,5 +15,5 @@ struct AppContext{
 #endif
 	struct AppPlatform* platform;
 
-	int8_t field_10, field_11, field_12, field_13;
+	bool field_10;
 };

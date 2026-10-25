@@ -612,7 +612,7 @@ void Entity::move(float dx, float dy, float dz) {
 		}
 		stepHeight = this->stepHeight;
 		if(stepHeight > 0.0f && fallingFlag && this->ySize < 0.05f && (movX != v43 || movZ != v42)) {
-			AABB v96{this->boundingBox.minX, this->boundingBox.minY, this->boundingBox.minZ, this->boundingBox.maxX, this->boundingBox.maxY, this->boundingBox.maxZ};
+			AABB v96 = this->boundingBox;
 			this->boundingBox = boundingBox;
 			std::vector<AABB> v38 = *this->level->getCubes(this, this->boundingBox.expand(movX, stepHeight, movZ), 0);
 			for(int v58 = 0; v58 != v38.size(); ++v58){

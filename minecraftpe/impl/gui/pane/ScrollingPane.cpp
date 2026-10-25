@@ -220,22 +220,18 @@ bool_t ScrollingPane::getGridItemFor_slow(int32_t a2, ScrollingPane::GridItem& a
 	return a2 % v8 >= v6 && a2 % v8 <= v15.field_4 && v11 >= v7 && v11 <= v15.field_8;
 }
 ScrollingPane::GridItem ScrollingPane::getItemForPos(float a3, float a4, bool_t a5) {
-	float v5 = a4;
-	float v8 = a3;
 	if(a5) {
-		v8 = a3 - this->field_2C.minX;
-		v5 = a4 - this->field_2C.minY;
+		a3 -= this->field_2C.minX;
+		a4 -= this->field_2C.minY;
 	}
-	float v9 = v8 + this->field_1C;
-	float v10 = v5 + this->field_20;
-	if((this->field_4 & 4) != 0) v9 = fmod(v9, this->field_4C.width * this->field_8);
-	if((this->field_4 & 8) != 0) v10 = fmod(v10, this->field_4C.height * this->field_C);
+	a3 += this->field_1C;
+	a4 += this->field_20;
+	if((this->field_4 & 4) != 0) a3 = fmod(a3, (float)(this->field_4C.width * this->field_8));
+	if((this->field_4 & 8) != 0) a4 = fmod(a4, (float)(this->field_4C.height * this->field_C));
 	int32_t v11 = this->field_8;
-	float v12 = v9 / (float)this->field_4C.width;
-	float height = this->field_4C.height;
-	float v14 = v10 / height;
-	int32_t v15 = (int32_t)v12;
-	return ScrollingPane::GridItem(v15 + v11 * (int32_t)v14, v15, (int32_t)v14, v12, v14);
+	float v12 = a3 / (float)this->field_4C.width;
+	float v14 = a4 / (float) this->field_4C.height;
+	return ScrollingPane::GridItem((int32_t)v12 + v11 * (int32_t)v14, (int32_t)v12, (int32_t)v14, v12, v14);
 }
 ScrollBar* ScrollingPane::getVerticleScrollBar() {
 	return &this->verticalScrollbar;

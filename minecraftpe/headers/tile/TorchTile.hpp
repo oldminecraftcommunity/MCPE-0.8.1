@@ -5,12 +5,11 @@
 
 struct TorchTile : Tile{
 	bool_t isConnection(Level* level, int32_t x, int32_t y, int32_t z) {
-		int32_t v8; // r0
 		if (level->isSolidBlockingTile(x, y, z)) {
 			return 1;
 		}
-		v8 = level->getTile(x, y, z);
-		return v8 == Tile::fence->blockID || v8 == Tile::glass->blockID || v8 == Tile::cobbleWall->blockID;
+		int id = level->getTile(x, y, z);
+		return id == Tile::fence->blockID || id == Tile::glass->blockID || id == Tile::cobbleWall->blockID;
 	}
 	bool_t checkCanSurvive(Level* level, int32_t x, int32_t y, int32_t z) {
 		int32_t v10; // r0
@@ -52,37 +51,29 @@ struct TorchTile : Tile{
 		}
 	}
 	virtual void animateTick(Level* level, int32_t x, int32_t y, int32_t z, Random* r) {
-		int32_t v9; // r0
-		float v10; // s18
-		float v11; // s16
-		float v12; // s17
-		float v13; // s18
-		float v14; // s17
-		v9 = level->getData(x, y, z);
-		v10 = (float) (y) + 0.7;
-		v11 = (float) (x) + 0.5;
-		v12 = (float) (z) + 0.5;
-		switch (v9) {
-		case 1:
-			v11 = v11 - 0.27;
-			LABEL_5: v10 = v10 + 0.22;
-			break;
-		case 2:
-			v11 = v11 + 0.27;
-			goto LABEL_5;
-		case 3:
-			v13 = v10 + 0.22;
-			v14 = v12 - 0.27;
-			level->addParticle(PT_SMOKE, v11, v13, v14, 0.0, 0.0, 0.0, 0);
-			level->addParticle(PT_FLAME, v11, v13, v14, 0.0, 0.0, 0.0, 0);
-			return;
-		case 4:
-			v10 = v10 + 0.22;
-			v12 = v12 + 0.27;
-			break;
+		int meta = level->getData(x, y, z);
+		float yy = y + 0.7f;
+		float xx = x + 0.5f;
+		float zz = z + 0.5f;
+
+		if(meta == 1) {
+			level->addParticle(PT_SMOKE, xx - 0.27f, yy + 0.22f, zz, 0, 0, 0, 0);
+			level->addParticle(PT_FLAME, xx - 0.27f, yy + 0.22f, zz, 0, 0, 0, 0);
+		} else if(meta == 2) {
+			level->addParticle(PT_SMOKE, xx + 0.27f, yy + 0.22f, zz, 0, 0, 0, 0);
+			level->addParticle(PT_FLAME, xx + 0.27f, yy + 0.22f, zz, 0, 0, 0, 0);
+		} else if(meta == 3) {
+			level->addParticle(PT_SMOKE, xx, yy + 0.22f, zz - 0.27f, 0, 0, 0, 0);
+			level->addParticle(PT_FLAME, xx, yy + 0.22f, zz - 0.27f, 0, 0, 0, 0);
+		} else if(meta == 4) {
+			level->addParticle(PT_SMOKE, xx, yy + 0.22f, zz + 0.27f, 0, 0, 0, 0);
+			level->addParticle(PT_FLAME, xx, yy + 0.22f, zz + 0.27f, 0, 0, 0, 0);
+		}else{
+			level->addParticle(PT_SMOKE, xx, yy, zz, 0, 0, 0, 0);
+			level->addParticle(PT_FLAME, xx, yy, zz, 0, 0, 0, 0);
 		}
-		level->addParticle(PT_SMOKE, v11, v10, v12, 0.0, 0.0, 0.0, 0);
-		level->addParticle(PT_FLAME, v11, v10, v12, 0.0, 0.0, 0.0, 0);
+
+
 	}
 	virtual void neighborChanged(Level* level, int32_t x, int32_t y, int32_t z, int32_t, int32_t, int32_t, int32_t) {
 		int32_t data; // r9
@@ -112,109 +103,43 @@ struct TorchTile : Tile{
 		}
 	}
 	virtual void onPlace(Level* level, int32_t x, int32_t y, int32_t z) {
-		int32_t v9; // r3
-		if (!level->getData(x, y, z)) {
+		if (level->getData(x, y, z) == 0) {
 			if (level->isSolidBlockingTile(x - 1, y, z)) {
-				v9 = 1;
-				LABEL_12: level->setData(x, y, z, v9, 2);
-				goto LABEL_13;
-			}
-			if (level->isSolidBlockingTile(x + 1, y, z)) {
+				level->setData(x, y, z, 1, 2);
+			}else if (level->isSolidBlockingTile(x + 1, y, z)) {
 				level->setData(x, y, z, 2, 2);
-			} else {
-				if (level->isSolidBlockingTile(x, y, z - 1)) {
-					v9 = 3;
-					goto LABEL_12;
-				}
-				if (level->isSolidBlockingTile(x, y, z + 1)) {
-					v9 = 4;
-					goto LABEL_12;
-				}
-				if (this->isConnection(level, x, y - 1, z)) {
-					v9 = 5;
-					goto LABEL_12;
-				}
+			} else if (level->isSolidBlockingTile(x, y, z - 1)) {
+				level->setData(x, y, z, 3, 2);
+			}else if (level->isSolidBlockingTile(x, y, z + 1)) {
+				level->setData(x, y, z, 4, 2);
+			}else if (this->isConnection(level, x, y - 1, z)) {
+				level->setData(x, y, z, 5, 2);
 			}
 		}
-		LABEL_13: this->checkCanSurvive(level, x, y, z);
+		this->checkCanSurvive(level, x, y, z);
 	}
 	virtual HitResult clip(Level* level, int32_t x, int32_t y, int32_t z, const Vec3& a7, const Vec3& a8) {
-		int8_t v12; // r0
-		int32_t v14; // r0
-		float v16; // r1
-		float v18; // r2
-		float v19; // r3
-		float a5a; // [sp+0h] [bp-30h]
-		float a6a; // [sp+4h] [bp-2Ch]
-		float a7a; // [sp+8h] [bp-28h]
-		v12 = level->getData(x, y, z);
-		v14 = v12 & 7;
-		switch (v14) {
-		case 1:
-			v16 = 0.0;
-			a5a = 0.3;
-			a6a = 0.8;
-			a7a = 0.65;
-			LABEL_5: v18 = 0.2;
-			v19 = 0.35;
-			LABEL_11: this->setShape(v16, v18, v19, a5a, a6a, a7a);
-			break;
-		case 2:
-			a5a = 1.0;
-			v16 = 0.7;
-			a6a = 0.8;
-			a7a = 0.65;
-			goto LABEL_5;
-		case 3:
-			this->setShape(0.35, 0.2, 0.0, 0.65, 0.8, 0.3);
-			break;
-		case 4:
-			this->setShape(0.35, 0.2, 0.7, 0.65, 0.8, 1.0);
-			break;
-		default:
-			v16 = 0.4;
-			v18 = 0.0;
-			a5a = 0.6;
-			a6a = 0.6;
-			a7a = 0.6;
-			v19 = 0.4;
-			goto LABEL_11;
-		}
+		int v14 = level->getData(x, y, z) & 7;
+
+
+		if(v14 == 1) this->setShape(0.0f, 0.2f, 0.35f, 0.3f, 0.8f, 0.65f);
+		else if(v14 == 2) this->setShape(0.7f, 0.2f, 0.35f, 1.0f, 0.8f, 0.65f);
+		else if(v14 == 3) this->setShape(0.35f, 0.2f, 0.0f, 0.65f, 0.8f, 0.3f);
+		else if(v14 == 4) this->setShape(0.35f, 0.2f, 0.7f, 0.65f, 0.8f, 1.0f);
+		else this->setShape(0.4f, 0.0f, 0.4f, 0.6f, 0.6f, 0.6f);
+
 		return Tile::clip(level, x, y, z, a7, a8);
 	}
 	virtual int32_t getRenderLayer() {
 		return 0;
 	}
 	virtual int32_t getPlacementDataValue(Level* level, int32_t x, int32_t y, int32_t z, int32_t a6, float, float, float, Mob*, int32_t a11) {
-		switch (a6) {
-		case 1:
-			if (this->isConnection(level, x, y - 1, z)) {
-				return 5;
-			}
-			goto LABEL_19;
-		case 2:
-			if (level->isSolidBlockingTile(x, y, z + 1)) {
-				return 4;
-			}
-			goto LABEL_19;
-		case 3:
-			if (level->isSolidBlockingTile(x, y, z - 1)) {
-				return 3;
-			}
-			break;
-		case 4:
-			if (level->isSolidBlockingTile(x + 1, y, z)) {
-				return 2;
-			}
-			break;
-		default:
-			LABEL_19: if (a6 == 5) {
-				if (level->isSolidBlockingTile(x - 1, y, z)) {
-					return 1;
-				}
-			}
-			return a11;
-		}
+		if(a6 == 1 && this->isConnection(level, x, y - 1, z)) return 5;
+		if(a6 == 2 && level->isSolidBlockingTile(x, y, z + 1)) return 4;
+		if(a6 == 3 && level->isSolidBlockingTile(x, y, z - 1)) return 3;
+		if(a6 == 4 && level->isSolidBlockingTile(x + 1, y, z)) return 2;
+		if(a6 == 5 && level->isSolidBlockingTile(x - 1, y, z)) return 1;
+
 		return a11;
 	}
 };

@@ -6,7 +6,7 @@ TileEntityRenderer::TileEntityRenderer(void) {
 	this->dispatcher = 0;
 }
 void TileEntityRenderer::bindTexture(const std::string& a2) {
-	this->dispatcher->textures->loadAndBindTexture(a2);
+	if(this->dispatcher->textures) this->dispatcher->textures->loadAndBindTexture(a2);
 }
 Font* TileEntityRenderer::getFont() {
 	return this->dispatcher->getFont();

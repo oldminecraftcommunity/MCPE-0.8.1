@@ -8,9 +8,9 @@ struct MessagePacket : Packet{
 	RakNet::RakString source;
 	RakNet::RakString message;
 	MessagePacket(){}
-	MessagePacket(std::string message, std::string source) {
-		this->message = RakNet::RakString(message.c_str());
-		this->source = RakNet::RakString(source.c_str());
+	MessagePacket(const std::string& message, const std::string& source) {
+		this->message = RakNet::RakString::NonVariadic(message.c_str());
+		this->source = RakNet::RakString::NonVariadic(source.c_str());
 	}
 	virtual ~MessagePacket(){}
 	virtual void write(RakNet::BitStream* stream) {

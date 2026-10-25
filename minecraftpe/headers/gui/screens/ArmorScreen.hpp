@@ -24,7 +24,6 @@ struct ArmorScreen: Screen, Touch::IInventoryPaneCallback
 	int32_t field_1D0, field_1D4, field_1D8, field_1DC;
 	std::vector<const ItemInstance*> field_1E0;
 	bool_t performUpdate;
-	int8_t field_1ED, field_1EE, field_1EF;
 	NinePatchLayer* field_1F0;
 	NinePatchLayer* field_1F4;
 	NinePatchLayer* field_1F8;

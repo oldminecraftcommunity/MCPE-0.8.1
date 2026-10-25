@@ -6,14 +6,13 @@ struct App : AppPlatform::Listener{
 
 	bool initialized;
 	bool wantsToQuit;
-	char field_2, field_3;
 	AppContext context;
-	int8_t field_18, field_19, field_1A, field_1B;
+	bool field_18;
 	int32_t width, height, field_24, field_28, field_2C;
 	int field_30;
 	int field_34;
 
-	void init(AppContext& ctx){
+	noinline void init(AppContext& ctx){
 		this->context = ctx;
 		this->init();
 		this->initialized = 1;

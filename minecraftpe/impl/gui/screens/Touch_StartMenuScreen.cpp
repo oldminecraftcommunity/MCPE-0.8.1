@@ -338,13 +338,11 @@ void Touch::StartMenuScreen::_updateLicense(){
 	bool_t v4;
 	int32_t licenseId = this->minecraft->getLicenseId();
 	if(licenseId < 0) v4 = 0;
-	else{
-		if((uint32_t)licenseId > 1){
-			this->minecraft->setScreen(new InvalidLicenseScreen(licenseId, this->minecraft->platform()->hasBuyButtonWhenInvalidLicense()));
-			return;
-		}
-		v4 = 1;
-	}
+	else if(licenseId > 1) {
+		this->minecraft->setScreen(new InvalidLicenseScreen(licenseId, this->minecraft->platform()->hasBuyButtonWhenInvalidLicense()));
+		return;
+	} else v4 = 1;
+
 	this->playOnRealmsButton.active = v4;
 	this->playButton.active = v4;
 }

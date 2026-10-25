@@ -4,8 +4,8 @@
 namespace Touch {
 	struct PromotionStartMenuScreen: Touch::StartMenuScreen
 	{
-		Button* playButton2;
-		Button* realmsButton2;
+		Button* creativeButton;
+		Button* survivalButton;
 
 		virtual ~PromotionStartMenuScreen() {
 		}

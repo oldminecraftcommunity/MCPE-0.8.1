@@ -25,7 +25,7 @@ struct Minecraft : App{
 	static char_t* progressMessages[];
 
 	Options options;
-	int8_t field_16C, field_16D, field_16E, field_16F;
+	bool field_16C;
 	struct LevelRenderer* levelRenderer;
 	struct GameRenderer* gameRenderer;
 	struct ParticleEngine* particleEngine;
@@ -45,12 +45,12 @@ struct Minecraft : App{
 	int field_C5C;
 	User* user;
 	struct Level* level;
-	struct LocalPlayer* player; //TODO needs 1 field before this thing somewhere
+	struct LocalPlayer* player;
 	struct IInputHolder *inputHolder;
 	struct Mob* viewEntity;
 	CThread* prepareLevelThread;
 	Screen* currentScreen;
-	std::shared_ptr<Screen> field_C7C;
+	std::shared_ptr<Screen> field_C7C;  //TODO not shared_ptr?
 	bool mouseGrabbed;
 	float pixelsPerMillimeter;
 	float field_C88;
@@ -65,13 +65,12 @@ struct Minecraft : App{
 	bool field_CF4, levelGenerated, field_CF6, field_CF7;
 	struct LevelStorageSource* levelStorageSource;
 	bool levelSelected, powerVR;
-	int8_t field_CFE, field_CFF;
 	std::string field_D00;
 	int32_t progressMessageIndex;
 	int32_t field_D08; //buildActionDelay?
 	int32_t field_D0C;
 	int32_t field_D10;
-	int8_t field_D14, field_D15, field_D16, field_D17;
+	bool field_D14, field_D15;
 	struct Screen* field_D18;
 	int32_t license;
 	bool supportsNonTouchScreen;
