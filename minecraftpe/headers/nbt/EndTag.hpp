@@ -9,7 +9,7 @@ struct EndTag : public Tag{
 	}
 	virtual void load(IDataInput*) {
 	}
-	virtual int32_t getId(void) const {
+	virtual char getId(void) const {
 		return 0;
 	}
 	virtual std::string toString(void) const {

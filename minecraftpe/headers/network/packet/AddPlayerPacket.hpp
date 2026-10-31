@@ -61,8 +61,7 @@ struct AddPlayerPacket : Packet{
 		stream->Write<int8_t>(PacketUtil::Rot_degreesToChar(this->pitch));
 		stream->Write<int16_t>(this->itemId);
 		stream->Write<int16_t>(this->itemAuxValue);
-		RakDataOutput v7;
-		v7.bitStream = stream;
+		RakDataOutput v7(stream);
 		this->dataToSend->packAll(&v7);
 	}
 	virtual void read(RakNet::BitStream* stream) {

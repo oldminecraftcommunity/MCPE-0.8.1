@@ -168,16 +168,16 @@ void Gui::addMessage(const std::string& a2, const std::string& a3, int32_t a4) {
 
 	if(this->minecraftInst->font) {
 		const GuiMessage v13(a2, a3, a4);
-		this->chatMessages.emplace(this->chatMessages.begin(), v13);
+		this->chatMessages.insert(this->chatMessages.begin(), v13);
 
 		if(!this->minecraftInst->isOnlineClient() && v13.message[0] == '/') {
-			std::string v10 = *this->minecraftInst->serverCmdParser->executeCommand(v13);
-
-			this->chatMessages.emplace(this->chatMessages.begin(), GuiMessage("server", v10, 200));
+			this->chatMessages.insert(
+				this->chatMessages.begin(),
+				GuiMessage("server", *this->minecraftInst->serverCmdParser->executeCommand(v13), 200)
+			);
 		}
 
-		while(1) { //TODO check
-			if(this->chatMessages.size() <= 30) break;
+		while(this->chatMessages.size() > 30) {
 			this->chatMessages.pop_back();
 		}
 	}
@@ -199,34 +199,18 @@ int32_t Gui::getNumSlots() {
 	return this->slotsAmount;
 }
 RectangleArea Gui::getRectangleArea(int32_t a3) {
-	int32_t v6;				  // s12
-	int32_t slots;		  // r0
-	float v8;				  // s16
-	Minecraft* minecraftInst; // r3
-	float v10;				  // s15
-	float v11;				  // s14
-	float v12;				  // s13
-	int32_t v13;			  // s12
-	int32_t v14;			  // s13
-
-	v6 = this->minecraftInst->width / 2;
-	slots = this->getNumSlots();
-	v8 = (float)v6 + 2.0;
-	minecraftInst = this->minecraftInst;
-	v10 = (float)((float)(10 * slots + 3) + 1.0) * Gui::GuiScale;
-	v11 = Gui::GuiScale * 25.0;
+	int cx = this->minecraftInst->width / 2;
+	float v8 = (float)cx + 2.0;
+	float v10 = ((float)(10 * this->getNumSlots() + 3) + 1.0f) * Gui::GuiScale;
+	float v11 = Gui::GuiScale * 25.0f;
+	float v12 = (float)this->minecraftInst->height;
 	if(a3 < 0) {
-		v12 = (float)minecraftInst->height;
 		return RectangleArea(1, 0, v12 - v11, (float)(v8 + v10) + 2, v12);
 	}
-	if(!a3) {
-		v14 = minecraftInst->height;
-		v12 = (float)v14;
+	if(a3 == 0) {
 		return RectangleArea(1, v8 - v10, v12 - v11, (float)(v8 + v10) + 2, v12);
 	}
-	v12 = (float)minecraftInst->height;
-	v13 = minecraftInst->width;
-	return RectangleArea(1, v8 - v10, v12 - v11, v13, v12);
+	return RectangleArea(1, v8 - v10, v12 - v11, this->minecraftInst->width, v12);
 }
 int32_t Gui::getSlotIdAt(int32_t a2, int32_t a3) {
 	int32_t v5 = (int32_t)(this->minecraftInst->width * Gui::InvGuiScale);
@@ -282,29 +266,15 @@ void Gui::handleClick(int32_t a2, int32_t a3, int32_t a4) {
 		}
 	}
 }
-void Gui::handleKeyPressed(int32_t a2) {
-	Inventory* inventory; // r3
-	int32_t selectedSlot; // r2
-
-	switch(a2) {
-		case 99:
-			inventory = this->minecraftInst->player->inventory;
-			selectedSlot = inventory->selectedSlot;
-			if(selectedSlot <= 0) {
-				return;
-			}
-			inventory->selectedSlot = selectedSlot - 1;
-			return;
-		case 4:
-			if(this->minecraftInst->player->inventory->selectedSlot >= this->getNumSlots() - 2) {
-				return;
-			}
-			inventory = this->minecraftInst->player->inventory;
-			inventory->selectedSlot = inventory->selectedSlot + 1;
-			break;
-		case 100:
-			this->minecraftInst->screenChooser.setScreen(ScreenId::INVENTORY_SCREEN);
-			break;
+void Gui::handleKeyPressed(int32_t key) {
+	if(key == 99) { //prevslot
+		if(this->minecraftInst->player->inventory->selectedSlot <= 0) return;
+		this->minecraftInst->player->inventory->selectedSlot -= 1;
+	}else if(key == 4){ //nextslot
+		if(this->minecraftInst->player->inventory->selectedSlot >= this->getNumSlots() - 2) return;
+		this->minecraftInst->player->inventory->selectedSlot += 1;
+	}else if(key == 100){ //inventory
+		this->minecraftInst->screenChooser.setScreen(ScreenId::INVENTORY_SCREEN);
 	}
 }
 void Gui::inventoryUpdated() {
@@ -709,10 +679,8 @@ void Gui::renderSlot(int32_t a2, int32_t a3, int32_t a4, float a5) {
 	}
 }
 void Gui::renderSlotText(const struct ItemInstance* a2, float a3, float a4, bool_t a5, bool_t shadow) {
-	char_t v15[4]; // [sp+Ch] [bp-1Ch] BYREF
-
 	if(a2->count > 1) {
-		v15[0] = v15[1] = v15[2] = v15[3] = 0; //float?
+		char_t v15[4] = {0};
 		if(a5) {
 			Gui::itemCountItoa(v15, a2->count);
 		} else {

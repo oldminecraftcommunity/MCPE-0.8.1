@@ -82,4 +82,8 @@ struct ItemInstance{
 	void useAsFuel();
 	bool_t useOn(Player*, Level*, int32_t, int32_t, int32_t, int32_t, float, float, float);
 	ItemInstance useTimeDepleted(Level*, Player*);
+
+	bool_t isItem(const Item* a2) {
+		return a2 == this->itemClass && a2;
+	}
 };

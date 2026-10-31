@@ -47,12 +47,10 @@ AppPlatform::AppPlatform(void){
 #endif
 }
 void AppPlatform::loadTGA(ImageData& data, const std::string& path, bool_t a4){
-	int32_t v6;
-	v6 = a4;
+	int v6;
 	uint8_t* pxls = stbi_load(path.c_str(), &data.width, &data.height, &v6, 0);
 	data.field_C = v6 == 3;
 	data.pixels = pxls;
-
 }
 
 int32_t AppPlatform::getPreloadingHTMLLength(void){
@@ -69,7 +67,7 @@ void AppPlatform::loadImage(ImageData& image, const std::string& name, bool_t a4
 }
 TextureData AppPlatform::loadTexture(const std::string& a3, bool_t a4){
 
-	int v5 = 0;
+	int lod = 0;
 	TextureData data;
 
 
@@ -84,13 +82,11 @@ TextureData AppPlatform::loadTexture(const std::string& a3, bool_t a4){
 
 		if(AppPlatform::TEXTURE_MAX_LEVEL){
 			while(1){
-				++v5;
-				ImageData v20;
-				memset(&v20, 0, 16+sizeof(void*));
-				v20.lod = v5;
+				++lod;
+				ImageData v20(lod);
 				std::string v19 = v18;
 				v19 += "_mip";
-				v19 += (v5 + '/');
+				v19 += (lod + '/');
 				v19 += v17;
 				this->loadImage(v20, v19, a4);
 				if(!v20.pixels) break;

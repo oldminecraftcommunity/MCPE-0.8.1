@@ -19,7 +19,7 @@ struct StringTag : public Tag{
 	virtual void load(IDataInput* in) {
 		this->value = in->readString();
 	}
-	virtual int32_t getId(void) const {
+	virtual char getId(void) const {
 		return 8;
 	}
 	virtual std::string toString(void) const {

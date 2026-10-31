@@ -19,23 +19,15 @@ StartMenuScreen::StartMenuScreen()
 	this->gameVersion = "";
 }
 void StartMenuScreen::_updateLicense() {
-	int32_t lide;		  // r0
-	int32_t v3;			  // r6
-	bool_t v4;			  // r3
-	int8_t v6;			  // r0
-	Minecraft* minecraft; // r7
-	int8_t v8;			  // r8
+	bool_t v4;
 
-	lide = this->minecraft->getLicenseId();
-	v3 = lide;
+	int lide = this->minecraft->getLicenseId();
 	if(lide < 0) {
 		v4 = 0;
 	} else {
 		if((uint32_t)lide > 1) {
-			v6 = this->minecraft->platform()->hasBuyButtonWhenInvalidLicense();
-			minecraft = this->minecraft;
-			v8 = v6;
-			minecraft->setScreen(new InvalidLicenseScreen(v3, v8));
+			bool v6 = this->minecraft->platform()->hasBuyButtonWhenInvalidLicense();
+			this->minecraft->setScreen(new InvalidLicenseScreen(lide, v6));
 			return;
 		}
 		v4 = 1;

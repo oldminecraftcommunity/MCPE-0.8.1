@@ -5,7 +5,7 @@
 #include <util/output/IDataOutput.hpp>
 
 struct ByteTag : public Tag{
-	int8_t value;
+	char value;
 
 	ByteTag(const std::string& s, int8_t v) : Tag(s){
 		this->value = v;
@@ -20,7 +20,7 @@ struct ByteTag : public Tag{
 	virtual void load(IDataInput* in){
 		this->value = in->readByte();
 	}
-	virtual int32_t getId(void) const{
+	virtual char getId(void) const{
 		return 1;
 	}
 	virtual std::string toString() const{

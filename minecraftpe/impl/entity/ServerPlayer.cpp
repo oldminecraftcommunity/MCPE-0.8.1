@@ -166,7 +166,6 @@ void ServerPlayer::slotChanged(BaseContainerMenu* a2, int32_t a3, const ItemInst
 	}
 }
 void ServerPlayer::refreshContainer(BaseContainerMenu* a2, const std::vector<ItemInstance>& a3) {
-	//TODO it uses different ContainerSetContentPacket contructor (that is probably not implemented)
 	ContainerSetContentPacket v10(a2->field_0, a2->getItems(), 0); //inlined
-	this->minecraft->rakNetInstance->send(v10);
+	this->minecraft->rakNetInstance->send(this->rakNetGUID, v10);
 }

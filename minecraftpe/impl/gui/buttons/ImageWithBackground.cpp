@@ -44,8 +44,8 @@ void ImageWithBackground::render(struct Minecraft* mc, int32_t x, int32_t y){
 			}
 		}
 		this->renderBg(mc, x, y);
-		if(this->image.field_0.size()){
-			if(mc->texturesPtr->loadAndBindTexture(this->image.field_0)){
+		if(this->image.texture.size()){
+			if(mc->texturesPtr->loadAndBindTexture(this->image.texture)){
 				Tesselator::instance.begin(4);
 				int32_t col;
 				if(this->active) col = 0xffffffff;
@@ -53,9 +53,9 @@ void ImageWithBackground::render(struct Minecraft* mc, int32_t x, int32_t y){
 				Tesselator::instance.color(col);
 				int32_t width = this->image.width;
 				int32_t height = this->image.height;
-				float v15 = (((float)this->posX + (float)this->image.field_4) + (float)(width*0.5)) + ((float)this->width - width)*0.5;
+				float v15 = (((float)this->posX + (float)this->image.xOff) + (float)(width*0.5)) + ((float)this->width - width)*0.5;
 				float v16 = height*0.5;
-				float v17 = (((float)this->posY + (float)this->image.field_8) + (float)(height*0.5)) + ((float)this->height - height)*0.5;
+				float v17 = (((float)this->posY + (float)this->image.yOff) + (float)(height*0.5)) + ((float)this->height - height)*0.5;
 				float v18 = this->field_6C;
 				float v19;
 				if(active){
@@ -66,23 +66,23 @@ void ImageWithBackground::render(struct Minecraft* mc, int32_t x, int32_t y){
 					if((float)(v18+0.025) >= 1.0) v19 = 1;
 				}
 
-				int32_t v20 = this->image.field_24;
+				int32_t v20 = this->image.initialized;
 				this->field_6C = v19;
 				float v21 = this->field_6C;
 				float v22 = (float)(width*0.5)*v21;
 				float v23 = v16*v21;
 				if(v20){
-					TextureData* td = mc->texturesPtr->loadAndGetTextureData(this->image.field_0);
+					TextureData* td = mc->texturesPtr->loadAndGetTextureData(this->image.texture);
 					if(td){
-						int32_t v25 = this->image.field_18;
+						int32_t v25 = this->image.texYStart;
 						float v26 = td->image.width;
-						float v27 = (float)this->image.field_14/v26;
-						float v28 = (float)(this->image.field_14+this->image.field_1C)/v26;
+						float v27 = (float)this->image.texXStart/v26;
+						float v28 = (float)(this->image.texXStart+this->image.texWidth)/v26;
 						float v29 = td->image.height;
 						float v30 = v27+0.001;
 						float v31 = v17-v23;
 						float v32 = v28-0.001;
-						float v33 = ((float)(v25 + this->image.field_20)/v29) - 0.001;
+						float v33 = ((float)(v25 + this->image.texHeight)/v29) - 0.001;
 						Tesselator::instance.vertexUV(v15-v22, v17-v23, this->zLayer, v30, ((float)v25/v29)+0.001);
 						float v34 = v17+v23;
 						Tesselator::instance.vertexUV(v15-v22, v34, this->zLayer, v30, v33);

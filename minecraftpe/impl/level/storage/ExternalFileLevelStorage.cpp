@@ -161,8 +161,7 @@ bool_t ExternalFileLevelStorage::writeLevelData(const std::string& a1, LevelData
 		if(a2.getStorageVersion() == 1) {
 			a2.v1_write(v14);
 		} else {
-			RakDataOutput v13;
-			v13.bitStream = &v14;
+			RakDataOutput v13(&v14);
 			Tag* tag;
 			if(a3 && !a3->empty()) {
 				tag = a2.createTag(*a3);
@@ -241,8 +240,7 @@ bool_t ExternalFileLevelStorage::load(Player* a2) {
 static int _d6753BB8 = 0x524C50;
 bool_t ExternalFileLevelStorage::save(Player* a2) {
 	RakNet::BitStream v12;
-	RakDataOutput v10;
-	v10.bitStream = &v12;
+	RakDataOutput v10(&v12);
 	{
 		CompoundTag v11;
 		a2->saveWithoutId(&v11);
@@ -454,8 +452,7 @@ void ExternalFileLevelStorage::saveEntities(Level* a2, LevelChunk* a3) {
 	v22.put("Entities", v6);
 	v22.put("TileEntities", v11);
 	RakNet::BitStream v23;
-	RakDataOutput a1;
-	a1.bitStream = &v23;
+	RakDataOutput a1(&v23);
 	Tag::writeNamedTag(&v22, &a1);
 	int n = v23.GetNumberOfBytesUsed();
 	FILE* v15 = fopen((this->anotherDataFolder + "/entities.dat").c_str(), "wb");

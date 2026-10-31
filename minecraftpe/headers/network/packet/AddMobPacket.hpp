@@ -42,9 +42,7 @@ struct AddMobPacket : Packet{
 		}
 	}
 	virtual void write(RakNet::BitStream* stream) {
-		SynchedEntityData* synchedData;
 		int8_t p;
-		RakDataOutput input;
 
 		stream->Write<uint8_t>(PID_ADD_MOB_PACKET);
 		stream->Write<int32_t>(this->eid);
@@ -56,9 +54,8 @@ struct AddMobPacket : Packet{
 		stream->Write<int8_t>(p);
 		p = PacketUtil::Rot_degreesToChar(this->yaw);
 		stream->Write<int8_t>(p);
-		synchedData = this->synchedData;
-		input.bitStream = stream;
-		synchedData->packAll(&input);
+		RakDataOutput out(stream);
+		this->synchedData->packAll(&out);
 	}
 	virtual void read(RakNet::BitStream* stream) {
 		int32_t v4;

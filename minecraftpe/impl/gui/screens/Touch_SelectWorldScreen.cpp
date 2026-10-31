@@ -23,14 +23,14 @@ Touch::SelectWorldScreen::SelectWorldScreen()
 	this->field_54.active = 0;
 	{
 		ImageDef a3;
-		a3.field_0 = "gui/touchgui.png";
-		a3.field_24 = 1;
+		a3.texture = "gui/touchgui.png";
+		a3.initialized = 1;
 		a3.width = 34;
-		a3.field_18 = 0;
+		a3.texYStart = 0;
 		a3.height = 26;
-		a3.field_14 = 150;
-		a3.field_1C = 34;
-		a3.field_20 = 26;
+		a3.texXStart = 150;
+		a3.texWidth = 34;
+		a3.texHeight = 26;
 		this->field_54.setImageDef(a3, 1);
 	}
 }
@@ -44,7 +44,7 @@ std::string Touch::SelectWorldScreen::getUniqueLevelName(const std::string& a3) 
 		if(v14.find(ret) == v14.end()) {
 			break;
 		}
-		ret += '-';
+		ret += "-";
 	}
 	return ret;
 }
@@ -64,10 +64,11 @@ Touch::SelectWorldScreen::~SelectWorldScreen() {
 }
 void Touch::SelectWorldScreen::render(int32_t mx, int32_t my, float pt) {
 	this->renderBackground(0);
+	this->selectionList->setComponentSelected(this->field_168.highlight);
 	if(this->field_1A8) {
 		this->selectionList->render(mx, my, pt);
 	} else {
-		this->selectionList->render((uint8_t)this->field_1A8, (uint8_t)this->field_1A8, pt);
+		this->selectionList->render(0, 0, pt);
 		this->field_1A8 = Mouse::getButtonState(1) == 0;
 	}
 	Screen::render(mx, my, pt);

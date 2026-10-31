@@ -24,8 +24,7 @@ struct EntityDataPacket : Packet{
 		stream->Write<int16_t>(this->x);
 		stream->Write<uint8_t>(this->y);
 		stream->Write<int16_t>(this->z);
-		RakDataOutput v7;
-		v7.bitStream = stream;
+		RakDataOutput v7(stream);
 		Tag::writeNamedTag(&this->data, &v7);
 	}
 	virtual void read(RakNet::BitStream* stream) {

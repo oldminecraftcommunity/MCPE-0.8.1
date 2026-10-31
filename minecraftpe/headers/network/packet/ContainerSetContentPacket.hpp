@@ -3,18 +3,21 @@
 #include <vector>
 #include <util/PacketUtil.hpp>
 #include <network/NetEventCallback.hpp>
+#include <inventory/BaseContainerMenu.hpp>
 
 struct ItemInstance;
 struct ContainerSetContentPacket: Packet
 {
-	uint8_t field_C, field_D, field_E, field_F;
+	uint8_t field_C;
 	std::vector<ItemInstance> field_10;
 	std::vector<int32_t> field_1C;
 	ContainerSetContentPacket() {
 	}
-	ContainerSetContentPacket(int32_t a2, const std::vector<ItemInstance>& a3, int32_t a4) {
-		this->field_C = a2;
-		this->field_10 = a3;
+	ContainerSetContentPacket(BaseContainerMenu*){
+
+	}
+	ContainerSetContentPacket(int32_t a2, const std::vector<ItemInstance>& a3, int32_t a4) : field_C(a2), field_10(a3.begin() + a4, a3.end()) {
+
 	}
 	virtual ~ContainerSetContentPacket() {
 	}

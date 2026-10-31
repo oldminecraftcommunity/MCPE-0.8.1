@@ -16,12 +16,8 @@ ModelPart::ModelPart(const std::string& a2): noFaceCull(0), field_38(a2), texOff
 	this->_init(64, 32);
 }
 void ModelPart::_init(int32_t texWidth, int32_t texHeight) {
-	this->zOffset = 0;
-	this->yOffset = 0;
-	this->xOffset = 0;
-	this->zRotAngle = 0;
-	this->yRotAngle = 0;
-	this->xRotAngle = 0;
+	this->xOffset = this->yOffset = this->zOffset = 0;
+	this->xRotAngle = this->yRotAngle = this->zRotAngle = 0;
 	this->texWidth = texWidth;
 	this->texHeight = texHeight;
 	this->field_50 = 0;

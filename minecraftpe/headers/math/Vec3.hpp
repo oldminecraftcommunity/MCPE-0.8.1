@@ -94,7 +94,7 @@ struct Vec3{
 	}
 	Vec3 normalized(void) const {
 		float length;
-		length = sqrt((this->y * this->y) + (this->x * this->x) + (this->z * this->z));
+		length = sqrt((this->x * this->x) + (this->y * this->y) + (this->z * this->z));
 		if (length >= 0.0001f) {
 			return Vec3(this->x / length, this->y / length, this->z / length);
 		}
@@ -114,5 +114,15 @@ struct Vec3{
 
 		this->y = (zCoord * v5) + (yCoord * v4);
 		this->z = (zCoord * v4) + (yCoord * v5);
+	}
+
+	Vec3 add(const Vec3& v) const {
+		return Vec3(this->x + v.x, this->y + v.y, this->z + v.z);
+	}
+	Vec3 sub(const Vec3& v) const {
+		return Vec3(this->x - v.x, this->y - v.y, this->z - v.z);
+	}
+	Vec3 mul(float f) const {
+		return Vec3(this->x * f, this->y * f, this->z * f);
 	}
 };

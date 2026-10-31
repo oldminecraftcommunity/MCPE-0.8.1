@@ -105,7 +105,7 @@ MouseAction* MouseDevice::getEvent(){
 void Mouse::reset(){
 	return Mouse::_instance.reset();
 }
-int32_t Mouse::getButtonState(int32_t b){
+uint8_t Mouse::getButtonState(int32_t b){
 	return Mouse::_instance.getButtonState(b);
 }
 bool_t Mouse::isButtonDown(int32_t b){

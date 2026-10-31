@@ -6,14 +6,13 @@
 #include <util/input/IDataInput.hpp>
 #include <util/output/IDataOutput.hpp>
 #include <string.h>
+#include <sstream>
 
 struct ByteArrayTag : public Tag{
 	int8_t* value;
 	int32_t count;
 
-	ByteArrayTag(const std::string& n, int8_t* arr, int32_t length) : Tag(n){
-		this->value = arr;
-		this->count = length;
+	ByteArrayTag(const std::string& n, int8_t* arr, int32_t length) : Tag(n), value(arr), count(length){
 	}
 	ByteArrayTag(const std::string& s)
 		: Tag(s) {
@@ -32,14 +31,13 @@ struct ByteArrayTag : public Tag{
 
 		in->readBytes(this->value, n);
 	}
-	virtual int32_t getId(void) const{
+	virtual char getId(void) const{
 		return 7;
 	}
 	virtual std::string toString() const{
-		std::string result = "[";
-		result += this->count;
-		result += " bytes]";
-		return result;
+		std::stringstream ss;
+		ss << "[" << this->count << " bytes]";
+		return ss.str();
 	}
 	virtual Tag* copy(void) const {
 		int8_t* arr = new int8_t[this->count];

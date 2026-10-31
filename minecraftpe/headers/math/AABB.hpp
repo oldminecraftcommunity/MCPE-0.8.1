@@ -193,4 +193,14 @@ struct AABB{
 	bool contains(const Vec3& vec){
 		return vec.x > this->minX && vec.x < this->maxX && vec.y > this->minY && vec.y < this->maxY && vec.z > this->minZ && vec.z < this->maxZ;
 	}
+	//this method name was made up
+	void assign(Vec3 start, Vec3 add) {
+		Vec3 end = start.add(add);
+		this->minX = start.x;
+		this->minY = start.y;
+		this->minZ = start.z;
+		this->maxX = end.x;
+		this->maxY = end.y;
+		this->maxZ = end.z;
+	}
 };

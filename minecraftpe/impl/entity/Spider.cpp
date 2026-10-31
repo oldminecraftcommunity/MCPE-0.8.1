@@ -67,20 +67,16 @@ Entity* Spider::findAttackTarget() {
 	return this->level->getNearestPlayer(this, 16);
 }
 void Spider::checkHurtTarget(Entity* a2, float a3) {
-	float diffX; // s17
-	float diffZ; // s16
-	float dist2; // s12
-
-	if(this->getBrightness(1.0) <= 0.5 || this->random.genrand_int32() % 0x64) {
-		if(a3 <= 2.0 || a3 >= 6.0 || this->random.genrand_int32() % 0xA) {
+	if(this->getBrightness(1.0) <= 0.5f || this->random.nextInt(100)) {
+		if(a3 <= 2.0f || a3 >= 6.0f || this->random.nextInt(10) != 0) {
 			Monster::checkHurtTarget(a2, a3);
 		} else if(this->onGround) {
-			diffX = a2->posX - this->posX;
-			diffZ = a2->posZ - this->posZ;
-			this->motionY = 0.4;
-			dist2 = sqrt((float)((float)(diffZ * diffZ) + (float)(diffX * diffX)));
-			this->motionX = (float)(this->motionX * 0.2) + (float)((float)((float)(diffX / dist2) * 0.5) * 0.8);
-			this->motionZ = (float)(this->motionZ * 0.2) + (float)((float)((float)(diffZ / dist2) * 0.5) * 0.8);
+			float diffX = a2->posX - this->posX;
+			float diffZ = a2->posZ - this->posZ;
+			this->motionY = 0.4f;
+			float dist2 = sqrt((diffX * diffX) + (diffZ * diffZ));
+			this->motionX = (this->motionX * 0.2f) + ((diffX / dist2) * 0.5f) * 0.8f;
+			this->motionZ = (this->motionZ * 0.2f) + ((diffZ / dist2) * 0.5f) * 0.8f;
 		}
 	} else {
 		this->attackTarget = 0;

@@ -5,6 +5,7 @@
 #include <entity/ItemEntity.hpp>
 #include <tile/material/Material.hpp>
 #include <rendering/TextureAtlasTextureItem.hpp>
+#include <math/Mth.hpp>
 
 ChestTile::ChestTile(int32_t id)
 	: EntityTile(id, Material::wood) {
@@ -35,56 +36,33 @@ bool_t ChestTile::isSolidRender() {
 	return 0;
 }
 void ChestTile::onRemove(Level* level, int32_t x, int32_t y, int32_t z) {
-	ChestTileEntity* te; // r0
-	ChestTileEntity* v8; // r6
-	int32_t n;			 // r7
-	ItemInstance* v10;	 // r9
-	float v11;			 // s14
-	float v12;			 // s22
-	float v13;			 // s14
-	float v14;			 // s23
-	float v15;			 // s14
-	int32_t v16;		 // r1
-	int32_t count;		 // r8
-	Item* itemClass;	 // r1
-	int32_t auxValue;	 // r0
-	ItemEntity* v20;	 // r8
-	Item* v21;			 // [sp+Ch] [bp-74h]
+	TileEntity* te = (ChestTileEntity*)level->getTileEntity(x, y, z);
+	if(te && te->type == 2) {
+		ChestTileEntity* chest = (ChestTileEntity*)te;
+		chest->unpair();
+		if(!level->isClient) {
+			for(int n = 0; n < chest->getContainerSize(); ++n) {
+				ItemInstance* it = chest->getItem(n);
+				if(it) {
+					float xo = this->random.nextFloat() * 0.8f + 0.1f;
+					float yo = this->random.nextFloat() * 0.8f + 0.1f;
+					float zo = this->random.nextFloat() * 0.8f + 0.1f;
+					while(it->count > 0) {
+						int v16 = this->random.nextInt(21) + 10;
+						int count = v16 < it->count ? v16 : it->count;
+						it->count -= count;
 
-	te = (ChestTileEntity*)level->getTileEntity(x, y, z);
-	v8 = te;
-	if(te) {
-		if(te->type == 2) {
-			te->unpair();
-			n = 0;
-			if(!level->isClient) {
-				while(n < v8->getContainerSize()) {
-					v10 = (ItemInstance*)v8->getItem(n);
-					if(v10) {
-						v11 = this->random.nextFloat();
-						v12 = (float)(v11 * 0.8) + 0.1;
-						v13 = this->random.nextFloat();
-						v14 = (float)(v13 * 0.8) + 0.1;
-						v15 = this->random.nextFloat();
-						while(v10->count > 0) {
-							v16 = this->random.genrand_int32() % 0x15 + 10;
-							if(v16 >= v10->count) {
-								count = v10->count;
-							} else {
-								count = v16;
-							}
-							itemClass = v10->itemClass;
-							v10->count -= count;
-							v21 = itemClass;
-							auxValue = v10->getAuxValue();
-							v20 = new ItemEntity(level, (float)x + v12, (float)y + v14, (float)z + (float)((float)(v15 * 0.8) + 0.1), ItemInstance(v21, count, auxValue));
-							v20->motionX = this->random.nextGaussian() * 0.05;
-							v20->motionY = (float)(this->random.nextGaussian() * 0.05) + 0.2;
-							v20->motionZ = this->random.nextGaussian() * 0.05;
-							level->addEntity(v20);
-						}
+						ItemEntity* e = new ItemEntity(level,
+							x + xo,
+							y + yo,
+							z + zo,
+							ItemInstance(it->itemClass, count, it->getAuxValue())
+						);
+						e->motionX = this->random.nextGaussian() * 0.05f;
+						e->motionY = this->random.nextGaussian() * 0.05f + 0.2f;
+						e->motionZ = this->random.nextGaussian() * 0.05f;
+						level->addEntity(e);
 					}
-					++n;
 				}
 			}
 		}
@@ -103,16 +81,10 @@ bool_t ChestTile::use(Level* level, int32_t x, int32_t y, int32_t z, Player* pla
 	return 1;
 }
 int32_t ChestTile::getPlacementDataValue(Level*, int32_t, int32_t, int32_t, int32_t, float, float, float, struct Mob* a10, int32_t a11) {
-	float v11 = ((a10->yaw * 4) / 360.0) + 0.5;
-	int32_t v12 = (int32_t)v11;
-	if(v11 < (float)(int32_t)v11) v12 = v12 - 1;
-	switch(v12 & 3) {
-		case 0:
-			return a11 | 2;
-		case 1:
-			return a11 | 5;
-		case 2:
-			return a11 | 3;
-	}
+	float dir = ((a10->yaw * 4) / 360.0f) + 0.5f;
+	int32_t v12 = Mth::floor(dir) & 3;
+	if(v12 == 0) return a11 | 2;
+	if(v12 == 1) return a11 | 5;
+	if(v12 == 2) return a11 | 3;
 	return a11 | 4;
 }

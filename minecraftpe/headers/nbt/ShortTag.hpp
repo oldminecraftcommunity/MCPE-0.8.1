@@ -19,7 +19,7 @@ struct ShortTag : public Tag{
 	virtual void load(IDataInput* in) {
 		this->value = in->readShort();
 	}
-	virtual int32_t getId(void) const {
+	virtual char getId(void) const {
 		return 2;
 	}
 	virtual std::string toString(void) const {

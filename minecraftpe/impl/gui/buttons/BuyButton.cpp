@@ -7,17 +7,7 @@
 #include <rendering/Tesselator.hpp>
 
 BuyButton::BuyButton(int32_t n) : ImageButton(n, ""){
-	ImageDef img;
-	img.field_0 = "";
-	img.field_4 = 0;
-	img.field_8 = 0;
-	img.field_14 = 64;
-	img.field_18 = 182;
-	img.field_1C = 190;
-	img.field_20 = 55;
-	img.width = 75;
-	img.height = 21.711;
-	this->setImageDef(img, 1);
+	this->setImageDef(ImageDef("gui/gui.png", 0, 0, 75, 21.711f, 64, 182, 190, 55), 1);
 }
 
 void BuyButton::render(Minecraft* mc, int32_t x, int32_t y){
@@ -29,8 +19,8 @@ void BuyButton::render(Minecraft* mc, int32_t x, int32_t y){
 	}
 	this->renderBg(mc, x, y);
 	std::string s;
-	if(this->image.field_0.size()){
-		s = this->image.field_0;
+	if(this->image.texture.size()){
+		s = this->image.texture;
 	}else{
 		s = Util::EMPTY_STRING;
 	}
@@ -45,9 +35,9 @@ void BuyButton::render(Minecraft* mc, int32_t x, int32_t y){
 		}
 		Tesselator::instance.color(color);
 		int32_t v13 = this->posX;
-		int32_t v14 = this->image.field_4;
+		int32_t v14 = this->image.xOff;
 		int32_t v15 = this->posY;
-		int32_t v16 = this->image.field_8;
+		int32_t v16 = this->image.yOff;
 		float v17 = this->image.width*0.5;
 		float v18 = this->image.height*0.5;
 		float v19, v20;
@@ -61,15 +51,15 @@ void BuyButton::render(Minecraft* mc, int32_t x, int32_t y){
 
 		TextureData* td = mc->texturesPtr->loadAndGetTextureData(s);
 
-		if(this->image.field_24){
+		if(this->image.initialized){
 			if(td){
 				float width = td->image.width;
 				float v23 = (v13+v14) + v17;
-				int32_t v24 = this->image.field_18;
-				float v25 = (float)this->image.field_14/width;
-				float v26 = (float)(this->image.field_14 + this->image.field_1C) / width;
+				int32_t v24 = this->image.texYStart;
+				float v25 = (float)this->image.texXStart/width;
+				float v26 = (float)(this->image.texXStart + this->image.texWidth) / width;
 				float height = (float) td->image.height;
-				float v28 = (float)(v24 + this->image.field_20) / height;
+				float v28 = (float)(v24 + this->image.texHeight) / height;
 				float v29 = (float)((float)v15 + (float)v16) + v18;
 				float v30 = v29 - v20;
 

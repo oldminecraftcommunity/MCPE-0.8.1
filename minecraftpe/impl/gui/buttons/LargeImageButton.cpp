@@ -25,8 +25,8 @@ void LargeImageButton::render(struct Minecraft* mc, int32_t x, int32_t y){
 		}
 
 		this->renderBg(mc, x, y);
-		if(this->image.field_0.size()){
-			if(mc->texturesPtr->loadAndBindTexture(this->image.field_0)){
+		if(this->image.texture.size()){
+			if(mc->texturesPtr->loadAndBindTexture(this->image.texture)){
 				Tesselator::instance.begin(4);
 				int32_t col;
 				if(this->active){
@@ -39,8 +39,8 @@ void LargeImageButton::render(struct Minecraft* mc, int32_t x, int32_t y){
 				float v13 = this->image.width*0.5;
 				float v14 = this->image.height*0.5;
 				float v15 = this->field_6C;
-				float v16 = ((float)this->posX + (float)this->image.field_4) + v13;
-				float v17 = ((float)this->posY + (float)this->image.field_8) + v14;
+				float v16 = ((float)this->posX + (float)this->image.xOff) + v13;
+				float v17 = ((float)this->posY + (float)this->image.yOff) + v14;
 				float v18;
 				if(active){
 					v18 = v15-0.025;
@@ -54,29 +54,29 @@ void LargeImageButton::render(struct Minecraft* mc, int32_t x, int32_t y){
 					}
 				}
 
-				int32_t v19 = this->image.field_24;
+				int32_t v19 = this->image.initialized;
 				this->field_6C = v18;
 				float v20 = this->field_6C;
 				float v21 = v13*v20;
 				float v22 = v14*v20;
 				if(v19){
-					TextureData* td = mc->texturesPtr->loadAndGetTextureData(this->image.field_0);
+					TextureData* td = mc->texturesPtr->loadAndGetTextureData(this->image.texture);
 					if(td){
-						int32_t v24 = this->image.field_14;
+						int32_t v24 = this->image.texXStart;
 						int32_t v25;
-						if(active) v25 = this->image.field_1C;
+						if(active) v25 = this->image.texWidth;
 						else v25 = 0;
 
 						float width = td->image.width;
 						int32_t v27 = v24+v25;
-						int32_t v28 = this->image.field_1C;
+						int32_t v28 = this->image.texWidth;
 						float v29 = (float)v27/width;
 
 						if(active) v28 *= 2;
-						int32_t v30 = this->image.field_18;
+						int32_t v30 = this->image.texYStart;
 						float v31 = (float)(v24+v28) / width;
 						float height = td->image.height;
-						float v33 = (float)(v30 + this->image.field_20)/height;
+						float v33 = (float)(v30 + this->image.texHeight)/height;
 						float v34 = v17-v22;
 
 						Tesselator::instance.vertexUV(v16-v21, v17-v22, this->zLayer, v29, (float)v30/height);

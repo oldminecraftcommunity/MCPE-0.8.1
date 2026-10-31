@@ -41,13 +41,13 @@ int32_t Zombie::getEntityTypeId() const {
 void Zombie::die(Entity* a2) {
 	Mob::die(a2);
 	if(!this->level->isClient) {
-		if(!(this->random.genrand_int32() << 30)) {
+		if((this->random.genrand_int32() << 30) == 0) {
 			this->spawnAtLocation(Item::feather->itemID, 1);
 		}
-		if(!(this->random.genrand_int32() % 0x28)) {
+		if(this->random.nextInt(40) == 0) {
 			this->spawnAtLocation(Item::carrot->itemID, 1);
 		}
-		if(!(this->random.genrand_int32() % 0x28)) {
+		if(this->random.nextInt(40) == 0) {
 			this->spawnAtLocation(Item::potato->itemID, 1);
 		}
 	}

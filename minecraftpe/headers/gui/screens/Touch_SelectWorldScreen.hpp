@@ -16,7 +16,7 @@ namespace Touch {
 		Button field_168;
 		Touch::TouchWorldSelectionList* selectionList;
 		std::vector<LevelSummary> field_19C;
-		int8_t field_1A8, field_1A9, field_1AA, field_1AB;
+		bool field_1A8, field_1A9;
 		int32_t field_1AC;
 
 		SelectWorldScreen();

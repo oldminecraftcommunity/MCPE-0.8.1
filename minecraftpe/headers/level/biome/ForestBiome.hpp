@@ -10,7 +10,7 @@ struct ForestBiome : public Biome{
 
 	virtual ~ForestBiome(){}
 	virtual Feature* getTreeFeature(Random* a2) {
-		if(a2->genrand_int32() % 5) {
+		if(a2->nextInt(5) != 0) {
 			a2->genrand_int32();
 			return new TreeFeature(0, 0);
 		}

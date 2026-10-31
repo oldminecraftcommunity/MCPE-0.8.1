@@ -1,8 +1,10 @@
 #pragma once
 #include <_types.h>
+#include <string>
 
-//XXX this class wasnt found in ida and it doesnt seem to do anything in NBT::print
-
+//is this some kind of terrible attempt to port nbt from java </3
 struct PrintStream{
-	char empty;
+	void println(std::string v) {
+		std::string n("\n");
+	}
 };

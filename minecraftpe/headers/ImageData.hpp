@@ -17,4 +17,12 @@ UNK	int32_t field_10;
 		, field_10(0)
 		, lod(0) {
 	}
+	ImageData(int lod) : width(0)
+		, height(0)
+		, pixels(0)
+		, field_C(0)
+		, field_10(0),
+		lod(lod) {
+
+	}
 };

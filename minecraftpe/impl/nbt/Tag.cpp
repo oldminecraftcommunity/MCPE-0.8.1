@@ -36,11 +36,11 @@ void Tag::print(const std::string& s, PrintStream& ps) const{
 		v9 += "(\"";
 		v9 += tagName;
 		v9 += "\")";
-		std::string tagName2 = v9;
+		std::string tagName2;
+		tagName2 = std::move(v9);
 	}
 	std::string(": ");
-	this->toString() + "\n";
-	printf("Tag::print - not implemented\n");
+	ps.println(this->toString());
 }
 Tag* Tag::setName(const std::string& name){
 	this->tagName = name;

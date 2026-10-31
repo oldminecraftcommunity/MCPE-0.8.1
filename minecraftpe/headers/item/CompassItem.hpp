@@ -31,20 +31,14 @@ struct CompassItem: Item
 		return &this->textures[a3];
 	}
 	virtual int32_t getAnimationFrameFor(Mob* a2) const {
-		float v4; // s15
 		float i; // s15
-		TilePos result = a2->level->getSharedSpawnPos();
-		Vec3 v8((float) (result.x), 0.0, (float) (result.z));
-		Vec3 v9(a2->posX, 0.0, a2->posZ);
-		Vec3 v11(v8.x - v9.x, v8.y - v9.y, v8.z - v9.z);
-		v4 = sqrt((float) (((float) (((float) ((v11.y * v11.y)) + (float) ((v11.x * v11.x)))) + (float) ((v11.z * v11.z)))));
-		Vec3 x = v4 >= 0.0001 ? Vec3(v11.x / v4, v11.y / v4, v11.z / v4) : Vec3::ZERO; // [sp+28h] [bp-28h] BYREF
-		for (i = (float) (((float) ((Mth::rad2deg(atan2f(x.z, x.x)))) - a2->yaw)) + 90.0; i < 0.0; i = i + 360.0) {
+		TilePos spawn = a2->level->getSharedSpawnPos();
+		Vec3 x = Vec3(spawn.x, 0, spawn.z).sub(Vec3(a2->posX, 0, a2->posZ)).normalized();
+
+		for (i = (float) (((float) ((Mth::rad2deg(atan2f(x.z, x.x)))) - a2->yaw)) + 90; i < 0; i += 360) {
 			;
 		}
-		while (i >= 360.0) {
-			i = i - 360.0;
-		}
-		return (int32_t) ((float) (((float) ((i / 360.0)) * (float) (this->field_C))));
+		while (i >= 360) i -= 360;
+		return (int32_t) ((float) (((float) ((i / 360.0f)) * (float) (this->field_C))));
 	}
 };

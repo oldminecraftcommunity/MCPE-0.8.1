@@ -32,8 +32,7 @@ struct SetEntityDataPacket : Packet{
 	virtual void write(RakNet::BitStream* stream) {
 		stream->Write<uint8_t>(PID_SET_ENTITY_DATA_PACKET);
 		stream->Write<int32_t>(this->entityId);
-		RakDataOutput v5;
-		v5.bitStream = stream;
+		RakDataOutput v5(stream);
 		SynchedEntityData::pack(&this->data, &v5);
 	}
 	virtual void read(RakNet::BitStream* stream) {

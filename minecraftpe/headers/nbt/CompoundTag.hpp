@@ -54,7 +54,7 @@ struct CompoundTag : public Tag{
 			}
 		}
 	}
-	virtual int32_t getId(void) const {
+	virtual char getId(void) const {
 		return 10;
 	}
 	bool_t equals(const Tag& t) const {
@@ -96,14 +96,19 @@ struct CompoundTag : public Tag{
 			this->value.insert(std::pair<std::string,Tag *>(tag->getName(), tag));
 		}
 	}
-	virtual void print(const std::string& a2, PrintStream& a3) const {
-		Tag::print(a2, a3);
-		printf("CompoundTag::print - not implemented\n");
+	virtual void print(const std::string& s, PrintStream& ps) const {
+		Tag::print(s, ps);
+		std::string v14 = s;
+		ps.println("{");
+		v14 += "   ";
+		for(auto&& t = this->value.begin(); t != this->value.end(); ++t){
+			t->second->print(v14, ps);
+		}
+		ps.println("}");
 	}
 	virtual std::string toString(void) const {
 		std::stringstream ss;
-		ss << this->value.size();
-		ss << " entries";
+		ss << this->value.size() << " entries";
 		return ss.str();
 	}
 	virtual void write(IDataOutput* out) {
@@ -123,7 +128,7 @@ struct CompoundTag : public Tag{
 
 		return it->second;
 	}
-	int8_t getByte(const std::string& name) const {
+	char getByte(const std::string& name) const {
 		if (this->contains(name, 1)) {
 			ByteTag* tag = (ByteTag*) (this->get(name));
 			return tag->value;

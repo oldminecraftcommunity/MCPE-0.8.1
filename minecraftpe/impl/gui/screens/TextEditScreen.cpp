@@ -107,16 +107,16 @@ void TextEditScreen::init() {
 	}
 	this->field_54 = 1;
 	ImageDef a2;
-	a2.field_0 = "gui/spritesheet.png";
-	a2.field_4 = 0;
+	a2.texture = "gui/spritesheet.png";
+	a2.xOff = 0;
 	a2.height = 18.0;
 	a2.width = 18.0;
-	a2.field_8 = 1;
-	a2.field_14 = 60;
-	a2.field_24 = 1;
-	a2.field_1C = 18;
-	a2.field_20 = 18;
-	a2.field_18 = 0;
+	a2.yOff = 1;
+	a2.texXStart = 60;
+	a2.initialized = 1;
+	a2.texWidth = 18;
+	a2.texHeight = 18;
+	a2.texYStart = 0;
 
 	this->doneButton.setImageDef(a2, 1);
 	this->doneButton.field_64 = 0;
@@ -166,22 +166,20 @@ void TextEditScreen::buttonClicked(Button* a2) {
 	}
 }
 void TextEditScreen::keyPressed(int32_t a2) {
-	TileEntity* te;		 // r0
-	SignTileEntity* v5;	 // r5
-	int32_t currentLine; // r3
-	int32_t v8;			 // r0
 	int32_t v10;		 // r3
 
-	te = this->minecraft->level->getTileEntity(this->signX, this->signY, this->signZ);
-	v5 = (SignTileEntity*)te;
+	TileEntity* te = this->minecraft->level->getTileEntity(this->signX, this->signY, this->signZ);
+
 	if(!te || te->type != 4) {
 		this->failedToFindSignEntity();
 		return;
 	}
+
+	SignTileEntity* v5 = (SignTileEntity*)te;
 	if(a2 == 8) {
-		currentLine = this->currentLine;
+		int currentLine = this->currentLine;
 		if(v5->textLines[currentLine].size() != 0) {
-			v8 = Util::utf8len(v5->textLines[currentLine]);
+			int v8 = Util::utf8len(v5->textLines[currentLine]);
 			v5->textLines[currentLine] = Util::utf8substring(v5->textLines[currentLine], 0, v8 - 1);
 			return;
 		}

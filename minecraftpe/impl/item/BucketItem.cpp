@@ -17,22 +17,19 @@ BucketItem::BucketItem(int32_t id)
 	this->setMaxDamage(0);
 }
 bool_t BucketItem::emptyBucket(Level* level, int32_t type, int32_t x, int32_t y, int32_t z){
-	int32_t v10;   // r9
-	Material* v11; // r0
-
 	if(type <= 0) {
 		return 0;
 	}
-	v10 = level->getTile(x, y, z);
+	int v10 = level->getTile(x, y, z);
 	if(v10) {
-		v11 = level->getMaterial(x, y, z);
+		Material* v11 = level->getMaterial(x, y, z);
 		if(v11->isSolid()) {
 			return 0;
 		}
 	}
 	level->setTileAndData(x, y, z, type, 0, 3);
 	if(type == Tile::water->blockID && (v10 == Tile::fire->blockID || v10 == Tile::lava->blockID || v10 == Tile::calmLava->blockID)) {
-		level->playSound((float)x + 0.5, (float)y + 0.5, (float)z + 0.5, "random.fizz", 0.5, (float)((float)(level->random.nextFloat() - level->random.nextFloat()) * 0.8) + 2.6);
+		level->playSound(x + 0.5f, y + 0.5f, z + 0.5f, "random.fizz", 0.5f, (level->random.nextFloat() - level->random.nextFloat()) * 0.8f + 2.6f);
 	}
 	return 1;
 }
@@ -95,17 +92,6 @@ LABEL_5:
 			v20 = v12->count - 1;
 			v12->count = v20;
 			if(!v20) {
-				/*v21 = &v29;
-				do
-				{
-					metadata = v21->metadata;
-					v23 = &v21->itemClass == (Item **)&v29.isValid;
-					v12->count = v21->count;
-					v21 = (ItemInstance *)((char *)v21 + 8);
-					v12->metadata = metadata;
-					v12 = (ItemInstance *)((char *)v12 + 8);
-				}
-				while ( !v23 );*/
 				*v12 = v29;
 				return 1;
 			}

@@ -293,16 +293,16 @@ void PaneCraftingScreen::render(int32_t a2, int32_t a3, float a4) {
 }
 void PaneCraftingScreen::init() {
 	ImageDef a2;
-	a2.field_0 = "gui/spritesheet.png";
-	a2.field_8 = 1;
+	a2.texture = "gui/spritesheet.png";
+	a2.yOff = 1;
 	a2.height = 18.0;
 	a2.width = 18.0;
-	a2.field_24 = 1;
-	a2.field_14 = 60;
-	a2.field_4 = 0;
-	a2.field_1C = 18;
-	a2.field_20 = 18;
-	a2.field_18 = 0;
+	a2.initialized = 1;
+	a2.texXStart = 60;
+	a2.xOff = 0;
+	a2.texWidth = 18;
+	a2.texHeight = 18;
+	a2.texYStart = 0;
 	this->closeButton.setImageDef(a2, 1);
 	this->closeButton.field_64 = 0;
 	this->craftButton.init(this->minecraft->texturesPtr);
@@ -350,12 +350,12 @@ void PaneCraftingScreen::setupPositions() {
 		ImageDef a2;
 		a2.height = (float)v7;
 		a2.width = (float)v7;
-		a2.field_0 = "gui/spritesheet.png";
-		a2.field_24 = 1;
-		a2.field_14 = 32 * (v10 / 2);
-		a2.field_18 = 32 * ((v10 & 1) + 2);
-		a2.field_1C = 32;
-		a2.field_20 = 32;
+		a2.texture = "gui/spritesheet.png";
+		a2.initialized = 1;
+		a2.texXStart = 32 * (v10 / 2);
+		a2.texYStart = 32 * ((v10 & 1) + 2);
+		a2.texWidth = 32;
+		a2.texHeight = 32;
 		v9->setImageDef(a2, 0);
 	}
 	this->craftButton.posX = this->width - 95;

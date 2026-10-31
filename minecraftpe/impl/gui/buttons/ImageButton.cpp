@@ -8,15 +8,15 @@
 
 ImageButton::ImageButton(int32_t a2, const std::string& a3) : Button(a2, a3), color(Color4::WHITE){
 	this->image.width = 16;
-	this->image.field_0 = "";
-	this->image.field_4 = 0;
-	this->image.field_8 = 0;
-	this->image.field_14 = 0;
-	this->image.field_18 = 0;
-	this->image.field_24 = 0;
+	this->image.texture = "";
+	this->image.xOff = 0;
+	this->image.yOff = 0;
+	this->image.texXStart = 0;
+	this->image.texYStart = 0;
+	this->image.initialized = 0;
 	this->image.height = 16;
-	this->image.field_1C = 1;
-	this->image.field_20 = 1;
+	this->image.texWidth = 1;
+	this->image.texHeight = 1;
 	this->yOffset = 16;
 	this->setupDefault();
 }
@@ -45,8 +45,8 @@ void ImageButton::render(struct Minecraft* mc, int32_t x, int32_t y){
 		}
 		bool_t second = this->isSecondImage(active);
 		this->renderBg(mc, x, y);
-		if(this->image.field_0.size()){
-			if(mc->texturesPtr->loadAndBindTexture(this->image.field_0)){
+		if(this->image.texture.size()){
+			if(mc->texturesPtr->loadAndBindTexture(this->image.texture)){
 				Tesselator::instance.begin(4);
 				int32_t col;
 				if(this->active) col = 0xffffffff;
@@ -54,31 +54,31 @@ void ImageButton::render(struct Minecraft* mc, int32_t x, int32_t y){
 				Tesselator::instance.color(col);
 				float v14 = (float)(this->image.width*0.5) * ((float)this->width/this->image.width);
 				float v15 = (float)(this->image.height*0.5) * ((float)this->height/this->image.height);
-				float v16 = ((float)this->posX + (float)this->image.field_4)+v14;
-				float v17 = ((float)this->posY + (float)this->image.field_8)+v15;
+				float v16 = ((float)this->posX + (float)this->image.xOff)+v14;
+				float v17 = ((float)this->posY + (float)this->image.yOff)+v15;
 				if(this->field_64){
 					if(active){
 						v14 *= 0.95;
 						v15 *= 0.95;
 					}
 				}
-				if(this->image.field_24){
-					TextureData* td = mc->texturesPtr->loadAndGetTextureData(this->image.field_0);
+				if(this->image.initialized){
+					TextureData* td = mc->texturesPtr->loadAndGetTextureData(this->image.texture);
 					if(td){
 						int32_t v20;
-						int32_t v19 = this->image.field_14;
-						if(second) v20 = this->image.field_1C;
+						int32_t v19 = this->image.texXStart;
+						if(second) v20 = this->image.texWidth;
 						else v20 = 0;
 
 						float width = td->image.width;
 						int32_t v22 = v19+v20;
-						int32_t v23 = this->image.field_1C;
+						int32_t v23 = this->image.texWidth;
 						float v24 = (float)v22 / width;
 						if(second) v23 *= 2;
-						int32_t v25 = this->image.field_18;
+						int32_t v25 = this->image.texYStart;
 						float v26 = (float)(v19 + v23) / width;
 						float height = td->image.height;
-						float v28 = (float)(v25+this->image.field_20) / height;
+						float v28 = (float)(v25+this->image.texHeight) / height;
 						float v29 = v17-v15;
 						Tesselator::instance.vertexUV(v16-v14, v17-v15, this->zLayer, v24, (float)v25/height);
 						float v30 = v17+v15;

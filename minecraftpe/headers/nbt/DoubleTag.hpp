@@ -21,7 +21,7 @@ struct DoubleTag : public Tag{
 	virtual void load(IDataInput* in) {
 		this->value = in->readDouble();
 	}
-	virtual int32_t getId(void) const {
+	virtual char getId(void) const {
 		return 6;
 	}
 	virtual std::string toString(void) const {

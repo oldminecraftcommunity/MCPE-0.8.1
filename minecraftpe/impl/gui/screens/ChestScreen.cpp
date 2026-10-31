@@ -273,16 +273,16 @@ void ChestScreen::render(int32_t a2, int32_t a3, float a4) {
 void ChestScreen::init() {
 	BaseContainerScreen::init();
 	ImageDef a2;
-	a2.field_0 = "gui/spritesheet.png";
-	a2.field_4 = 0;
+	a2.texture = "gui/spritesheet.png";
+	a2.xOff = 0;
 	a2.height = 18.0;
 	a2.width = 18.0;
-	a2.field_18 = 0;
-	a2.field_14 = 60;
-	a2.field_8 = 1;
-	a2.field_1C = 18;
-	a2.field_20 = 18;
-	a2.field_24 = 1;
+	a2.texYStart = 0;
+	a2.texXStart = 60;
+	a2.yOff = 1;
+	a2.texWidth = 18;
+	a2.texHeight = 18;
+	a2.initialized = 1;
 	this->field_60.setImageDef(a2, 1);
 	this->field_60.field_64 = 0;
 	this->buttons.push_back(&this->field_D0);
@@ -333,19 +333,15 @@ void ChestScreen::buttonClicked(Button* a2) {
 	}
 }
 bool_t ChestScreen::addItem(const Touch::InventoryPane* a2, int32_t a3) {
+	FillingContainer *from, *to; //idk is it actually from/to or something else
 	if(this->field_138 == a2) {
-		if(this->tileEntity) {
-			return this->handleAddItem(this->minecraft->player->inventory, this->tileEntity, a3);
-		}
-		return this->handleAddItem(this->minecraft->player->inventory, this->tileEntity, a3);
+		from = this->minecraft->player->inventory;
+		to = this->tileEntity;
 	} else {
-		if(this->tileEntity) {
-			return this->handleAddItem(this->tileEntity, this->minecraft->player->inventory, a3);
-		} else {
-			return this->handleAddItem(0, this->minecraft->player->inventory, a3);
-		}
+		from = this->tileEntity;
+		to = this->minecraft->player->inventory;
 	}
-	return 0;
+	return this->handleAddItem(from, to, a3);
 }
 bool_t ChestScreen::isAllowed(int32_t) {
 	return 1;

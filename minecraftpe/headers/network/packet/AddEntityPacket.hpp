@@ -47,8 +47,8 @@ struct AddEntityPacket : Packet{
 			else if(motY <= -3.9) motY = -3.9f;
 			int16_t mY = (int16_t)(motY*8000);
 
-			if(motZ > 3.9) motZ = 3.9;
-			else if(motZ <= -3.9) motZ = -3.9;
+			if(motZ > 3.9f) motZ = 3.9f;
+			else if(motZ <= -3.9f) motZ = -3.9f;
 			int16_t mZ = (int16_t)(motZ*8000);
 
 			stream->Write<int16_t>(mX);
@@ -58,7 +58,7 @@ struct AddEntityPacket : Packet{
 	}
 	virtual void read(RakNet::BitStream* stream){
 		stream->Read<int32_t>(this->eid);
-		uint8_t tt = (uint8_t) this->type;
+		uint8_t tt;
 		stream->Read<uint8_t>(tt);
 		this->type = tt;
 		stream->Read<float>(this->x);

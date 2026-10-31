@@ -32,7 +32,7 @@ void Mushroom::tick(Level* level, int32_t x, int32_t y, int32_t z, Random* rando
 	int32_t v26;  // [sp+1Ch] [bp-2Ch]
 
 	v25 = z;
-	if(!(random->genrand_int32() % 0x19)) {
+	if(random->nextInt(25) == 0) {
 		v8 = 5;
 		for(i = x - 4; i <= x + 4; ++i) {
 			for(j = z - 4; j <= z + 4; ++j) {

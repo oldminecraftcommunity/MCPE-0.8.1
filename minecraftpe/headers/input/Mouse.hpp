@@ -49,7 +49,7 @@ struct Mouse{
 	static MouseDevice _instance;
 
 	static void reset();
-	static int32_t getButtonState(int32_t);
+	static uint8_t getButtonState(int32_t);
 	static bool_t isButtonDown(int32_t);
 	static int16_t getX();
 	static int16_t getY();

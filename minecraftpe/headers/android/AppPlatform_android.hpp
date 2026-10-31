@@ -346,18 +346,16 @@ struct AppPlatform_android : AppPlatform{
 		return {};
 	}
 	virtual std::string getDateString(int32_t a2) {
-		if (this->initialized && this->field_50) {
-			JVMAttacher v10(this->jvm);
-			jstring o = (jstring) (v10.env->CallObjectMethod(this->mainActivityRef, this->field_50));
-			std::string v9;
-			const char* utfChars = v10.env->GetStringUTFChars(o, 0);
-			if (utfChars) v9 = utfChars;
+		if(!this->initialized || this->field_50 == 0) return "";
 
-			v10.env->ReleaseStringUTFChars(o, utfChars);
-			return v9;
-		} else {
-			return "";
-		}
+		JVMAttacher v10(this->jvm);
+		jstring o = (jstring) (v10.env->CallObjectMethod(this->mainActivityRef, this->field_50));
+		std::string v9;
+		const char* utfChars = v10.env->GetStringUTFChars(o, 0);
+		if (utfChars) v9 = utfChars;
+
+		v10.env->ReleaseStringUTFChars(o, utfChars);
+		return v9;
 	}
 	virtual int32_t checkLicense(void) {
 		if (!this->initialized || !this->_jniCheckLicense) {
@@ -451,12 +449,13 @@ struct AppPlatform_android : AppPlatform{
 		if (this->initialized) {
 			if (this->_jniQuit) {
 				JVMAttacher v3(this->jvm);
+				JNIEnv* env = v3.env;
 				v3.env->CallVoidMethod(this->mainActivityRef, this->_jniQuit);
-				v3.env->DeleteGlobalRef(this->mainActivityReference);
-				v3.env->DeleteGlobalRef(this->windowReference);
-				v3.env->DeleteGlobalRef(this->contextReference);
-				v3.env->DeleteGlobalRef(this->viewReference);
-				v3.env->DeleteGlobalRef(this->inputMethodHandlerReference);
+				env->DeleteGlobalRef(this->mainActivityReference);
+				env->DeleteGlobalRef(this->windowReference);
+				env->DeleteGlobalRef(this->contextReference);
+				env->DeleteGlobalRef(this->viewReference);
+				env->DeleteGlobalRef(this->inputMethodHandlerReference);
 			}
 		}
 	}
@@ -467,7 +466,7 @@ struct AppPlatform_android : AppPlatform{
 	}
 	virtual void vibrate(int32_t a2) {
 		if (this->initialized) {
-			if (this->_jniWebRequest) {
+			if (this->_jniVibrate) {
 				JVMAttacher v17(this->jvm);
 				v17.env->CallVoidMethod(this->mainActivityRef, this->_jniVibrate, a2);
 			}

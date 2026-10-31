@@ -2,31 +2,16 @@
 #include <crafting/Recipes.hpp>
 #include <item/Item.hpp>
 #include <tile/Tile.hpp>
-static std::vector<std::string> _dword_D6E4DEF8 = Recipes::Shape("X", "X", "#");
+static std::vector<std::string> swordShape = Recipes::Shape("X", "X", "#");
 void WeaponRecipes::addRecipes(Recipes* a1) {
-	int v2;			  // r6
-	int v3;			  // r7
-	int mats[5];	  // [sp+34h] [bp-84h] BYREF
-	Item* results[5]; // [sp+48h] [bp-70h] BYREF
+	int mats[5] = {Tile::wood->blockID, Tile::stoneBrick->blockID, Item::ironIngot->itemID, Item::emerald->itemID, Item::goldIngot->itemID};
+	Item* results[5] = {Item::sword_wood, Item::sword_stone, Item::sword_iron, Item::sword_emerald, Item::sword_gold};
 
-	v2 = 0;
-	mats[0] = Tile::wood->blockID;
-	mats[1] = Tile::stoneBrick->blockID;
-	mats[2] = Item::ironIngot->itemID;
-	mats[3] = Item::emerald->itemID;
-	mats[4] = Item::goldIngot->itemID;
-	results[0] = Item::sword_wood;
-	results[1] = Item::sword_stone;
-	results[2] = Item::sword_iron;
-	results[3] = Item::sword_emerald;
-	results[4] = Item::sword_gold;
-	do {
-		v3 = mats[v2];
-		a1->addShapedRecipe(ItemInstance(results[v2]), _dword_D6E4DEF8, /*inlined*/ v3 <= 255 ? definition<Item*, Tile*>('#', Item::stick, 'X', Tile::tiles[v3]) : definition<Item*, Item*>('#', Item::stick, 'X', Item::items[v3]));
-		++v2;
+	for(int v2 = 0; v2 < 5; ++v2) {
+		int v3 = mats[v2];
+		a1->addShapedRecipe(ItemInstance(results[v2]), swordShape, v3 <= 255 ? definition<Item*, Tile*>('#', Item::stick, 'X', Tile::tiles[v3]) : definition<Item*, Item*>('#', Item::stick, 'X', Item::items[v3]));
+	}
 
-	} while(v2 != 5);
-
-	a1->addShapedRecipe(ItemInstance(Item::bow, 1), " #X", "# X", " #X", definition<Item*, Item*>('X', Item::string, '#', Item::stick) /*inlined*/);
+	a1->addShapedRecipe(ItemInstance(Item::bow, 1), " #X", "# X", " #X", definition<Item*, Item*>('X', Item::string, '#', Item::stick));
 	a1->addShapedRecipe(ItemInstance(Item::arrow, 4), "X", "#", "Y", definition<Item*, Item*, Item*>('Y', Item::feather, 'X', Item::flint, '#', Item::stick));
 }

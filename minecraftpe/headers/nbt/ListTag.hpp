@@ -33,11 +33,13 @@ struct ListTag : public Tag{
 			this->value.insert(this->value.end(), t);
 		}
 	}
-	virtual int32_t getId(void) const {
+	virtual char getId(void) const {
 		return 9;
 	}
 	virtual std::string toString(void) const {
-		return this->value.size() + "entries of type " + Tag::getTagName(this->tagType);
+		std::stringstream ss;
+		ss << this->value.size() << "entries of type " << Tag::getTagName(this->tagType);
+		return ss.str();
 	}
 	virtual Tag* copy(void) const {
 		ListTag* tg = new ListTag(this->getName());
@@ -52,7 +54,7 @@ struct ListTag : public Tag{
 		const ListTag* tg = (const ListTag*) (&v);
 		bool_t eq = Tag::equals(v);
 		if (eq) {
-			if (tg->value.size() == this->value.size()) {
+			if (this->tagType == tg->tagType && tg->value.size() == this->value.size()) {
 				for (int i = 0; i < this->value.size(); ++i) {
 					Tag* t = this->value[i];
 					const Tag* t2 = tg->value[i];
@@ -65,7 +67,7 @@ struct ListTag : public Tag{
 		return eq;
 	}
 	virtual void deleteChildren(void) {
-		for (Tag* t : this->value) {
+		for (auto t : this->value) {
 			if (t) {
 				t->deleteChildren();
 				delete t;
@@ -73,30 +75,31 @@ struct ListTag : public Tag{
 		}
 	}
 	virtual void print(const std::string& s, PrintStream& ps) const {
-		//XXX
 		Tag::print(s, ps);
 		std::string v14 = s;
-		v14 += "{";
+		ps.println("{");
 		v14 += "   ";
-		for (Tag* t : this->value) {
-			t->print(s, ps);
+		for(auto&& t = this->value.begin(); t != this->value.end(); ++t){
+			(*t)->print(v14, ps);
 		}
-		v14 += "}";
+		ps.println("}");
 	}
+	//TODO there are other methods like this(FillingContainer & Player - inlined getCompound)
 	float getFloat(int32_t n) {
-		if (n >= this->value.size()) {
+		if (n >= (int)this->value.size()) {
 			this->field_0 |= 1;
 			return 0;
 		}
 		Tag* t = this->value[n];
 		if (t) {
-			if (t->getId() == 5) {
-				FloatTag* ft = (FloatTag*) (t);
-				return ft->value;
+			if(t->getId() != 5){
+				this->field_0 |= 2;
+				return 0;
 			}
-			this->field_0 |= 2;
+			FloatTag* ft = (FloatTag*) (t);
+			return ft->value;
 		}
-		return 0.0;
+		return 0;
 	}
 	void add(Tag* t) {
 		this->tagType = t->getId();

@@ -3,22 +3,30 @@
 #include <string>
 
 struct ImageDef{
-	std::string field_0;
-	int32_t field_4, field_8;
+	std::string texture;
+	int32_t xOff, yOff;
 	float width, height;
-	int32_t field_14, field_18, field_1C, field_20;
-	int8_t field_24, field_25, field_26, field_27;
+	int32_t texXStart, texYStart, texWidth, texHeight;
+	bool initialized;
 
 	ImageDef() {
-		this->field_4 = 0;
-		this->field_8 = 0;
-		this->field_14 = 0;
+		this->xOff = 0;
+		this->yOff = 0;
+		this->texXStart = 0;
 		this->width = 16;
 		this->height = 16;
-		this->field_18 = 0;
-		this->field_1C = 1;
-		this->field_20 = 1;
-		this->field_24 = 0;
+		this->texYStart = 0;
+		this->texWidth = 1;
+		this->texHeight = 1;
+		this->initialized = 0;
+	}
+	ImageDef(const char* tex, int xOff, int yOff, int tx, int ty, int tw, int th) : initialized(1), xOff(xOff), yOff(yOff), width(16), height(16), texXStart(tx), texYStart(ty), texWidth(tw), texHeight(th) {
+		this->texture = tex;
+	}
+	ImageDef(const char* tex, int xOff, int yOff, float w, float h, int tx, int ty, int tw, int th) : initialized(1), xOff(xOff), yOff(yOff), texXStart(tx), texYStart(ty), texWidth(tw), texHeight(th) {
+		this->width = w;
+		this->height = h;
+		this->texture = tex;
 	}
 };
 

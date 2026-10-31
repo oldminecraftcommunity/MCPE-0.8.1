@@ -273,16 +273,16 @@ void CreativeInventoryScreen::init()
 	this->field_98.push_back(CreativeInventoryScreen::TabButtonWithMeta(4, this->createInventoryTabButton(9, 4)));
 
 	ImageDef v18;
-	v18.field_0 = "gui/spritesheet.png";
-	v18.field_4 = 0;
-	v18.field_8 = 1;
+	v18.texture = "gui/spritesheet.png";
+	v18.xOff = 0;
+	v18.yOff = 1;
 	v18.height = 18.0;
 	v18.width = 18.0;
-	v18.field_24 = 1;
-	v18.field_14 = 60;
-	v18.field_18 = 0;
-	v18.field_1C = 18;
-	v18.field_20 = 18;
+	v18.initialized = 1;
+	v18.texXStart = 60;
+	v18.texYStart = 0;
+	v18.texWidth = 18;
+	v18.texHeight = 18;
 
 	ImageWithBackground* v5 = new ImageWithBackground(5);
 	v5->init(this->minecraft->texturesPtr, this->field_58, this->field_58, a5, a5, 2, 2, "gui/spritesheet.png");

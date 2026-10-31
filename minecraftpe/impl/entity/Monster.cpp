@@ -1,6 +1,7 @@
 #include <entity/Monster.hpp>
 #include <level/Level.hpp>
 #include <level/LightLayer.hpp>
+#include <math/Mth.hpp>
 
 Monster::Monster(Level* a2)
 	: PathfinderMob(a2) {
@@ -9,39 +10,15 @@ Monster::Monster(Level* a2)
 	this->entityRenderId = HUMANOID;
 }
 bool_t Monster::isDarkEnoughToSpawn() {
-	float posX; // s15
-	int32_t v4; // r7
-	bool_t v5;	// fnf
-	float minY; // s15
-	int32_t v7; // r6
-	bool_t v8;	// fnf
-	float posZ; // s15
-	int32_t z;	// r5
-	int32_t b;	// r9
-	int32_t rb; // r4
+	int x = Mth::floor(this->posX);
+	int y = Mth::floor(this->boundingBox.minY);
+	int z = Mth::floor(this->posZ);
 
-	posX = this->posX;
-	v4 = (int32_t)posX;
-	v5 = posX < (float)(int32_t)posX;
-	minY = this->boundingBox.minY;
-	v7 = (int32_t)minY;
-	if(v5) {
-		--v4;
-	}
-	v8 = minY < (float)(int32_t)minY;
-	posZ = this->posZ;
-	z = (int32_t)posZ;
-	if(v8) {
-		--v7;
-	}
-	if(posZ < (float)(int32_t)posZ) {
-		--z;
-	}
-	b = this->level->getBrightness(LightLayer::Sky, v4, v7, z);
+	int b = this->level->getBrightness(LightLayer::Sky, x, y, z);
 	if(b > (int32_t)(this->random.genrand_int32() & 0x1F)) {
 		return 0;
 	}
-	rb = this->level->getRawBrightness(v4, v7, z);
+	int rb = this->level->getRawBrightness(x, y, z);
 	return rb <= (int32_t)(this->random.genrand_int32() & 7);
 }
 

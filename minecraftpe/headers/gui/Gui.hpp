@@ -48,7 +48,7 @@ struct Gui : GuiComponent, IConfigListener, AppPlatform::Listener{
 	int32_t getSlotIdAt(int32_t, int32_t);
 	int32_t getSlotPos(int32_t, int32_t&, int32_t&);
 	void handleClick(int32_t, int32_t, int32_t);
-	void handleKeyPressed(int32_t);
+	void handleKeyPressed(int32_t key);
 	void inventoryUpdated();
 	bool_t isInside(int32_t, int32_t);
 	static int32_t itemCountItoa(char_t*, int32_t);

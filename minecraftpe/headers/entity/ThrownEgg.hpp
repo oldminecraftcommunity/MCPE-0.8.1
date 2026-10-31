@@ -22,35 +22,24 @@ struct ThrownEgg: Throwable
 		return 82;
 	}
 	virtual void onHit(const HitResult& a2) {
-		int32_t v3; // r8
-		int32_t v4; // r5
-		Chicken* v5; // r5
-		int32_t v6; // r9
 		if (a2.hitType == 1) {
 			a2.entity->hurt(this, 0);
 		}
-		if (!this->level->isClient) {
-			v3 = Entity::sharedRandom.genrand_int32() & 7;
-			if (!v3) {
-				if ((Entity::sharedRandom.genrand_int32() & 31) != 0) {
-					v6 = 1;
-				} else {
-					v6 = 4;
-				}
-				do {
-					++v3;
-					v5 = new Chicken(this->level);
-					v5->setAge(-24000);
-					v5->moveTo(this->posX, this->posY, this->posZ, this->yaw, 0.0);
-					this->level->addEntity(v5);
-				} while (v3 < v6);
+
+		if (this->level->isClient && Entity::sharedRandom.nextInt(8) == 0) {
+			int toSpawn = Entity::sharedRandom.nextInt(32) != 0 ? 1 : 4;
+
+			for(int v3 = 0; v3 < toSpawn; ++v3){
+				Chicken* v5 = new Chicken(this->level);
+				v5->setAge(-24000);
+				v5->moveTo(this->posX, this->posY, this->posZ, this->yaw, 0);
+				this->level->addEntity(v5);
 			}
 		}
-		v4 = 6;
-		do {
-			this->level->addParticle(PT_BREAKING_ITEM_2, this->posX, this->posY, this->posZ, 0.0, 0.0, 0.0, Item::egg->itemID);
-			--v4;
-		} while (v4);
+		for(int v4 = 6; v4 > 0; --v4){
+			this->level->addParticle(PT_BREAKING_ITEM_2, this->posX, this->posY, this->posZ, 0, 0, 0, Item::egg->itemID);
+		}
+
 		if (!this->level->isClient) {
 			this->remove();
 		}

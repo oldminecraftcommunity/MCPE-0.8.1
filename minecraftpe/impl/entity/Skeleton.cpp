@@ -40,7 +40,7 @@ int32_t Skeleton::getMaxHealth() {
 }
 void Skeleton::aiStep() {
 	this->skyCheckCounter += 1;
-	if((this->skyCheckCounter & 1) != 0 && this->level->isDay() && !this->level->isClient && this->getBrightness(1.0) > 0.5f && !this->isOnFire()) {
+	if(this->skyCheckCounter % 2 != 0 && this->level->isDay() && !this->level->isClient && this->getBrightness(1) > 0.5f && !this->isOnFire()) {
 		if(this->level->canSeeSky(Mth::floor(this->posX), Mth::floor(this->posY), Mth::floor(this->posZ))) {
 			this->setOnFire(8);
 		}
@@ -86,30 +86,21 @@ bool_t Skeleton::useNewAi(){
 return 0;
 }
 void Skeleton::checkHurtTarget(Entity* a2, float a3) {
-	float v5;	  // s18
-	float v6;	  // s19
-	Arrow* v7;	  // r61
-	float v9;	  // s21
-	float v10;	  // r0
-	Level* level; // r5
-	float v12;	  // d8
-
 	if(a3 < 10.0f) {
-		v5 = a2->posX - this->posX;
-		v6 = a2->posZ - this->posZ;
-		if(!this->attackTime) {
-			v7 = new Arrow(this->level, (Mob*)this, 1.0f);
-			v9 = (float)((float)(a2->posY + a2->getHeadHeight()) - 0.7f) - v7->posY;
-			v10 = sqrt((float)((float)(v6 * v6) + (float)(v5 * v5)));
-			level = this->level;
-			level->playSound(this, "random.bow", 1.0f, 1.0f / (float)((float)(this->random.nextFloat() * 0.4f) + 0.8f));
+		float xd = a2->posX - this->posX;
+		float zd = a2->posZ - this->posZ;
+		if(this->attackTime == 0) {
+			Arrow* v7 = new Arrow(this->level, this, 1.0f);
+			float v9 = ((a2->posY + a2->getHeadHeight()) - 0.7f) - v7->posY;
+			float v10 = sqrt((xd * xd) + (zd * zd));
+			this->level->playSound(this, "random.bow", 1.0f, 1.0f / (float)((float)(this->random.nextFloat() * 0.4f) + 0.8f));
 
 			this->level->addEntity(v7);
-			v7->shoot(v5, v9 + (float)(v10 * 0.2), v6, 1.6f, 32.0f);
+			v7->shoot(xd, v9 + v10 * 0.2f, zd, 1.6f, 32.0f);
 			this->attackTime = 60;
 		}
 		this->_shouldHoldGround = 1;
-		this->yaw = Mth::rad2deg(atan2f(v6, v5)) - 90.0f;
+		this->yaw = Mth::rad2deg(atan2f(zd, xd)) - 90.0f;
 	}
 }
 int32_t Skeleton::getUseDuration() {

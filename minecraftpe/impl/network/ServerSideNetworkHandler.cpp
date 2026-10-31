@@ -152,7 +152,8 @@ void ServerSideNetworkHandler::onReady_ClientGeneration(const RakNet::RakNetGUID
 		}
 
 		stream.Reset();
-		ContainerSetContentPacket a3(0, p->inventory->getSlotCopies(), 9);
+		std::vector<ItemInstance> vec = p->inventory->getSlotCopies();
+		ContainerSetContentPacket a3(0, vec, 9);
 		for(int v26 = 0; v26 < p->inventory->getLinkedSlotsCount(); ++v26) {
 			a3.field_1C.push_back(p->inventory->getLinkedSlot(v26));
 		}

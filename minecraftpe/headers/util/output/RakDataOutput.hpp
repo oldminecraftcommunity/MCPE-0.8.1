@@ -5,7 +5,9 @@
 struct RakDataOutput: BytesDataOutput
 {
 	RakNet::BitStream* bitStream;
-
+	RakDataOutput(RakNet::BitStream* bitStream)
+		: bitStream(bitStream) {
+	}
 	virtual ~RakDataOutput() {
 	}
 	virtual void writeBytes(const void* a2, int32_t a3) {

@@ -7,20 +7,8 @@ struct GuiMessage
 	int32_t tickCounter, ticksShown;
 	std::string message, author, fullMessage;
 
-	GuiMessage(const GuiMessage& a2)
-		: tickCounter(a2.tickCounter)
-		, ticksShown(a2.ticksShown)
-		, message(a2.message)
-		, author(a2.author)
-		, fullMessage(a2.fullMessage) {
-	}
-	GuiMessage(GuiMessage&& a2)
-		: tickCounter(a2.tickCounter)
-		, ticksShown(a2.ticksShown)
-		, message(std::move(a2.message))
-		, author(std::move(a2.author))
-		, fullMessage(std::move(a2.fullMessage)) {
-	}
+	GuiMessage(const GuiMessage& a2) = default;
+	GuiMessage(GuiMessage&& a2) = default;
 	GuiMessage(const std::string& a2, const std::string& a3, int32_t ticksShown)
 		: tickCounter(0)
 		, ticksShown(ticksShown)
@@ -33,13 +21,6 @@ struct GuiMessage
 		}
 	}
 	GuiMessage& operator=(const GuiMessage& a2) = default;
-	GuiMessage& operator=(GuiMessage&& a2) {
-		this->tickCounter = a2.tickCounter;
-		this->ticksShown = a2.ticksShown;
-		this->message = a2.message;
-		this->author = a2.author;
-		this->fullMessage = a2.fullMessage;
-		return *this;
-	}
+	GuiMessage& operator=(GuiMessage&& a2) = default;
 	~GuiMessage(){}
 };

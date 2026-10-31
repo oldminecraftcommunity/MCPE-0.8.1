@@ -9,7 +9,7 @@ struct TaigaBiome : public Biome{
 	virtual ~TaigaBiome() {
 	}
 	virtual Feature* getTreeFeature(Random* a2) {
-		if(a2->genrand_int32() % 3) {
+		if(a2->nextInt(3) != 0) {
 			return new SpruceFeature(0);
 		} else {
 			return new PineFeature();

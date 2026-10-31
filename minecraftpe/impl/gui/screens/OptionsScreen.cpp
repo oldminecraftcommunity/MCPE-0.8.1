@@ -30,11 +30,11 @@ void OptionsScreen::closeScreen() {
 }
 int32_t OptionsScreen::createCategoryButton(int32_t a2, int32_t a3, struct ImageDef& a4, int32_t a5, int32_t a6, int32_t a7, int32_t a8) {
 	ImageButton* v12 = new CategoryButton(a2, this->field_7C, this->field_80, (Button**)&this->field_5C);
-	a4.field_24 = 1;
-	a4.field_14 = a5;
-	a4.field_18 = a6;
-	a4.field_1C = 28;
-	a4.field_20 = 28;
+	a4.initialized = 1;
+	a4.texXStart = a5;
+	a4.texYStart = a6;
+	a4.texWidth = 28;
+	a4.texHeight = 28;
 	v12->posX = a7;
 	v12->posY = a8;
 	v12->setImageDef(a4, 1);
@@ -48,7 +48,7 @@ void OptionsScreen::createCategoryButtons(void) {
 	this->field_7C = a1.createSymmetrical({8, 32, 8, 8}, 2, 2, this->field_88, this->field_88);
 	this->field_80 = a1.createSymmetrical({0, 32, 8, 8}, 2, 2, this->field_88, this->field_88);
 	ImageDef v11;
-	v11.field_0 = "gui/touchgui2.png";
+	v11.texture = "gui/touchgui2.png";
 	v11.width = v11.height = this->field_88;
 	int32_t v7 = this->createCategoryButton(2, this->field_88, v11, 134, 0, 0, 0);
 	int32_t v8 = this->createCategoryButton(v7, this->field_88, v11, 106, 0, 0, 0);

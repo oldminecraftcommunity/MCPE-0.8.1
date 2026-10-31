@@ -54,7 +54,7 @@ struct ServerCommandParser
 	};
 
 	std::string retStr;
-	std::unordered_map<std::string, std::unique_ptr<ServerCommandParser::Command>> commands;
+	std::unordered_multimap<std::string, std::unique_ptr<ServerCommandParser::Command>> commands;
 
 	/*static ServerCommandParser::Command* testCmd = new ServerCommandParser::Command{{0, 0, 1}, 2, [](const std::vector<ServerCommandParser::Token>& params) {
 	 return params[0].field_0+" has successfully received your cliff client! owo: "+params[1].field_0+" "+params[2].field_0+" "+params[3].field_0;

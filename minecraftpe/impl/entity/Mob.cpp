@@ -609,7 +609,7 @@ void Mob::rideTick() {
 	this->fallDistance = 0.0;
 }
 float Mob::getHeadHeight() {
-	return this->entityHeight * 0.85;
+	return this->entityHeight * 0.85f;
 }
 bool_t Mob::isPickable() {
 	return !this->isDead;
@@ -823,14 +823,10 @@ bool_t Mob::canSee(Entity* a2) {
 	return a1.hitType == 2;
 }
 bool_t Mob::onLadder() {
-	int32_t v2; // r7
-	int32_t v3; // r6
-	int32_t v4; // r8
-
-	v2 = Mth::floor(this->posX);
-	v3 = Mth::floor(this->boundingBox.minY);
-	v4 = Mth::floor(this->posZ);
-	return this->level->getTile(v2, v3, v4) == Tile::ladder->blockID || this->level->getTile(v2, v3 + 1, v4) == Tile::ladder->blockID;
+	int x = Mth::floor(this->posX);
+	int y = Mth::floor(this->boundingBox.minY);
+	int z = Mth::floor(this->posZ);
+	return this->level->getTile(x, y, z) == Tile::ladder->blockID || this->level->getTile(x, y + 1, z) == Tile::ladder->blockID;
 }
 void Mob::spawnAnim() {
 }
@@ -847,23 +843,12 @@ void Mob::setSneaking(bool_t a2) {
 	this->setSharedFlag(1, a2);
 }
 float Mob::getVoicePitch() {
-	Random* p_random; // r4
-	float f; // s17
-	float v3; // s17
-	float v4; // s15
-	float v5; // s17
-
-	p_random = &this->random;
 	if(this->isBaby()) {
-		f = p_random->nextFloat();
-		v3 = f - p_random->nextFloat();
-		v4 = 1.5;
+		return 1.5f + ((this->random.nextFloat() - this->random.nextFloat()) * 0.2f);
 	} else {
-		v5 = p_random->nextFloat();
-		v3 = v5 - p_random->nextFloat();
-		v4 = 1.0;
+		return 1.0f + ((this->random.nextFloat() - this->random.nextFloat()) * 0.2f);
 	}
-	return v4 + (float)(v3 * 0.2);
+
 }
 void Mob::playAmbientSound() {
 	const char_t* v2; // r1
@@ -909,10 +894,7 @@ int32_t Mob::getArmorValue() {
 }
 HitResult Mob::pick(float a3, float a4, bool_t a5) {
 	Vec3 start = this->getPos(a4);
-	Vec3 v11 = this->getViewVector(a4);
-	Vec3 v12(a3 * v11.x, a3 * v11.y, a3 * v11.z);
-	Vec3 v13(start.x + v12.x, start.y + v12.y, start.z + v12.z);
-	return this->level->clip(start, v13, a5, 0);
+	return this->level->clip(start, start.add(this->getViewVector(a4).mul(a3)), a5, 0);
 }
 void Mob::travel(float strafe, float forward) {
 	bool_t isInWater; // r0
@@ -1290,11 +1272,7 @@ Entity* Mob::getTarget() {
 	return 0;
 }
 void Mob::setTarget(Mob* a2) {
-	if(a2) {
-		this->targetEID = a2->entityId;
-	} else {
-		this->targetEID = 0;
-	}
+	this->targetEID = a2 ? a2->entityId : 0;
 }
 bool_t Mob::doHurtTarget(Entity* a2) {
 	this->setLastHurtMob(a2);

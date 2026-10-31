@@ -82,16 +82,16 @@ void ChatScreen::updateKeyboardVisibility() {
 }
 void ChatScreen::updateToggleKeyboardButton() {
 	ImageDef v12;
-	v12.field_0 = "gui/spritesheet.png";
-	v12.field_14 = 36;
+	v12.texture = "gui/spritesheet.png";
+	v12.texXStart = 36;
 	int32_t v5;
 	if(this->keyboardVisible) {
 		v5 = 9;
 	} else {
 		v5 = 0;
 	}
-	v12.field_24 = 1;
-	v12.field_18 = v5;
+	v12.initialized = 1;
+	v12.texYStart = v5;
 	float v6 = 13.0;
 	if(this->keyboardVisible) {
 		v6 = 12.0;
@@ -100,8 +100,8 @@ void ChatScreen::updateToggleKeyboardButton() {
 	float v7 = 8.0;
 	if(!this->keyboardVisible) v7 = 11;
 	v12.height = v7;
-	v12.field_1C = (int32_t)v6;
-	v12.field_20 = (int32_t)v7;
+	v12.texWidth = (int32_t)v6;
+	v12.texHeight = (int32_t)v7;
 	this->field_64->setImageDef(v12, 0);
 	int32_t height = this->height;
 	int32_t v11;
@@ -168,14 +168,14 @@ void ChatScreen::init() {
 	this->sendChatMessageButton = new ImageWithBackground(2);
 	this->sendChatMessageButton->init(this->minecraft->texturesPtr, 32, 32, {112, 0, 8, 67}, {120, 0, 8, 67}, 2, 2, "gui/spritesheet.png");
 	ImageDef v27;
-	v27.field_0 = "gui/spritesheet.png";
-	v27.field_24 = 1;
+	v27.texture = "gui/spritesheet.png";
+	v27.initialized = 1;
 	v27.width = 12.0;
 	v27.height = 12.0;
-	v27.field_14 = 48;
-	v27.field_18 = 4;
-	v27.field_1C = 12;
-	v27.field_20 = 12;
+	v27.texXStart = 48;
+	v27.texYStart = 4;
+	v27.texWidth = 12;
+	v27.texHeight = 12;
 	this->sendChatMessageButton->setImageDef(v27, 0);
 	this->closeButton = new Touch::TButton(2, "Back", 0);
 	this->closeButton->width = 38;

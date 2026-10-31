@@ -60,16 +60,14 @@ int32_t Sheep::getColor() const{
 	return this->synchedEntityData.getByte(16) & 0xf;
 }
 float Sheep::getHeadEatAngleScale(float a2) {
-	int v3; // r1
-
-	v3 = this->eatAnimationTick;
+	int v3 = this->eatAnimationTick;
 	if((uint32_t)(v3 - 5) <= 0x1F) {
-		return (float)((float)(3.1416 * 0.07) * Mth::sin((float)((float)((float)(v3 - 4) - a2) * 0.03125) * 28.7)) + (float)(3.1416 * 0.2);
+		return (Mth::PI * 0.07f) * Mth::sin((v3 - 4 - a2) * 0.03125f * 28.7f) + (Mth::PI * 0.2f);
 	}
 	if(v3 <= 0) {
-		return this->pitch / (float)(180.0 / 3.1416);
+		return this->pitch / (float)(180.0 / Mth::PI);
 	}
-	return 3.1416 * 0.2;
+	return Mth::PI * 0.2f;
 }
 float Sheep::getHeadEatPositionScale(float a2) {
 	int32_t v2; // r3
@@ -124,39 +122,24 @@ void Sheep::setSheared(bool_t a2) {
 }
 
 bool_t Sheep::interactWithPlayer(Player* a2) {
-	ItemInstance* sel; // r0
-	ItemInstance* v5;  // r8
-	int32_t v6;		   // r11
-	int32_t i;		   // r10
-	Level* level;	   // r3
-
-	sel = a2->inventory->getSelected();
-	v5 = sel;
-	if(sel) {
-		if(Item::shears == sel->itemClass) {
-			if(Item::shears) {
-				this->isSheared();
-				if(!this->isSheared() && !this->isBaby()) {
-					level = this->level;
-					if(!level->isClient) {
-						i = 0;
-						this->setSheared(1);
-						v6 = this->random.genrand_int32() % 3;
-						do {
-							++i;
-							Entity* v10 = this->spawnAtLocation(ItemInstance(Tile::cloth->blockID, 1, this->getColor()), 1.0);
-							v10->motionY = v10->motionY + (float)(this->random.nextFloat() * 0.05);
-							v10->motionX = v10->motionX + (float)((float)(this->random.nextFloat() - this->random.nextFloat()) * 0.1);
-							v10->motionZ = v10->motionZ + (float)((float)(this->random.nextFloat() - this->random.nextFloat()) * 0.1);
-						} while(v6 >= i);
-					}
-					if(!a2->abilities.instabuild) {
-						v5->hurtAndBreak(1, a2);
-					}
+	ItemInstance* sel = a2->inventory->getSelected();
+	if(sel && sel->isItem(Item::shears)) {
+		if(!this->isSheared() && !this->isBaby()) {
+			if(!this->level->isClient) {
+				this->setSheared(1);
+				for(int i = 0; i <= this->random.nextInt(3); ++i) {
+					Entity* v10 = this->spawnAtLocation(ItemInstance(Tile::cloth->blockID, 1, this->getColor()), 1.0f);
+					v10->motionY += this->random.nextFloat() * 0.05f;
+					v10->motionX += (this->random.nextFloat() - this->random.nextFloat()) * 0.1f;
+					v10->motionZ += (this->random.nextFloat() - this->random.nextFloat()) * 0.1f;
 				}
+			}
+			if(!a2->abilities.instabuild) {
+				sel->hurtAndBreak(1, a2);
 			}
 		}
 	}
+
 	return Animal::interactWithPlayer(a2);
 }
 void Sheep::handleEntityEvent(char event) {
@@ -198,10 +181,6 @@ void Sheep::aiStep() {
 }
 void Sheep::finalizeMobSpawn() {
 	this->setColor(Sheep::getSheepColor(&this->random));
-	if(this->isBaby()) {
-		int32_t newAge = this->getAge() + 1200;
-		this->setAge(newAge > 0 ? 0 : newAge);
-	}
 }
 void Sheep::ate() {
 	this->setSheared(0);

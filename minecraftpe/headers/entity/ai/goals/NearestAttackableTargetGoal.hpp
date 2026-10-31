@@ -17,12 +17,11 @@ struct NearestAttackableTargetGoal: TargetGoal
 	virtual ~NearestAttackableTargetGoal() {
 	}
 	virtual bool_t canUse() {
-		int32_t v2; // r5
-		Player* nearestPlayer; // r5
-		v2 = this->field_1C;
-		if (v2 > 0 && this->mob->random.genrand_int32() % v2) {
+		if (this->field_1C > 0 && this->mob->random.nextInt(this->field_1C)) {
 			return 0;
 		}
+
+		Player* nearestPlayer;
 		if (this->field_18 == 1) {
 			nearestPlayer = this->mob->level->getNearestPlayer(this->mob, this->radius);
 		} else {

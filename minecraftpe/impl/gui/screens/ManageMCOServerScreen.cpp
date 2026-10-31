@@ -125,13 +125,13 @@ void ManageMCOServerScreen::init(){
 	NinePatchFactory npf(this->minecraft->texturesPtr, "gui/spritesheet.png");
 	this->field_D4 = npf.createSymmetrical(IntRectangle{34, 43, 14, 14}, 3, 3, 32, 32);
 	ImageDef v37; //TODO this is supposed to be inside of some constructor?
-	v37.field_1C = 38;
-	v37.field_14 = 160;
-	v37.field_24 = 1;
-	v37.field_18 = 206;
-	v37.field_20 = 20;
+	v37.texWidth = 38;
+	v37.texXStart = 160;
+	v37.initialized = 1;
+	v37.texYStart = 206;
+	v37.texHeight = 20;
 
-	v37.field_0 = "gui/touchgui.png";
+	v37.texture = "gui/touchgui.png";
 	v37.width = 38.0;
 	v37.height = 20.0;
 	this->openLabel = new Label("Open", this->minecraft, -1, 0, 0, 0, 1);
@@ -163,14 +163,14 @@ void ManageMCOServerScreen::init(){
 	this->field_BC->height = (this->resetButton->height * 1.5f);
 	this->field_BC->init(this->minecraft->texturesPtr, this->field_BC->width, this->field_BC->height, {112, 0, 8, 67}, {120, 0, 8, 67}, 2, 2, "gui/spritesheet.png");
 	ImageDef v43;
-	v43.field_18 = 0;
+	v43.texYStart = 0;
 	v43.height = 12.0;
 	v43.width = 12.0;
-	v43.field_24 = 1;
-	v43.field_14 = 221;
-	v43.field_1C = 8;
-	v43.field_20 = 8;
-	v43.field_0 = "gui/gui.png";
+	v43.initialized = 1;
+	v43.texXStart = 221;
+	v43.texWidth = 8;
+	v43.texHeight = 8;
+	v43.texture = "gui/gui.png";
 	this->field_BC->setImageDef(v43, 0);
 	this->buttons.push_back(this->field_BC.get());
 	this->field_BC->setOverrideScreenRendering(1);

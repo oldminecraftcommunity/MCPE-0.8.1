@@ -16,29 +16,14 @@ struct Recipes
 		Tile* tile;
 		ItemInstance itemInstance;
 		char_t chr;
-		char field_1D, field_1E, field_1F;
 
-		Type(const Recipes::Type& a2)
-			: itemInstance(a2.itemInstance) {
-			this->item = a2.item;
-			this->tile = a2.tile;
-			this->chr = a2.chr;
-		}
-		Type(char_t a2, Item* a3) {
-			this->item = a3;
-			this->tile = 0;
-			this->chr = a2;
+		Type(const Recipes::Type& a2) = default;
+		Type(char_t a2, Item* a3) : item(a3), tile(0), chr(a2) {
 		}
 		Type(char_t a2, const ItemInstance& a3)
-			: itemInstance(a3) {
-			this->item = 0;
-			this->tile = 0;
-			this->chr = a2;
+			: item(0), tile(0), chr(a2), itemInstance(a3) {
 		}
-		Type(char_t a2, Tile* a3) {
-			this->tile = a3;
-			this->item = 0;
-			this->chr = a2;
+		Type(char_t a2, Tile* a3) : tile(a3), item(0), chr(a2) {
 		}
 	};
 

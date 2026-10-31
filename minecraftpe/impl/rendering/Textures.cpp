@@ -15,7 +15,6 @@ Textures::Textures(Options* options, AppPlatform* platform){
 
 void Textures::_loadTexImage(const ImageData& data){
 	int32_t v3 = data.field_C;
-	printf("%d\n", (uint32_t)(v3-5));
 	if((uint32_t)(v3-5) > 2){
 		switch(v3){
 			case 2:

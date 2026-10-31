@@ -108,9 +108,9 @@ void Font::drawSlow(const char_t* s, int32_t len, float x, float y, int32_t colo
 	int32_t col = color;
 	const uint8_t* ss;
 	float v12, v13, v14;
-	bool_t v15;
+	bool_t hasUnicode;
 	int32_t alpha;
-	int32_t v17, v18;
+	int32_t unicodeTex, v18;
 
 	int32_t v24;
 
@@ -121,7 +121,7 @@ void Font::drawSlow(const char_t* s, int32_t len, float x, float y, int32_t colo
 	v12 = 0;
 	v13 = 0;
 	v14 = -1;
-	v15 = this->containsUnicodeChar(s);
+	hasUnicode = this->containsUnicodeChar(s);
 	alpha = (col >> 24) & 0xff;
 	if(!alpha) alpha = 255;
 
@@ -134,26 +134,26 @@ void Font::drawSlow(const char_t* s, int32_t len, float x, float y, int32_t colo
 		if(v18 <= 0) break;
 		ss += v18;
 		len -= v18;
-		v17 = v24/256;
+		unicodeTex = v24/256;
 		if(v24/256 != v14 && v24 != ' '){ //' ' == 32
 			if(v14 != -1){
 				Tesselator::instance.draw(this->field_4);
 				Tesselator::instance.addOffset(-x, -y, 0);
 			}
 
-			if(v17 || v15) this->setUnicodeTexture(v17);
+			if(unicodeTex || hasUnicode) this->setUnicodeTexture(unicodeTex);
 			else this->setDefaultTexture();
 
 			Tesselator::instance.begin(0);
 			Tesselator::instance.color(r, g, b, alpha);
-			v14 = v17;
+			v14 = unicodeTex;
 			Tesselator::instance.addOffset(x, y, 0);
 		}
 
 		if(v24 == 10){
 			v13 = 0;
 			v12 += this->field_C;
-		}else if(v14 || v15){
+		}else if(v14 || hasUnicode){
 			v13 = v13 + this->buildChar(v24, v13, v12, 1);
 		}else{
 			v13 = v13 + this->buildChar(v24, v13, v12, 0);

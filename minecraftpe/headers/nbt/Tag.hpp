@@ -1,10 +1,10 @@
 #pragma once
 #include <_types.h>
 #include <string>
+#include <_PrintStream.hpp>
 
 struct IDataInput;
 struct IDataOutput;
-struct PrintStream;
 
 struct Tag{
 	int32_t field_0;
@@ -19,7 +19,7 @@ struct Tag{
 	virtual void write(IDataOutput*) = 0;
 	virtual void load(IDataInput*) = 0;
 	virtual std::string	toString(void) const = 0;
-	virtual int32_t getId(void) const = 0;
+	virtual char getId(void) const = 0;
 	virtual bool_t equals(const Tag&) const;
 	virtual void print(PrintStream&) const;
 	virtual	void print(const std::string&, PrintStream&) const;

@@ -98,22 +98,12 @@ void Throwable::lerpMotion(float x, float y, float z) {
 void Throwable::tick() {
 	int shake; // r3
 	int v7; // r3
-	float posX; // s12
-	float posY; // s13
-	float posZ; // s14
-	Level* level; // r1
 	float v12; // s9
 	float v13; // s10
 	float v14; // s11
-	float v15; // s12
-	float v16; // s13
-	float v17; // s14
-	float v18; // s11
-	float v19; // s15
 	float motionX; // s12
 	float motionY; // s13
 	float motionZ; // s14
-	Level* v23; // r0
 	float minX; // s6
 	float minY; // s7
 	float minZ; // s8
@@ -160,64 +150,29 @@ void Throwable::tick() {
 	}
 	if(this->level->getTile(this->xTile, this->yTile, this->zTile) != this->inTile) {
 		this->inGround = 0;
-		this->motionX = this->motionX * (float)(Entity::sharedRandom.nextFloat() * 0.2);
-		this->motionY = this->motionY * (float)(Entity::sharedRandom.nextFloat() * 0.2);
+		this->motionX *= Entity::sharedRandom.nextFloat() * 0.2f;
+		this->motionY *= Entity::sharedRandom.nextFloat() * 0.2f;
 		this->ticksInGround = 0;
 		this->ticksInAir = 0;
-		this->motionZ = this->motionZ * (float)(Entity::sharedRandom.nextFloat() * 0.2);
+		this->motionZ *= Entity::sharedRandom.nextFloat() * 0.2f;
 LABEL_9:
-		posX = this->posX;
-		posY = this->posY;
-		posZ = this->posZ;
-		level = this->level;
-		if(posX == 0.0) {
-			v12 = 0.0;
-		} else {
-			v12 = this->posX;
-		}
-		if(posY == 0.0) {
-			v13 = 0.0;
-		} else {
-			v13 = posY;
-		}
-		if(posZ == 0.0) {
-			v14 = 0.0;
-		} else {
-			v14 = posZ;
-		}
-		Vec3 start(v12, v13, v14); // [sp+18h] [bp-B0h] BYREF
+		Vec3 start(this->posX, this->posY, this->posZ); // [sp+18h] [bp-B0h] BYREF
+		Vec3 end(this->posX + this->motionX, this->posY + this->motionY, this->posZ + this->motionZ);
 
-		v15 = posX + this->motionX;
-		v16 = posY + this->motionY;
-		v17 = posZ + this->motionZ;
-		if(v15 == 0.0) {
-			v15 = 0.0;
-		}
-		if(v16 == 0.0) {
-			v16 = 0.0;
-		}
-		if(v17 == 0.0) {
-			v17 = 0.0;
-		}
-		Vec3 end(v15, v16, v17); // [sp+24h] [bp-A4h] BYREF
-
-		HitResult a1 = level->clip(start, end, 0, 0);
-		v18 = this->posY;
-		v19 = this->posZ;
+		HitResult a1 = this->level->clip(start, end, 0, 0);
 		start.x = this->posX;
-		start.y = v18;
-		start.z = v19;
+		start.y = this->posY;
+		start.z = this->posZ;
 		motionX = this->motionX;
 		motionY = this->motionY;
 		motionZ = this->motionZ;
 		end.x = start.x + motionX;
-		end.y = v18 + motionY;
-		end.z = v19 + motionZ;
+		end.y = start.y + motionY;
+		end.z = start.z + motionZ;
 		if(a1.hitType != 2) {
 			end = a1.hitVec;
 		}
-		v23 = this->level;
-		if(!v23->isClient) {
+		if(!this->level->isClient) {
 			minX = this->boundingBox.minX;
 			minY = this->boundingBox.minY;
 			minZ = this->boundingBox.minZ;
@@ -248,7 +203,7 @@ LABEL_9:
 			v31 = 0.0;
 			v32 = 0;
 
-			std::vector<Entity*>* entities = v23->getEntities(this, {minX - 1.0f, minY - 1.0f, minZ - 1.0f, maxX + 1.0f, maxY + 1.0f, maxZ + 1.0f});
+			std::vector<Entity*>* entities = this->level->getEntities(this, {minX - 1.0f, minY - 1.0f, minZ - 1.0f, maxX + 1.0f, maxY + 1.0f, maxZ + 1.0f});
 			for(int32_t v30 = 0; v30 < entities->size(); ++v30) {
 				v36 = entities->at(v30);
 				if(v36->isPickable()) {

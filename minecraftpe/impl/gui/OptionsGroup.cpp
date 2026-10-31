@@ -40,20 +40,20 @@ void OptionsGroup::setupPositions() {
 	}
 }
 void OptionsGroup::createToggle(const Options::Option* a2, Minecraft* a3) {
-	ImageDef idef;
-	idef.field_24 = 1;
-	idef.field_0 = "";
-	idef.field_4 = 0;
-	idef.field_8 = 0;
+	ImageDef idef("gui/touchgui.png", 0, 0, 160, 206, 38, 20);
+	/*idef.initialized = 1;
+	idef.texture = "";
+	idef.xOff = 0;
+	idef.yOff = 0;
 	idef.width = 16.0;
 	idef.height = 16.0;
-	idef.field_14 = 160;
-	idef.field_18 = 206;
-	idef.field_1C = 38;
-	idef.field_20 = 20;
-	idef.field_0 = "gui/touchgui.png";
-	idef.width = 38.0;
-	idef.height = 20.0;
+	idef.texXStart = 160;
+	idef.texYStart = 206;
+	idef.texWidth = 38;
+	idef.texHeight = 20;
+	idef.texture = "gui/touchgui.png";*/
+	idef.width = 38;
+	idef.height = 20;
 	std::shared_ptr<OptionButton> v9(new OptionButton(a2));
 	v9->updateImage(&a3->options);
 	v9->setImageDef(idef, 1);
