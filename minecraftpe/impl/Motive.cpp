@@ -32,13 +32,8 @@ Motive Motive::Water("Water", 32, 32, 96, 160, 0);
 
 Motive* Motive::DefaultImage = &Motive::Kebab;
 
-Motive::Motive(std::string name, int32_t w, int32_t h, int32_t uo, int32_t vo, bool_t isUsed){
-	this->name = name;
-	this->w = w;
-	this->h = h;
-	this->uo = uo;
-	this->vo = vo;
-	this->isUsed = isUsed;
+Motive::Motive(std::string name, int32_t w, int32_t h, int32_t uo, int32_t vo, bool_t isUsed) : name(name), w(w), h(h), uo(uo), vo(vo), isUsed(isUsed){
+
 }
 std::vector<const Motive*> Motive::getAllMotivesAsList(void) {
 	std::vector<const Motive*> vec;

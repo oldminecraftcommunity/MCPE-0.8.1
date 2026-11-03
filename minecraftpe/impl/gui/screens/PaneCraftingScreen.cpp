@@ -11,7 +11,7 @@
 #include <gui/pane/ScrollingPane.hpp>
 #include <inventory/Inventory.hpp>
 #include <item/Item.hpp>
-#include <perf/StopwatchNLast.hpp>
+#include <perf/Stopwatch.hpp>
 #include <rendering/Font.hpp>
 #include <rendering/Tesselator.hpp>
 #include <rendering/entity/ItemRenderer.hpp>

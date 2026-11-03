@@ -100,18 +100,15 @@ void TemptGoal::stop() {
 	this->holder->getNavigation()->setAvoidWater(this->prevAvoidWater);
 }
 void TemptGoal::tick() {
-	Entity* holder; // r7
-
 	--this->field_50;
 	this->holder->getLookControl()->setLookAt(this->followedPlayer.lock(), 30.0f, this->holder->getMaxHeadXRot());
-
-	holder = (Entity*)this->holder;
-	if(holder->distanceToSqr(this->followedPlayer.lock()) >= 6.25) {
-		if(this->field_50 <= 0) {
-			this->holder->getNavigation()->moveTo(this->followedPlayer.lock(), this->speedMultiplier);
-			this->field_50 = Mth::fastRandom();
-		}
-	} else {
+	if(this->holder->distanceToSqr(this->followedPlayer.lock()) < 6.25f) {
 		this->holder->getNavigation()->stop();
+		return;
+	}
+
+	if(this->field_50 <= 0) {
+		this->holder->getNavigation()->moveTo(this->followedPlayer.lock(), this->speedMultiplier);
+		this->field_50 = Mth::fastRandom();
 	}
 }

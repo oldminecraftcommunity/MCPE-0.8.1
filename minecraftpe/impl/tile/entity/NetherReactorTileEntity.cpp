@@ -8,6 +8,7 @@
 #include <math.h>
 #include <nbt/CompoundTag.hpp>
 #include <tile/NetherReactor.hpp>
+#include <math/Mth.hpp>
 
 ItemInstance NetherReactorTileEntity::GetLowOddsSpawnItem() {
 	//TODO seems to be global~
@@ -56,23 +57,10 @@ void NetherReactorTileEntity::buildDome(int32_t x, int32_t y, int32_t z) {
 	this->buildCrockedRoofVolume(0, x, y + 11, z, 3, 14, Tile::netherrack->blockID);
 }
 void NetherReactorTileEntity::buildFloorVolume(int32_t x, int32_t y, int32_t z, int32_t r, int32_t h, int32_t id) {
-	int32_t yo;	 // r4
-	int32_t xo;	 // r5
-	int32_t zz;	 // r3
-	int32_t zo;	 // r6
-	int32_t xx;	 // r12
-	int32_t v16; // [sp+8h] [bp-30h]
-
-	for(yo = 0; yo < h; ++yo) {
-		for(xo = -r; xo <= r; ++xo) {
-			zo = -r;
-			xx = xo + x;
-			while(zo <= r) {
-				zz = zo + z;
-				++zo;
-				v16 = xx;
-				this->level->setTile(xx, yo + y, zz, id, 3);
-				xx = v16;
+	for(int yo = 0; yo < h; ++yo) {
+		for(int xo = -r; xo <= r; ++xo) {
+			for(int zo = -r; zo <= r; ++zo){
+				this->level->setTile(xo + x, yo + y, zo + z, id, 3);
 			}
 		}
 	}
@@ -274,21 +262,13 @@ ItemInstance NetherReactorTileEntity::getSpawnItem() {
 	}
 }
 Vec3 NetherReactorTileEntity::getSpawnPosition(float x, float y, float z) {
-	float v9;  // s14
-	double v10; // d8
-	float v11; // s18
-	double v12; // d9
-	float v13; // s21
-	float v14; // s20
-	float v15; // s14
 
-	v9 = this->level->random.nextFloat();
-	v10 = (float)(x + (float)(v9 * y));
-	v11 = this->level->random.nextFloat();
-	v12 = (float)(v11 * 6.2832);
-	v13 = (double)this->posX + sin(v12) * v10;
-	v14 = z + (float)this->posY;
-	v15 = (double)this->posZ + cos(v12) * v10;
+	float v10 = x + this->level->random.nextFloat() * y;
+	float v12 = this->level->random.nextFloat() * Mth::TAU;
+
+	float v13 = this->posX + sin(v12) * v10;
+	float v14 = z + this->posY;
+	float v15 = this->posZ + cos(v12) * v10;
 	return Vec3(v13, v14, v15);
 }
 bool_t NetherReactorTileEntity::isEdge(int32_t x, int32_t y, int32_t z) {
@@ -318,38 +298,22 @@ void NetherReactorTileEntity::lightItUp(int32_t x, int32_t y, int32_t z) {
 	this->level->setNightMode(1);
 }
 int32_t NetherReactorTileEntity::numOfFreeEnemySlots() {
-	float posX;	  // s11
-	int32_t v2;	  // r5
-	float posY;	  // s12
-	int32_t posZ; // s15
-	AABB v11;	  // [sp+10h] [bp-28h] BYREF
-
-	posX = (float)this->posX;
-	v2 = 0;
-	posY = (float)this->posY;
-	posZ = this->posZ;
-	std::vector<struct Entity*>* ents = this->level->getEntities(0, {posX - 7.0f, posY - 7.0f, (float)posZ - 7.0f, (float)(posX + 1.0f) + 7.0f, (float)(posY + 1.0f) + 7.0f, (float)((float)posZ + 1.0f) + 7.0f});
-	for(auto p: *ents) {
-		if(p->getEntityTypeId() == 36) {
-			if(p->isAlive()) {
-				++v2;
-			}
+	AABB aabb(this->posX, this->posY, this->posZ);
+	std::vector<Entity*> ents = *this->level->getEntities(0, aabb.grow(7, 7, 7));
+	int v2 = 0;
+	for(auto p : ents){
+		if(p->getEntityTypeId() == 36 && p->isAlive()) {
+			++v2;
 		}
 	}
 	return 3 - v2;
 }
 bool_t NetherReactorTileEntity::playersAreCloseBy() {
-	float posX; // s12
-	int v3;		// r6
-	float posY; // s13
-	int posZ;	// s15
+	AABB aabb(this->posX, this->posY, this->posZ);
+	std::vector<struct Entity*> ents = *this->level->getEntities(0, aabb.grow(40, 40, 40));
+	int v3 = 0;
 
-	posX = (float)this->posX;
-	v3 = 0;
-	posY = (float)this->posY;
-	posZ = this->posZ;
-	std::vector<struct Entity*>* ents = this->level->getEntities(0, {posX - 40.0f, posY - 40.0f, (float)posZ - 40.0f, (float)(posX + 1.0) + 40.0f, (float)(posY + 1.0) + 40.0f, (float)((float)posZ + 1.0) + 40.0f});
-	for(auto e: *ents) {
+	for(auto e: ents) {
 		if(e->isPlayer() && e->isAlive() && e->distanceTo(this->posX, this->posY, this->posZ) < 40) {
 			++v3;
 		}

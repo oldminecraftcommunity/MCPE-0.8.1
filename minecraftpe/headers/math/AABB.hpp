@@ -28,6 +28,9 @@ struct AABB{
 		, maxY(maxY)
 		, maxZ(maxZ) {
 	}
+	AABB(float x, float y, float z) : minX(x), minY(y), minZ(z), maxX(x+1), maxY(y+1), maxZ(z+1){
+
+	}
 	AABB() {
 	}
 

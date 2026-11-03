@@ -27,5 +27,4 @@ struct PerformanceTestChunkSource: ChunkSource
 	virtual std::string gatherStats() {
 		return "PerformanceTestChunkSource";
 	}
-
 };

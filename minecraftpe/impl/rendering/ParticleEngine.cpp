@@ -61,59 +61,37 @@ std::string ParticleEngine::countParticles() { //TODO check return type
 	return ss.str();
 }
 void ParticleEngine::crack(int32_t x, int32_t y, int32_t z, int32_t a5) {
-	int32_t v9; // r6
-	int32_t v10; // r0
-	float v11; // s19
-	Tile* v12; // r4
-	int32_t v13; // r11
-	float v14; // s18
-	float v15; // s21
-	float v16; // s17
-	float v17; // s20
-	float f; // r0
-	float minZ; // s13
-	float maxZ; // s12
-	float v21; // s14
-	Particle* v22; // r0
-
-	v9 = this->level->getTile(x, y, z);
-	if(v9) {
-		v10 = this->level->getData(x, y, z);
-		v11 = (float)x;
-		v12 = Tile::tiles[v9];
-		v13 = v10;
-		v14 = (float)((float)((float)x + (float)(this->random.nextFloat() * (float)((float)(v12->maxX - v12->minX) - 0.2))) + 0.1) + v12->minX;
-		v15 = (float)y;
-		v16 = (float)((float)((float)y + (float)(this->random.nextFloat() * (float)((float)(v12->maxY - v12->minY) - 0.2))) + 0.1) + v12->minY;
-		v17 = (float)z;
-		f = this->random.nextFloat();
-		minZ = v12->minZ;
-		maxZ = v12->maxZ;
-		v21 = (float)((float)((float)z + (float)(f * (float)((float)(maxZ - minZ) - 0.2))) + 0.1) + minZ;
+	int id = this->level->getTile(x, y, z);
+	if(id) {
+		int data = this->level->getData(x, y, z);
+		Tile* tile = Tile::tiles[id];
+		float xx = x + (this->random.nextFloat() * (tile->maxX - tile->minX - 0.2f)) + 0.1f + tile->minX;
+		float yy = y + (this->random.nextFloat() * (tile->maxY - tile->minY - 0.2f)) + 0.1f + tile->minY;
+		float zz = z + (this->random.nextFloat() * (tile->maxZ - tile->minZ - 0.2f)) + 0.1f + tile->minZ;
 		switch(a5) {
 			case 0:
-				v16 = (float)(v15 + v12->minY) - 0.1;
+				yy = (y + tile->minY) - 0.1f;
 				break;
 			case 1:
-				v16 = (float)(v15 + v12->maxY) + 0.1;
+				yy = (y + tile->maxY) + 0.1f;
 				break;
 			case 2:
-				v21 = (float)(v17 + minZ) - 0.1;
+				zz = (z + tile->minZ) - 0.1f;
 				break;
 			case 3:
-				v21 = (float)(v17 + maxZ) + 0.1;
+				zz = (z + tile->maxZ) + 0.1f;
 				break;
 			case 4:
-				v14 = (float)(v11 + v12->minX) - 0.1;
+				xx = (x + tile->minX) - 0.1f;
 				break;
 			case 5:
-				v14 = (float)(v11 + v12->maxX) + 0.1;
+				xx = (x + tile->maxX) + 0.1f;
 				break;
 			default:
 				break;
 		}
-		v22 = this->instance(PT_TERRAIN, v14, v16, v21, 0.0, 0.0, 0.0, v12->blockID | (v13 << 16));
-		v22->setPower(0.2)->scale(0.6);
+		Particle* pt = this->instance(PT_TERRAIN, xx, yy, zz, 0.0, 0.0, 0.0, tile->blockID | (data << 16));
+		pt->setPower(0.2)->scale(0.6f);
 	}
 }
 Particle* ParticleEngine::create(ParticleType a2) {
@@ -224,8 +202,8 @@ void ParticleEngine::render(Entity* a2, float a3) {
 	posZ = a2->posZ;
 	Particle::yOff = v15;
 	Particle::zOff = a2->prevPosZ + (float)((float)(posZ - a2->prevPosZ) * a3);
-	glEnable(0xBC0u);
-	glDisable(0xBE2u);
+	glEnable(GL_ALPHA_TEST);
+	glDisable(GL_BLEND);
 	for(auto& p: this->string2ParticleVec) {
 		if(!p.second.empty()) {
 			this->textures->loadAndBindTexture(p.first);
@@ -237,21 +215,23 @@ void ParticleEngine::render(Entity* a2, float a3) {
 			Tesselator::instance.draw(1);
 		}
 	}
-	glEnable(0xBE2u);
-	glDisable(0xBC0u);
+	glEnable(GL_BLEND);
+	glDisable(GL_ALPHA_TEST);
 }
 void ParticleEngine::setLevel(Level* a2) {
 	this->level = a2;
 	this->clear();
 }
 void ParticleEngine::tick() {
-	for(auto& p: this->string2ParticleVec) {
-		for(int32_t i = 0; i < p.second.size(); ++i) {
+	for(auto&& p: this->string2ParticleVec) {
+		uint32_t sz = p.second.size();
+		for(uint32_t i = 0; i < sz; ++i) {
 			Particle* prt = p.second[i];
 			prt->tick();
 			if(prt->isDead) {
-				p.second.erase(p.second.begin() + i);
 				--i;
+				p.second.erase(p.second.begin() + i);
+				--sz;
 				this->_release(prt);
 			}
 		}

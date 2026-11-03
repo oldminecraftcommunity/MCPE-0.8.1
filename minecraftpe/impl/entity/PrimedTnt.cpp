@@ -31,44 +31,27 @@ void PrimedTnt::explode() {
 }
 
 void PrimedTnt::tick() {
-	float motionY;	 // s15
-	float motionX;	 // r1
-	float posZ;		 // r3
-	float v5;		 // s12
-	float motionZ;	 // s13
-	bool_t onGround; // r3
-	float v8;		 // s14
-	Level* level;	 // r0
-	int32_t v10;	 // r3
-
-	motionY = this->motionY - 0.04;
-	motionX = this->motionX;
+	this->motionY -= 0.04f;
 	this->prevX = this->posX;
 	this->prevY = this->posY;
-	posZ = this->posZ;
-	this->motionY = motionY;
-	this->prevZ = posZ;
-	this->move(motionX, motionY, this->motionZ);
-	v5 = this->motionX * 0.98;
-	motionZ = this->motionZ;
-	onGround = this->onGround;
-	v8 = this->motionY * 0.98;
-	this->motionX = v5;
-	this->motionY = v8;
-	this->motionZ = motionZ * 0.98;
-	if(onGround) {
-		this->motionZ = (float)(motionZ * 0.98) * 0.7;
-		this->motionX = v5 * 0.7;
-		this->motionY = v8 * -0.5;
+	this->prevZ = this->posZ;
+
+	this->move(this->motionX, this->motionY, this->motionZ);
+
+	this->motionX *= 0.98f;
+	this->motionY *= 0.98f;
+	this->motionZ *= 0.98f;
+	if(this->onGround) {
+		this->motionX *= 0.7f;
+		this->motionZ *= 0.7f;
+		this->motionY *= -0.5f;
 	}
-	level = this->level;
-	v10 = this->ticksUntilExplode - 1;
-	this->ticksUntilExplode = v10;
-	if(level->isClient || v10 > 0) {
-		level->addParticle(PT_SMOKE, this->posX, this->posY + 0.5, this->posZ, 0.0, 0.0, 0.0, 0);
-	} else {
+	this->ticksUntilExplode -= 1;
+	if(!this->level->isClient && this->ticksUntilExplode <= 0){
 		this->remove();
 		this->explode();
+	}else{
+		this->level->addParticle(PT_SMOKE, this->posX, this->posY + 0.5f, this->posZ, 0, 0, 0, 0);
 	}
 }
 

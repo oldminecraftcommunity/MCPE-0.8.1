@@ -1,7 +1,7 @@
 #pragma once
 #include <_types.h>
 #include <math.h>
-#include <cpputils.hpp>
+#include <perf/Stopwatch.hpp>
 
 struct Random{
 	int32_t seed;
@@ -34,6 +34,10 @@ struct Random{
 	//should be always inlined
 	int nextInt(int limit) {
 		return this->genrand_int32() % limit;
+	}
+	//should always be inlined - maybe should be called nextLong (based on java)?
+	int nextInt() {
+		return this->genrand_int32() >> 1;
 	}
 	float nextGaussian(void){
 		if(this->haveNextNextGaussian){

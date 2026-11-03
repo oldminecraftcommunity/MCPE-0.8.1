@@ -1,5 +1,6 @@
 #pragma once
 #include <cpputils.hpp>
+#include <perf/Stopwatch.hpp>
 
 struct Timer{
 	float ticksPerSecond;

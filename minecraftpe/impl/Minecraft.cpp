@@ -57,6 +57,7 @@
 #include <util/SharedConstants.hpp>
 #include <util/Util.hpp>
 #include <cpputils.hpp>
+#include <algorithm>
 
 char Minecraft::customDebugId[4];
 
@@ -448,8 +449,9 @@ bool_t Minecraft::isCreativeMode(void) {
 bool_t Minecraft::isKindleFire(int32_t a2) {
 	if(a2 != 1) return 0;
 
-	std::string v12 = this->platform()->getPlatformStringVar(0);
-	v12 = Util::toLower(v12);
+	std::string v11 = this->platform()->getPlatformStringVar(0);
+	std::string v12 = v11;
+	std::transform(v12.begin(), v12.end(), v12.begin(), tolower);
 	return v12.find("kindle") != -1 && v12.find("fire") != -1;
 }
 bool_t Minecraft::isLevelGenerated(void) {
@@ -731,9 +733,9 @@ void Minecraft::reloadOptions(void) {
 void Minecraft::resetPlayer(Player* a2) {
 	this->level->validateSpawn();
 	a2->reset();
-	TilePos result = a2->hasRespawnPosition() ? a2->getRespawnPosition() : this->level->getSharedSpawnPos(); // [sp+4h] [bp-1Ch] OVERLAPPED BYREF
+	TilePos result = a2->hasRespawnPosition() ? a2->getRespawnPosition() : this->level->getSharedSpawnPos();
 
-	a2->setPos((float)result.x + 0.5, (float)result.y + 1.0, (float)result.z + 0.5);
+	a2->setPos(result.x + 0.5f, result.y + 1.0f, result.z + 0.5f);
 	a2->resetPos(1);
 }
 Player* Minecraft::respawnPlayer(int32_t a2) {

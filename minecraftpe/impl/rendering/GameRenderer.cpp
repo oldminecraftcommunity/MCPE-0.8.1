@@ -77,34 +77,26 @@ GameRenderer::GameRenderer(struct Minecraft* a2)
 	entityRenderer->textures = a2->texturesPtr;
 }
 void GameRenderer::bobHurt(float a2) {
-	Player* viewEntityMaybe; // r4
-	int hurtTime;			 // s17
-	float v5;				 // r0
-	float v6;				 // r4
-	float v7;				 // s16
 
-	viewEntityMaybe = (Player*)this->minecraft->viewEntity;
-	hurtTime = viewEntityMaybe->hurtTime;
-	if(viewEntityMaybe->health <= 0) {
-		glRotatef(40.0 - (float)(8000.0 / (float)((float)((float)viewEntityMaybe->deathTime + a2) + 200.0)), 0.0, 0.0, 1.0);
+	Mob* ve = this->minecraft->viewEntity;
+	if(ve->health <= 0) {
+		glRotatef(40.0f - (8000.0f / (ve->deathTime + a2 + 200)), 0, 0, 1);
 	}
-	if(viewEntityMaybe->hurtTime > 0) {
-		v5 = Mth::sin((float)((float)((float)((float)((float)((float)hurtTime - a2) / (float)viewEntityMaybe->field_148) * (float)((float)((float)hurtTime - a2) / (float)viewEntityMaybe->field_148)) * (float)((float)((float)hurtTime - a2) / (float)viewEntityMaybe->field_148)) * (float)((float)((float)hurtTime - a2) / (float)viewEntityMaybe->field_148)) * 3.1416);
-		v6 = viewEntityMaybe->field_14C;
-		v7 = v5;
-		glRotatef(-v6, 0.0, 1.0, 0.0);
-		glRotatef(-(float)(v7 * 14.0), 0.0, 0.0, 1.0);
-		glRotatef(v6, 0.0, 1.0, 0.0);
+	if(ve->hurtTime > 0) {
+		float v5 = Mth::sin(((ve->hurtTime - a2) / ve->field_148) * ((ve->hurtTime - a2) / ve->field_148) * ((ve->hurtTime - a2) / ve->field_148) * ((ve->hurtTime - a2) / ve->field_148) * Mth::PI);
+		glRotatef(-ve->field_14C, 0, 1, 0);
+		glRotatef(-(v5 * 14), 0, 0, 1);
+		glRotatef(ve->field_14C, 0, 1, 0);
 	}
 }
 void GameRenderer::bobView(float a2) {
 	if(this->minecraft->viewEntity->isPlayer()) {
 		Player* ve = (Player*)this->minecraft->viewEntity;
-		float v5 = ve->field_C74 + (float)((float)(ve->field_C78 - ve->field_C74) * a2);
-		float v6 = -(float)((float)(ve->field_BC + (float)((float)(ve->field_BC - ve->field_B8) * a2)) * 3.1416f);
-		float v7 = ve->field_158 + (float)((float)(ve->field_15C - ve->field_158) * a2);
-		glTranslatef((float)(Mth::sin(v6) * v5) * 0.5f, -fabsf(Mth::cos(v6) * v5), 0.0f);
-		glRotatef((float)(Mth::sin(v6) * v5) * 3.0f, 0.0f, 0.0f, 1.0f);
+		float v5 = ve->field_C74 + (ve->field_C78 - ve->field_C74) * a2;
+		float v6 = -((ve->field_BC + (ve->field_BC - ve->field_B8) * a2) * Mth::PI);
+		float v7 = ve->field_158 + (ve->field_15C - ve->field_158) * a2;
+		glTranslatef(Mth::sin(v6) * v5 * 0.5f, -fabsf(Mth::cos(v6) * v5), 0.0f);
+		glRotatef(Mth::sin(v6) * v5 * 3.0f, 0.0f, 0.0f, 1.0f);
 		glRotatef(fabsf(Mth::cos(v6 - 0.2f) * v5) * 5.0f, 1.0f, 0.0f, 0.0f);
 		glRotatef(v7, 1.0f, 0.0f, 0.0f);
 	}
@@ -633,110 +625,86 @@ void GameRenderer::renderItemInHand(float a2, int32_t a3) {
 }
 #include <rendering/Tesselator.hpp>
 extern MeshBuffer cube;
-void GameRenderer::renderLevel(float a2) {
-	Minecraft* minecraft;			// r3
-	Mob* player;					// r2
-	Minecraft* v6;					// r3
-	Mob* viewEntityMaybe;			// r5
-	LevelRenderer* levelRenderer;	// r6
-	ParticleEngine* particleEngine; // r10
-	float v10;						// s19
-	float v11;						// s18
-	float v12;						// s17
-	GLenum v13;						// r0
-	LevelRenderer* a1;				// [sp+14h] [bp-52Ch]
+void GameRenderer::renderLevel(float pt) {
+	if(!this->minecraft->viewEntity) {
+		if(!this->minecraft->player) return;
+		this->minecraft->viewEntity = this->minecraft->player;
+	}
+	this->pick(pt);
+	Mob* ve = this->minecraft->viewEntity;
+	LevelRenderer* levelRenderer = this->minecraft->levelRenderer;
+	ParticleEngine* particleEngine = this->minecraft->particleEngine;
+	float renderX = ve->prevPosX + (ve->posX - ve->prevPosX) * pt;
+	float renderY = ve->prevPosY + (ve->posY - ve->prevPosY) * pt;
+	float renderZ = ve->prevPosZ + (ve->posZ - ve->prevPosZ) * pt;
 
-	minecraft = this->minecraft;
-	if(!minecraft->viewEntity) {
-		player = (Mob*)minecraft->player;
-		if(!player) {
-			return;
-		}
-		minecraft->viewEntity = player;
-	}
-	this->pick(a2);
-	v6 = this->minecraft;
-	viewEntityMaybe = v6->viewEntity;
-	levelRenderer = v6->levelRenderer;
-	particleEngine = v6->particleEngine;
-	v10 = viewEntityMaybe->prevPosX + (float)((float)(viewEntityMaybe->posX - viewEntityMaybe->prevPosX) * a2);
-	v11 = viewEntityMaybe->prevPosY + (float)((float)(viewEntityMaybe->posY - viewEntityMaybe->prevPosY) * a2);
-	v12 = viewEntityMaybe->prevPosZ + (float)((float)(viewEntityMaybe->posZ - viewEntityMaybe->prevPosZ) * a2);
-	glViewport(0, 0, v6->width, v6->height);
-	this->setupClearColor(a2);
+	glViewport(0, 0, this->minecraft->width, this->minecraft->height);
+	this->setupClearColor(pt);
 	glClear(0x4500u);
-	this->setupCamera(a2, 0);
+	this->setupCamera(pt, 0);
 	this->saveMatrices();
-	if(this->enableScissorTest) {
-		v13 = 3089;
-	} else {
-		v13 = 0;
-	}
-	EnableState v18(v13);
+
+	EnableState v18(this->enableScissorTest ? GL_SCISSOR_TEST : 0);
 	if(this->enableScissorTest) {
 		glScissor(this->scissorRect.minX, this->scissorRect.minY, this->scissorRect.width, this->scissorRect.height);
 	}
 	this->setupFog(1);
 	Frustum::frustum.calculateFrustum();
-	FrustumCuller v23{Frustum::frustum, v10, v11, v12};
+	FrustumCuller v23{Frustum::frustum, renderX, renderY, renderZ};
 
-	this->minecraft->levelRenderer->cullAndSort(&v23, this->field_8, a2);
-	this->minecraft->levelRenderer->updateDirtyChunks(viewEntityMaybe, 0);
+	this->minecraft->levelRenderer->cullAndSort(&v23, this->field_8, pt);
+	this->minecraft->levelRenderer->updateDirtyChunks(ve, 0);
 	{
-		DisableState v21(3042);
-		glShadeModel(0x1D01u);
+		DisableState v21(GL_BLEND);
+		glShadeModel(GL_SMOOTH);
 		this->minecraft->texturesPtr->loadAndBindTexture("terrain-atlas.tga");
-		levelRenderer->renderChunks(0, a2, this->field_150);
-		levelRenderer->renderChunks(1, a2, this->field_150);
-		levelRenderer->renderChunks(3, a2, this->field_150);
+		levelRenderer->renderChunks(0, pt, this->field_150);
+		levelRenderer->renderChunks(1, pt, this->field_150);
+		levelRenderer->renderChunks(3, pt, this->field_150);
 		if(!this->field_150) {
-			levelRenderer->renderFarChunks(a2);
+			levelRenderer->renderFarChunks(pt);
 		}
-		glShadeModel(0x1D00u);
-		a1 = this->minecraft->levelRenderer;
-		Vec3 v22 = viewEntityMaybe->getPos(a2);
-		a1->renderEntities(v22, &v23, this->minecraft->options.graphics, a2);
+		glShadeModel(GL_FLAT);
+		this->minecraft->levelRenderer->renderEntities(ve->getPos(pt), &v23, this->minecraft->options.graphics, pt);
 	}
 
 	{
-		EnableState v19(2912);
-		DisableState v20(3042);
-		if(viewEntityMaybe->isUnderLiquid(Material::water)) {
-			glCullFace(0x404u);
+		EnableState v19(GL_FOG);
+		DisableState v20(GL_BLEND);
+		if(ve->isUnderLiquid(Material::water)) {
+			glCullFace(GL_FRONT);
 		}
 		this->setupFog(1);
 		this->minecraft->texturesPtr->loadAndBindTexture("terrain-atlas.tga");
-		levelRenderer->renderChunks(2, a2, this->field_150);
-		if(viewEntityMaybe->isUnderLiquid(Material::water)) {
-			glCullFace(0x405u);
+		levelRenderer->renderChunks(2, pt, this->field_150);
+		if(ve->isUnderLiquid(Material::water)) {
+			glCullFace(GL_BACK);
 		}
 	}
 	if(this->minecraft->options.fancySkies) {
 		glPushMatrix();
-		this->setupCamera(a2, 0);
-		this->renderSky(levelRenderer, 0.0, a2);
+		this->setupCamera(pt, 0);
+		this->renderSky(levelRenderer, 0, pt);
 		glPopMatrix();
-		levelRenderer->renderClouds(a2);
+		levelRenderer->renderClouds(pt);
 	}
-	this->minecraft->levelRenderer->renderNameTags(a2);
-	if(this->field_4C == 1.0) {
-		if(viewEntityMaybe->isPlayer()) {
-			if(!this->minecraft->currentScreen && this->minecraft->selectedObject.hitType != 2 && !viewEntityMaybe->isUnderLiquid(Material::water)) {
+	this->minecraft->levelRenderer->renderNameTags(pt);
+	if(this->field_4C == 1.0f && ve->isPlayer()) {
+		if(!this->minecraft->currentScreen && this->minecraft->selectedObject.hitType != 2 && !ve->isUnderLiquid(Material::water)) {
 #ifndef PCTWEAKS
-				if(this->minecraft->useTouchscreen()) {
+			if(this->minecraft->useTouchscreen()) {
 #endif
-					levelRenderer->renderHitSelect((Player*)viewEntityMaybe, this->minecraft->selectedObject, 0, 0, a2);
+				levelRenderer->renderHitSelect((Player*)ve, this->minecraft->selectedObject, 0, 0, pt);
 #ifndef PCTWEAKS
-				}
-#endif
-				levelRenderer->renderHit((Player*)viewEntityMaybe, this->minecraft->selectedObject, 0, 0, a2);
 			}
+#endif
+			levelRenderer->renderHit((Player*)ve, this->minecraft->selectedObject, 0, 0, pt);
 		}
 	}
-	particleEngine->render(viewEntityMaybe, a2);
+	particleEngine->render(ve, pt);
 
-	if(this->field_4C == 1.0) {
-		this->renderItemInHand(a2, 0);
+	if(this->field_4C == 1.0f) {
+		this->renderItemInHand(pt, 0);
 	}
 }
 void GameRenderer::renderSky(LevelRenderer* a2, float a3, float a4) {

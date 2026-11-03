@@ -9,10 +9,9 @@
 struct LeafTile : TransparentTile{
 	int32_t* treeBlocksNearby;
 	bool_t field_88;
-	int8_t field_89, field_8A, field_8B;
-	TextureUVCoordinateSet field_8C[4];
+	TextureUVCoordinateSet opaqueTex[4];
 	TextureUVCoordinateSet field_EC[4];
-	TextureUVCoordinateSet field_14C[4];
+	TextureUVCoordinateSet nonOpaqueTex[4];
 	int32_t field_1AC, field_1B0, field_1B4, field_1B8, field_1BC, field_1C0;
 
 	LeafTile(int32_t id, const std::string& name) :
@@ -21,8 +20,8 @@ struct LeafTile : TransparentTile{
 		TextureAtlasTextureItem* texIt = this->getTextureItem("leaves_opaque");
 		TextureAtlasTextureItem* texIt2 = this->getTextureItem("leaves");
 		for (int32_t i = 0; i < 4; ++i) {
-			this->field_8C[i] = *texIt->getUV(i);
-			this->field_14C[i] = *texIt2->getUV(i);
+			this->opaqueTex[i] = *texIt->getUV(i);
+			this->nonOpaqueTex[i] = *texIt2->getUV(i);
 			this->field_EC[i] = *texIt2->getUV(i + 4);
 		}
 		this->field_5C = 3;
@@ -32,9 +31,9 @@ struct LeafTile : TransparentTile{
 		if (this->treeBlocksNearby) delete[] this->treeBlocksNearby;
 	}
 	virtual TextureUVCoordinateSet* getTexture(int32_t a2, int32_t meta) {
-		if (this->field_88) return &this->field_14C[meta & 3];
+		if (this->field_88) return &this->nonOpaqueTex[meta & 3];
 
-		return &this->field_8C[meta & 3];
+		return &this->opaqueTex[meta & 3];
 	}
 	virtual TextureUVCoordinateSet* getCarriedTexture(int32_t a2, int32_t a3) {
 		return &this->field_EC[a3 & 3];

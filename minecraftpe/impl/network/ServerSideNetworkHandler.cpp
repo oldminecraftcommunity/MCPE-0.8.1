@@ -696,7 +696,7 @@ void ServerSideNetworkHandler::onPlayerVerified(const RestCallTagData& a2) {
 	RakNet::RakNetGUID v13(a2.guid_g);
 	Player* pp = this->findPendingPlayer(v13);
 	if(pp) {
-		pp->field_CD0 = 1;
+		pp->playerVerified = 1;
 		LoginStatusPacket(0).write(&v16);
 		this->rakPeer->Send(&v16, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE_ORDERED, 0, RakNet::AddressOrGUID(RakNet::RakNetGUID(a2.guid_g)), 0, 0);
 		this->sendWorldSeed(pp, v13);

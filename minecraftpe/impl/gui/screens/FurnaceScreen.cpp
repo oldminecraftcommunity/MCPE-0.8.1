@@ -11,7 +11,7 @@
 #include <level/Level.hpp>
 #include <network/RakNetInstance.hpp>
 #include <network/packet/ContainerSetSlotPacket.hpp>
-#include <perf/StopwatchNLast.hpp>
+#include <perf/Stopwatch.hpp>
 #include <rendering/Font.hpp>
 #include <rendering/Tesselator.hpp>
 #include <rendering/Textures.hpp>

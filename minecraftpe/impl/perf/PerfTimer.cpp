@@ -1,6 +1,7 @@
 #include <perf/PerfTimer.hpp>
 #include <cpputils.hpp>
 #include <algorithm>
+#include <perf/Stopwatch.hpp>
 
 bool_t PerfTimer::enabled = 0;
 std::vector<std::string> PerfTimer::paths;

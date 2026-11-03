@@ -46,7 +46,8 @@ int32_t Painting::getEntityTypeId() const {
 	return 83;
 }
 void Painting::readAdditionalSaveData(CompoundTag* a2) {
-	this->motive = Motive::getMotiveByName(a2->getString("Motive"));
+	std::string motive = a2->getString("Motive");
+	this->motive = Motive::getMotiveByName(motive);
 	HangingEntity::readAdditionalSaveData(a2);
 }
 void Painting::addAdditonalSaveData(CompoundTag* a2) {

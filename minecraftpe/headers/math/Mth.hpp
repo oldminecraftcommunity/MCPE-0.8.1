@@ -35,10 +35,10 @@ struct Mth{
 		return v2;
 	}
 	static uint32_t fastRandom(void) {
-		static int32_t x = 123456789;
-		static int32_t y = 362436069;
-		static int32_t z = 521288629;
-		static int32_t w = 88675123;
+		static uint32_t x = 123456789;
+		static uint32_t y = 362436069;
+		static uint32_t z = 521288629;
+		static uint32_t w = 88675123;
 		uint32_t v0;
 		uint32_t result;
 		v0 = x ^ (x << 11);

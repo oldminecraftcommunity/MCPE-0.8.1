@@ -13,8 +13,9 @@ struct GLBufferPool{
 
 	GLBufferPool(unsigned int reserveCnt) {
 		this->reserveCnt = reserveCnt;
-	} // - not inlined in x86 but inlined in armv7?
+	}
 	GLuint get(){
+		//TODO check is correct
 		if(this->unusedBuffers.size() < this->reserveCnt) {
 			while(this->unusedBuffers.size() < this->reserveCnt) {
 				unsigned int bf;
@@ -38,13 +39,13 @@ struct GLBufferPool{
 		this->unusedBuffers.push(n);
 		this->usedBuffers.erase(v4);
 	}
-	bool_t trim(void){
-		//TODO check is correct
-		if(this->unusedBuffers.size() == 0){
+	bool_t trim(void) {
+		if(this->unusedBuffers.empty()) {
 			return 0;
 		}
 		while(!this->unusedBuffers.empty()) {
-			glDeleteBuffers(1, &this->unusedBuffers.front());
+			uint32_t n = this->unusedBuffers.front();
+			glDeleteBuffers(1, &n);
 			this->unusedBuffers.pop();
 		}
 		return 1;

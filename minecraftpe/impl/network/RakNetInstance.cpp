@@ -225,9 +225,7 @@ void RakNetInstance::send(Packet& a2) {
 	RakNet::BitStream v14;
 	a2.write(&v14);
 	if(this->_isServer) {
-		RakNet::SystemAddress v13;
-		v13 = _D6E0A1B0;
-		this->rakPeerInstance->Send(&v14, a2.packetPriorityMaybe, a2.packetReliabilityMaybe, 0, v13, 1, 0);
+		this->rakPeerInstance->Send(&v14, a2.packetPriorityMaybe, a2.packetReliabilityMaybe, 0, _D6E0A1B0, 1, 0);
 	} else {
 		this->rakPeerInstance->Send(&v14, a2.packetPriorityMaybe, a2.packetReliabilityMaybe, 0, RakNet::AddressOrGUID(this->field_8), 0, 0);
 	}

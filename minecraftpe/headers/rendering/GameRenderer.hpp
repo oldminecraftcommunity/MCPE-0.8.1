@@ -42,7 +42,7 @@ struct GameRenderer{
 	void pick(float);
 	void render(float);
 	void renderItemInHand(float, int32_t);
-	void renderLevel(float);
+	void renderLevel(float pt);
 	void renderSky(struct LevelRenderer*, float, float);
 	void saveMatrices(void);
 	void setupCamera(float, int32_t);

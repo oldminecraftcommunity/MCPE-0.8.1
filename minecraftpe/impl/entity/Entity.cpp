@@ -982,7 +982,7 @@ void Entity::positionRider(bool_t a2) {
 
 	if(this->rider) {
 		if(this->isDead || a2) {
-			v3 = 0.01;
+			v3 = 0.01f;
 		} else {
 			v3 = this->getRideHeight();
 		}
@@ -997,20 +997,23 @@ float Entity::getRideHeight() {
 	return this->entityHeight * 0.75;
 }
 void Entity::ride(Entity* a2) {
-	Entity* ridingAt; // r3
-
 	this->field_6C = 0;
 	this->field_70 = 0;
-	ridingAt = this->ridingAt;
 	if(a2) {
-		if(ridingAt) {
-			ridingAt->rider = 0;
+		if(this->ridingAt) {
+			this->ridingAt->rider = 0;
 		}
 		this->ridingAt = a2;
 		a2->rider = this;
 	} else {
-		if(ridingAt) {
-			this->moveTo(ridingAt->posX, ridingAt->boundingBox.minY + ridingAt->entityHeight, ridingAt->posZ, this->yaw, this->pitch);
+		if(this->ridingAt) {
+			this->moveTo(
+				this->ridingAt->posX,
+				this->ridingAt->boundingBox.minY + this->ridingAt->entityHeight,
+				this->ridingAt->posZ,
+				this->yaw,
+				this->pitch
+			);
 			this->ridingAt->rider = 0;
 		}
 		this->ridingAt = 0;

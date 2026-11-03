@@ -9,67 +9,45 @@ WaterTexture::~WaterTexture() {
 	if(this->field_3C) delete[] this->field_3C;
 }
 void WaterTexture::tick() {
-	int32_t i;	  // r2
-	int32_t v3;	  // r1
-	float v4;	  // s15
-	int32_t v5;	  // r6
-	int32_t v6;	  // r1
-	int32_t j;	  // r3
-	int32_t v8;	  // r5
-	float* v9;	  // r3
-	int32_t m;	  // r6
-	int32_t k;	  // r7
-	float* v12;	  // r2
-	uint32_t v13; // r3
-	float v14;	  // s15
-	float v15;	  // s15
+	for(int i = 0; i != 16; ++i) {
+		for(int j = 0; j != 16; ++j) {
+			float v4 = 0;
+			for(int v3 = j - 1; v3 != j + 2; ++v3) {
+				int v5 = (v3 & 0xF) + i*16;
+				v4 += this->field_30[v5];
+			}
 
-	for(i = 0; i != 256; i += 16) {
-		for(j = 0; j != 16; ++j) {
-			v3 = j - 1;
-			v4 = 0.0;
-			while(v3 != j + 2) {
-				v5 = (v3++ & 0xF) + i;
-				v4 = v4 + this->field_30[v5];
-			}
-			v6 = j + i;
-			this->field_34[v6] = (float)(v4 / 3.3) + (float)(this->field_38[v6] * 0.8);
+			int ind = j + i*16;
+			this->field_34[ind] = (v4 / 3.3f) + (this->field_38[ind] * 0.8f);
 		}
 	}
-	for(k = 0; k != 256; k += 16) {
-		for(m = 0; m != 16; ++m) {
-			v8 = m * 4 + k * 4;
-			this->field_38[m + k] = this->field_38[m + k] + (float)(this->field_3C[m + k] * 0.05);
-			v9 = &this->field_38[m + k];
-			if(*v9 < 0.0) {
-				*v9 = 0.0;
-			}
-			this->field_3C[v8 / 4] = this->field_3C[v8 / 4] - 0.1;
-			//*(float *)((char *)this->field_3C + v8) = *(float *)((char *)this->field_3C + v8) - 0.1;
+	for(int i = 0; i != 16; ++i) {
+		for(int j = 0; j != 16; ++j) {
+			int ind = j + i * 16;
+			this->field_38[ind] += this->field_3C[ind] * 0.05f;
+			if(this->field_38[ind] < 0) this->field_38[ind] = 0;
+
+			this->field_3C[ind] -= 0.1f;
 			if(Mth::fastRandom() <= 0xCCCCCCC) {
-				this->field_3C[v8 / 4] = 0.5;
-				//*(float *)((char *)this->field_3C + v8) = 0.5;
+				this->field_3C[ind] = 0.5f;
 			}
 		}
 	}
-	v12 = this->field_34;
+	float* tmp = this->field_34;
 	this->field_34 = this->field_30;
-	v13 = 0;
-	this->field_30 = v12;
-	do {
-		v14 = this->field_30[v13 / 4];
-		if(v14 > 1.0) {
-			v14 = 1.0;
-		} else if(v14 < 0.0) {
-			v14 = 0.0;
-		}
-		v15 = v14 * v14;
-		this->data[v13] = (int32_t)(float)((float)(v15 * 32.0) + 32.0);
-		this->data[v13 + 1] = (int32_t)(float)((float)(v15 * 64.0) + 50.0);
-		this->data[v13 + 2] = -1;
-		this->data[v13 + 3] = (int32_t)(float)((float)(v15 * 50.0) + 146.0);
-		v13 += 4;
-	} while(v13 != 1024);
+	this->field_30 = tmp;
+
+	for(int v13 = 0; v13 != 256; ++v13){
+		float v14 = this->field_30[v13];
+		if(v14 > 1.0f) v14 = 1.0f;
+		if(v14 < 0.0f) v14 = 0.0f;
+
+		float v15 = v14 * v14;
+		this->data[v13*4] = (int32_t)(v15 * 32 + 32);
+		this->data[v13*4 + 1] = (int32_t)(v15 * 64 + 50);
+		this->data[v13*4 + 2] = 0xff;
+		this->data[v13*4 + 3] = (int32_t)(v15 * 50 + 146);
+	}
 }
 WaterTexture::WaterTexture(const TextureUVCoordinateSet& a2)
 	: DynamicTexture(Tile::water->textureUV, 1) {

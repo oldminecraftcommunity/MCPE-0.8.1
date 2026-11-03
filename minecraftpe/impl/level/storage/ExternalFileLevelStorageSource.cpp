@@ -5,6 +5,7 @@
 #include <level/storage/ExternalFileLevelStorage.hpp>
 #include <level/storage/LevelData.hpp>
 #include <sstream>
+#include <cpputils.hpp>
 
 ExternalFileLevelStorageSource::ExternalFileLevelStorageSource(const std::string& a2, const std::string& a3) {
 	this->field_10 = !(a3 == a2);

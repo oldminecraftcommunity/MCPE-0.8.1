@@ -28,10 +28,9 @@ struct CompoundTag : public Tag{
 	}
 	bool_t contains(const std::string& name, int32_t id) const {
 		Tag* t = this->get(name);
-		if (t) {
-			return t->getId() == id;
-		}
-		return 0;
+		if(!t) return 0;
+		if(t->getId() != id) return 0;
+		return 1;
 	}
 	virtual Tag* copy(void) const {
 		CompoundTag* cp = new CompoundTag(this->getName());

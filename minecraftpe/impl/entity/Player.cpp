@@ -30,7 +30,7 @@ Player::Player(Level* a2, bool_t a3)
 	this->field_CC4 = 0.0f;
 	this->field_CC8 = 0;
 	this->field_CCC = 0.0f;
-	this->field_CD0 = 0;
+	this->playerVerified = 0;
 	this->useItemDuration = 0;
 	this->sleepingCounter = 0;
 	this->spawn.y = -1;
@@ -38,7 +38,7 @@ Player::Player(Level* a2, bool_t a3)
 	this->spawn.z = 0;
 	this->hasRespawnPos = 0;
 	this->sleeping = 0;
-	this->field_D4E = 0;
+	this->allPlayersSleeping = 0;
 	this->isDestroying = 0;
 	this->field_106 = 0;
 	this->_init();
@@ -160,7 +160,7 @@ void Player::findStandUpPosition(Entity* a2) {
 			v23 = v23 + 1.5f;
 		} while(v22);
 		--v4;
-		v5 = v5 + 1.5f;
+		v5 += 1.5f;
 	} while(v4);
 	a2->positionRider(1);
 }
@@ -267,14 +267,14 @@ void Player::respawn() {
 }
 void Player::setAllPlayersSleeping() {
 	this->sleepingCounter = 0;
-	this->field_D4E = 1;
+	this->allPlayersSleeping = 1;
 }
 void Player::setArmor(int32_t a2, const ItemInstance* a3) {
-	if((uint32_t)a2 <= 3) {
-		if(a3) {
-			this->armorSlots[a2] = *a3;
-		} else {
+	if(a2 >= 0 && a2 <= 3) {
+		if(!a3) {
 			this->armorSlots[a2].setNull();
+		} else {
+			this->armorSlots[a2] = *a3;
 		}
 	}
 }
@@ -410,11 +410,8 @@ void Player::startUsingItem(ItemInstance a2, int32_t a3) {
 }
 void Player::stopUsingItem() {
 	if(this->getCarriedItem()) {
-		ItemInstance* v3 = this->getCarriedItem();
-		if(v3) {
-			if(this->item.itemClass == v3->itemClass && this->item.itemClass) {
-				this->getCarriedItem()->setAuxValue(this->item.getAuxValue());
-			}
+		if(this->item.sameItem(this->getCarriedItem())){
+			this->getCarriedItem()->setAuxValue(this->item.getAuxValue());
 		}
 	}
 	this->item.setNull();
@@ -452,10 +449,7 @@ void Player::tick() {
 	int16_t sleepingCounter; // r3
 	int16_t v8;				 // r3
 	Level* level;			 // r3
-	int16_t v11;			 // r3
-	int32_t v13;			 // [sp+0h] [bp-20h] BYREF
 
-	v13 = 16;
 	v3 = (this->synchedEntityData.getByte(16) >> 1) & 1; //TODO check
 	if(v3 != this->isSleeping()) {
 		if(this->isSleeping()) {
@@ -492,9 +486,8 @@ void Player::tick() {
 			this->swing();
 		}
 	} else {
-		v11 = sleepingCounter + 1;
-		this->sleepingCounter = v11;
-		if(v11 > 109) {
+		this->sleepingCounter += 1;
+		if(this->sleepingCounter > 109) {
 			this->sleepingCounter = 0;
 		}
 	}
@@ -509,29 +502,19 @@ void Player::tick() {
 	}
 }
 void Player::rideTick() {
-	Level* level;	  // r3
-	float yaw;		  // r5
-	float pitch;	  // r6
-	Entity* ridingAt; // r0
-
-	level = this->level;
-	if(!level->isClient && this->isSneaking()) {
+	if(!this->level->isClient && this->isSneaking()) {
 		this->ride(0);
 		this->setSneaking(0);
 	} else {
-		yaw = this->yaw;
-		pitch = this->pitch;
+		float yaw = this->yaw;
+		float pitch = this->pitch;
 		Mob::rideTick();
 		this->field_C74 = this->field_C78;
 		this->field_C78 = 0.0f;
-		ridingAt = this->ridingAt;
-		if(ridingAt) {
-			if(ridingAt->getEntityTypeId() == 12) //Pig
-			{
-				this->pitch = pitch;
-				this->yaw = yaw;
-				this->field_124 = ((Mob*)this->ridingAt)->field_124;
-			}
+		if(this->ridingAt && this->ridingAt->getEntityTypeId() == 12) {  //Pig
+			this->pitch = pitch;
+			this->yaw = yaw;
+			this->field_124 = ((Mob*)this->ridingAt)->field_124;
 		}
 	}
 }
@@ -650,23 +633,7 @@ void Player::readAdditionalSaveData(CompoundTag* a2) {
 	}
 
 	this->dimension = a2->getInt("Dimension");
-	bool_t v17;
-	if(a2->contains("Sleeping")) {
-		if(a2->contains("SleepTimer")) {
-			if(a2->contains("BedPositionX")) {
-				if(a2->contains("BedPositionY")) {
-					v17 = a2->contains("BedPositionZ");
-				} else {
-					v17 = 0;
-				}
-			} else {
-				v17 = 0;
-			}
-			goto LABEL_25;
-		}
-	}
-	v17 = 0;
-LABEL_25:
+	bool_t v17 = a2->contains("Sleeping") && a2->contains("SleepTimer") && a2->contains("BedPositionX") && a2->contains("BedPositionY") && a2->contains("BedPositionZ");
 	if(v17) {
 		this->sleeping = a2->getByte("Sleeping") != 0;
 		this->sleepingCounter = a2->getShort("SleepTimer");
@@ -686,17 +653,7 @@ LABEL_25:
 	}
 
 	this->synchedEntityData.set<Pos>(17, this->bedPosition);
-	bool_t v25 = 0;
-	if(a2->contains("SpawnX")) {
-		if(a2->contains("SpawnY")) {
-			v25 = a2->contains("SpawnZ");
-		} else {
-			v25 = 0;
-		}
-	} else {
-		v25 = 0;
-	}
-
+	bool_t v25 = a2->contains("SpawnX") && a2->contains("SpawnY") && a2->contains("SpawnZ");
 	if(v25) {
 		this->spawn = {a2->getInt("SpawnX"), a2->getInt("SpawnY"), a2->getInt("SpawnZ")};
 	}
@@ -725,32 +682,24 @@ void Player::addAdditonalSaveData(CompoundTag* a2) {
 	this->abilities.addSaveData(a2);
 }
 void Player::die(Entity* a2) {
-	Level* level;	  // r3
-	int32_t v5;		  // r5
-	ItemInstance* v6; // r0
-	float v7;		  // s17
-
 	Mob::die(a2);
 	this->setSize(0.2f, 0.2f);
 	this->setPos(this->posX, this->posY, this->posZ);
-	level = this->level;
 	this->motionY = 0.1f;
-	v5 = 0;
-	this->inventory->dropAll(level->isClient);
-	do {
-		if(!this->level->isClient && ItemInstance::isArmorItem(&this->armorSlots[v5])) {
-			this->drop(&this->armorSlots[v5], 1);
+	this->inventory->dropAll(this->level->isClient);
+	for(int v5 = 0; v5 != 4; ++v5) {
+		ItemInstance* it = &this->armorSlots[v5];
+		if(!this->level->isClient && ItemInstance::isArmorItem(it)) {
+			this->drop(it, 1);
 		}
-		v6 = &this->armorSlots[v5++];
-		v6->setNull();
-	} while(v5 != 4);
+		it->setNull();
+	}
 	if(a2) {
-		v7 = (float)((float)(this->field_14C + this->yaw) * 3.1416f) / 180.0f;
-		this->motionX = -(float)(Mth::cos(v7) * 0.1f);
-		this->motionZ = -(float)(Mth::sin(v7) * 0.1f);
+		float v7 = (this->field_14C + this->yaw) * Mth::PI / 180.0f;
+		this->motionX = -(Mth::cos(v7) * 0.1f);
+		this->motionZ = -(Mth::sin(v7) * 0.1f);
 	} else {
-		this->motionZ = 0.0f;
-		this->motionX = 0.0f;
+		this->motionX = this->motionZ = 0.0f;
 	}
 	this->ridingHeight = 0.1f;
 }
@@ -763,8 +712,9 @@ int32_t Player::getMaxHealth() {
 int32_t Player::getArmorValue() {
 	int32_t value = 0;
 	for(int32_t i = 0; i != 4; ++i) {
-		if(ItemInstance::isArmorItem(&this->armorSlots[i])) {
-			value += ((ArmorItem*)this->armorSlots[i].itemClass)->defenseForSlot;
+		ItemInstance* it = &this->armorSlots[i];
+		if(ItemInstance::isArmorItem(it)) {
+			value += ((ArmorItem*)it->itemClass)->defenseForSlot;
 		}
 	}
 	return value;
@@ -835,10 +785,11 @@ void Player::hurtArmor(int32_t a2) {
 	int v3 = v2 < 1 ? 1 : v2;
 
 	for(int i = 0; i != 4; ++i) {
-		if(ItemInstance::isArmorItem(&this->armorSlots[i])) {
-			this->armorSlots[i].hurtAndBreak(v3, this);
-			if(this->armorSlots[i].count == 0) {
-				this->armorSlots[i].setNull();
+		ItemInstance* it = &this->armorSlots[i];
+		if(ItemInstance::isArmorItem(it)) {
+			it->hurtAndBreak(v3, this);
+			if(it->count == 0) {
+				it->setNull();
 			}
 		}
 	}
@@ -1020,11 +971,11 @@ void Player::stopSleepInBed(bool_t a2, bool_t a3, bool_t a4) {
 		BedTile::findStandUpPosition(v16, v15, v13, v14, 0, v18);
 		this->setRespawnPosition(v18);
 		this->synchedEntityData.clearFlag<char>(16, 1);
-		this->field_D4E = 0;
+		this->allPlayersSleeping = 0;
 	}
 }
 int32_t Player::getSleepTimer() {
-	if(this->field_D4E) return this->sleepingCounter;
+	if(this->allPlayersSleeping) return this->sleepingCounter;
 	return 0;
 }
 void Player::openTextEdit(struct TileEntity*) {

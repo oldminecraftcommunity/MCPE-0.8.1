@@ -1,2 +1,0 @@
-#include <nbt/ByteArrayTag.hpp>
-

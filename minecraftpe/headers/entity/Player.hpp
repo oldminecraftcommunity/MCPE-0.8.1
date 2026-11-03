@@ -27,22 +27,21 @@ struct Player : Mob{
 	int32_t field_CA8;
 	int32_t field_CAC;
 	struct Inventory* inventory;
-	int8_t field_CB4, field_CB5, field_CB6, field_CB7;
+	bool field_CB4;
 	Pos bedPosition;
 	float field_CC4;
 	float field_CC8;
 	float field_CCC;
-	int8_t field_CD0, field_CD1, field_CD2, field_CD3;
+	bool playerVerified;
 	ItemInstance item;
 	int32_t useItemDuration;
 	int16_t sleepingCounter;
-	int8_t field_CEE, field_CEF;
 	ItemInstance armorSlots[4];
 	Pos spawn;
-	bool_t hasRespawnPos;
-	bool_t sleeping;
-	int8_t field_D4E;
-	bool_t isDestroying;
+	bool hasRespawnPos;
+	bool sleeping;
+	bool allPlayersSleeping;
+	bool isDestroying;
 
 	Player(Level*, bool_t);
 	void _init();

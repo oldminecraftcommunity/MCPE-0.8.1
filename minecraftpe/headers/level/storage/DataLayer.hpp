@@ -3,8 +3,8 @@
 #include <string.h>
 
 struct DataLayer{
-	int32_t layerSize;
 	uint8_t* data;
+	int32_t layerSize;
 	int32_t layerSize2;
 
 	DataLayer(int32_t size) {
@@ -14,20 +14,20 @@ struct DataLayer{
 		this->layerSize2 = this->layerSize;
 	}
 	int32_t get(int32_t x, int32_t y, int32_t z) {
-		int32_t index = y | (x << 11) | (z << 7);
-		uint8_t bt = this->data[index >> 1];
-		if ((index & 1) != 0) return bt >> 4;
-
-		return bt & 0xf;
+		int32_t index = (x << 11) | (z << 7) | y;
+		int ind = index >> 1;
+		uint8_t res = (index & 1) == 0 ? (this->data[ind] & 0xf) : (this->data[ind] >> 4);
+		return res;
 	}
 	void set(int32_t x, int32_t y, int32_t z, int32_t d) {
-		int32_t index = y | (x << 11) | (z << 7);
-		uint8_t bt = this->data[index >> 1];
-		uint8_t res;
-		if ((index & 1) != 0) res = (bt & 0xf) | (16 * d);
-		else res = (d & 0xf) | (bt & 0xf0);
+		int32_t index = (x << 11) | (z << 7) | y;
+		int ind = index >> 1;
 
-		this->data[index >> 1] = res;
+		if((index & 1) == 0) {
+			this->data[ind] = (this->data[ind] & 0xf0) | (d & 0xf);
+		} else {
+			this->data[ind] = (this->data[ind] & 0x0f) | (d << 4);
+		}
 	}
 	~DataLayer() {
 		if (this->data) delete[] this->data;

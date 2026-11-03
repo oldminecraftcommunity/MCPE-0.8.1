@@ -11,11 +11,6 @@
 struct RestRequestJob;
 struct Minecraft;
 
-double getTimeS();
-time_t getEpochTimeS();
-int32_t getTimeMs();
-void sleepMs(int32_t a1);
-
 template <typename T> void safeRemove(T*& p){
 	if(p){
 		delete p;
@@ -36,4 +31,3 @@ inline void safeStopAndRemove(std::shared_ptr<RestRequestJob>& a2) {
 void splitString(const std::string&, char_t, std::vector<std::string>&);
 int recursiveDelete(const char_t*);
 bool_t DeleteDirectory(const std::string& a1, bool_t);
-int getRawTimeS();

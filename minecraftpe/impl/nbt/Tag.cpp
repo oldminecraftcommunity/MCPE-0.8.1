@@ -6,10 +6,10 @@
 #include <nbt/ByteTag.hpp>
 #include <nbt/ShortTag.hpp>
 #include <nbt/IntTag.hpp>
-#include <nbt/ByteArrayTag.hpp>
 #include <nbt/LongTag.hpp>
 #include <nbt/FloatTag.hpp>
 #include <nbt/DoubleTag.hpp>
+#include <nbt/ByteArrayTag.hpp>
 #include <nbt/StringTag.hpp>
 #include <nbt/ListTag.hpp>
 #include <nbt/CompoundTag.hpp>

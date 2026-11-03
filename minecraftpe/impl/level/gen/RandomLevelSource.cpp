@@ -560,109 +560,87 @@ struct LevelChunk* RandomLevelSource::create(int32_t x, int32_t z) {
 static double _D6E52C58 = 0;
 void RandomLevelSource::postProcess(struct ChunkSource* a2, int32_t chunkX, int32_t chunkZ) {
 	this->level->isDecorating = 1;
+	HeavyTile::instaFall = 1;
 	int32_t chunkXStart = 16 * chunkX;
 	int32_t chunkZStart = 16 * chunkZ;
-	HeavyTile::instaFall = 1;
 
 	BiomeSource* bs = this->level->getBiomeSource();
 	Biome* biomeAtChunk = bs->getBiome(chunkXStart + 16, chunkZStart + 16);
 	this->random.setSeed(this->level->getSeed());
-	int v11 = this->random.genrand_int32();
-	int v12 = (2 * (this->random.genrand_int32() >> 2) + 1) * chunkZ;
-	this->random.setSeed((v12 + (2 * (v11 >> 2) + 1) * chunkX) ^ this->level->getSeed());
+	int v11 = ((this->random.nextInt() / 2) * 2 + 1);
+	int v12 = ((this->random.nextInt() / 2) * 2 + 1);
+	this->random.setSeed((chunkX*v11 + chunkZ*v12) ^ this->level->getSeed());
 	double timeS = getTimeS();
 	Random* a8 = &this->random;
 	for(int32_t i = 0; i < 10; ++i) {
-		int32_t x = chunkXStart + (a8->genrand_int32() & 0xF);
-		int8_t y = a8->genrand_int32();
-		int32_t z = chunkZStart + (a8->genrand_int32() & 0xF);
-		ClayFeature f;
-		f.place(this->level, a8, x, y & 0x7F, z);
+		int32_t x = chunkXStart + a8->nextInt(16);
+		int32_t y = a8->nextInt(128);
+		int32_t z = chunkZStart + a8->nextInt(16);
+		ClayFeature().place(this->level, a8, x, y, z);
 	}
 	for(int32_t i = 0; i < 20; ++i) {
-		int32_t x = chunkXStart + (a8->genrand_int32() & 0xF);
-		int8_t y = a8->genrand_int32();
-		int32_t z = chunkZStart + (a8->genrand_int32() & 0xF);
-		OreFeature f(Tile::dirt->blockID, 32);
-		f.place(this->level, a8, x, y & 0x7F, z);
+		int32_t x = chunkXStart + a8->nextInt(16);
+		int32_t y = a8->nextInt(128);
+		int32_t z = chunkZStart + a8->nextInt(16);
+		OreFeature(Tile::dirt->blockID, 32).place(this->level, a8, x, y, z);
 	}
-	for(int32_t v25 = 0; v25 < 10; ++v25) {
-		int32_t v26 = chunkXStart + (a8->genrand_int32() & 0xF);
-		int8_t v27 = a8->genrand_int32();
-		int8_t v28 = a8->genrand_int32();
-		int32_t v29 = chunkZStart + (v28 & 0xF);
-		OreFeature f(Tile::gravel->blockID, 32);
-		f.place(this->level, a8, v26, v27 & 0x7F, v29);
+	for(int32_t i = 0; i < 10; ++i) {
+		int32_t x = chunkXStart + a8->nextInt(16);
+		int32_t y = a8->nextInt(128);
+		int32_t z = chunkZStart + a8->nextInt(16);
+		OreFeature(Tile::gravel->blockID, 32).place(this->level, a8, x, y, z);
 	}
-	for(int v30 = 0; v30 < 20; ++v30) {
-		int32_t v31 = chunkXStart + (a8->genrand_int32() & 0xF);
-		int8_t v32 = a8->genrand_int32();
-		int8_t v33 = a8->genrand_int32();
-		int32_t v34 = chunkZStart + (v33 & 0xF);
-		OreFeature f(Tile::coalOre->blockID, 16);
-		f.place(this->level, a8, v31, v32 & 0x7F, v34);
+	for(int i = 0; i < 20; ++i) {
+		int32_t x = chunkXStart + a8->nextInt(16);
+		int32_t y = a8->nextInt(128);
+		int32_t z = chunkZStart + a8->nextInt(16);
+		OreFeature(Tile::coalOre->blockID, 16).place(this->level, a8, x, y, z);
 	}
-	for(int v36 = 0; v36 < 20; ++v36) {
-		int32_t v37 = chunkXStart + (a8->genrand_int32() & 0xF);
-		int8_t v38 = a8->genrand_int32();
-		int8_t v39 = a8->genrand_int32();
-		int32_t v40 = chunkZStart + (v39 & 0xF);
-		OreFeature f(Tile::ironOre->blockID, 8);
-		f.place(this->level, a8, v37, v38 & 0x3F, v40);
+	for(int i = 0; i < 20; ++i) {
+		int32_t x = chunkXStart + a8->nextInt(16);
+		int32_t y = a8->nextInt(64);
+		int32_t z = chunkZStart + a8->nextInt(16);
+		OreFeature(Tile::ironOre->blockID, 8).place(this->level, a8, x, y, z);
 	}
-	for(int v42 = 0; v42 < 2; ++v42) {
-		int32_t v43 = chunkXStart + (a8->genrand_int32() & 0xF);
-		int8_t v44 = a8->genrand_int32();
-		int8_t v45 = a8->genrand_int32();
-		int32_t v46 = chunkZStart + (v45 & 0xF);
-		OreFeature f(Tile::goldOre->blockID, 8);
-		f.place(this->level, a8, v43, v44 & 0x1F, v46);
+	for(int i = 0; i < 2; ++i) {
+		int32_t x = chunkXStart + a8->nextInt(16);
+		int32_t y = a8->nextInt(32);
+		int32_t z = chunkZStart + a8->nextInt(16);
+		OreFeature(Tile::goldOre->blockID, 8).place(this->level, a8, x, y, z);
 	}
-	for(int v48 = 0; v48 < 8; ++v48) {
-		int32_t v49 = chunkXStart + (a8->genrand_int32() & 0xF);
-		int8_t v50 = a8->genrand_int32();
-		int8_t v51 = a8->genrand_int32();
-		int32_t v52 = chunkZStart + (v51 & 0xF);
-		OreFeature f(Tile::redStoneOre->blockID, 7);
-		f.place(this->level, a8, v49, v50 & 0xF, v52);
+	for(int i = 0; i < 8; ++i) {
+		int32_t x = chunkXStart + a8->nextInt(16);
+		int32_t y = a8->nextInt(16);
+		int32_t z = chunkZStart + a8->nextInt(16);
+		OreFeature(Tile::redStoneOre->blockID, 7).place(this->level, a8, x, y, z);
 	}
-	{
-		int32_t v54 = chunkXStart + (a8->genrand_int32() & 0xF);
-		int8_t v55 = a8->genrand_int32();
-		int8_t v56 = a8->genrand_int32();
-		int32_t v57 = chunkZStart + (v56 & 0xF);
-		OreFeature f(Tile::emeraldOre->blockID, 7);
-		f.place(this->level, a8, v54, v55 & 0xF, v57);
+	for(int i = 0; i < 1; ++i) {
+		int32_t x = chunkXStart + a8->nextInt(16);
+		int32_t y = a8->nextInt(16);
+		int32_t z = chunkZStart + a8->nextInt(16);
+		OreFeature(Tile::emeraldOre->blockID, 7).place(this->level, a8, x, y, z);
 	}
-	{
-		int32_t v59 = chunkXStart + (a8->genrand_int32() & 0xF);
-		int8_t v60 = a8->genrand_int32();
-		int32_t v61 = (v60 & 0xF) + (a8->genrand_int32() & 0xF);
-		int8_t v62 = a8->genrand_int32();
-		int32_t v63 = chunkZStart + (v62 & 0xF);
-		OreFeature f(Tile::lapisOre->blockID, 6);
-		f.place(this->level, a8, v59, v61, v63);
+	for(int i = 0; i < 1; ++i) {
+		int32_t x = chunkXStart + a8->nextInt(16);
+		int32_t y = a8->nextInt(16) + a8->nextInt(16);
+		int32_t z = chunkZStart + a8->nextInt(16);
+		OreFeature(Tile::lapisOre->blockID, 6).place(this->level, a8, x, y, z);
 	}
 
-	float v = this->treeNoise.getValue((float)chunkXStart * 0.5f, (float)chunkZStart * 0.5f);
-	int v67 = (int)(float)((float)((float)((float)(a8->nextFloat() * 4.0f) + (float)(v * 0.125f)) + 4.0f) / 3.0f);
-	int v68 = v67;
-	int v69 = a8->genrand_int32() % 0xA;
-	int32_t amountOfTrees = v69 == 0;
+	float v = this->treeNoise.getValue(chunkXStart * 0.5f,chunkZStart * 0.5f);
+	int treeNoiseValue = (int) ((((a8->nextFloat() * 4.0f) + (v * 0.125f)) + 4.0f) / 3.0f);
+	int32_t amountOfTrees = a8->nextInt(10) == 0;
 	if(biomeAtChunk == Biome::forest) {
-		amountOfTrees += v67 + 2;
+		amountOfTrees += treeNoiseValue + 2;
 	}
 	if(biomeAtChunk == Biome::rainForest) {
-		amountOfTrees += v67 + 2;
+		amountOfTrees += treeNoiseValue + 2;
 	}
 	if(biomeAtChunk == Biome::seasonalForest) {
-		amountOfTrees += v67 + 1;
+		amountOfTrees += treeNoiseValue + 1;
 	}
 	if(biomeAtChunk == Biome::taiga) {
-		v68 = v67 + 1;
-	}
-	if(biomeAtChunk == Biome::taiga) {
-		amountOfTrees += v68;
+		amountOfTrees += treeNoiseValue + 1;
 	}
 	if(biomeAtChunk == Biome::desert) {
 		amountOfTrees -= 20;
@@ -673,9 +651,9 @@ void RandomLevelSource::postProcess(struct ChunkSource* a2, int32_t chunkX, int3
 	if(biomeAtChunk == Biome::plains) {
 		amountOfTrees -= 20;
 	}
-	for(int32_t v65 = 0; v65 < amountOfTrees; ++v65) {
-		int32_t xx = chunkXStart + (a8->genrand_int32() & 0xF) + 8;
-		int32_t zz = chunkZStart + (a8->genrand_int32() & 0xF) + 8;
+	for(int32_t i = 0; i < amountOfTrees; ++i) {
+		int32_t xx = chunkXStart + a8->nextInt(16) + 8;
+		int32_t zz = chunkZStart + a8->nextInt(16) + 8;
 		int32_t hm = this->level->getHeightmap(xx, zz);
 		Feature* v74 = biomeAtChunk->getTreeFeature(a8);
 		if(v74) {
@@ -684,98 +662,75 @@ void RandomLevelSource::postProcess(struct ChunkSource* a2, int32_t chunkX, int3
 			delete v74;
 		}
 	}
-	for(int32_t v76 = 0; v76 < 2; ++v76) {
-		int8_t v77 = a8->genrand_int32();
-		int8_t v78 = a8->genrand_int32();
-		int8_t v79 = a8->genrand_int32();
-		FlowerFeature f(Tile::flower->blockID);
-		f.place(this->level, a8, chunkXStart + (v77 & 0xF) + 8, v78 & 0x7F, chunkZStart + (v79 & 0xF) + 8);
+	for(int32_t i = 0; i < 2; ++i) {
+		int32_t x = chunkXStart + a8->nextInt(16) + 8;
+		int32_t y = a8->nextInt(128);
+		int32_t z = chunkZStart + a8->nextInt(16) + 8;
+		FlowerFeature(Tile::flower->blockID).place(this->level, a8, x, y, z);
 	}
-	if((a8->genrand_int32() & 1) == 0) {
-		int8_t v80 = a8->genrand_int32();
-		int8_t v81 = a8->genrand_int32();
-		int8_t v82 = a8->genrand_int32();
-		FlowerFeature f(Tile::rose->blockID);
-		f.place(this->level, a8, chunkXStart + (v80 & 0xF) + 8, v81 & 0x7F, chunkZStart + (v82 & 0xF) + 8);
+	if(a8->nextInt(2) == 0) {
+		int32_t x = chunkXStart + a8->nextInt(16) + 8;
+		int32_t y = a8->nextInt(128);
+		int32_t z = chunkZStart + a8->nextInt(16) + 8;
+		FlowerFeature(Tile::rose->blockID).place(this->level, a8, x, y, z);
 	}
-	if((a8->genrand_int32() & 3) == 0) {
-		int8_t v84 = a8->genrand_int32();
-		int8_t v85 = a8->genrand_int32();
-		int8_t v86 = a8->genrand_int32();
-		FlowerFeature f(Tile::mushroom1->blockID);
-		f.place(this->level, a8, chunkXStart + (v84 & 0xF) + 8, v85 & 0x7F, chunkZStart + (v86 & 0xF) + 8);
+	if(a8->nextInt(4) == 0) {
+		int32_t x = chunkXStart + a8->nextInt(16) + 8;
+		int32_t y = a8->nextInt(128);
+		int32_t z = chunkZStart + a8->nextInt(16) + 8;
+		FlowerFeature(Tile::mushroom1->blockID).place(this->level, a8, x, y, z);
 	}
-	if((a8->genrand_int32() & 7) == 0) {
-		int8_t v89 = a8->genrand_int32();
-		int8_t v90 = a8->genrand_int32();
-		int8_t v91 = a8->genrand_int32();
-		FlowerFeature f(Tile::mushroom2->blockID);
-		f.place(this->level, a8, chunkXStart + (v89 & 0xF) + 8, v90 & 0x7F, chunkZStart + (v91 & 0xF) + 8);
+	if(a8->nextInt(8) == 0) {
+		int32_t x = chunkXStart + a8->nextInt(16) + 8;
+		int32_t y = a8->nextInt(128);
+		int32_t z = chunkZStart + a8->nextInt(16) + 8;
+		FlowerFeature(Tile::mushroom2->blockID).place(this->level, a8, x, y, z);
 	}
-	for(int32_t v95 = 0; v95 < 10; ++v95) {
-		int8_t v96 = a8->genrand_int32();
-		int8_t v97 = a8->genrand_int32();
-		int8_t v98 = a8->genrand_int32();
-		ReedsFeature f;
-		f.place(this->level, a8, chunkXStart + (v96 & 0xF) + 8, v97 & 0x7F, chunkZStart + (v98 & 0xF) + 8);
+	for(int32_t i = 0; i < 10; ++i) {
+		int32_t x = chunkXStart + a8->nextInt(16) + 8;
+		int32_t y = a8->nextInt(128);
+		int32_t z = chunkZStart + a8->nextInt(16) + 8;
+		ReedsFeature().place(this->level, a8, x, y, z);
 	}
-	int32_t cactiCnt;
-	if(biomeAtChunk == Biome::desert) {
-		cactiCnt = 5;
-	} else {
-		cactiCnt = 0;
+	int32_t cactiCnt = biomeAtChunk == Biome::desert ? 5 : 0;
+
+	for(int32_t i = 0; i < cactiCnt; ++i) {
+		int32_t x = chunkXStart + a8->nextInt(16) + 8;
+		int32_t y = a8->nextInt(128);
+		int32_t z = chunkZStart + a8->nextInt(16) + 8;
+		CactusFeature().place(this->level, a8, x, y, z);
 	}
-	for(int32_t v95 = 0; v95 < cactiCnt; ++v95) {
-		int8_t v100 = a8->genrand_int32();
-		int8_t v101 = a8->genrand_int32();
-		int8_t v102 = a8->genrand_int32();
-		CactusFeature f;
-		f.place(this->level, a8, chunkXStart + (v100 & 0xF) + 8, v101 & 0x7F, chunkZStart + (v102 & 0xF) + 8);
+	for(int32_t i = 0; i < 50; ++i) {
+		int32_t x = chunkXStart + a8->nextInt(16) + 8;
+		int32_t y = a8->nextInt(a8->nextInt(120) + 8);
+		int32_t z = chunkZStart + a8->nextInt(16) + 8;
+		SpringFeature(Tile::water->blockID).place(this->level, a8, x, y, z);
 	}
-	for(int32_t v103 = 0; v103 < 50; ++v103) {
-		int8_t v104 = a8->genrand_int32();
-		int v137 = a8->genrand_int32();
-		int v135 = a8->genrand_int32();
-		int8_t v105 = a8->genrand_int32();
-		SpringFeature f(Tile::water->blockID);
-		f.place(this->level, a8, (v104 & 0xF) + chunkXStart + 8, v135 % (v137 % 0x78u + 8), chunkZStart + (v105 & 0xF) + 8);
-	}
-	for(int32_t v103 = 0; v103 < 20; ++v103) {
-		int8_t v108 = a8->genrand_int32();
-		int v138 = a8->genrand_int32();
-		int v136 = a8->genrand_int32();
-		int v109 = a8->genrand_int32();
-		int8_t v110 = a8->genrand_int32();
-		SpringFeature f(Tile::lava->blockID);
-		f.place(this->level, a8, (v108 & 0xF) + chunkXStart + 8, v109 % (v136 % (v138 % 0x70u + 8) + 8), chunkZStart + (v110 & 0xF) + 8);
+	for(int32_t i = 0; i < 20; ++i) {
+		int32_t x = chunkXStart + a8->nextInt(16) + 8;
+		int32_t y = a8->nextInt(a8->nextInt(a8->nextInt(112) + 8) + 8);
+		int32_t z = chunkZStart + a8->nextInt(16) + 8;
+		SpringFeature(Tile::lava->blockID).place(this->level, a8, x, y, z);
 	}
 	if(this->spawnMobs) {
 		MobSpawner::postProcessSpawnMobs(this->level, biomeAtChunk, chunkXStart + 8, chunkZStart + 8, 16, 16, a8);
 	}
 
-	int v113 = chunkXStart + 8;
 	float* v114 = this->level->getBiomeSource()->getTemperatureBlock(chunkXStart + 8, chunkZStart + 8, 16, 16);
-	while(chunkXStart + 23 >= v113) {
-		int v119 = chunkZStart + 8;
-		float* v142 = v114;
-		while(chunkZStart + 23 >= v119) {
-			int topy = this->level->getTopSolidBlock(v113, v119);
-			float v116 = *v142++;
-			int v117 = topy;
-			if((float)(v116 - (float)((float)((float)(topy - 64) * 0.015625f) * 0.3f)) < 0.5f && (unsigned int)(topy - 1) <= 0x7E && this->level->isEmptyTile(v113, topy, v119)) {
-				Material* v118 = this->level->getMaterial(v113, v117 - 1, v119);
-				if(v118->blocksMotion()) {
-					if(Material::ice != this->level->getMaterial(v113, v117 - 1, v119)) {
-						this->level->setTile(v113, v117, v119, Tile::topSnow->blockID, 4);
-					}
-				}
+	for(int x = chunkXStart + 8; x < chunkXStart + 8 + 16; ++x) {
+		for(int z = chunkZStart + 8; z < chunkZStart + 8 + 16; ++z) {
+			int lx = x - (chunkXStart + 8);
+			int lz = z - (chunkZStart + 8);
+			int y = this->level->getTopSolidBlock(x, z);
+
+			float v116 = v114[lx * 16 + lz] - ((float)(y - 64) / 64.0f * 0.3f);
+			if(v116 < 0.5f && (unsigned int)(y-1) <= 0x7E && this->level->getMaterial(x, y - 1, z)->blocksMotion() && this->level->getMaterial(x, y - 1, z) != Material::ice){
+				this->level->setTile(x, y, z, Tile::topSnow->blockID, 4);
 			}
-			++v119;
 		}
-		++v113;
-		v114 += 16;
 	}
-	_D6E52C58 = _D6E52C58 + getTimeS() - timeS;
+
+	_D6E52C58 += getTimeS() - timeS;
 	HeavyTile::instaFall = 0;
 	this->level->isDecorating = 0;
 }

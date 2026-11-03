@@ -2,39 +2,8 @@
 #include <sstream>
 #include <dirent.h>
 #include <string.h>
-#include <sys/time.h>
 #include <stdio.h>
-#include <time.h>
 #include <unistd.h>
-
-inline time_t _startedAt(){
-	struct timeval v1;
-	gettimeofday(&v1, 0);
-	return v1.tv_sec;
-}
-static time_t startedAtSec = _startedAt(); //XXX mojang does it somehow else probably
-
-double getTimeS(){
-	struct timeval v1;
-	gettimeofday(&v1, 0);
-	return v1.tv_sec - startedAtSec + (double)v1.tv_usec / 1000000.0;
-}
-
-
-time_t getEpochTimeS() { //TODO returns int?
-	return time(0);
-}
-
-int32_t getTimeMs(){
-	return (int32_t) (getTimeS() * 1000);
-}
-
-
-
-
-void sleepMs(int32_t a1) {
-	usleep(1000 * a1);
-}
 
 void splitString(const std::string& a1, char_t a2, std::vector<std::string>& a3) {
 	std::stringstream v9(a1);
@@ -94,10 +63,3 @@ bool_t DeleteDirectory(const std::string& a1, bool_t a2) {
 //TODO CopyFile
 
 //move end
-
-
-int getRawTimeS() {
-	struct timeval v1;
-	gettimeofday(&v1, 0);
-	return v1.tv_sec;
-}
