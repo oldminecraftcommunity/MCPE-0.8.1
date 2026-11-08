@@ -29,12 +29,10 @@ struct TargetGoal: Goal
 	virtual ~TargetGoal(){}
 	virtual bool_t canContinueToUse() {
 		Entity* v2 = this->mob->getTarget();
-		if (v2) {
-			if (v2->isAlive() && this->mob->distanceToSqr(v2) <= (this->radius * this->radius)) {
-				if (!this->field_C) return 1;
-				if (this->mob->getSensing()->canSee(v2)) return 1;
-			}
-		}
+		if(!v2) return 0;
+		if(!v2->isAlive()) return 0;
+		if(this->mob->distanceToSqr(v2) > (this->radius * this->radius)) return 0;
+		if (!this->field_C || this->mob->getSensing()->canSee(v2)) return 1;
 		return 0;
 	}
 	virtual void stop() {

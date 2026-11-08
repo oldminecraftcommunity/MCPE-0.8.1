@@ -1,8 +1,8 @@
 #pragma once
 #include <level/gen/ChunkSource.hpp>
 #include <level/Level.hpp>
-#include <level/chunk/LevelChunk.hpp>
 #include <level/storage/chunk/ChunkStorage.hpp>
+#include <level/chunk/EmptyLevelChunk.hpp>
 
 struct ChunkStorage;
 struct LevelChunk;
@@ -14,7 +14,7 @@ static bool_t sub_D66664FE(int a1, int a2) {
 
 struct ChunkCache: ChunkSource
 {
-	int8_t field_4;
+	bool field_4;
 	int32_t lastChunkX, lastChunkZ;
 	LevelChunk* emptyChunk;
 	ChunkSource* generatorSource;
@@ -22,7 +22,17 @@ struct ChunkCache: ChunkSource
 	LevelChunk* chunks[256];
 	Level* level;
 	LevelChunk* lastChunk;
-
+	ChunkCache(Level* level, ChunkStorage* storage, ChunkSource* source){
+		this->generatorSource = source;
+		this->chunkStorage = storage;
+		this->lastChunkX = -999999999;
+		this->lastChunkZ = -999999999;
+		this->level = level;
+		this->lastChunk = 0;
+		this->field_4 = 1;
+		this->emptyChunk = new EmptyLevelChunk(level);
+		memset(this->chunks, 0, sizeof(this->chunks));
+	}
 	virtual ~ChunkCache() {
 		if (this->generatorSource) {
 			delete this->generatorSource;

@@ -53,24 +53,16 @@ struct StoneSlabTileItem: TileItem
 	}
 	virtual std::string getName(const ItemInstance* a3) const {
 		int32_t meta = a3->getAuxValue();
-		int32_t v6 = meta;
-		if (meta < 0) {
-			v6 = 0;
-		} else if (meta >= StoneSlabTile::SLAB_NAMES_COUNT) {
-			v6 = 0;
+		if (meta < 0 || meta >= StoneSlabTile::SLAB_NAMES_COUNT) {
+			meta = 0;
 		}
 
-		return I18n::get(TileItem::getDescriptionId() + "." + StoneSlabTile::SLAB_NAMES[v6] + ".name");
+		return I18n::get(TileItem::getDescriptionId() + "." + StoneSlabTile::SLAB_NAMES[meta] + ".name");
 	}
 	virtual std::string getDescriptionId(const ItemInstance* a3) const {
 		int32_t meta = a3->getAuxValue();
-		int32_t v6 = meta;
-		if (meta < 0) {
-			v6 = 0;
-		} else if (meta >= StoneSlabTile::SLAB_NAMES_COUNT) {
-			v6 = 0;
-		}
+		if (meta < 0 || meta >= StoneSlabTile::SLAB_NAMES_COUNT) meta = 0;
 
-		return TileItem::getDescriptionId() + "." + StoneSlabTile::SLAB_NAMES[v6];
+		return TileItem::getDescriptionId() + "." + StoneSlabTile::SLAB_NAMES[meta];
 	}
 };

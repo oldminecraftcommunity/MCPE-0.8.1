@@ -13,66 +13,45 @@ struct SmokeParticle: Particle
 	virtual ~SmokeParticle() {
 	}
 	virtual void tick() {
-		int32_t maxAliveTime; // r2
-		int32_t ticksAlive; // r3
-		float v4; // s15
-		float motionX; // r1
-		bool_t onGround; // r3
-		float v8; // s13
-		float v9; // s15
-		maxAliveTime = this->maxAliveTime;
+		int maxAliveTime = this->maxAliveTime;
 		this->prevX = this->posX;
 		this->prevY = this->posY;
 		this->prevZ = this->posZ;
-		ticksAlive = this->ticksAlive;
-		this->ticksAlive = ticksAlive + 1;
+		int ticksAlive = this->ticksAlive;
+		this->ticksAlive += 1;
 		if (ticksAlive >= maxAliveTime) {
 			this->remove();
 		}
-		v4 = this->motionY + 0.004;
-		motionX = this->motionX;
-		this->motionY = v4;
-		this->move(motionX, v4, this->motionZ);
+
+		this->motionY += 0.004f;
+		this->move(this->motionX, this->motionY, this->motionZ);
 		if (this->posY == this->prevY) {
-			this->motionX = this->motionX * 1.1;
-			this->motionZ = this->motionZ * 1.1;
+			this->motionX *= 1.1f;
+			this->motionZ *= 1.1f;
 		}
-		onGround = this->onGround;
-		v8 = this->motionX * 0.96;
-		this->motionY = this->motionY * 0.96;
-		v9 = this->motionZ * 0.96;
-		this->motionX = v8;
-		this->motionZ = v9;
-		if (onGround) {
-			this->motionX = v8 * 0.7;
-			this->motionZ = v9 * 0.7;
+
+		this->motionX *= 0.96f;
+		this->motionY *= 0.96f;
+		this->motionZ *= 0.96f;
+		if (this->onGround) {
+			this->motionX *= 0.7f;
+			this->motionZ *= 0.7f;
 		}
 	}
 	virtual void init(float xPos, float yPos, float zPos, float motX, float motY, float motZ, int32_t a8) {
-		float motionY; // s10
 		int32_t v9; // r3
-		float v11; // s16
-		float v12; // s14
-		float v13; // r0
-		float v14; // s15
-		motionY = this->motionY;
 		v9 = a8;
-		if (!a8) {
+		if (a8 == 0) {
 			v9 = 100;
 		}
-		v11 = (float) (v9) / 100.0;
-		v12 = motZ + (float) ((this->motionZ * 0.1));
-		this->motionX = motX + (float) ((this->motionX * 0.1));
-		this->motionZ = v12;
-		this->motionY = motY + (float) ((motionY * 0.1));
-		v13 = Mth::random();
-		this->bColMul = v13 * 0.5;
-		this->gColMul = v13 * 0.5;
-		this->rColMul = v13 * 0.5;
-		v14 = (float) ((this->_scale * 0.75)) * v11;
-		this->_scale = v14;
-		this->field_164 = v14;
-		this->maxAliveTime = (int32_t) ((float) (((float) ((v11 * 8.0)) / (float) (((float) ((Mth::random() * 0.8)) + 0.2)))));
+		float v11 = v9 / 100.0f;
+		this->motionX = motX + (this->motionX * 0.1f);
+		this->motionZ = motZ + (this->motionZ * 0.1f);
+		this->motionY = motY + (this->motionY * 0.1f);
+
+		this->rColMul = this->gColMul = this->bColMul = Mth::random() * 0.5f;
+		this->field_164 = this->_scale = (this->_scale * 0.75f) * v11;
+		this->maxAliveTime = (int32_t) ((v11 * 8.0f) / ((Mth::random() * 0.8f) + 0.2f));
 	}
 	virtual void render(Tesselator& a2, float a3, float a4, float a5, float a6, float a7, float a8) {
 		float v12; // s16

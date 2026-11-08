@@ -8,11 +8,11 @@ struct Mob;
 struct Model: AppPlatform::Listener
 {
 	float field_0;
-	int8_t field_4, field_5, field_6, field_7;
+	bool riding, field_5;
 	std::vector<ModelPart*> parts;
-	int8_t field_14, field_15, field_16, field_17;
+	bool field_14;
 
-	Model() : field_0(0), field_4(0), field_5(0){
+	Model() : field_0(0), riding(0), field_5(0){
 		this->field_14 = 1;
 		AppPlatform::_singleton->addListener(this, 1.0);
 	}

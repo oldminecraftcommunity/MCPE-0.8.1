@@ -55,15 +55,16 @@ struct Sapling: Bush
 		return &this->field_80;
 	}
 	virtual void tick(Level* level, int32_t x, int32_t y, int32_t z, Random* rng) {
-		int32_t v10; // r0
 		if (!level->isClient) {
 			this->checkAlive(level, x, y, z);
-			if (level->getRawBrightness(x, y + 1, z) > 8 && !(rng->genrand_int32() % 7)) {
-				v10 = level->getData(x, y, z);
-				if ((v10 & 8) != 0) {
-					this->growTree(level, x, y, z, rng);
-				} else {
-					level->setDataNoUpdate(x, y, z, v10 | 8);
+			if (level->getRawBrightness(x, y + 1, z) > 8) {
+				if(rng->nextInt(7) == 0){
+					int v10 = level->getData(x, y, z);
+					if ((v10 & 8) == 0) {
+						level->setDataNoUpdate(x, y, z, v10 | 8);
+					}else{
+						this->growTree(level, x, y, z, rng);
+					}
 				}
 			}
 		}

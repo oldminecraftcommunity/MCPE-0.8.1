@@ -22,7 +22,7 @@ struct MouseDevice{
 	int16_t hasDX, hasDY;
 	int16_t prevMouseX, prevMouseY;
 	bool_t buttonStates[2];
-	int8_t field_12, field_13;
+	bool_t field_12, field_13;
 	std::vector<MouseAction> mouseEvents;
 	int32_t firstMovement;
 

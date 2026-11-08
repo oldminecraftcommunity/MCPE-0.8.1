@@ -5,38 +5,29 @@
 #include <nbt/CompoundTag.hpp>
 #include <cpputils.hpp>
 
-LevelData::LevelData(struct CompoundTag* a2) {
+LevelData::LevelData(void) {
 	this->sizeOnDisk = 0; //TODO doesnt seem to exist in mcpe
+	this->playerData.x = 0.0;
+	this->playerData.y = 0.0;
+	this->playerData.z = 0.0;
+	this->playerData.motX = 0.0;
+	this->playerData.motY = 0.0;
+	this->playerData.motZ = 0.0;
+	this->field_50 = -1;
+	this->ySpawn = 64;
+	this->xSpawn = 128;
+	this->levelName = "";
+	this->zSpawn = 128;
+	this->seed = 0;
+	this->time = 0;
+	this->lastPlayed = 0;
 	this->playerTag = 0;
-	this->getTagData(a2);
-}
-LevelData::LevelData(const LevelData& a2) {
-	this->sizeOnDisk = 0; //TODO doesnt seem to exist in mcpe
-	this->playerData = a2.playerData;
-	this->field_2C = a2.field_2C;
-	this->field_30 = a2.field_30;
-	this->field_34 = a2.field_34;
-	this->field_38 = a2.field_38;
-	this->field_3C = a2.field_3C;
-	this->field_40 = a2.field_40;
-	this->field_44 = a2.field_44;
-	this->field_48 = a2.field_48;
-	this->field_4C = a2.field_4C;
-	this->field_50 = a2.field_50;
-	this->levelName = a2.levelName;
-	this->seed = a2.seed;
-	this->xSpawn = a2.xSpawn;
-	this->ySpawn = a2.ySpawn;
-	this->zSpawn = a2.zSpawn;
-	this->time = a2.time;
-	this->lastPlayed = a2.lastPlayed;
-	this->playerTag = 0;
-	this->dimensionID = a2.dimensionID;
-	this->gameType = a2.gameType;
-	this->storageVersion = a2.storageVersion;
-	this->spawnMobs = a2.spawnMobs;
-	this->generatorVersion = a2.generatorVersion;
-	this->setPlayerTag(a2.playerTag);
+	this->dimensionID = 0;
+	this->storageVersion = 0;
+	this->generatorVersion = 0;
+	this->spawnMobs = 0;
+	this->gameType = 1;
+	this->stopTime = 5000;
 }
 LevelData::LevelData(const struct LevelSettings& settings, const std::string& a3, int32_t a4) {
 	this->sizeOnDisk = 0; //TODO doesnt seem to exist in mcpe
@@ -67,86 +58,202 @@ LevelData::LevelData(const struct LevelSettings& settings, const std::string& a3
 	}
 	this->stopTime = v10;
 }
-LevelData::LevelData(void) {
-	this->sizeOnDisk = 0; //TODO doesnt seem to exist in mcpe
-	this->playerData.x = 0.0;
-	this->playerData.y = 0.0;
-	this->playerData.z = 0.0;
-	this->playerData.motX = 0.0;
-	this->playerData.motY = 0.0;
-	this->playerData.motZ = 0.0;
-	this->field_50 = -1;
-	this->ySpawn = 64;
-	this->xSpawn = 128;
-	this->levelName = "";
-	this->zSpawn = 128;
-	this->seed = 0;
-	this->time = 0;
-	this->lastPlayed = 0;
-	this->playerTag = 0;
-	this->dimensionID = 0;
-	this->storageVersion = 0;
-	this->generatorVersion = 0;
-	this->spawnMobs = 0;
-	this->gameType = 1;
-	this->stopTime = 5000;
-}
-struct CompoundTag* LevelData::createTag(const std::vector<struct Player*>& a2) {
-	CompoundTag* v4 = new CompoundTag();
-	CompoundTag* v7;
-	if(a2.empty()) {
-		v7 = 0;
 
-	} else {
-		if(a2[0]) {
-			v7 = new CompoundTag();
-			a2[0]->saveWithoutId(v7);
-		}else{
-			v7 = 0;
-		}
+void LevelData::setPlayerTag(struct CompoundTag* a2) {
+	if(this->playerTag) {
+		this->playerTag->deleteChildren();
+		if(this->playerTag) delete this->playerTag;
+		this->playerTag = 0;
 	}
-	this->setTagData(v4, v7);
-	return v4;
+	if(a2) {
+		this->playerTag = (CompoundTag*)a2->copy();
+	}
 }
-
-struct CompoundTag* LevelData::createTag() {
-	CompoundTag* v2 = new CompoundTag();
-	if(this->playerTag) this->setTagData(v2, (CompoundTag*)this->playerTag->copy());
-	else this->setTagData(v2, 0);
-
-	return v2;
+LevelData& LevelData::operator=(const LevelData& a2) {
+	if(this != &a2) {
+		this->seed = a2.seed;
+		this->gameType = a2.gameType;
+		this->levelName = a2.levelName;
+		this->xSpawn = a2.xSpawn;
+		this->ySpawn = a2.ySpawn;
+		this->zSpawn = a2.zSpawn;
+		this->lastPlayed = a2.lastPlayed;
+		this->time = a2.time;
+		this->dimensionID = a2.dimensionID;
+		this->spawnMobs = a2.spawnMobs;
+		this->playerData = a2.playerData;
+		this->field_2C = a2.field_2C;
+		this->field_30 = a2.field_30;
+		this->field_34 = a2.field_34;
+		this->field_38 = a2.field_38;
+		this->field_3C = a2.field_3C;
+		this->field_40 = a2.field_40;
+		this->field_44 = a2.field_44;
+		this->field_48 = a2.field_48;
+		this->field_4C = a2.field_4C;
+		this->stopTime = a2.stopTime;
+		this->field_50 = a2.field_50;
+		this->generatorVersion = a2.generatorVersion;
+		this->storageVersion = a2.storageVersion;
+		this->setPlayerTag(a2.playerTag);
+	}
+	return *this;
 }
-
-int32_t LevelData::getDimension() {
-	return this->dimensionID;
+LevelData::LevelData(const LevelData& a2) {
+	this->sizeOnDisk = 0; //TODO doesnt seem to exist in mcpe
+	this->playerData = a2.playerData;
+	this->field_2C = a2.field_2C;
+	this->field_30 = a2.field_30;
+	this->field_34 = a2.field_34;
+	this->field_38 = a2.field_38;
+	this->field_3C = a2.field_3C;
+	this->field_40 = a2.field_40;
+	this->field_44 = a2.field_44;
+	this->field_48 = a2.field_48;
+	this->field_4C = a2.field_4C;
+	this->field_50 = a2.field_50;
+	this->levelName = a2.levelName;
+	this->seed = a2.seed;
+	this->xSpawn = a2.xSpawn;
+	this->ySpawn = a2.ySpawn;
+	this->zSpawn = a2.zSpawn;
+	this->time = a2.time;
+	this->lastPlayed = a2.lastPlayed;
+	this->playerTag = 0;
+	this->dimensionID = a2.dimensionID;
+	this->gameType = a2.gameType;
+	this->storageVersion = a2.storageVersion;
+	this->spawnMobs = a2.spawnMobs;
+	this->generatorVersion = a2.generatorVersion;
+	this->setPlayerTag(a2.playerTag);
 }
-int32_t LevelData::getGameType() const{
-	return this->gameType;
-}
-int32_t LevelData::getGeneratorVersion() const{
-	return this->generatorVersion;
-}
-int32_t LevelData::getLastPlayed() const{
-	return this->lastPlayed;
-}
-std::string LevelData::getLevelName() {
-	return this->levelName;
-}
-struct CompoundTag* LevelData::getLoadedPlayerTag() {
-	return this->playerTag;
+LevelData::~LevelData() {
+	this->setPlayerTag(0);
 }
 
 int32_t LevelData::getSeed() const{
 	return this->seed;
 }
+int32_t LevelData::getXSpawn() const{
+	return this->xSpawn;
+}
+int32_t LevelData::getYSpawn() const{
+	return this->ySpawn;
+}
+int32_t LevelData::getZSpawn() const{
+	return this->zSpawn;
+}
+int32_t LevelData::getTime() const{
+	return this->time;
+}
 int32_t LevelData::getSizeOnDisk() const{
 	return this->sizeOnDisk;
+}
+struct CompoundTag* LevelData::getLoadedPlayerTag() {
+	return this->playerTag;
+}
+void LevelData::setLoadedPlayerTo(struct Player* a2) {
+	if(this->field_50 == 1) {
+		this->playerData.loadPlayer(a2);
+	}
+}
+int32_t LevelData::getDimension() {
+	return this->dimensionID;
+}
+void LevelData::setSeed(long a2) {
+	this->seed = a2;
+}
+void LevelData::setXSpawn(int32_t x) {
+	this->xSpawn = x;
+}
+void LevelData::setYSpawn(int32_t y) {
+	this->ySpawn = y;
+}
+void LevelData::setZSpawn(int32_t z) {
+	this->zSpawn = z;
+}
+void LevelData::setTime(long a2) {
+	this->time = a2;
+}
+void LevelData::setStopTime(long a2) {
+	this->stopTime = a2;
+}
+void LevelData::setSizeOnDisk(long a2) {
+	this->sizeOnDisk = a2;
+}
+void LevelData::setLoadedPlayerTag(struct CompoundTag* a2) {
+	if(this->playerTag) {
+		this->playerTag->deleteChildren();
+		if(this->playerTag) delete this->playerTag;
+		this->playerTag = 0;
+	}
+	this->playerTag = a2;
+}
+void LevelData::setDimension(int32_t a2) {
+	this->dimensionID = a2;
+}
+void LevelData::setSpawn(int32_t x, int32_t y, int32_t z) {
+	this->xSpawn = x;
+	this->ySpawn = y;
+	this->zSpawn = z;
+}
+std::string LevelData::getLevelName() {
+	return this->levelName;
+}
+void LevelData::setLevelName(const std::string& a2) {
+	this->levelName = a2;
+}
+int32_t LevelData::getGeneratorVersion() const{
+	return this->generatorVersion;
+}
+void LevelData::setGeneratorVersion(int32_t a2) {
+	this->generatorVersion = a2;
+}
+int32_t LevelData::getLastPlayed() const{
+	return this->lastPlayed;
+}
+int32_t LevelData::getStorageVersion() const{
+	return this->storageVersion;
+}
+void LevelData::setStorageVersion(int32_t a2) {
+	this->storageVersion = a2;
+}
+int32_t LevelData::getGameType() const{
+	return this->gameType;
+}
+void LevelData::setGameType(int32_t a2) {
+	this->gameType = a2;
 }
 bool_t LevelData::getSpawnMobs() const{
 	return this->spawnMobs;
 }
-int32_t LevelData::getStorageVersion() const{
-	return this->storageVersion;
+void LevelData::setSpawnMobs(bool_t a2) {
+	this->spawnMobs = a2;
+}
+void LevelData::v1_write(RakNet::BitStream& a2) {
+	a2.Write<long>(this->seed);
+	a2.Write<int32_t>(this->xSpawn);
+	a2.Write<int32_t>(this->ySpawn);
+	a2.Write<int32_t>(this->zSpawn);
+	a2.Write<long>(this->time);
+	a2.Write<long>(this->sizeOnDisk);
+	a2.Write<int32_t>(getEpochTimeS());
+	a2.Write(this->levelName.c_str());
+}
+void LevelData::v1_read(RakNet::BitStream& a2, int32_t a3) {
+	this->storageVersion = a3;
+	a2.Read<long>(this->seed);
+	a2.Read<int32_t>(this->xSpawn);
+	a2.Read<int32_t>(this->ySpawn);
+	a2.Read<int32_t>(this->zSpawn);
+	a2.Read<long>(this->time);
+	a2.Read<long>(this->sizeOnDisk);
+	a2.Read<int32_t>(this->lastPlayed);
+	{
+		RakNet::RakString s;
+		a2.Read<RakNet::RakString>(s);
+		this->levelName = s.C_String();
+	}
 }
 void LevelData::getTagData(const CompoundTag* a2) {
 	if(a2) {
@@ -188,103 +295,12 @@ FINALS:
 		}
 	}
 }
-int32_t LevelData::getTime() const{
-	return this->time;
+LevelData::LevelData(struct CompoundTag* a2) {
+	this->sizeOnDisk = 0; //TODO doesnt seem to exist in mcpe
+	this->playerTag = 0;
+	this->getTagData(a2);
 }
-int32_t LevelData::getXSpawn() const{
-	return this->xSpawn;
-}
-int32_t LevelData::getYSpawn() const{
-	return this->ySpawn;
-}
-int32_t LevelData::getZSpawn() const{
-	return this->zSpawn;
-}
-LevelData& LevelData::operator=(const LevelData& a2) {
-	if(this != &a2) {
-		this->seed = a2.seed;
-		this->gameType = a2.gameType;
-		this->levelName = a2.levelName;
-		this->xSpawn = a2.xSpawn;
-		this->ySpawn = a2.ySpawn;
-		this->zSpawn = a2.zSpawn;
-		this->lastPlayed = a2.lastPlayed;
-		this->time = a2.time;
-		this->dimensionID = a2.dimensionID;
-		this->spawnMobs = a2.spawnMobs;
-		this->playerData = a2.playerData;
-		this->field_2C = a2.field_2C;
-		this->field_30 = a2.field_30;
-		this->field_34 = a2.field_34;
-		this->field_38 = a2.field_38;
-		this->field_3C = a2.field_3C;
-		this->field_40 = a2.field_40;
-		this->field_44 = a2.field_44;
-		this->field_48 = a2.field_48;
-		this->field_4C = a2.field_4C;
-		this->stopTime = a2.stopTime;
-		this->field_50 = a2.field_50;
-		this->generatorVersion = a2.generatorVersion;
-		this->storageVersion = a2.storageVersion;
-		this->setPlayerTag(a2.playerTag);
-	}
-	return *this;
-}
-void LevelData::setDimension(int32_t a2) {
-	this->dimensionID = a2;
-}
-void LevelData::setGameType(int32_t a2) {
-	this->gameType = a2;
-}
-void LevelData::setGeneratorVersion(int32_t a2) {
-	this->generatorVersion = a2;
-}
-void LevelData::setLevelName(const std::string& a2) {
-	this->levelName = a2;
-}
-void LevelData::setLoadedPlayerTag(struct CompoundTag* a2) {
-	if(this->playerTag) {
-		this->playerTag->deleteChildren();
-		if(this->playerTag) delete this->playerTag;
-		this->playerTag = 0;
-	}
-	this->playerTag = a2;
-}
-void LevelData::setLoadedPlayerTo(struct Player* a2) {
-	if(this->field_50 == 1) {
-		this->playerData.loadPlayer(a2);
-	}
-}
-void LevelData::setPlayerTag(struct CompoundTag* a2) {
-	if(this->playerTag) {
-		this->playerTag->deleteChildren();
-		if(this->playerTag) delete this->playerTag;
-		this->playerTag = 0;
-	}
-	if(a2) {
-		this->playerTag = (CompoundTag*)a2->copy();
-	}
-}
-void LevelData::setSeed(long a2) {
-	this->seed = a2;
-}
-void LevelData::setSizeOnDisk(long a2) {
-	this->sizeOnDisk = a2;
-}
-void LevelData::setSpawn(int32_t x, int32_t y, int32_t z) {
-	this->xSpawn = x;
-	this->ySpawn = y;
-	this->zSpawn = z;
-}
-void LevelData::setSpawnMobs(bool_t a2) {
-	this->spawnMobs = a2;
-}
-void LevelData::setStopTime(long a2) {
-	this->stopTime = a2;
-}
-void LevelData::setStorageVersion(int32_t a2) {
-	this->storageVersion = a2;
-}
+
 void LevelData::setTagData(struct CompoundTag* a2, struct CompoundTag* a3) {
 	a2->putLong("RandomSeed", this->seed);
 	a2->putInt("GameType", this->gameType);
@@ -303,43 +319,28 @@ void LevelData::setTagData(struct CompoundTag* a2, struct CompoundTag* a3) {
 		a2->put("Player", a3);
 	}
 }
-void LevelData::setTime(long a2) {
-	this->time = a2;
+struct CompoundTag* LevelData::createTag() {
+	CompoundTag* v2 = new CompoundTag();
+	if(this->playerTag) this->setTagData(v2, (CompoundTag*)this->playerTag->copy());
+	else this->setTagData(v2, 0);
+
+	return v2;
 }
-void LevelData::setXSpawn(int32_t x) {
-	this->xSpawn = x;
-}
-void LevelData::setYSpawn(int32_t y) {
-	this->ySpawn = y;
-}
-void LevelData::setZSpawn(int32_t z) {
-	this->zSpawn = z;
-}
-void LevelData::v1_read(RakNet::BitStream& a2, int32_t a3) {
-	this->storageVersion = a3;
-	a2.Read<long>(this->seed);
-	a2.Read<int32_t>(this->xSpawn);
-	a2.Read<int32_t>(this->ySpawn);
-	a2.Read<int32_t>(this->zSpawn);
-	a2.Read<long>(this->time);
-	a2.Read<long>(this->sizeOnDisk);
-	a2.Read<int32_t>(this->lastPlayed);
-	{
-		RakNet::RakString s;
-		a2.Read<RakNet::RakString>(s);
-		this->levelName = s.C_String();
+struct CompoundTag* LevelData::createTag(const std::vector<struct Player*>& a2) {
+	CompoundTag* v4 = new CompoundTag();
+	CompoundTag* v7;
+	if(a2.empty()) {
+		v7 = 0;
+
+	} else {
+		if(a2[0]) {
+			v7 = new CompoundTag();
+			a2[0]->saveWithoutId(v7);
+		}else{
+			v7 = 0;
+		}
 	}
+	this->setTagData(v4, v7);
+	return v4;
 }
-void LevelData::v1_write(RakNet::BitStream& a2) {
-	a2.Write<long>(this->seed);
-	a2.Write<int32_t>(this->xSpawn);
-	a2.Write<int32_t>(this->ySpawn);
-	a2.Write<int32_t>(this->zSpawn);
-	a2.Write<long>(this->time);
-	a2.Write<long>(this->sizeOnDisk);
-	a2.Write<int32_t>(getEpochTimeS());
-	a2.Write(this->levelName.c_str());
-}
-LevelData::~LevelData() {
-	this->setPlayerTag(0);
-}
+

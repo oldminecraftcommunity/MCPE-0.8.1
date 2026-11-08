@@ -136,10 +136,9 @@ StopwatchNLast::~StopwatchNLast() {
 void StopwatchNLast::stop() {
 	Stopwatch::stop();
 	double last = this->getLast();
-	int32_t v3 = this->field_34;
-	double v6 = this->field_38[v3];
-	this->field_34 = ++v3;
-	if(v3 == this->size) {
+	double v6 = this->field_38[this->field_34];
+	this->field_34 += 1;
+	if(this->field_34 == this->size) {
 		this->field_34 = 0;
 	}
 	this->field_38[this->field_34] = last;

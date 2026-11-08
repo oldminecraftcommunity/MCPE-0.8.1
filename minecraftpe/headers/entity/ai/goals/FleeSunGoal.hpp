@@ -8,7 +8,7 @@ struct Level;
 struct FleeSunGoal: Goal
 {
 	PathfinderMob* holder;
-	Vec3 target;
+	float targetX, targetY, targetZ;
 	float speedMultiplier;
 	Level* level;
 

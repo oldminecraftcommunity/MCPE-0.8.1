@@ -87,13 +87,13 @@ struct ListTag : public Tag{
 	//TODO there are other methods like this(FillingContainer & Player - inlined getCompound)
 	float getFloat(int32_t n) {
 		if (n >= (int)this->value.size()) {
-			this->field_0 |= 1;
+			this->err |= 1;
 			return 0;
 		}
 		Tag* t = this->value[n];
 		if (t) {
 			if(t->getId() != 5){
-				this->field_0 |= 2;
+				this->err |= 2;
 				return 0;
 			}
 			FloatTag* ft = (FloatTag*) (t);

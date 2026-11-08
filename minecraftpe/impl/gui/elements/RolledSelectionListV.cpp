@@ -39,7 +39,7 @@ RolledSelectionListV::RolledSelectionListV(Minecraft* a2, int32_t a3, int32_t a4
 }
 
 void RolledSelectionListV::evaluate(int32_t a2, int32_t a3) {
-	if(fabsf(this->field_3C - a3) > 9) { //abs32
+	if(abs(this->field_3C - a3) > 9) {
 		this->field_5C = -1;
 		this->selectCancel();
 	}

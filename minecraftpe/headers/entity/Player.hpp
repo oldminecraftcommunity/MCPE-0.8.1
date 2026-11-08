@@ -29,9 +29,9 @@ struct Player : Mob{
 	struct Inventory* inventory;
 	bool field_CB4;
 	Pos bedPosition;
-	float field_CC4;
-	float field_CC8;
-	float field_CCC;
+	float bedOffsetX;
+	float bedOffsetY;
+	float bedOffsetZ;
 	bool playerVerified;
 	ItemInstance item;
 	int32_t useItemDuration;

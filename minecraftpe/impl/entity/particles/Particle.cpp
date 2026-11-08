@@ -58,12 +58,13 @@ void Particle::scale(float a2) {
 }
 
 void Particle::tick() {
+	int maxAliveTime = this->maxAliveTime;
 	this->prevX = this->posX;
 	this->prevY = this->posY;
 	this->prevZ = this->posZ;
-
+	int ticksAlive = this->ticksAlive;
 	this->ticksAlive += 1;
-	if(this->ticksAlive >= this->maxAliveTime) {
+	if(ticksAlive >= maxAliveTime) {
 		this->remove();
 	}
 

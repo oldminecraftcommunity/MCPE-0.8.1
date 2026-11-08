@@ -7,8 +7,6 @@
 #include <rendering/Textures.hpp>
 #include <rendering/TileRenderer.hpp>
 #include <rendering/entity/ItemRenderer.hpp>
-#include <rendering/states/DisableState.hpp>
-#include <rendering/states/EnableClientState.hpp>
 #include <string.h>
 #include <tile/Tile.hpp>
 
@@ -40,25 +38,6 @@ Touch::InventoryPane::InventoryPane(Touch::IInventoryPaneCallback* a2, Minecraft
 	AppPlatform::_singleton->addListener(this, 1.0);
 }
 
-void Touch::InventoryPane::buildInventoryItemsChunk(ItemRenderChunkType a2) {
-	std::vector<const ItemInstance*> v10 = this->callback->getItems(this);
-	for(uint32_t i = 0; i < v10.size(); ++i) {
-		const ItemInstance* v5 = v10[i];
-		if(v5) {
-			float v6 = (float)this->field_4C.height * (float)(i / this->field_8);
-			float v7 = Gui::floorAlignToScreenPixel((float)((float)((float)this->field_264 + (float)((float)this->field_4C.width * (float)(i % this->field_8))) + 4.0) + (float)this->field_228.minX);
-			float v8 = Gui::floorAlignToScreenPixel((float)((float)(v6 + (float)this->field_264) + 4.0) + (float)this->field_228.minY);
-			float v9;
-			if(this->callback->isAllowed(i)) {
-				v9 = 1.0;
-			} else {
-				v9 = 0.25;
-			}
-			ItemRenderer::renderGuiItemInChunk(a2, this->minecraft->texturesPtr, v5, v7, v8, v9, 1.0, 1.0);
-			;
-		}
-	}
-}
 void Touch::InventoryPane::drawScrollBar(ScrollBar& a2) {
 	float color; // s13
 
@@ -66,6 +45,13 @@ void Touch::InventoryPane::drawScrollBar(ScrollBar& a2) {
 	if(color > 0.0) {
 		this->fill((float)(this->field_2C.minX + this->field_2C.width) - a2.field_8, a2.field_4, (float)(this->field_2C.minX + this->field_2C.width), a2.field_4 + a2.field_C, ((int32_t)(float)(color * 255.0) << 24) | 0xAAAAAA);
 	}
+}
+void Touch::InventoryPane::tick() {
+	--this->invTicker;
+	ScrollingPane::tick();
+}
+void Touch::InventoryPane::setRenderDecorations(bool_t a2) {
+	this->renderDecorations = a2;
 }
 void Touch::InventoryPane::renderSelectedItem(std::vector<ScrollingPane::GridItem>& a2, std::vector<const ItemInstance*> a3, Tesselator& a4, ScrollingPane::GridItem*& a5, float& a6, float& a7) {
 	int32_t v11;			 // r1
@@ -116,13 +102,27 @@ void Touch::InventoryPane::renderSelectedItem(std::vector<ScrollingPane::GridIte
 		++v11;
 	}
 }
-void Touch::InventoryPane::setRenderDecorations(bool_t a2) {
-	this->renderDecorations = a2;
+
+void Touch::InventoryPane::buildInventoryItemsChunk(ItemRenderChunkType a2) {
+	std::vector<const ItemInstance*> v10 = this->callback->getItems(this);
+	for(uint32_t i = 0; i < v10.size(); ++i) {
+		const ItemInstance* v5 = v10[i];
+		if(v5) {
+			float v6 = (float)this->field_4C.height * (float)(i / this->field_8);
+			float v7 = Gui::floorAlignToScreenPixel((float)((float)((float)this->field_264 + (float)((float)this->field_4C.width * (float)(i % this->field_8))) + 4.0) + (float)this->field_228.minX);
+			float v8 = Gui::floorAlignToScreenPixel((float)((float)(v6 + (float)this->field_264) + 4.0) + (float)this->field_228.minY);
+			float v9;
+			if(this->callback->isAllowed(i)) {
+				v9 = 1.0;
+			} else {
+				v9 = 0.25;
+			}
+			ItemRenderer::renderGuiItemInChunk(a2, this->minecraft->texturesPtr, v5, v7, v8, v9, 1.0, 1.0);
+			;
+		}
+	}
 }
-void Touch::InventoryPane::tick() {
-	--this->invTicker;
-	ScrollingPane::tick();
-}
+
 Touch::InventoryPane::~InventoryPane() {
 	AppPlatform::_singleton->removeListener(this);
 	if(this->field_23C) delete this->field_23C;
@@ -228,13 +228,6 @@ void Touch::InventoryPane::renderBatch(std::vector<ScrollingPane::GridItem>& a2,
 	this->drawScrollBar(this->field_1C4);
 	this->drawScrollBar(this->verticalScrollbar);
 }
-bool_t Touch::InventoryPane::onSelect(int32_t a2, bool_t a3) {
-	if(this->callback->isAllowed(a2) && this->callback->addItem(this, a2)) {
-		this->field_25C = a2;
-		this->invTicker = 7;
-	}
-	return 0;
-}
 void Touch::InventoryPane::refreshItems() {
 	Tesselator::instance.beginOverride();
 	this->buildInventoryItemsChunk(IRCT_NULL);
@@ -250,11 +243,18 @@ void Touch::InventoryPane::refreshItems() {
 	Tesselator::instance.voidBeginAndEndCalls(0);
 	this->field_2BC = Tesselator::instance.end();
 }
+void Touch::InventoryPane::onAppResumed() {
+	this->refreshItems();
+}
 void Touch::InventoryPane::onAppSuspended() {
 	this->field_26C.reset();
 	this->field_294.reset();
 	this->field_2BC.reset();
 }
-void Touch::InventoryPane::onAppResumed() {
-	this->refreshItems();
+bool_t Touch::InventoryPane::onSelect(int32_t a2, bool_t a3) {
+	if(this->callback->isAllowed(a2) && this->callback->addItem(this, a2)) {
+		this->field_25C = a2;
+		this->invTicker = 7;
+	}
+	return 0;
 }

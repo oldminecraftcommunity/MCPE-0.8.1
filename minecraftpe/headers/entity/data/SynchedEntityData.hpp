@@ -67,6 +67,10 @@ struct SynchedEntityData{
 			this->markDirty(a2);
 		}
 	}
+	bool getFlag(int a2, int a3) {
+		int32_t value = ((DataItem2<uint8_t>*)this->data[a2])->value;
+		return (value >> a3) & 1;
+	}
 	static std::vector<DataItem*> unpack(IDataInput*);
 	static void writeDataItem(IDataOutput*, const DataItem*);
 

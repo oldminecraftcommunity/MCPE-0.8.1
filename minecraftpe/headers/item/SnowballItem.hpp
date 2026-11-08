@@ -16,7 +16,7 @@ struct SnowballItem: Item
 		if (!a4->abilities.instabuild) {
 			--a2->count;
 		}
-		a3->playSound(a4, "random.bow", 0.5, 0.4 / (float) (((float) ((Item::random.nextFloat() * 0.4)) + 0.8)));
+		a3->playSound(a4, "random.bow", 0.5f, 0.4f / ((Item::random.nextFloat() * 0.4f) + 0.8f));
 		if (!a3->isClient) {
 			a3->addEntity(new Snowball(a3, a4));
 		}

@@ -37,7 +37,6 @@ void SlabTile::updateDefaultShape() {
 	}
 }
 bool_t SlabTile::shouldRenderFace(LevelSource* level, int32_t x, int32_t y, int32_t z, int32_t side) {
-	int32_t result; // r0
 	int32_t v11;	// r0
 	uint32_t v12;	// r0
 	int32_t v13;	// r0
@@ -45,7 +44,7 @@ bool_t SlabTile::shouldRenderFace(LevelSource* level, int32_t x, int32_t y, int3
 	if(this->isFull) {
 		return Tile::shouldRenderFace(level, x, y, z, side);
 	}
-	if((uint32_t)side <= 1 || (result = Tile::shouldRenderFace(level, x, y, z, side)) != 0) {
+	if((uint32_t)side <= 1 || Tile::shouldRenderFace(level, x, y, z, side)) {
 		if(this->isBottomSlab(level, Facing::STEP_X[Facing::OPPOSITE_FACING[side]] + x, Facing::STEP_Y[Facing::OPPOSITE_FACING[side]] + y, z + Facing::STEP_Z[Facing::OPPOSITE_FACING[side]])) {
 			if(side != 1 && (side || !Tile::shouldRenderFace(level, x, y, z, 0))) {
 				v13 = level->getTile(x, y, z);
@@ -65,7 +64,7 @@ bool_t SlabTile::shouldRenderFace(LevelSource* level, int32_t x, int32_t y, int3
 		}
 		return 1;
 	}
-	return result;
+	return 0;
 }
 void SlabTile::addAABBs(Level* level, int32_t x, int32_t y, int32_t z, const AABB* a6, std::vector<AABB>& a7) {
 	this->updateShape(level, x, y, z);

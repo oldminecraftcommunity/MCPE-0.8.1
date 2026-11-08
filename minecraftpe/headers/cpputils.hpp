@@ -1,10 +1,9 @@
 #pragma once
-#include <_types.h>
+#include <network/mco/RestRequestJob.hpp>
 #include <Config.hpp>
 #include <vector>
 #include <string>
 #include <memory>
-#include <network/mco/RestRequestJob.hpp>
 
 #define vcvts_n_f32_s32(a2, a3) (float)((float)(a2) / (1 << (uint32_t)(a3)))
 

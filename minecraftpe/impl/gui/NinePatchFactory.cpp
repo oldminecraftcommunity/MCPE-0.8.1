@@ -3,11 +3,8 @@
 #include <util/IntRectangle.hpp>
 #include <gui/NinePatchLayer.hpp>
 
-NinePatchFactory::NinePatchFactory(Textures* tex, const std::string& data){
-	this->textures = tex;
-	this->imagePath = data;
-	this->width = this->height = 1;
-	TextureData* td = this->textures->loadAndGetTextureData(data);
+NinePatchFactory::NinePatchFactory(Textures* tex, const std::string& data) : textures(tex), imagePath(data), width(1), height(1){
+	TextureData* td = tex->loadAndGetTextureData(data);
 	if(td){
 		this->width = td->image.width;
 		this->height = td->image.height;

@@ -32,9 +32,7 @@ struct RestRequestJob: Job
 
 	template<typename... _args>
 	void setMethod(const std::string& fmt, _args... args) {
-		std::vector<std::string> v4;
-		ParameterStringify::stringifyNext(v4, args...);
-		this->url = Util::simpleFormat(fmt, v4);
+		this->url = Util::simpleFormat(fmt, ParameterStringify::stringify(args...));
 	}
 
 	void setTagData(const RestCallTagData&);

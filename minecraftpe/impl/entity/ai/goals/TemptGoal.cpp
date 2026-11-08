@@ -63,20 +63,20 @@ bool_t TemptGoal::canUse() {
 	return 0;
 }
 bool_t TemptGoal::canContinueToUse() {
-	Entity* v2; // r5
-
 	if(this->field_4C) {
-		v2 = this->followedPlayer.lock();
+		Entity* v2 = this->followedPlayer.lock();
 		if(!v2) {
 			return 0;
 		}
-		if(this->holder->distanceToSqr(v2) >= 36.0) {
+		if(this->holder->distanceToSqr(v2) < 36) {
+			if(v2->distanceToSqr(this->field_10, this->field_14, this->field_18) > 0.16f || fabsf(v2->pitch - this->field_1C) > 5.0f || fabsf(v2->yaw - this->field_20) > 5.0f) return 0;
+
+		}else{
 			this->field_10 = v2->posX;
 			this->field_14 = v2->posY;
 			this->field_18 = v2->posZ;
-		} else if(v2->distanceToSqr(this->field_10, this->field_14, this->field_18) > 0.16 || fabsf(v2->pitch - this->field_1C) > 5.0 || fabsf(v2->yaw - this->field_20) > 5.0) {
-			return 0;
 		}
+
 		this->field_1C = v2->pitch;
 		this->field_20 = v2->yaw;
 	}

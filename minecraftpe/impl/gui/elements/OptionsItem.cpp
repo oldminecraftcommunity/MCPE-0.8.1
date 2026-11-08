@@ -10,7 +10,7 @@ OptionsItem::OptionsItem(const Options::Option* a2, std::shared_ptr<GuiElement> 
 
 void OptionsItem::render(Minecraft* a2, int32_t a3, int32_t a4) {
 	int32_t v9 = (this->height - 8) / 2;
-	std::string v10 = a2->options.getDescription(this->option, I18n::get(option->name));
+	std::string v10 = a2->options.getDescription(this->option, I18n::get(this->option->name));
 	a2->font->drawShadow(v10, this->posX, (float)this->posY + (float)v9, 0xFFBBBBBB);
 	GuiElementContainer::render(a2, a3, a4);
 }

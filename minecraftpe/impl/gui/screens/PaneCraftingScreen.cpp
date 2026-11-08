@@ -89,7 +89,7 @@ void PaneCraftingScreen::clearCategoryItems() {
 	this->field_84.clear();
 }
 void PaneCraftingScreen::closeScreen() {
-	if(this->minecraft->useTouchscreen() && !this->field_17C) {
+	if(this->minecraft->useTouchscreen() && this->field_17C == Recipe::SIZE_2X2) {
 		this->minecraft->screenChooser.setScreen(INVENTORY_SCREEN);
 	} else {
 		this->minecraft->setScreen(0);

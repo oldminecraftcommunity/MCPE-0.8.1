@@ -75,7 +75,7 @@ int32_t CropTile::getRenderShape() {
 	return 6;
 }
 const TextureUVCoordinateSet* CropTile::getTexture(int32_t a2, int32_t a3) {
-	if(a3 < 0) a3 = 0;
+	if(a3 < 0) a3 = 7;
 	return this->texture2.getUV(a3);
 }
 const TextureUVCoordinateSet* CropTile::getTexture(LevelSource* level, int32_t x, int32_t y, int32_t z, int32_t a6) {

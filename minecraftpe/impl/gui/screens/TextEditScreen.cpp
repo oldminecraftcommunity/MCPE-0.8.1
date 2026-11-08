@@ -129,15 +129,10 @@ void TextEditScreen::setupPositions() {
 	this->doneButton.posY = 0;
 }
 bool_t TextEditScreen::handleBackEvent(bool_t a2) {
-	TileEntity* tile; // r0
-	TileEntity* v4;	  // r5
-	Packet* v5;		  // r0
-
-	tile = this->minecraft->level->getTileEntity(this->signX, this->signY, this->signZ);
-	v4 = tile;
+	TileEntity* tile = this->minecraft->level->getTileEntity(this->signX, this->signY, this->signZ);
 	if(tile && tile->type == 4) {
 		tile->setChanged();
-		this->minecraft->rakNetInstance->send(v4->getUpdatePacket());
+		this->minecraft->rakNetInstance->send(tile->getUpdatePacket());
 		this->minecraft->platform()->hideKeyboard();
 		this->minecraft->setScreen(0);
 	} else {

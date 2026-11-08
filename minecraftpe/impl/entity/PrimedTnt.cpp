@@ -8,26 +8,29 @@ PrimedTnt::PrimedTnt(Level* a2)
 	this->ticksUntilExplode = 80;
 	this->entityRenderId = TNT;
 	this->field_FC = 1;
-	this->setSize(0.98, 0.98);
-	this->ridingHeight = this->entityHeight * 0.5;
+	this->setSize(0.98f, 0.98f);
+	this->ridingHeight = this->entityHeight * 0.5f;
 }
 PrimedTnt::PrimedTnt(Level* a2, float x, float y, float z)
-	: PrimedTnt(a2) {
+	: Entity(a2) {
+	this->ticksUntilExplode = 80;
+	this->entityRenderId = TNT;
+	this->field_FC = 1;
+	this->setSize(0.98f, 0.98f);
+	this->ridingHeight = this->entityHeight * 0.5f;
+
 	this->setPos(x, y, z);
-	float v8 = Mth::random();
-	float v9 = (float)((float)((float)(v8 * 3.1416) + (float)(v8 * 3.1416)) * 0.017453);
-	float v10 = Mth::sin(v9) * -0.02;
-	this->motionY = 0.2;
-	this->motionX = v10;
-	float v11 = Mth::cos(v9) * -0.02;
+	float v9 = (Mth::random() * Mth::PI) * 2 * Mth::DEGRAD;
+	this->motionX = Mth::sin(v9) * -0.02f;
+	this->motionY = 0.2f;
+	this->motionZ = Mth::cos(v9) * -0.02f;
 	this->prevX = x;
-	this->field_110 = 0;
 	this->prevY = y;
 	this->prevZ = z;
-	this->motionZ = v11;
+	this->field_110 = 0;
 }
 void PrimedTnt::explode() {
-	this->level->explode(0, this->posX, this->posY, this->posZ, 3.1);
+	this->level->explode(0, this->posX, this->posY, this->posZ, 3.1f);
 }
 
 void PrimedTnt::tick() {

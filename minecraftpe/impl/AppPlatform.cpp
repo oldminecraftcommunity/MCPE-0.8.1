@@ -1,7 +1,7 @@
+#include <cpputils.hpp>
 #include <AppPlatform.hpp>
 #include <ImageData.hpp>
 #include <_AssetFile.hpp>
-#include <cpputils.hpp>
 #include <network/mco/LoginInformation.hpp>
 #include <util/Util.hpp>
 #include <algorithm>

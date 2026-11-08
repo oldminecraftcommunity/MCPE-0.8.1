@@ -17,8 +17,6 @@ PlayerRenderer::~PlayerRenderer() {
 	if(this->hmodel2) delete this->hmodel2;
 }
 
-static std::string _dword_D6E083C8_armorTextures[] = {"armor/cloth_1.png", "armor/cloth_2.png", "armor/chain_1.png", "armor/chain_2.png", "armor/iron_1.png", "armor/iron_2.png", "armor/diamond_1.png", "armor/diamond_2.png", "armor/gold_1.png", "armor/gold_2.png"};
-
 void PlayerRenderer::renderName(Entity* a2_, float a3) {
 	Player* a2 = (Player*)a2_;
 	Mob* cameraEntity; // r1
@@ -56,18 +54,19 @@ void PlayerRenderer::renderName(Entity* a2_, float a3) {
 		glPopMatrix();
 	}
 }
+
+static std::string armorTextures[] = {"armor/cloth_1.png", "armor/cloth_2.png", "armor/chain_1.png", "armor/chain_2.png", "armor/iron_1.png", "armor/iron_2.png", "armor/diamond_1.png", "armor/diamond_2.png", "armor/gold_1.png", "armor/gold_2.png"};
 int32_t PlayerRenderer::prepareArmor(Mob* a2_, int32_t armour, float a4) {
 	Player* a2 = (Player*)a2_;
-	ItemInstance* armor;	// r4
-	HumanoidModel* hmodel2; // r4
-	bool_t v9;				// r3
-	bool_t v10;				// r5
 
-	armor = a2->getArmor(armour);
-	if(!ItemInstance::isArmorItem(armor)) {
+
+	ItemInstance* it = a2->getArmor(armour);
+	if(!ItemInstance::isArmorItem(it)) {
 		return -1;
 	}
-	this->bindTexture(_dword_D6E083C8_armorTextures[2 * ((ArmorItem*)armor->itemClass)->field_50 + (armour == 2)]);
+	this->bindTexture(armorTextures[2 * ((ArmorItem*)it->itemClass)->field_50 + (armour == 2)]);
+
+	HumanoidModel* hmodel2; // r4
 	if(armour == 2) {
 		hmodel2 = this->hmodel2;
 	} else {
@@ -75,28 +74,22 @@ int32_t PlayerRenderer::prepareArmor(Mob* a2_, int32_t armour, float a4) {
 	}
 	hmodel2->headModel.field_1D = armour == 0;
 	hmodel2->bodyModel.field_1D = (uint32_t)(armour - 1) <= 1;
-	v9 = armour == 1;
-	hmodel2->rightArmModel.field_1D = armour == 1;
-	v10 = (uint32_t)(armour - 2) <= 1;
-	hmodel2->leftArmModel.field_1D = v9;
-	hmodel2->rightLegModel.field_1D = v10;
-	hmodel2->leftLegModel.field_1D = v10;
+	hmodel2->leftArmModel.field_1D = hmodel2->rightArmModel.field_1D = armour == 1;
+	hmodel2->leftLegModel.field_1D = hmodel2->rightLegModel.field_1D = (uint32_t)(armour - 2) <= 1;
+
 	this->setArmor(hmodel2);
-	hmodel2->field_4 = a2->isRiding();
+	hmodel2->riding = a2->isRiding();
 	return 1;
 }
 void PlayerRenderer::setupPosition(Entity* a2_, float a3, float a4, float a5) {
 	Player* a2 = (Player*)a2_;
-	float v11, v12;
+
 	if(a2->isAlive() && a2->isSleeping()) {
-		v11 = a3 + a2->field_CC4;
-		v12 = a4 + a2->field_CC8;
-		a5 = a5 + a2->field_CCC;
-	} else {
-		v11 = a3;
-		v12 = a4;
+		MobRenderer::setupPosition(a2, a3 + a2->bedOffsetX, a4 + a2->bedOffsetY, a5 + a2->bedOffsetZ);
+	}else{
+		MobRenderer::setupPosition(a2, a3, a4, a5);
 	}
-	MobRenderer::setupPosition(a2, v11, v12, a5);
+
 }
 void PlayerRenderer::setupRotations(Entity* a2_, float a3, float a4, float a5) {
 	Player* a2 = (Player*)a2_;

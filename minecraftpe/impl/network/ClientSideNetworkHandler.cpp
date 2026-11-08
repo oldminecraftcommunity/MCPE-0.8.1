@@ -15,7 +15,13 @@
 #include <item/Item.hpp>
 #include <level/Explosion.hpp>
 #include <level/LevelSettings.hpp>
+
+#include <network/packet/RequestChunkPacket.hpp>
+#include <network/packet/LoginPacket.hpp>
 #include <level/MultiPlayerLevel.hpp>
+#include <network/packet/ReadyPacket.hpp>
+
+
 #include <level/chunk/LevelChunk.hpp>
 #include <level/dimension/Dimension.hpp>
 #include <level/gen/ChunkSource.hpp>
@@ -45,17 +51,14 @@
 #include <network/packet/HurtArmorPacket.hpp>
 #include <network/packet/InteractPacket.hpp>
 #include <network/packet/LevelEventPacket.hpp>
-#include <network/packet/LoginPacket.hpp>
 #include <network/packet/LoginStatusPacket.hpp>
 #include <network/packet/MessagePacket.hpp>
 #include <network/packet/MoveEntityPacket.hpp>
 #include <network/packet/MovePlayerPacket.hpp>
 #include <network/packet/PlayerArmorEquipmentPacket.hpp>
 #include <network/packet/PlayerEquipmentPacket.hpp>
-#include <network/packet/ReadyPacket.hpp>
 #include <network/packet/RemoveEntityPacket.hpp>
 #include <network/packet/RemovePlayerPacket.hpp>
-#include <network/packet/RequestChunkPacket.hpp>
 #include <network/packet/RespawnPacket.hpp>
 #include <network/packet/RotateHeadPacket.hpp>
 #include <network/packet/SetEntityDataPacket.hpp>

@@ -43,7 +43,7 @@ std::string I18n::getDescriptionString(const struct ItemInstance& a2) {
 
 	std::string v17;
 	if(!I18n::get(v16, v17)) {
-		std::string _d6e09320[] = {"tile.workbench", "craftingtable", "tile.quartzBlockChiseled", "quartzBlockChiseled", "tile.quartzBlockPillar", "quartzBlockPillar"};
+		static std::string _d6e09320[] = {"tile.workbench", "craftingtable", "tile.quartzBlockChiseled", "quartzBlockChiseled", "tile.quartzBlockPillar", "quartzBlockPillar"};
 		Util::removeAll(v16, _d6e03d98, 9);
 		if(!I18n::get(v16, v17)) {
 			int32_t v9 = 0;

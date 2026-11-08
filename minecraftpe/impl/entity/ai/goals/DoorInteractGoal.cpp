@@ -4,7 +4,7 @@
 #include <entity/path/Path.hpp>
 #include <entity/path/PathNavigation.hpp>
 #include <level/Level.hpp>
-#include <tile/Tile.hpp>
+#include <tile/DoorTile.hpp>
 
 DoorInteractGoal::DoorInteractGoal(Mob* a2) {
 	this->holder = a2;
@@ -17,10 +17,10 @@ DoorInteractGoal::DoorInteractGoal(Mob* a2) {
 	this->targetX = 0;
 }
 
-Tile* DoorInteractGoal::getDoorTile(int32_t x, int32_t y, int32_t z) {
+DoorTile* DoorInteractGoal::getDoorTile(int32_t x, int32_t y, int32_t z) {
 	int32_t id = this->holder->level->getTile(x, y, z);
 	if(id == Tile::door_wood->blockID) {
-		return Tile::tiles[id];
+		return (DoorTile*) Tile::tiles[id];
 	}
 	return 0;
 }
@@ -35,7 +35,6 @@ bool_t DoorInteractGoal::canUse() {
 	int32_t xCoord;		 // r1
 	int32_t zCoord;		 // r3
 	Entity* v10;		 // r0
-	Tile* door;			 // r0
 	int32_t v13;		 // r7
 	int32_t size;		 // r0
 	Mob* v15;			 // r3
@@ -45,7 +44,6 @@ bool_t DoorInteractGoal::canUse() {
 	int32_t v19;		 // r2
 	float posZ;			 // s15
 	int32_t v21;		 // r3
-	Tile* v22;			 // r0
 
 	holder = this->holder;
 	if(!holder->isCollidedHorizontally) {
@@ -77,9 +75,8 @@ bool_t DoorInteractGoal::canUse() {
 		zCoord = v7->zCoord;
 		this->doorZ = zCoord;
 		if(this->holder->distanceToSqr((float)xCoord, this->holder->posY, (float)zCoord) <= 2.25) {
-			door = this->getDoorTile(this->doorX, this->doorY, this->doorZ);
-			this->doorTile = door;
-			if(door) {
+			this->doorTile = this->getDoorTile(this->doorX, this->doorY, this->doorZ);
+			if(this->doorTile) {
 				return 1;
 			}
 		}
@@ -104,9 +101,8 @@ bool_t DoorInteractGoal::canUse() {
 		--v21;
 	}
 	this->doorZ = v21;
-	v22 = this->getDoorTile(v17, v19, v21);
-	this->doorTile = v22;
-	return v22 != 0;
+	this->doorTile = this->getDoorTile(v17, v19, v21);
+	return this->doorTile != 0;
 }
 bool_t DoorInteractGoal::canContinueToUse() {
 	return !this->closeToTarget;

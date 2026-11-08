@@ -46,24 +46,22 @@ void Textures::addDynamicTexture(DynamicTexture* a2){
 }
 
 int32_t Textures::assignTexture(const std::string& s, TextureData& d, bool_t b){
-	int32_t v8;
-
 	glGenTextures(1, &d.glTexId);
 	this->bind(d.glTexId);
 	if(b){
-		glTexParameteri(GL_TEXTURE_2D, 0x2802u, 33071);
-		glTexParameteri(GL_TEXTURE_2D, 0x2803u, 33071);
-		glTexParameteri(GL_TEXTURE_2D, 0x2801u, 9729);
-		v8 = 9729;
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 	else{
-		glTexParameteri(GL_TEXTURE_2D, 0x2802u, 10497);
-		glTexParameteri(GL_TEXTURE_2D, 0x2803u, 10497);
-		glTexParameteri(GL_TEXTURE_2D, 0x2801u, 9728);
-		v8 = 9728;
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}
 
-	glTexParameteri(GL_TEXTURE_2D, 0x2800u, v8);
+
 	this->_loadTexImage(d.image);
 	if(d.images.begin() != d.images.end()){
 		if(AppPlatform::TEXTURE_MAX_LEVEL){
@@ -74,21 +72,9 @@ int32_t Textures::assignTexture(const std::string& s, TextureData& d, bool_t b){
 			this->_loadTexImage(data); //creates a copy
 		}
 
-		 glTexParameteri(GL_TEXTURE_2D, 0x2801u, 9986);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
 	}
 	this->textures[s] = d;
-
-	/*TextureData& td = this->textures[s];
-	td.width = d.width;
-	td.height = d.height;
-	td.pixels = d.pixels;
-	td.field_C = d.field_C;
-	td.field_10 = d.field_10;
-	td.lod = d.lod;
-	td.field_18 = d.field_18;
-	td.glTexId = d.glTexId;
-	td.images = d.images;*/
-
 	return d.glTexId;
 }
 
@@ -138,14 +124,15 @@ TextureData* Textures::loadAndGetTextureData(const std::string& s){
 
 int32_t Textures::loadTexture(const std::string& s, bool_t a, bool_t b){
 	//XXX pain (need to check)
-	if(this->textures.count(s) <= 0){
-		TextureData data = this->platform->loadTexture(s, a);
-		return this->assignTexture(s, data, b);
-	}else{
-		if(this->textures[s].glTexId) return this->textures[s].glTexId;
-		return this->assignTexture(s, this->textures[s], b);
+	auto&& p = this->textures.find(s);
+	if(p != this->textures.end()){
+		if(p->second.glTexId) return p->second.glTexId;
+		return this->assignTexture(s, p->second, b);
 	}
 
+	TextureData data = this->platform->loadTexture(s, a);
+	if(data.image.pixels) return this->assignTexture(s, data, b);
+	return 0;
 }
 
 void Textures::reloadAll(){}
@@ -164,7 +151,7 @@ void Textures::tick(bool_t a2) {
 			DynamicTexture* v7 = this->dynamicTextures[i];
 			v7->bindTexture(this);
 			if(v7->field_18 == 1) {
-				glTexSubImage2D(0xDE1u, 0, (int32_t)(float)(v7->uv.minX * v7->uv.width), (int32_t)(float)(v7->uv.minY * v7->uv.height), (int32_t)(float)((float)((float)(v7->uv.maxX - v7->uv.minX) * v7->uv.width) + 0.49), (int32_t)(float)((float)((float)(v7->uv.maxY - v7->uv.minY) * v7->uv.height) + 0.49) + 1, 0x1908u, 0x1401u, v7->data);
+				glTexSubImage2D(GL_TEXTURE_2D, 0, (int32_t)(float)(v7->uv.minX * v7->uv.width), (int32_t)(float)(v7->uv.minY * v7->uv.height), (int32_t)(float)((float)((float)(v7->uv.maxX - v7->uv.minX) * v7->uv.width) + 0.49), (int32_t)(float)((float)((float)(v7->uv.maxY - v7->uv.minY) * v7->uv.height) + 0.49) + 1, 0x1908u, 0x1401u, v7->data);
 			} else if(v7->field_18 == 2) {
 				uint8_t* data = v7->data;
 				char_t* v10 = &byte_D6E06B78[0x40]; //TODO figure out what is this
@@ -176,7 +163,7 @@ void Textures::tick(bool_t a2) {
 					v11 = ((int16_t)v11 + 64) & 0x3FF;
 				}
 				while ( v10 < &byte_D6E06B78[0x1000] );
-				glTexSubImage2D(0xDE1u, 0, (int)(float)(v7->uv.minX * v7->uv.width), (int)(float)(v7->uv.minY * v7->uv.height), 2 * (int)(float)((float)((float)(v7->uv.maxX - v7->uv.minX) * v7->uv.width) + 0.49), 2 * (int)(float)((float)((float)(v7->uv.maxY - v7->uv.minY) * v7->uv.height) + 0.49), 0x1908u, 0x1401u, byte_D6E06B78);
+				glTexSubImage2D(GL_TEXTURE_2D, 0, (int)(float)(v7->uv.minX * v7->uv.width), (int)(float)(v7->uv.minY * v7->uv.height), 2 * (int)(float)((float)((float)(v7->uv.maxX - v7->uv.minX) * v7->uv.width) + 0.49), 2 * (int)(float)((float)((float)(v7->uv.maxY - v7->uv.minY) * v7->uv.height) + 0.49), 0x1908u, 0x1401u, byte_D6E06B78);
 			}
 		}
 

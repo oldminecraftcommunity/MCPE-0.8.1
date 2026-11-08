@@ -11,5 +11,5 @@ StonecutterScreen::StonecutterScreen()
 StonecutterScreen::~StonecutterScreen() {
 }
 bool_t StonecutterScreen::filterRecipe(const Recipe& a2) {
-	return CraftingFilters::isStonecutterItem(a2.getResultItem()->at(0));
+	return CraftingFilters::isStonecutterItem((*a2.getResultItem())[0]);
 }

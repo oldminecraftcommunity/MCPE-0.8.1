@@ -30,8 +30,8 @@ struct LevelChunk
 	std::vector<struct Entity*> miniChunkEntities[8];
 	std::unordered_map<TilePos, struct TileEntity*> tileEntities;
 
-	LevelChunk(struct Level*, int32_t, int32_t);
 	LevelChunk(struct Level*, uint8_t*, int32_t, int32_t);
+	LevelChunk(struct Level*, int32_t, int32_t);
 	void addTileEntity(struct TileEntity*);
 	void clearUpdateMap();
 	void deleteBlockData();

@@ -376,99 +376,42 @@ void Tile::initTiles(std::shared_ptr<TextureAtlas> a1) {
 }
 void Tile::teardownTiles() {
 	for(int32_t i = 0; i != 256; ++i) {
-		delete Tile::tiles[i];
-		Tile::tiles[i] = 0;
+		if(Tile::tiles[i]){
+			delete Tile::tiles[i];
+			Tile::tiles[i] = 0;
+		}
 	}
 }
 
-Tile::Tile(int32_t blockID, const Material* mat) {
-	this->blockResistance = 0; //XXX doesnt seem to exist in mcpe?
-	this->textureUV.minX = 0;
-	this->textureUV.minY = 0;
-	this->textureUV.maxX = 0;
-	this->textureUV.maxY = 0;
-	this->blockID = blockID;
-	this->minX = 0;
-	this->minY = 0;
-	this->minZ = 0;
-	this->maxX = 1;
-	this->maxY = 1;
-	this->maxZ = 1;
-	this->material = mat;
-	this->aabb.minX = 0;
-	this->aabb.minY = 0;
-	this->aabb.minZ = 0;
-	this->soundType = &Tile::SOUND_NORMAL;
-	this->slipperiness = 0.6;
-	this->field_3C = 1;
-	this->field_50 = -1;
-	this->aabb.maxX = 1;
-	this->field_5C = 0;
-	this->aabb.maxY = 1;
-	this->aabb.maxZ = 1;
-	this->replaceable = 0;
-	this->descriptionId = "";
+Tile::Tile(int32_t blockID, const Material* mat) :
+	blockID(blockID), minX(0), minY(0), minZ(0), maxX(1), maxY(1), maxZ(1),
+	material(mat), aabb(0, 0, 0, 1, 1, 1), soundType(&Tile::SOUND_NORMAL),
+	slipperiness(0.6f), field_3C(1), field_50(-1), field_5C(0), replaceable(0)
+{
+	//this->blockResistance = 0; //XXX doesnt seem to exist in mcpe?
 	if(Tile::tiles[blockID]) {
 		printf("Slot %d is already occupied by %p when adding %p\n", blockID, &Tile::tiles[blockID], this);
 	}
 }
 
-Tile::Tile(int32_t blockID, TextureUVCoordinateSet uv, const Material* mat) {
-	this->blockResistance = 0; //XXX doesnt seem to exist in mcpe?
-	this->textureUV = uv;
-	this->minX = 0;
-	this->minY = 0;
-	this->minZ = 0;
-	this->maxX = 1;
-	this->maxY = 1;
-	this->maxZ = 1;
-	this->blockID = blockID;
-	this->field_3C = 1;
-	this->aabb.minX = 0;
-	this->soundType = &Tile::SOUND_NORMAL;
-	this->material = mat;
-	this->slipperiness = 0.6;
-	this->field_50 = -1;
-	this->field_5C = 0;
-	this->aabb.minY = 0;
-	this->aabb.maxX = 1;
-	this->aabb.maxY = 1;
-	this->aabb.maxZ = 1;
-	this->aabb.minZ = 0;
-	this->replaceable = 0;
-	this->descriptionId = "";
+Tile::Tile(int32_t blockID, TextureUVCoordinateSet uv, const Material* mat) :
+	textureUV(uv), minX(0), minY(0), minZ(0), maxX(1), maxY(1), maxZ(1),
+	blockID(blockID), field_3C(1), aabb(0, 0, 0, 1, 1, 1),
+	soundType(&Tile::SOUND_NORMAL), material(mat), slipperiness(0.6f),
+	field_50(-1), field_5C(0), replaceable(0)
+{
+	//this->blockResistance = 0; //XXX doesnt seem to exist in mcpe?
 	if(Tile::tiles[blockID]) {
 		printf("Slot %d is already occupied by %p when adding %p\n", blockID, &Tile::tiles[blockID], this);
 	}
 }
 
-Tile::Tile(int32_t blockID, std::string s, const Material* mat) {
-	this->blockResistance = 0; //XXX doesnt seem to exist in mcpe?
-	this->blockID = blockID;
-	this->maxX = 1;
-	this->maxY = 1;
-	this->textureUV.minX = 0;
-	this->textureUV.minY = 0;
-	this->textureUV.maxX = 0;
-	this->textureUV.maxY = 0;
-	this->minX = 0;
-	this->minY = 0;
-	this->minZ = 0;
-	this->maxZ = 1;
-	this->field_3C = 1;
-	this->material = mat;
-	this->aabb.maxX = 1;
-	this->aabb.maxY = 1;
-	this->aabb.maxZ = 1;
-	this->soundType = &Tile::SOUND_NORMAL;
-	this->slipperiness = 0.6;
-	this->aabb.minX = 0;
-	this->field_50 = -1;
-	this->aabb.minY = 0;
-	this->field_5C = 0;
-	this->aabb.minZ = 0;
-	this->replaceable = 0;
-	this->descriptionId = "";
+Tile::Tile(int32_t blockID, std::string s, const Material* mat) :
+	blockID(blockID), minX(0), minY(0), minZ(0), maxX(1), maxY(1), maxZ(1),
+	field_3C(1), material(mat), aabb(0, 0, 0, 1, 1, 1), soundType(&Tile::SOUND_NORMAL),
+	slipperiness(0.6f), field_50(-1), field_5C(0), replaceable(0)
+{
+	//this->blockResistance = 0; //XXX doesnt seem to exist in mcpe?
 	TextureUVCoordinateSet v10 = this->getTextureUVCoordinateSet(s, 0);
 	this->textureUV = v10;
 }
@@ -562,7 +505,8 @@ int32_t Tile::transformToValidBlockId(int32_t oldid, int32_t x, int32_t y, int32
 	Tile* v4;
 	if(oldid) {
 		if(!Tile::tiles[oldid]) {
-			if((((int8_t)x + (int8_t)y + (int8_t)z) & 1) != 0) {
+			int xyz = (x + y + z);
+			if((xyz & 1) != 0) {
 				v4 = Tile::info_updateGame1;
 			} else {
 				v4 = Tile::info_updateGame2;
@@ -583,14 +527,13 @@ bool_t Tile::isCubeShaped() {
 int32_t Tile::getRenderShape() {
 	return 0;
 }
-Tile* Tile::setShape(float a2, float a3, float a4, float a5, float a6, float a7) {
+void Tile::setShape(float a2, float a3, float a4, float a5, float a6, float a7) {
 	this->minZ = a4;
 	this->minX = a2;
 	this->minY = a3;
 	this->maxX = a5;
 	this->maxY = a6;
 	this->maxZ = a7;
-	return this;
 }
 
 float Tile::getBrightness(LevelSource* level, int32_t x, int32_t y, int32_t z) {

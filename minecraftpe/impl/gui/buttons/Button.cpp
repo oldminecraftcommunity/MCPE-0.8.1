@@ -2,7 +2,14 @@
 #include <Minecraft.hpp>
 #include <rendering/Textures.hpp>
 
-Button::Button(int32_t a2, int32_t a3, int32_t a4, int32_t a5, int32_t a6, const std::string& s) : GuiElement(1, 1, a3, a4, a5, a6), text(s){
+void Button::render(struct Minecraft* mc, int32_t x, int32_t y){
+	if(this->visible){
+		this->renderBg(mc, x, y);
+		this->renderFace(mc, x, y);
+	}
+}
+
+Button::Button(int32_t a2, const std::string& s) : GuiElement(1, 1, 0, 0, 200, 24), text(s){
 	this->buttonID = a2;
 	this->highlight = 0;
 	this->pressed = 0;
@@ -14,13 +21,13 @@ Button::Button(int32_t a2, int32_t a3, int32_t a4, const std::string& s) : GuiEl
 	this->pressed = 0;
 	this->overridingScreenRendering = 0;
 }
-
-Button::Button(int32_t a2, const std::string& s) : GuiElement(1, 1, 0, 0, 200, 24), text(s){
+Button::Button(int32_t a2, int32_t a3, int32_t a4, int32_t a5, int32_t a6, const std::string& s) : GuiElement(1, 1, a3, a4, a5, a6), text(s){
 	this->buttonID = a2;
 	this->highlight = 0;
 	this->pressed = 0;
 	this->overridingScreenRendering = 0;
 }
+
 
 bool_t Button::hovered(struct Minecraft* mc, int32_t a3, int32_t a4){
 	if(this->pressed) return this->isInside(a3, a4);
@@ -46,19 +53,13 @@ void Button::setOverrideScreenRendering(bool_t a2){
 	this->overridingScreenRendering = a2;
 }
 
-void Button::render(struct Minecraft* mc, int32_t x, int32_t y){
-	if(this->visible){
-		this->renderBg(mc, x, y);
-		this->renderFace(mc, x, y);
-	}
+void Button::released(int32_t, int32_t){
+	this->pressed = 0;
 }
 bool_t Button::clicked(struct Minecraft* mc, int32_t x, int32_t y){
 	if(!this->active) return 0; //this.active
 	if(x < this->posX) return 0;
 	return y >= this->posY && x < (this->posX+this->width) && y < (this->posY+this->height);
-}
-void Button::released(int32_t, int32_t){
-	this->pressed = 0;
 }
 void Button::setPressed(){
 	this->pressed = 1;

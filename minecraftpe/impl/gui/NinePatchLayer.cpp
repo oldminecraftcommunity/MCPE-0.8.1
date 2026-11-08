@@ -7,8 +7,7 @@ NinePatchLayer* NinePatchLayer::setExcluded(int32_t a2){
 	return this;
 }
 NinePatchLayer* NinePatchLayer::exclude(int32_t a2){
-	this->setExcluded((1 << a2) | this->excluded);
-	return this;
+	return this->setExcluded((1 << a2) | this->excluded);
 }
 
 void NinePatchLayer::getPatchInfo(int32_t a2, int32_t a3, float& a4, float& a5, float& a6, float& a7){

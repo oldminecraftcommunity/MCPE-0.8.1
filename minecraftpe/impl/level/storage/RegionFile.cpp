@@ -1,61 +1,14 @@
 #include <level/storage/RegionFile.hpp>
 #include <BitStream.h>
 
-RegionFile::RegionFile(const std::string& a2) {
-	this->fileRaw = 0;
-	this->path2file = a2;
-	this->path2file += "/";
-	this->path2file += "chunks.dat";
-	this->locTable = new int32_t[1024];
-	this->bytes4096_2 = new int8_t[4096];
-	memset(this->bytes4096_2, 0, 4096);
-}
+
 void RegionFile::close() {
 	if(this->fileRaw) {
 		fclose(this->fileRaw);
 		this->fileRaw = 0;
 	}
 }
-bool_t RegionFile::open() {
-	FILE* file; // r0
-	int32_t v3; // r5
-	int32_t v4; // r3
-	int32_t v5; // r11
-	int32_t v6; // r10
-	int32_t i; // r7
-	FILE* result; // r0
 
-	this->close();
-	memset(this->locTable, 0, 4096u);
-	file = fopen(this->path2file.c_str(), "r+b");
-	this->fileRaw = file;
-	if(file) // file_exists
-	{
-		fread(this->locTable, 4u, 1024u, file);
-		v3 = 0;
-		this->stdMap[0] = 0;
-		do {
-			v4 = this->locTable[v3];
-			if(v4) {
-				v5 = v4 >> 8;
-				v6 = (uint8_t)v4;
-				for(i = 0; i < v6; ++i) {
-					this->stdMap[i + v5] = 0;
-				}
-			}
-			++v3;
-		} while(v3 != 1024);
-	} else {
-		result = fopen(this->path2file.c_str(), "w+b");
-		this->fileRaw = result;
-		if(!result) {
-			return 0;
-		}
-		fwrite(this->locTable, 4u, 1024u, result);
-		this->stdMap[0] = 0;
-	}
-	return this->fileRaw != 0;
-}
 bool_t RegionFile::readChunk(int32_t chunkX, int32_t chunkZ, RakNet::BitStream** a4) {
 	int32_t result; // r0
 	FILE* fileRaw; // r3
@@ -86,6 +39,21 @@ bool_t RegionFile::write(int32_t a2, RakNet::BitStream& a3) {
 	fwrite(a3.GetData(), 1u, a3.GetNumberOfBytesUsed(), this->fileRaw);
 	return 1;
 }
+RegionFile::~RegionFile() {
+	this->close();
+	if(this->locTable) delete[] this->locTable;
+	if(this->bytes4096_2) delete[] this->bytes4096_2;
+}
+RegionFile::RegionFile(const std::string& a2) {
+	this->fileRaw = 0;
+	this->path2file = a2;
+	this->path2file += "/";
+	this->path2file += "chunks.dat";
+	this->locTable = new int32_t[1024];
+	this->bytes4096_2 = new int8_t[4096];
+	memset(this->bytes4096_2, 0, 4096);
+}
+
 bool_t RegionFile::writeChunk(int32_t chunkX, int32_t chunkZ, RakNet::BitStream& a4) {
 	int32_t v10; // r7
 	int32_t v11; // r6
@@ -145,17 +113,15 @@ bool_t RegionFile::writeChunk(int32_t chunkX, int32_t chunkZ, RakNet::BitStream&
 		for(i = v8 - v14; v22 < i; i = v28) {
 			v28 = i;
 			fwrite(this->bytes4096_2, 4u, 0x400u, this->fileRaw);
-			int ind = v22 + v16;
+			this->stdMap[v22 + v16] = 1;
 			++v22;
-			this->stdMap[ind] = 1;
 		}
 LABEL_25:
 		v24 = 0;
 		this->locTable[regionIndex] = v8 | (v16 << 8);
 		do {
-			int ind = v24 + v16;
+			this->stdMap[v24 + v16] = 0;
 			++v24;
-			this->stdMap[ind] = 0;
 		}
 		while ( v24 < v8 );
 		this->write(v16, a4);
@@ -166,8 +132,44 @@ LABEL_25:
 	return 0;
 }
 
-RegionFile::~RegionFile() {
+bool_t RegionFile::open() {
+	FILE* file; // r0
+	int32_t v3; // r5
+	int32_t v4; // r3
+	int32_t v5; // r11
+	int32_t v6; // r10
+	int32_t i; // r7
+	FILE* result; // r0
+
 	this->close();
-	if(this->locTable) delete[] this->locTable;
-	if(this->bytes4096_2) delete[] this->bytes4096_2;
+	memset(this->locTable, 0, 4096u);
+	file = fopen(this->path2file.c_str(), "r+b");
+	this->fileRaw = file;
+	if(file) // file_exists
+	{
+		fread(this->locTable, 4u, 1024u, file);
+		v3 = 0;
+		this->stdMap[0] = 0;
+		do {
+			v4 = this->locTable[v3];
+			if(v4) {
+				v5 = v4 >> 8;
+				v6 = (uint8_t)v4;
+				for(i = 0; i < v6; ++i) {
+					this->stdMap[i + v5] = 0;
+				}
+			}
+			++v3;
+		} while(v3 != 1024);
+	} else {
+		result = fopen(this->path2file.c_str(), "w+b");
+		this->fileRaw = result;
+		if(!result) {
+			return 0;
+		}
+		fwrite(this->locTable, 4u, 1024u, result);
+		this->stdMap[0] = 0;
+	}
+	return this->fileRaw != 0;
 }
+

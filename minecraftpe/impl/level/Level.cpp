@@ -804,25 +804,18 @@ int Level::getDirectSignal(int32_t x, int32_t y, int32_t z, int32_t a5) {
 	return 0;
 }
 std::vector<struct Entity*>* Level::getEntities(struct Entity* a2, const AABB& a3) {
-	int32_t v6;		   // r7
-	int32_t v7;		   // r9
-	int32_t v8;		   // r8
-	int32_t v9;		   // r10
-	LevelChunk* chunk; // r0
-	int32_t i;		   // r6
 	this->entVec.clear();
-	v6 = Mth::floor((float)(a3.minX - 2.0) * 0.0625);
-	v7 = Mth::floor((float)(a3.maxX + 2.0) * 0.0625);
-	v8 = Mth::floor((float)(a3.minZ - 2.0) * 0.0625);
-	v9 = Mth::floor((float)(a3.maxZ + 2.0) * 0.0625);
-	while(v6 <= v7) {
-		for(i = v8; i <= v9; ++i) {
-			if(this->hasChunk(v6, i)) {
-				chunk = this->getChunk(v6, i);
+	int minX = Mth::floor((a3.minX - 2) / 16);
+	int maxX = Mth::floor((a3.maxX + 2) / 16);
+	int minZ = Mth::floor((a3.minZ - 2) / 16);
+	int maxZ = Mth::floor((a3.maxZ + 2) / 16);
+	for(int x = minX; x <= maxX; ++x) {
+		for(int z = minZ; z <= maxZ; ++z) {
+			if(this->hasChunk(minX, z)) {
+				LevelChunk* chunk = this->getChunk(x, z);
 				chunk->getEntities(a2, a3, this->entVec);
 			}
 		}
-		++v6;
 	}
 	return &this->entVec;
 }
@@ -2047,16 +2040,12 @@ void Level::updateLightIfOtherThan(const LightLayer& a2, int32_t a3, int32_t a4,
 	}
 }
 bool_t Level::updateLights() {
-	int32_t lightUpdatesCnt; // r3
-	int32_t v3;				 // r5
-
-	lightUpdatesCnt = this->lightUpdatesCnt;
-	if(lightUpdatesCnt <= 49) {
-		v3 = 500;
-		this->lightUpdatesCnt = lightUpdatesCnt + 1;
+	if(this->lightUpdatesCnt <= 49) {
+		++this->lightUpdatesCnt;
+		int maxUpds = 500;
 		while(1) {
 			if(this->lightsToUpdate.size() <= 0) break;
-			if(!--v3) {
+			if(--maxUpds == 0) {
 				--this->lightUpdatesCnt;
 				return 1;
 			}
@@ -2077,16 +2066,15 @@ void Level::updateNeighborsAt(int32_t x, int32_t y, int32_t z, int32_t oldid) {
 	this->neighborChanged(x, y, z + 1, x, y, z, oldid);
 }
 bool_t Level::updateSkyBrightness() {
-	int32_t sd = this->getSkyDarken(1.0);
+	int32_t sd = this->getSkyDarken(1.0f);
 	if(sd == this->skyDarken) return 0;
 	this->skyDarken = sd;
 	return 1;
 }
 void Level::updateSkyDarken() {
-	if(this->updateSkyBrightness()) {
-		for(auto&& ll: this->levelListeners) {
-			ll->skyColorChanged();
-		}
+	if(!this->updateSkyBrightness()) return;
+	for(unsigned int i = 0; i < this->levelListeners.size(); ++i) {
+		this->levelListeners[i]->skyColorChanged();
 	}
 }
 void Level::validateSpawn() {
@@ -2159,32 +2147,12 @@ bool_t Level::isSolidRenderTile(int32_t x, int32_t y, int32_t z) {
 	return 0;
 }
 struct ChunkSource* Level::createChunkSource() {
-	LevelStorage* levelStoragePtr; // r0
-	ChunkCache* v3;				   // r4
-	ChunkStorage* v4;			   // r7
-	ChunkSource* v5;			   // r9
-	ChunkCache* v6;				   // r0
-
-	levelStoragePtr = this->levelStoragePtr;
-	if(levelStoragePtr) {
-		v4 = levelStoragePtr->createChunkStorage(this->dimensionPtr);
-		v5 = this->dimensionPtr->createRandomLevelSource();
-		v6 = new ChunkCache();
-		v3 = v6;
-		v6->generatorSource = v5;
-		v6->chunkStorage = v4;
-		v6->lastChunkX = -999999999;
-		v6->lastChunkZ = -999999999;
-		v6->level = this;
-		v6->lastChunk = 0;
-		v6->field_4 = 1;
-		v3->emptyChunk = new EmptyLevelChunk(this);
-		memset(v3->chunks, 0, sizeof(v3->chunks));
-	} else {
-		puts("no level data, calling dimension->createRandomLevelSource");
-		return (ChunkSource*)this->dimensionPtr->createRandomLevelSource();
+	if(this->levelStoragePtr) {
+		return new ChunkCache(this, this->levelStoragePtr->createChunkStorage(this->dimensionPtr), this->dimensionPtr->createRandomLevelSource());
 	}
-	return (ChunkSource*)v3;
+
+	puts("no level data, calling dimension->createRandomLevelSource");
+	return this->dimensionPtr->createRandomLevelSource();
 }
 struct Player* Level::getNearestPlayer(float x, float y, float z, float a5) {
 	float v5 = -1;

@@ -74,16 +74,14 @@ int32_t FillingContainer::addResource(const ItemInstance& a2) {
 	return count;
 }
 void FillingContainer::clearInventory(int32_t a2) {
-	int32_t i;	   // r5
-	int32_t j;	   // r5
-	uint32_t size; // r1
-
-	for(i = 0; i < this->getLinkedSlotsCount(); ++i) {
+	for(int i = 0; i < this->getLinkedSlotsCount(); ++i) {
 		this->linkedSlots[i].field_0 = i;
 	}
-	for(j = this->getLinkedSlotsCount(); j < this->getContainerSize(); ++j) {
+	for(int j = this->getLinkedSlotsCount(); j < this->getContainerSize(); ++j) {
 		this->release(j);
 	}
+
+	uint32_t size; // r1
 	if(a2 < 0) {
 		size = this->getContainerSize();
 	} else {
@@ -384,7 +382,7 @@ void FillingContainer::load(ListTag* a2) {
 		Tag* v7;
 		if(v4 >= a2->value.size()) {
 			v7 = 0;
-			a2->field_0 |= 1;
+			a2->err |= 1;
 		} else {
 			v7 = a2->value[v4];
 		}
@@ -562,8 +560,7 @@ ListTag* FillingContainer::save(ListTag* a2) {
 		v6->putByte("Slot", i);
 		if(v5->count < 0) v5->count = 0;
 		if(v5->count > 255) v5->count = 255;
-		ItemInstance ii(*v5);
-		ii.save(v6);
+		ItemInstance(*v5).save(v6);
 		a2->add(v6);
 	}
 	return a2;
@@ -617,19 +614,17 @@ void FillingContainer::setItem(int32_t a2, ItemInstance* a3) {
 }
 ItemInstance FillingContainer::removeItem(int32_t a3, int32_t a4) {
 	ItemInstance* v8; // r0
-	int32_t count;	  // r3
-	int32_t v10;	  // r3
+	int32_t torm;	  // r3
 
 	v8 = this->getItem(a3);
 	if(v8) {
 		if(a4 >= v8->count) {
-			count = v8->count;
+			torm = v8->count;
 		} else {
-			count = a4;
+			torm = a4;
 		}
-		v10 = v8->count - count;
-		v8->count = v10;
-		if(v10 <= 0) {
+		v8->count -= torm;
+		if(v8->count <= 0) {
 			this->clearSlot(a3);
 		}
 	}

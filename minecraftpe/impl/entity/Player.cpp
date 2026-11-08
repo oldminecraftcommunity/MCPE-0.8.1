@@ -27,9 +27,9 @@ Player::Player(Level* a2, bool_t a3)
 	this->bedPosition.x = 0;
 	this->bedPosition.y = 0;
 	this->bedPosition.z = 0;
-	this->field_CC4 = 0.0f;
-	this->field_CC8 = 0;
-	this->field_CCC = 0.0f;
+	this->bedOffsetX = 0.0f;
+	this->bedOffsetY = 0;
+	this->bedOffsetZ = 0.0f;
 	this->playerVerified = 0;
 	this->useItemDuration = 0;
 	this->sleepingCounter = 0;
@@ -282,8 +282,8 @@ void Player::setBedOffset(int32_t a2) {
 	float v4; // r3
 	float v5; // r2
 
-	this->field_CC4 = 0.0f;
-	this->field_CCC = 0.0f;
+	this->bedOffsetX = 0.0f;
+	this->bedOffsetZ = 0.0f;
 	switch(a2) {
 		case 0:
 			v4 = -1.8f;
@@ -294,12 +294,12 @@ void Player::setBedOffset(int32_t a2) {
 		case 2:
 			v4 = 1.8f;
 LABEL_4:
-			this->field_CCC = v4;
+			this->bedOffsetZ = v4;
 			return;
 		case 3:
 			v5 = -1.8f;
 LABEL_7:
-			this->field_CC4 = v5;
+			this->bedOffsetX = v5;
 			break;
 		default:
 			return;
@@ -358,7 +358,7 @@ void Player::spawnEatParticles(const ItemInstance* a2, int32_t a3) {
 				v13 = 0.0f;
 			}
 
-			Vec3 a6{v14, v13, 0.0f};
+			Vec3 a6(v14, v13, 0.0f);
 			a6.xRot(v9);
 			a6.yRot(v12);
 			v15 = this->random.nextFloat();
@@ -371,7 +371,7 @@ void Player::spawnEatParticles(const ItemInstance* a2, int32_t a3) {
 			if(v18 == 0.0f) {
 				v18 = 0.0f;
 			}
-			Vec3 vec{v17, v18, 0.6f};
+			Vec3 vec(v17, v18, 0.6f);
 			vec.xRot(v9);
 			vec.yRot(v12);
 			posX = this->posX;
@@ -619,7 +619,7 @@ void Player::readAdditionalSaveData(CompoundTag* a2) {
 				CompoundTag* v15;
 				if(v12 >= v10->value.size()) {
 					v15 = 0;
-					v10->field_0 |= 1;
+					v10->err |= 1;
 				} else {
 					v15 = (CompoundTag*)v10->value[v12];
 				}

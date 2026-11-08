@@ -196,7 +196,7 @@ void Arrow::tick() {
 		Entity* bestEnt = 0;
 		std::vector<Entity*>* ents = this->level->getEntities(this, this->boundingBox.expand(this->motionX, this->motionY, this->motionZ).grow(1, 1, 1));
 		for(int32_t v42 = 0; v42 < (uint32_t)ents->size(); ++v42) {
-			Entity* v46 = ents->at(v42);
+			Entity* v46 = (*ents)[v42];
 			if(v46->isPickable()) {
 				if(v46->entityId != this->shooterEID || this->ticksInAir > 4) {
 					HitResult a3 = v46->boundingBox.grow(0.3f, 0.3f, 0.3f).clip(start, endVec);

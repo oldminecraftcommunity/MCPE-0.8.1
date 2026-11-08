@@ -31,7 +31,7 @@ void OptionButton::toggle(Options* a2) {
 	if(this->option) {
 		if(this->isFloat) {
 			float v = this->minValue;
-			if(fabsf(this->curValue - this->minValue) < 0.01) {
+			if(fabsf(this->curValue - this->minValue) < 0.01f) {
 				v = this->maxValue;
 			}
 			a2->set(this->option, v);
@@ -50,7 +50,7 @@ void OptionButton::updateImage(Options* a2) {
 		pv = a2->getProgressValue(this->option);
 		minValue = this->minValue;
 		this->curValue = pv;
-		v8 = fabsf(pv - minValue) < 0.01;
+		v8 = fabsf(pv - minValue) < 0.01f;
 	} else {
 		if(this->option) {
 			this->boolValue = a2->getBooleanValue(this->option);

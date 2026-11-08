@@ -1,5 +1,6 @@
 #include <network/CommandServer.hpp>
 #include <entity/CameraEntity.hpp>
+#include <network/packet/ChatPacket.hpp>
 #include <entity/LocalPlayer.hpp>
 #include <Minecraft.hpp>
 #include <network/RakNetInstance.hpp>
@@ -246,9 +247,74 @@ bool CommandServer::init(int16_t a2) {
 	this->initialized = 1;
 	return 1;
 }
-std::string CommandServer::parse(ConnectedClient&, const std::string&) {
-	printf("CommandServer::parse - not implemented\n");
-	//TODO implement
+
+static std::string toString(int v) {
+	std::stringstream str;
+	str << v << "\n";
+	return str.str();
+}
+
+std::string CommandServer::parse(ConnectedClient& r2_0, const std::string& r3_0) {
+	int v8 = r3_0.find("(");
+	if(v8 != -1) {
+		int v9 = r3_0.rfind(")");
+		std::string command = r3_0.substr(0, v8);
+		std::string args = r3_0.substr(v8 + 1, v9 - v8 - 1);
+		if(command == "world.setBlock") {
+		} else if(command == "world.getBlock") {
+			int xx, yy, zz;
+			if(sscanf(args.c_str(), "%d,%d,%d", &xx, &yy, &zz) == 3) {
+				this->posTranslator.from(xx, yy, zz);
+				int id = this->minecraft->level->getTile(xx, yy, zz);
+				return toString(id);
+			}
+		} else if(command == "world.getBlockWithData") {
+		} else if(command == "world.setBlocks") {
+		} else if(command == "world.getHeight") {
+			int xx, zz;
+			if(sscanf(args.c_str(), "%d,%d", &xx, &zz) == 2) {
+				xx -= this->posTranslator.x;
+				zz -= this->posTranslator.z;
+				int v = this->minecraft->level->getHeightmap(xx, zz) + this->posTranslator.y;
+				return toString(v);
+			}
+			return CommandServer::Fail;
+		} else if(command == "player.setTile") {
+		} else if(command == "player.getTile") {
+		} else if(command == "player.setPos") {
+		} else if(command == "player.getPos") {
+		} else if(command == "entity.setTile") {
+		} else if(command == "entity.getTile") {
+		} else if(command == "entity.setPos") {
+		} else if(command == "entity.getPos") {
+		} else if(command == "chat.post") {
+			this->minecraft->gui.addMessage("command", args, 200);
+			ChatPacket pk(args, 0);
+			this->dispatchPacket(pk);
+			return _CommandServer_success;
+		} else if(command == "camera.mode.setFixed") {
+			this->camera->followEid = -1;
+			this->minecraft->viewEntity = this->camera;
+			return _CommandServer_success;
+		} else if(command == "camera.mode.setNormal") {
+
+		} else if(command == "camera.mode.setFollow") {
+
+		} else if(command == "camera.setPos") {
+		} else if(command == "world.getPlayerIds") {
+		} else if(command == "world.checkpoint.save") {
+		} else if(command == "world.checkpoint.restore") {
+		} else {
+			if(command.find("events.")) {
+				if(command.find("player.setting") && command.find("world.setting")) {
+				} /*else if(args.find(",") > 99)*/
+			} else {
+				return this->handleEventPollMessage(r2_0, command);
+			}
+		}
+		printf("CommandServer::parse - not implemented\n");
+	}
+
 	return CommandServer::Fail;
 }
 static int commandServerTick;

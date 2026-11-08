@@ -103,8 +103,9 @@ void ServerSideNetworkHandler::displayGameMessage(const std::string& a2, const s
 }
 Player* ServerSideNetworkHandler::findPendingPlayer(const RakNet::RakNetGUID& a2) {
 	for(int32_t i = 0; i < this->players.size(); ++i) {
-		if(this->players[i]->rakNetGUID == a2) {
-			return this->players[i];
+		Player* p = this->players[i];
+		if(p->rakNetGUID == a2) {
+			return p;
 		}
 	}
 	return 0;
@@ -249,12 +250,11 @@ void ServerSideNetworkHandler::sendLoginMessageMCO(int32_t a2, const RakNet::Rak
 }
 void ServerSideNetworkHandler::sendWorldSeed(Player* a2, const RakNet::RakNetGUID& a3) {
 	RakNet::BitStream v24;
-	StartGamePacket v22(this->level->getSeed(), this->level->getLevelData()->getGeneratorVersion(), this->minecraft->isCreativeMode(), a2->entityId, a2->posX, a2->posY - a2->ridingHeight, a2->posZ);
-	v22.write(&v24);
+	bool creative = this->minecraft->isCreativeMode();
+	StartGamePacket(this->level->getSeed(), this->level->getLevelData()->getGeneratorVersion(), creative, a2->entityId, a2->posX, a2->posY - a2->ridingHeight + 0.05f, a2->posZ).write(&v24);
 	this->rakPeer->Send(&v24, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE_ORDERED, 0, RakNet::AddressOrGUID(a3), 0, 0);
 	v24.Reset();
-	SetTimePacket v23(this->level->getTime(), this->level->levelData.stopTime >> 31);
-	v23.write(&v24);
+	SetTimePacket(this->level->getTime(), this->level->levelData.stopTime >> 31).write(&v24);
 	this->rakPeer->Send(&v24, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE_ORDERED, 0, RakNet::AddressOrGUID(a3), 0, 0);
 }
 
@@ -286,21 +286,21 @@ void ServerSideNetworkHandler::onNewClient(const RakNet::RakNetGUID& a2) {
 	a2.ToString();
 }
 void ServerSideNetworkHandler::onDisconnect(const RakNet::RakNetGUID& a2) {
-	if(this->level) {
-		for(int i = 0; i < this->level->players.size(); ++i) {
-			Player* v6 = this->level->players[i];
-			if(v6->rakNetGUID == a2) {
-				std::string v9 = v6->username + " disconnected from the game";
-				this->displayGameMessage("server", v9);
-				((ServerPlayer*)v6)->disconnect();
-				v6->field_108 = 1;
-				this->level->getLevelStorage()->save(v6);
-				this->level->removeEntity(v6);
-				break;
-			}
+	if(!this->level) return;
+
+	for(int i = 0; i < this->level->players.size(); ++i) {
+		Player* v6 = this->level->players[i];
+		if(v6->rakNetGUID == a2) {
+			std::string v9 = v6->username + " disconnected from the game";
+			this->displayGameMessage("server", v9);
+			((ServerPlayer*)v6)->disconnect();
+			v6->field_108 = 1;
+			this->level->getLevelStorage()->save(v6);
+			this->level->removeEntity(v6);
+			break;
 		}
-		this->popPendingPlayer(a2);
 	}
+	this->popPendingPlayer(a2);
 }
 bool_t ServerSideNetworkHandler::allowIncomingPacketId(const RakNet::RakNetGUID& a2, int32_t a3) {
 	if(!this->level) return 0;

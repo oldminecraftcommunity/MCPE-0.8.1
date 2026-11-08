@@ -7,9 +7,9 @@ struct DoorTile : Tile{
 	DoorTile(int32_t, const struct Material*);
 	bool_t blocksLight();
 	static int32_t getCompositeData(struct LevelSource*, int32_t, int32_t, int32_t);
-	static int32_t getDir(struct LevelSource*, int32_t, int32_t, int32_t);
+	int32_t getDir(struct LevelSource*, int32_t, int32_t, int32_t);
 	static bool_t isOpen(struct LevelSource*, int32_t, int32_t, int32_t);
-	static void setOpen(Level*, int32_t, int32_t, int32_t, bool_t);
+	void setOpen(Level*, int32_t, int32_t, int32_t, bool_t);
 
 	virtual ~DoorTile() {
 	}

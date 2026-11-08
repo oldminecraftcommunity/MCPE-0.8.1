@@ -100,26 +100,18 @@ bool_t ChestTileEntity::canPairWith(TileEntity* a2) {
 	return (uint32_t)v5 > 1;
 }
 float ChestTileEntity::getModelOffsetX() {
-	ChestTileEntity* pair; // r3
 	int32_t posZ;		   // r2
 	int32_t posX;		   // r3
 
 	if(!this->isUnpaired) {
-		return 0.0;
+		return 0;
 	}
-	pair = this->pair;
-	if(this->pairSameXPos) {
-		posZ = pair->posZ;
-		posX = this->posZ;
-	} else {
-		posZ = pair->posX;
-		posX = this->posX;
+
+	if(!this->pairSameXPos) {
+		return this->pair->posX < this->posX ? -0.5 : 0.5;
+
 	}
-	if(posZ >= posX) {
-		return 0.5;
-	} else {
-		return -0.5;
-	}
+	return this->pair->posZ < this->posZ ? -0.5 : 0.5;
 }
 void ChestTileEntity::openBy(Player* a2) {
 	ChestTileEntity* dis = this;

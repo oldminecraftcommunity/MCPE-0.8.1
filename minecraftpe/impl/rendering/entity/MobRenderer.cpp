@@ -25,7 +25,7 @@ void MobRenderer::_renderColorOverlay(Mob* a2, const Color4& a3, float a4) {
 			armorModel = this->armorModel;
 
 			{
-				DisableState v10(armorModel->field_5 && this->isFancy() ? 2896 : 0);
+				DisableState v10(armorModel->field_5 && this->isFancy() ? GL_LIGHTING : 0);
 				this->armorModel->render(a2, this->field_8, this->field_C, this->field_10, this->field_14 - this->field_18, this->field_1C, this->field_20);
 				//~
 			}
@@ -72,12 +72,12 @@ void MobRenderer::render(Entity* a2_, float a3, float a4, float a5, float a6, fl
 	model = this->model;
 	model->field_0 = this->getAttackAnim(a2, a7);
 	v12 = this->model;
-	v12->field_4 = a2->isRiding();
+	v12->riding = a2->isRiding();
 	v13 = this->model;
 	v13->field_14 = a2->isBaby();
 	armorModel = this->armorModel;
 	if(armorModel) {
-		armorModel->field_4 = this->model->field_4;
+		armorModel->riding = this->model->riding;
 		this->armorModel->field_14 = this->model->field_14;
 		this->armorModel->field_0 = this->model->field_0;
 	}

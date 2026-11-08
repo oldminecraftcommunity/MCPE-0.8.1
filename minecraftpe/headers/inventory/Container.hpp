@@ -23,10 +23,11 @@ struct Container
 			ItemInstance* v5 = this->getItem(v2);
 			ItemInstance* v6;
 			if(v5) {
-				res.push_back(*v5);
+				v6 = v5;
 			} else {
-				res.push_back(v8);
+				v6 = &v8;
 			}
+			res.push_back(*v6);
 		}
 		return res;
 	}

@@ -229,8 +229,8 @@ void ParticleEngine::tick() {
 			Particle* prt = p.second[i];
 			prt->tick();
 			if(prt->isDead) {
+				p.second.erase(p.second.begin()+i);
 				--i;
-				p.second.erase(p.second.begin() + i);
 				--sz;
 				this->_release(prt);
 			}

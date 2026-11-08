@@ -85,8 +85,9 @@ void FollowParentGoal::start() {
 	this->ticksFollowing = 0;
 }
 void FollowParentGoal::stop() {
-	if(this->parent.entity) {
-		this->parent.unset();
+	TempEPtr<Animal>* parent = &this->parent;
+	if(parent->entity) {
+		parent->unset();
 	}
 }
 void FollowParentGoal::tick() {

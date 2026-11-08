@@ -63,145 +63,16 @@ char Minecraft::customDebugId[4];
 
 char_t* Minecraft::progressMessages[] = {"Locating server", "Building terrain", "Preparing", "Saving chunks", "Waiting for Minecraft Realms"};
 
-Minecraft::Minecraft()
-	: gui(this) {
-	this->wantsToQuit = 0;
-	this->context.platform = 0;
-	this->width = 1;
-	this->field_24 = 4711;
-	this->height = 1;
-
-	this->field_18 = 0;
-	this->field_28 = 0;
-	this->field_2C = 0;
-	this->field_34 = 0;
-	//TODO settings and stuff
-	this->field_16C = 0;
-	this->levelRenderer = 0;
-	this->gameRenderer = 0;
-	this->particleEngine = 0;
-	this->soundEngine = 0;
-	this->gameMode = 0;
-	this->texturesPtr = 0;
-	this->screenChooser.minecraft = this;
-	this->font = 0;
-	//gui(this)
-	//mousehandler()
-	this->field_C54 = -1;
-	this->serverSideNetworkHandler = 0;
-	this->field_C50 = 0;
-	this->field_C58 = 0;
-	this->mouseGrabbed = 1;
-	this->field_C5C = 0;
-	this->user = 0;
-	this->level = 0;
-	this->player = 0;
-	this->inputHolder = 0;
-	this->viewEntity = 0;
-	this->prepareLevelThread = 0;
-	this->pixelsPerMillimeter = 1;
-	this->field_C88 = 1;
-	this->field_C8C = 1;
-	this->field_C90 = 1;
-	//hitresult(selectedObject)
-	this->field_CBC = 0;
-	this->dataPathMaybe = "";
-	this->field_CC4 = "";
-	this->externalServerFile = 0;
-	this->timer.ticksPerSecond = 20;
-	this->timer.timeScale = 1;
-	this->timer.passedTime = 0;
-	this->timer.adjustTime = 1;
-	int32_t timeMs = getTimeMs();
-	this->timer.lastMs = timeMs;
-	this->timer.lastMsSysTime = timeMs;
-	this->timer.lastTime = timeMs / 1000;
-	this->field_CF4 = 0;
-	this->levelGenerated = 1;
-	this->license = -2;
-	this->levelSelected = 0;
-	this->powerVR = 0;
-	this->field_D00 = "";
-	this->progressMessageIndex = 0;
-	this->field_D08 = 0;
-	this->field_D0C = 0;
-	this->field_D10 = 0;
-	this->field_D14 = 0;
-	this->field_D15 = 0;
-	this->field_D18 = 0;
-	this->supportsNonTouchScreen = 0;
-	this->_leaveGame = 0;
-	this->perfRenderer = 0;
-	this->commandServer = 0;
-	this->field_D34 = 0;
-	this->timeStartedAtMaybe = 0; //XXX not in mcpe?
-	this->rakNetInstance = new RakNetInstance();
-	this->soundEngine = new SoundEngine(20);
-	this->soundEngine->init(this, &this->options);
-	this->cmutex = new CMutex();
-	this->serverCmdParser = new ServerCommandParser();
+bool_t Minecraft::useTouchscreen(void) {
+#ifdef ANDROID
+	return this->options.useTouchscreen || !this->supportsNonTouchScreen;
+#else
+	//TODO touchscreen support
+	return this->options.useTouchscreen || !this->supportsNonTouchScreen;
+#endif
 }
-
-void Minecraft::_levelGenerated(void) {
-	LocalPlayer* v2;							// r0
-	LocalPlayer* player;						// r5
-	LocalPlayer* v4;							// r0
-	LevelRenderer* levelRenderer;				// r0
-	ParticleEngine* particleEngine;				// r0
-	NetEventCallback* serverSideNetworkHandler; // r0
-
-	if(!this->player) {
-		v2 = (LocalPlayer*)this->gameMode->createPlayer(this->level);
-		this->player = v2;
-		this->gameMode->initPlayer(v2);
-	}
-	player = this->player;
-	if(player) {
-		player->moveInput = (KeyboardInput*)this->inputHolder->getMoveInput();
-	}
-	this->gameMode->adjustPlayer(this->player);
-	this->gui.onLevelGenerated();
-	this->level->validateSpawn();
-	this->level->loadPlayer(this->player, 1);
-	v4 = this->player;
-	if(v4) {
-		if(!this->level->isClient) {
-			v4->resetPos(0);
-		}
-	}
-	levelRenderer = this->levelRenderer;
-	this->viewEntity = (Player*)this->player;
-	if(levelRenderer) {
-		levelRenderer->setLevel(this->level);
-	}
-	particleEngine = this->particleEngine;
-	if(particleEngine) {
-		particleEngine->setLevel(this->level);
-	}
-	if(this->rakNetInstance->isServer()) {
-		this->rakNetInstance->announceServer(this->user->username);
-	}
-	serverSideNetworkHandler = this->serverSideNetworkHandler;
-	if(serverSideNetworkHandler) {
-		serverSideNetworkHandler->levelGenerated(this->level);
-	}
-	this->levelGenerated = 1;
-	this->progressMessageIndex = 0;
-}
-void Minecraft::_reloadInput(void) {
-	if(this->inputHolder) delete this->inputHolder;
-	if(this->useTouchscreen()) {
-		TouchInputHolder* holder = new TouchInputHolder(this);
-		this->inputHolder = holder;
-	} else {
-		this->inputHolder = new CustomInputHolder(new XperiaPlayInput(this, &this->options), new ControllerTurnInput(), new IBuildInput());
-	}
-	this->mouseHandler.setTurnInput(this->inputHolder->getTurnInput());
-	if(this->level) {
-		if(this->player) {
-			this->player->moveInput = this->inputHolder->getMoveInput();
-		}
-	}
+void Minecraft::setTextboxText(const std::string& a2) {
+	if(this->currentScreen) this->currentScreen->setTextboxText(a2);
 }
 void Minecraft::audioEngineOff(void) {
 	this->soundEngine->enable(0);
@@ -209,59 +80,152 @@ void Minecraft::audioEngineOff(void) {
 void Minecraft::audioEngineOn(void) {
 	this->soundEngine->enable(1);
 }
-void Minecraft::cancelLocateMultiplayer(void) {
-	this->field_18 = 0;
-	this->rakNetInstance->stopPingForHosts();
-	if(this->serverSideNetworkHandler) delete this->serverSideNetworkHandler;
-	this->serverSideNetworkHandler = 0;
+void Minecraft::setLevel(struct Level* level, const std::string& a3, struct LocalPlayer* a4) {
+	LocalPlayer* player; // r1
+	CThread* v8;		 // r5
+
+	this->viewEntity = 0;
+	level->getSeed();
+	if(level) {
+		level->rakNetInstance = this->rakNetInstance;
+		this->gameMode->initLevel(level);
+		player = this->player;
+		if(player) {
+			player->resetPos(0);
+			level->addEntity(this->player);
+		} else if(a4) {
+			this->player = a4;
+			a4->resetPos(0);
+		}
+		this->level = level;
+		this->levelGenerated = 0;
+		this->field_CF4 = 1;
+		v8 = new CThread(&Minecraft::prepareLevel_tspawn, this);
+		this->prepareLevelThread = v8;
+	} else {
+		this->player = 0;
+	}
+	this->field_C54 = 0;
+	this->levelSelected = 1;
+}
+void Minecraft::onAppResumed(void) {
+	this->texturesPtr->clear(0);
+	glBufferPool.trim();
+	this->animatedTextureTicked = 0;
+}
+void Minecraft::onAppSuspended(void) {
+	this->texturesPtr->clear(0);
+	glBufferPool.trim();
 }
 void Minecraft::checkGlError(const char_t*) {
 }
-void Minecraft::connectToMCOServer(const std::string& a2, const std::string& a3, uint16_t a4) {
-	PingedCompatibleServer v8;
-	v8.field_4.FromStringExplicitPort(a3.c_str(), a4, 0);
-	v8.field_0 = a2.c_str();
-	this->joinMultiplayer(v8, 1);
+void Minecraft::prepareLevel(const std::string& a2) {
+	Level* level;	   // r0
+	int32_t v4;		   // r6
+	int32_t v5;		   // r8
+	int32_t i;		   // r5
+	int32_t v7;		   // r7
+	int32_t v8;		   // r6
+	LevelChunk* chunk; // r0
+	int32_t j;		   // r5
+	Level* v11;		   // r0
+
+	this->progressMessageIndex = 1;
+	Stopwatch v13; // [sp+4h] [bp-13Ch] BYREF
+	Stopwatch v14; // [sp+38h] [bp-108h] BYREF
+	Stopwatch v15; // [sp+68h] [bp-D8h] BYREF
+	Stopwatch v16; // [sp+98h] [bp-A8h] BYREF
+	Stopwatch v17; // [sp+C8h] [bp-78h] BYREF
+	v13.start();
+	Stopwatch v18; // [sp+F8h] [bp-48h] BYREF
+
+	level = this->level;
+	if(!level->field_B64) {
+		level->setUpdateLights(0);
+	}
+	v4 = 0;
+	v5 = 8;
+	do {
+		v7 = v4;
+		for(i = 8; i != 264; i += 16) {
+			this->field_CBC = v7 >> 8;
+			v14.start();
+			this->level->getTile(v5, 64, i);
+			v14.stop();
+			v18.start();
+			if(this->level->field_B64) {
+				while(this->level->updateLights()) {
+					;
+				}
+			}
+			v18.stop();
+			v7 += 100;
+		}
+		v4 += 1600;
+		v5 += 16;
+	} while(v4 != 25600);
+	v8 = 0;
+	v13.stop();
+	this->level->setUpdateLights(1);
+	v15.start();
+	do {
+		for(j = 0; j != 16; ++j) {
+			chunk = this->level->getChunk(v8, j);
+			if(chunk) {
+				if(!chunk->field_24B) {
+					chunk->unsaved = 0;
+					chunk->clearUpdateMap();
+				}
+			}
+		}
+		++v8;
+	} while(v8 != 16);
+	v15.stop();
+	v17.start();
+	v11 = this->level;
+	this->progressMessageIndex = 3;
+	if(v11->field_B64) {
+		v11->setInitialSpawn();
+		this->level->getChunkSource()->saveAll(0);
+		this->level->saveGame();
+	} else {
+		v11->saveLevelData();
+		this->level->loadEntities();
+	}
+	v17.stop();
+	this->field_CBC = -1;
+	this->progressMessageIndex = 2;
+	v16.start();
+	this->level->prepare();
+	v16.stop();
+
+	v13.print("Generate level: ");
+	v18.print(" - light: ");
+	v14.print(" - getTl: ");
+	v15.print(" - clear: ");
+	v16.print(" - prepr: ");
+	v17.print(" - store: ");
 }
-void Minecraft::gameLostFocus(void) {
-	if(this->currentScreen) {
-		this->currentScreen->lostFocus();
+void Minecraft::handleMouseDown(int32_t a2, bool_t a3) {
+	Tile* v9;	// r0
+
+	if(this->player->isUsingItem()) {
+		if(!a3 && Keyboard::_states[this->options.keyUse.keyCode] != 1) {
+			this->gameMode->releaseUsingItem(this->player);
+		}
+	} else if(!this->player->isSleeping() && (a2 != 1 || this->field_D08 <= 0)) {
+		if(this->player->isDestroying) {
+			if(this->selectedObject.hitType || !a3 || a2 != 1 || this->selectedObject.field_24 || (v9 = Tile::tiles[this->level->getTile(this->selectedObject.x, this->selectedObject.y, this->selectedObject.z)]) != 0 && v9->isLiquidTile()) {
+				this->player->stopDestroying();
+				this->gameMode->stopDestroyBlock();
+			} else {
+				this->gameMode->continueDestroyBlock(this->selectedObject.x, this->selectedObject.y, this->selectedObject.z, this->selectedObject.field_10);
+				this->particleEngine->crack(this->selectedObject.x, this->selectedObject.y, this->selectedObject.z, this->selectedObject.field_10);
+			}
+		}
 	}
 }
-void Minecraft::generateLevel(const std::string& a2, struct Level* a3) {
-	Stopwatch v6;
-	v6.start();
-	this->prepareLevel(a2);
-	v6.stop();
-	v6.print("Level generated: ");
-	this->field_CF4 = 0;
-}
-ICreator* Minecraft::getCreator(void) {
-	return 0;
-}
-struct LevelStorageSource* Minecraft::getLevelSource(void) {
-	return this->levelStorageSource;
-}
-
-int32_t Minecraft::getLicenseId(void) {
-	if(this->license < 0) this->license = this->platform()->checkLicense();
-	return this->license;
-}
-char_t* Minecraft::getProgressMessage(void) {
-	return Minecraft::progressMessages[this->progressMessageIndex];
-}
-int32_t Minecraft::getProgressStageStatus(void) {
-	return this->progressMessageIndex;
-}
-int32_t Minecraft::getProgressStatusId(void) {
-	return this->progressMessageIndex;
-}
-
-void Minecraft::grabMouse(void) {
-	if(!this->mouseGrabbed) {
-		this->mouseGrabbed = 1;
-		this->mouseHandler.grab();
-	}
+void Minecraft::handleMouseClick(int32_t) {
 }
 void Minecraft::handleBuildAction(struct BuildActionIntention* a2) {
 	int v9;				// r7
@@ -359,24 +323,65 @@ LABEL_27:
 		}
 	}
 }
-void Minecraft::handleMouseClick(int32_t) {
+bool_t Minecraft::isOnlineClient(void) {
+	if(this->level) return this->level->isClient;
+	return 0;
 }
-void Minecraft::handleMouseDown(int32_t a2, bool_t a3) {
-	Tile* v9;	// r0
-
-	if(this->player->isUsingItem()) {
-		if(!a3 && Keyboard::_states[this->options.keyUse.keyCode] != 1) {
-			this->gameMode->releaseUsingItem(this->player);
+bool_t Minecraft::isOnline(void) {
+	return this->serverSideNetworkHandler != 0;
+}
+void Minecraft::pauseGame(bool_t a2) {
+	if(!this->currentScreen) {
+		this->screenChooser.setScreen(a2 ? PAUSE_SCREEN_1 : PAUSE_SCREEN_0);
+	}
+}
+void Minecraft::gameLostFocus(void) {
+	if(this->currentScreen) {
+		this->currentScreen->lostFocus();
+	}
+}
+void Minecraft::grabMouse(void) {
+	if(!this->mouseGrabbed) {
+		this->mouseGrabbed = 1;
+		this->mouseHandler.grab();
+	}
+}
+void Minecraft::releaseMouse(void) {
+	if(this->mouseGrabbed) {
+		if(this->player) {
+			this->player->releaseAllKeys();
 		}
-	} else if(!this->player->isSleeping() && (a2 != 1 || this->field_D08 <= 0)) {
-		if(this->player->isDestroying) {
-			if(this->selectedObject.hitType || !a3 || a2 != 1 || this->selectedObject.field_24 || (v9 = Tile::tiles[this->level->getTile(this->selectedObject.x, this->selectedObject.y, this->selectedObject.z)]) != 0 && v9->isLiquidTile()) {
-				this->player->stopDestroying();
-				this->gameMode->stopDestroyBlock();
-			} else {
-				this->gameMode->continueDestroyBlock(this->selectedObject.x, this->selectedObject.y, this->selectedObject.z, this->selectedObject.field_10);
-				this->particleEngine->crack(this->selectedObject.x, this->selectedObject.y, this->selectedObject.z, this->selectedObject.field_10);
+		this->mouseGrabbed = 0;
+		this->mouseHandler.release();
+	}
+}
+bool_t Minecraft::supportNonTouchScreen(void) {
+	return this->supportsNonTouchScreen;
+}
+void Minecraft::locateMultiplayer(void) {
+	this->field_18 = 1;
+	this->rakNetInstance->pingForHosts(19132);
+	if(this->serverSideNetworkHandler) {
+		delete this->serverSideNetworkHandler;
+	}
+
+	this->serverSideNetworkHandler = new ClientSideNetworkHandler(this, this->rakNetInstance);
+}
+void Minecraft::cancelLocateMultiplayer(void) {
+	this->field_18 = 0;
+	this->rakNetInstance->stopPingForHosts();
+	if(this->serverSideNetworkHandler) delete this->serverSideNetworkHandler;
+	this->serverSideNetworkHandler = 0;
+}
+void Minecraft::joinMultiplayer(const struct PingedCompatibleServer& a2, bool_t a3) {
+	RakNetInstance* rakNetInstance; // r4
+	if(this->field_18) {
+		if(this->serverSideNetworkHandler) {
+			this->field_18 = 0;
+			if(a3) {
+				((ClientSideNetworkHandler*)this->serverSideNetworkHandler)->setRealmsServer();
 			}
+			this->rakNetInstance->connect(a2.field_4.ToString(0, '|'), a2.field_4.GetPort());
 		}
 	}
 }
@@ -391,57 +396,132 @@ bool_t Minecraft::hostMultiplayer(int32_t port) {
 	this->serverSideNetworkHandler = new ServerSideNetworkHandler(this, this->rakNetInstance);
 	return this->rakNetInstance->host(this->user->username, port, 4u);
 }
+void Minecraft::generateLevel(const std::string& a2, struct Level* a3) {
+	Stopwatch v6;
+	v6.start();
+	this->prepareLevel(a2);
+	v6.stop();
+	v6.print("Level generated: ");
+	this->field_CF4 = 0;
+}
+void* Minecraft::prepareLevel_tspawn(void* a2) {
+	((Minecraft*)a2)->generateLevel("Currently not used", ((Minecraft*)a2)->level);
+#ifdef EVILOREOBROKEPTHREADS
+	if(((Minecraft*)a2)->prepareLevelThread){
+		pthread_mutex_lock(&((Minecraft*)a2)->prepareLevelThread->lock);
+		pthread_mutex_unlock(&((Minecraft*)a2)->prepareLevelThread->lock);
+	}
+	sleepMs(20);
+#endif
+	return 0;
+}
+void Minecraft::_levelGenerated(void) {
+	LocalPlayer* v2;							// r0
+	LocalPlayer* player;						// r5
+	LocalPlayer* v4;							// r0
+	LevelRenderer* levelRenderer;				// r0
+	ParticleEngine* particleEngine;				// r0
+	NetEventCallback* serverSideNetworkHandler; // r0
 
-static int sub_D65CF2E4(std::string s) {
-	int v11 = 0;
-	FILE* f = fopen(s.c_str(), "r");
-	if(!f || (fscanf(f, "%d", &v11), fclose(f), !v11)) {
-		FILE* v5 = fopen(s.c_str(), "w");
-		if(v5) {
-			int rawTimeS = getRawTimeS();
-			Random v10(1000 * rawTimeS);
-			unsigned char v7 = -24 * rawTimeS;
-			int v9 = v7 + (v10.genrand_int32() >> 1 << 8);
-			fprintf(v5, "%d", v9);
-			fclose(v5);
+	if(!this->player) {
+		v2 = (LocalPlayer*)this->gameMode->createPlayer(this->level);
+		this->player = v2;
+		this->gameMode->initPlayer(v2);
+	}
+	player = this->player;
+	if(player) {
+		player->moveInput = (KeyboardInput*)this->inputHolder->getMoveInput();
+	}
+	this->gameMode->adjustPlayer(this->player);
+	this->gui.onLevelGenerated();
+	this->level->validateSpawn();
+	this->level->loadPlayer(this->player, 1);
+	v4 = this->player;
+	if(v4) {
+		if(!this->level->isClient) {
+			v4->resetPos(0);
 		}
 	}
-	return v11;
-}
-
-void Minecraft::init(void) {
-	this->field_C5C = sub_D65CF2E4(this->field_D00 + "/clientId.txt");
-	this->supportsNonTouchScreen = !this->platform()->supportsTouchscreen();
-	this->options.init(this, this->field_D00);
-	this->options.update();
-	this->externalServerFile = std::shared_ptr<ExternalServerFile>(new ExternalServerFile(this->field_D00));
-	this->externalServerFile->load();
-	this->checkGlError("Init enter");
-	this->platform()->supportsTouchscreen(); //calls it again for some reason
-	this->user = new User(this->options.username, "");
-	this->setIsCreativeMode(0);
-	this->_reloadInput();
-	this->setSize(this->width, this->height);
-	this->mojangConnector = std::shared_ptr<MojangConnector>(new MojangConnector(this));
-	std::shared_ptr<LoginInformation> v20 = this->mojangConnector->getLoginInformation();
-	if(v20->accessToken != "") {
-		std::string v18 = MCOStringify::stringifyRefresh(v20->accessToken, v20->clientId, v20->profileId, Common::getGameVersionStringNet());
-		std::shared_ptr<RestRequestJob> v21 = RestRequestJob::CreateJob(RRT_POST, this->mojangConnector->getAccountService(), this);
-		v21->setMethod("/refresh");
-		v21->setBody(v18);
-		//something weird happens with v21 here
-		RestRequestJob::launchRequest(
-			v21,
-			this->mojangConnector->getThreadCollection(),
-			[this](int32_t a2, const std::string& a3, const RestCallTagData& a4, std::shared_ptr<RestRequestJob> v11) {
-				LoginInformation v14 = this->mojangConnector->getMCOParser()->parseMCOAccountValidSessionReturnValue(a3);
-				this->mojangConnector->setLoginInformation(v14);
-				this->platform()->statsTrackData("login", "{\"new_registration\": false, \"automatic_login\": true}");
-			},
-			[this](bool a2, bool a3, int32_t a4, const std::string& a5, const RestCallTagData&, std::shared_ptr<RestRequestJob> v9){
-			}
-		);
+	levelRenderer = this->levelRenderer;
+	this->viewEntity = (Player*)this->player;
+	if(levelRenderer) {
+		levelRenderer->setLevel(this->level);
 	}
+	particleEngine = this->particleEngine;
+	if(particleEngine) {
+		particleEngine->setLevel(this->level);
+	}
+	if(this->rakNetInstance->isServer()) {
+		this->rakNetInstance->announceServer(this->user->username);
+	}
+	serverSideNetworkHandler = this->serverSideNetworkHandler;
+	if(serverSideNetworkHandler) {
+		serverSideNetworkHandler->levelGenerated(this->level);
+	}
+	this->levelGenerated = 1;
+	this->progressMessageIndex = 0;
+}
+void Minecraft::resetPlayer(Player* a2) {
+	this->level->validateSpawn();
+	a2->reset();
+	TilePos result = a2->hasRespawnPosition() ? a2->getRespawnPosition() : this->level->getSharedSpawnPos();
+
+	a2->setPos(result.x + 0.5f, result.y + 1.0f, result.z + 0.5f);
+	a2->resetPos(1);
+}
+Player* Minecraft::respawnPlayer(int32_t a2) {
+	int32_t v6 = 0;
+	int32_t v7 = this->level->players.size();
+	for(v6 = 0; v6 != v7; ++v6) {
+		Player* p = this->level->players[v6];
+		if(p->entityId == a2) {
+			this->resetPlayer(p);
+			return this->level->players[v6];
+		}
+	}
+	return 0;
+}
+void Minecraft::respawnPlayer(void) {
+	this->resetPlayer(this->player);
+	RespawnPacket v4(this->player);
+	this->rakNetInstance->send(v4);
+}
+int32_t Minecraft::getProgressStatusId(void) {
+	return this->progressMessageIndex;
+}
+char_t* Minecraft::getProgressMessage(void) {
+	return Minecraft::progressMessages[this->progressMessageIndex];
+}
+bool_t Minecraft::isLevelGenerated(void) {
+	if(this->level) return this->levelGenerated;
+	return 0;
+}
+struct LevelStorageSource* Minecraft::getLevelSource(void) {
+	return this->levelStorageSource;
+}
+int32_t Minecraft::getLicenseId(void) {
+	if(this->license < 0) this->license = this->platform()->checkLicense();
+	return this->license;
+}
+void Minecraft::setIsCreativeMode(bool_t a2) {
+	if(this->gameMode) {
+		if(this->isCreative == a2) goto LABEL_8;
+		delete this->gameMode;
+	}
+	if(a2) this->gameMode = new CreativeMode(this);
+	else this->gameMode = new SurvivalMode(this);
+	this->isCreative = a2;
+LABEL_8:
+	if(this->player) {
+		this->gameMode->initAbilities(this->player->abilities);
+	}
+}
+void Minecraft::selectLevel(const std::string& a2, const std::string& a3, const struct LevelSettings& a4) {
+	LevelStorage* v7 = this->levelStorageSource->selectLevel(a2, 0);
+	this->level = new ServerLevel(v7, a3, a4, 0, 0);
+	this->setLevel(this->level, "Generating level", 0);
+	this->setIsCreativeMode(this->level->getLevelData()->getGameType() == 1);
+	this->levelSelected = 1;
 }
 bool_t Minecraft::isCreativeMode(void) {
 	return this->isCreative;
@@ -454,28 +534,258 @@ bool_t Minecraft::isKindleFire(int32_t a2) {
 	std::transform(v12.begin(), v12.end(), v12.begin(), tolower);
 	return v12.find("kindle") != -1 && v12.find("fire") != -1;
 }
-bool_t Minecraft::isLevelGenerated(void) {
-	if(this->level) return this->levelGenerated;
+bool_t Minecraft::transformResolution(int32_t* x, int32_t* y) {
+	if(this->isKindleFire(1)) {
+		if(*y >= 560 && *y <= 620) {
+			*y = 580;
+			return 1;
+		}
+	}
 	return 0;
 }
-bool_t Minecraft::isOnline(void) {
-	return this->serverSideNetworkHandler != 0;
+void Minecraft::setSize(int32_t a2, int32_t a3) {
+	this->transformResolution(&a2, &a3);
+
+	this->width = a2;
+	this->height = a3;
+	if(a2 == 0) this->width = 240;
+	if(a3 == 0) this->height = 140;
+
+	float ppm;
+	if(this->platform()) {
+		ppm = this->platform()->getPixelsPerMillimeter();
+	} else {
+		ppm = 10;
+	}
+
+	if(this->width >= 1000) {
+		if(ppm <= 15) Gui::GuiScale = 4;
+		else Gui::GuiScale = 6;
+	} else if(this->width >= 800) {
+		Gui::GuiScale = 3;
+	} else if(this->width >= 400) {
+		Gui::GuiScale = 2;
+	} else {
+		Gui::GuiScale = 1;
+	}
+
+	Gui::InvGuiScale = 1.0f / Gui::GuiScale;
+	if(this->platform()) {
+		float pv = this->options.getProgressValue(&Options::Option::PIXELS_PER_MILLIMETER);
+		this->pixelsPerMillimeter = pv;
+		this->field_C88 = 1.0f / pv;
+		this->field_C8C = pv * Gui::InvGuiScale;
+		this->field_C90 = 1.0f / this->field_C8C;
+	}
+	Config v18 = createConfig(this);
+	this->gui.onConfigChanged(v18);
+	if(this->currentScreen) {
+		this->currentScreen->setSize(this->width * Gui::InvGuiScale, this->height * Gui::InvGuiScale);
+		this->currentScreen->setupPositions();
+	}
+	if(this->inputHolder) {
+		this->inputHolder->onConfigChanged(v18);
+	}
 }
-bool_t Minecraft::isOnlineClient(void) {
-	if(this->level) return this->level->isClient;
+ICreator* Minecraft::getCreator(void) {
 	return 0;
+}
+void Minecraft::optionUpdated(const Options::Option* a2, float a3) {
+	float v4; // s13
+
+	if(&Options::Option::PIXELS_PER_MILLIMETER == a2) {
+		v4 = a3 * Gui::InvGuiScale;
+		this->field_C8C = a3 * Gui::InvGuiScale;
+		this->field_C90 = 1.0 / v4;
+		this->pixelsPerMillimeter = a3;
+		this->field_C88 = 1.0 / a3;
+		Config v6 = createConfig(this);
+		this->gui.onConfigChanged(v6);
+		if(this->inputHolder) {
+			this->inputHolder->onConfigChanged(v6);
+		}
+	}
+}
+void Minecraft::optionUpdated(const Options::Option* a2, int32_t a3) {
+	if(&Options::Option::RENDER_DISTANCE == a2) {
+		this->levelRenderer->allChanged();
+	}
 }
 
-void Minecraft::joinMultiplayer(const struct PingedCompatibleServer& a2, bool_t a3) {
-	RakNetInstance* rakNetInstance; // r4
-	if(this->field_18) {
-		if(this->serverSideNetworkHandler) {
-			this->field_18 = 0;
-			if(a3) {
-				((ClientSideNetworkHandler*)this->serverSideNetworkHandler)->setRealmsServer();
-			}
-			this->rakNetInstance->connect(a2.field_4.ToString(0, '|'), a2.field_4.GetPort());
+void Minecraft::connectToMCOServer(const std::string& a2, const std::string& a3, uint16_t a4) {
+	PingedCompatibleServer v8;
+	v8.field_4.FromStringExplicitPort(a3.c_str(), a4, 0);
+	v8.field_0 = a2.c_str();
+	this->joinMultiplayer(v8, 1);
+}
+void Minecraft::lockForControl(void) {
+	this->cmutex->lock();
+}
+void Minecraft::unlockControl(void) {
+	this->cmutex->unlock();
+}
+int32_t Minecraft::getProgressStageStatus(void) {
+	return this->progressMessageIndex;
+}
+void Minecraft::onMojangConnectorStatus(enum MojangConnectionStatus a2) {
+	if(this->currentScreen) this->currentScreen->onMojangConnectorStatus(a2);
+}
+void Minecraft::updateStatusUserAttributes(void) {
+	this->platform()->updateStatsUserData((char_t*)glGetString(0x1f00), (char_t*)glGetString(0x1f01));
+}
+void Minecraft::setLeaveGame(void) {
+	this->_leaveGame = 1;
+}
+void Minecraft::onUpdatedClient(int32_t a2, int32_t a3, int32_t a4, int32_t a5) {
+	int32_t old = SharedConstants::getVersionCode(a2, a3, a4, 0);
+	if(old < SharedConstants::getVersionCode(0, 8, 1, 0)) {
+		this->levelStorageSource->clearCache();
+	}
+}
+Minecraft::Minecraft()
+	: gui(this) {
+	this->wantsToQuit = 0;
+	this->context.platform = 0;
+	this->width = 1;
+	this->field_24 = 4711;
+	this->height = 1;
+
+	this->field_18 = 0;
+	this->field_28 = 0;
+	this->field_2C = 0;
+	this->field_34 = 0;
+	//TODO settings and stuff
+	this->field_16C = 0;
+	this->levelRenderer = 0;
+	this->gameRenderer = 0;
+	this->particleEngine = 0;
+	this->soundEngine = 0;
+	this->gameMode = 0;
+	this->texturesPtr = 0;
+	this->screenChooser.minecraft = this;
+	this->font = 0;
+	//gui(this)
+	//mousehandler()
+	this->field_C54 = -1;
+	this->serverSideNetworkHandler = 0;
+	this->field_C50 = 0;
+	this->field_C58 = 0;
+	this->mouseGrabbed = 1;
+	this->field_C5C = 0;
+	this->user = 0;
+	this->level = 0;
+	this->player = 0;
+	this->inputHolder = 0;
+	this->viewEntity = 0;
+	this->prepareLevelThread = 0;
+	this->pixelsPerMillimeter = 1;
+	this->field_C88 = 1;
+	this->field_C8C = 1;
+	this->field_C90 = 1;
+	//hitresult(selectedObject)
+	this->field_CBC = 0;
+	this->dataPathMaybe = "";
+	this->field_CC4 = "";
+	this->externalServerFile = 0;
+	this->timer.ticksPerSecond = 20;
+	this->timer.timeScale = 1;
+	this->timer.passedTime = 0;
+	this->timer.adjustTime = 1;
+	int32_t timeMs = getTimeMs();
+	this->timer.lastMs = timeMs;
+	this->timer.lastMsSysTime = timeMs;
+	this->timer.lastTime = timeMs / 1000;
+	this->field_CF4 = 0;
+	this->levelGenerated = 1;
+	this->license = -2;
+	this->levelSelected = 0;
+	this->powerVR = 0;
+	this->field_D00 = "";
+	this->progressMessageIndex = 0;
+	this->field_D08 = 0;
+	this->field_D0C = 0;
+	this->field_D10 = 0;
+	this->field_D14 = 0;
+	this->field_D15 = 0;
+	this->field_D18 = 0;
+	this->supportsNonTouchScreen = 0;
+	this->_leaveGame = 0;
+	this->perfRenderer = 0;
+	this->commandServer = 0;
+	this->field_D34 = 0;
+	this->timeStartedAtMaybe = 0; //XXX not in mcpe?
+	this->rakNetInstance = new RakNetInstance();
+	this->soundEngine = new SoundEngine(20);
+	this->soundEngine->init(this, &this->options);
+	this->cmutex = new CMutex();
+	this->serverCmdParser = new ServerCommandParser();
+}
+Minecraft::~Minecraft() {
+}
+void Minecraft::_reloadInput(void) {
+	if(this->inputHolder) delete this->inputHolder;
+	if(this->useTouchscreen()) {
+		TouchInputHolder* holder = new TouchInputHolder(this);
+		this->inputHolder = holder;
+	} else {
+		this->inputHolder = new CustomInputHolder(new XperiaPlayInput(this, &this->options), new ControllerTurnInput(), new IBuildInput());
+	}
+	this->mouseHandler.setTurnInput(this->inputHolder->getTurnInput());
+	if(this->level) {
+		if(this->player) {
+			this->player->moveInput = this->inputHolder->getMoveInput();
 		}
+	}
+}
+void Minecraft::optionUpdated(const Options::Option* a2, bool_t a3) {
+	if(this->serverSideNetworkHandler) {
+		if(a2 == &Options::Option::SERVER_VISIBLE) {
+			((ServerSideNetworkHandler*)this->serverSideNetworkHandler)->allowIncomingConnections(a3);
+		}
+	}
+	if(a2 == &Options::Option::GRAPHICS) {
+		this->levelRenderer->allChanged();
+		this->gameRenderer->itemInHandRenderer->onAppSuspended();
+	}
+	if(a2 == &Options::Option::LEFT_HANDED || a2 == &Options::Option::USE_TOUCH_JOYPAD || a2 == &Options::Option::USE_TOUCHSCREEN) {
+		this->_reloadInput();
+	}
+}
+void Minecraft::reloadOptions(void) {
+	this->options.update();
+	this->options.save();
+	bool_t useTouchscreen = this->options.useTouchscreen;
+	this->options.useTouchscreen = this->useTouchscreen();
+	this->options.save();
+	if(this->options.useTouchscreen != useTouchscreen || !this->inputHolder) {
+		this->_reloadInput();
+	}
+	this->user->username = this->options.username;
+}
+void Minecraft::setScreen(Screen* screen) {
+	Mouse::reset();
+	Multitouch::reset();
+	Multitouch::resetThisUpdate();
+	if(this->field_D14) {
+		this->field_D18 = screen;
+		this->field_D15 = 1;
+		return;
+	}
+
+	if(screen) {
+		if(screen->isErrorScreen()) return;
+	} else if(!this->currentScreen) return;
+
+	if(this->currentScreen) this->currentScreen->removed();
+	this->currentScreen.reset(screen);
+	if(this->currentScreen) {
+		this->releaseMouse();
+		this->currentScreen->init(this, this->width * Gui::InvGuiScale, this->height * Gui::InvGuiScale);
+		if(this->currentScreen->isInGameScreen()) {
+			if(this->level) this->level->saveGame();
+		}
+	} else {
+		this->grabMouse();
 	}
 }
 void Minecraft::leaveGame(bool_t a2, bool_t a3) {
@@ -540,525 +850,6 @@ LABEL_7:
 				this->screenChooser.setScreen(START_MENU_SCREEN);
 			}
 		}
-	}
-}
-void Minecraft::locateMultiplayer(void) {
-	this->field_18 = 1;
-	this->rakNetInstance->pingForHosts(19132);
-	if(this->serverSideNetworkHandler) {
-		delete this->serverSideNetworkHandler;
-	}
-
-	this->serverSideNetworkHandler = new ClientSideNetworkHandler(this, this->rakNetInstance);
-}
-void Minecraft::lockForControl(void) {
-	this->cmutex->lock();
-}
-void Minecraft::onAppResumed(void) {
-	this->texturesPtr->clear(0);
-	glBufferPool.trim();
-	this->animatedTextureTicked = 0;
-}
-void Minecraft::onAppSuspended(void) {
-	this->texturesPtr->clear(0);
-	glBufferPool.trim();
-}
-void Minecraft::onMojangConnectorStatus(enum MojangConnectionStatus a2) {
-	if(this->currentScreen) this->currentScreen->onMojangConnectorStatus(a2);
-}
-void Minecraft::onUpdatedClient(int32_t a2, int32_t a3, int32_t a4, int32_t a5) {
-	int32_t old = SharedConstants::getVersionCode(a2, a3, a4, 0);
-	if(old < SharedConstants::getVersionCode(0, 8, 1, 0)) {
-		this->levelStorageSource->clearCache();
-	}
-}
-void Minecraft::optionUpdated(const Options::Option* a2, bool_t a3) {
-	if(this->serverSideNetworkHandler) {
-		if(a2 == &Options::Option::SERVER_VISIBLE) {
-			((ServerSideNetworkHandler*)this->serverSideNetworkHandler)->allowIncomingConnections(a3);
-		}
-	}
-	if(a2 == &Options::Option::GRAPHICS) {
-		this->levelRenderer->allChanged();
-		this->gameRenderer->itemInHandRenderer->onAppSuspended();
-	}
-	if(a2 == &Options::Option::LEFT_HANDED || a2 == &Options::Option::USE_TOUCH_JOYPAD || a2 == &Options::Option::USE_TOUCHSCREEN) {
-		this->_reloadInput();
-	}
-}
-void Minecraft::optionUpdated(const Options::Option* a2, float a3) {
-	float v4; // s13
-
-	if(&Options::Option::PIXELS_PER_MILLIMETER == a2) {
-		v4 = a3 * Gui::InvGuiScale;
-		this->field_C8C = a3 * Gui::InvGuiScale;
-		this->field_C90 = 1.0 / v4;
-		this->pixelsPerMillimeter = a3;
-		this->field_C88 = 1.0 / a3;
-		Config v6 = createConfig(this);
-		this->gui.onConfigChanged(v6);
-		if(this->inputHolder) {
-			this->inputHolder->onConfigChanged(v6);
-		}
-	}
-}
-void Minecraft::optionUpdated(const Options::Option* a2, int32_t a3) {
-	if(&Options::Option::RENDER_DISTANCE == a2) {
-		this->levelRenderer->allChanged();
-	}
-}
-void Minecraft::pauseGame(bool_t a2) {
-	if(!this->currentScreen) {
-		this->screenChooser.setScreen(a2 ? PAUSE_SCREEN_1 : PAUSE_SCREEN_0);
-	}
-}
-void Minecraft::prepareLevel(const std::string& a2) {
-	Level* level;	   // r0
-	int32_t v4;		   // r6
-	int32_t v5;		   // r8
-	int32_t i;		   // r5
-	int32_t v7;		   // r7
-	int32_t v8;		   // r6
-	LevelChunk* chunk; // r0
-	int32_t j;		   // r5
-	Level* v11;		   // r0
-
-	this->progressMessageIndex = 1;
-	Stopwatch v13; // [sp+4h] [bp-13Ch] BYREF
-	Stopwatch v14; // [sp+38h] [bp-108h] BYREF
-	Stopwatch v15; // [sp+68h] [bp-D8h] BYREF
-	Stopwatch v16; // [sp+98h] [bp-A8h] BYREF
-	Stopwatch v17; // [sp+C8h] [bp-78h] BYREF
-	v13.start();
-	Stopwatch v18; // [sp+F8h] [bp-48h] BYREF
-
-	level = this->level;
-	if(!level->field_B64) {
-		level->setUpdateLights(0);
-	}
-	v4 = 0;
-	v5 = 8;
-	do {
-		v7 = v4;
-		for(i = 8; i != 264; i += 16) {
-			this->field_CBC = v7 >> 8;
-			v14.start();
-			this->level->getTile(v5, 64, i);
-			v14.stop();
-			v18.start();
-			if(this->level->field_B64) {
-				while(this->level->updateLights()) {
-					;
-				}
-			}
-			v18.stop();
-			v7 += 100;
-		}
-		v4 += 1600;
-		v5 += 16;
-	} while(v4 != 25600);
-	v8 = 0;
-	v13.stop();
-	this->level->setUpdateLights(1);
-	v15.start();
-	do {
-		for(j = 0; j != 16; ++j) {
-			chunk = this->level->getChunk(v8, j);
-			if(chunk) {
-				if(!chunk->field_24B) {
-					chunk->unsaved = 0;
-					chunk->clearUpdateMap();
-				}
-			}
-		}
-		++v8;
-	} while(v8 != 16);
-	v15.stop();
-	v17.start();
-	v11 = this->level;
-	this->progressMessageIndex = 3;
-	if(v11->field_B64) {
-		v11->setInitialSpawn();
-		this->level->getChunkSource()->saveAll(0);
-		this->level->saveGame();
-	} else {
-		v11->saveLevelData();
-		this->level->loadEntities();
-	}
-	v17.stop();
-	this->field_CBC = -1;
-	this->progressMessageIndex = 2;
-	v16.start();
-	this->level->prepare();
-	v16.stop();
-
-	v13.print("Generate level: ");
-	v18.print(" - light: ");
-	v14.print(" - getTl: ");
-	v15.print(" - clear: ");
-	v16.print(" - prepr: ");
-	v17.print(" - store: ");
-}
-void* Minecraft::prepareLevel_tspawn(void* a2) {
-	((Minecraft*)a2)->generateLevel("Currently not used", ((Minecraft*)a2)->level);
-#ifdef EVILOREOBROKEPTHREADS
-	if(((Minecraft*)a2)->prepareLevelThread){
-		pthread_mutex_lock(&((Minecraft*)a2)->prepareLevelThread->lock);
-		pthread_mutex_unlock(&((Minecraft*)a2)->prepareLevelThread->lock);
-	}
-	sleepMs(20);
-#endif
-	return 0;
-}
-void Minecraft::releaseMouse(void) {
-	if(this->mouseGrabbed) {
-		if(this->player) {
-			this->player->releaseAllKeys();
-		}
-		this->mouseGrabbed = 0;
-		this->mouseHandler.release();
-	}
-}
-void Minecraft::reloadOptions(void) {
-	this->options.update();
-	this->options.save();
-	bool_t useTouchscreen = this->options.useTouchscreen;
-	this->options.useTouchscreen = this->useTouchscreen();
-	this->options.save();
-	if(this->options.useTouchscreen != useTouchscreen || !this->inputHolder) {
-		this->_reloadInput();
-	}
-	this->user->username = this->options.username;
-}
-void Minecraft::resetPlayer(Player* a2) {
-	this->level->validateSpawn();
-	a2->reset();
-	TilePos result = a2->hasRespawnPosition() ? a2->getRespawnPosition() : this->level->getSharedSpawnPos();
-
-	a2->setPos(result.x + 0.5f, result.y + 1.0f, result.z + 0.5f);
-	a2->resetPos(1);
-}
-Player* Minecraft::respawnPlayer(int32_t a2) {
-	int32_t v6 = 0;
-	int32_t v7 = this->level->players.size();
-	for(v6 = 0; v6 != v7; ++v6) {
-		Player* p = this->level->players[v6];
-		if(p->entityId == a2) {
-			this->resetPlayer(p);
-			return this->level->players[v6];
-		}
-	}
-	return 0;
-}
-
-void Minecraft::respawnPlayer(void) {
-	this->resetPlayer(this->player);
-	RespawnPacket v4(this->player);
-	this->rakNetInstance->send(v4);
-}
-void Minecraft::selectLevel(const std::string& a2, const std::string& a3, const struct LevelSettings& a4) {
-	LevelStorage* v7 = this->levelStorageSource->selectLevel(a2, 0);
-	this->level = new ServerLevel(v7, a3, a4, 0, 0);
-	this->setLevel(this->level, "Generating level", 0);
-	this->setIsCreativeMode(this->level->getLevelData()->getGameType() == 1);
-	this->levelSelected = 1;
-}
-void Minecraft::setIsCreativeMode(bool_t a2) {
-	if(this->gameMode) {
-		if(this->isCreative == a2) goto LABEL_8;
-		delete this->gameMode;
-	}
-	if(a2) this->gameMode = new CreativeMode(this);
-	else this->gameMode = new SurvivalMode(this);
-	this->isCreative = a2;
-LABEL_8:
-	if(this->player) {
-		this->gameMode->initAbilities(this->player->abilities);
-	}
-}
-void Minecraft::setLeaveGame(void) {
-	this->_leaveGame = 1;
-}
-void Minecraft::setLevel(struct Level* level, const std::string& a3, struct LocalPlayer* a4) {
-	LocalPlayer* player; // r1
-	CThread* v8;		 // r5
-
-	this->viewEntity = 0;
-	level->getSeed();
-	if(level) {
-		level->rakNetInstance = this->rakNetInstance;
-		this->gameMode->initLevel(level);
-		player = this->player;
-		if(player) {
-			player->resetPos(0);
-			level->addEntity(this->player);
-		} else if(a4) {
-			this->player = a4;
-			a4->resetPos(0);
-		}
-		this->level = level;
-		this->levelGenerated = 0;
-		this->field_CF4 = 1;
-		v8 = new CThread(&Minecraft::prepareLevel_tspawn, this);
-		this->prepareLevelThread = v8;
-	} else {
-		this->player = 0;
-	}
-	this->field_C54 = 0;
-	this->levelSelected = 1;
-}
-void Minecraft::setScreen(Screen* screen) {
-	Mouse::reset();
-	Multitouch::reset();
-	Multitouch::resetThisUpdate();
-	if(this->field_D14) {
-		this->field_D18 = screen;
-		this->field_D15 = 1;
-		return;
-	}
-
-	if(screen) {
-		if(screen->isErrorScreen()) return;
-	} else if(!this->currentScreen) return;
-
-	if(this->currentScreen) this->currentScreen->removed();
-	this->currentScreen.reset(screen);
-	if(this->currentScreen) {
-		this->releaseMouse();
-		this->currentScreen->init(this, this->width * Gui::InvGuiScale, this->height * Gui::InvGuiScale);
-		if(this->currentScreen->isInGameScreen()) {
-			if(this->level) this->level->saveGame();
-		}
-	} else {
-		this->grabMouse();
-	}
-}
-void Minecraft::setSize(int32_t a2, int32_t a3) {
-	this->transformResolution(&a2, &a3);
-
-	this->width = a2;
-	this->height = a3;
-	if(a2 == 0) this->width = 240;
-	if(a3 == 0) this->height = 140;
-
-	float ppm;
-	if(this->platform()) {
-		ppm = this->platform()->getPixelsPerMillimeter();
-	} else {
-		ppm = 10;
-	}
-
-	if(this->width >= 1000) {
-		if(ppm <= 15) Gui::GuiScale = 4;
-		else Gui::GuiScale = 6;
-	} else if(this->width >= 800) {
-		Gui::GuiScale = 3;
-	} else if(this->width >= 400) {
-		Gui::GuiScale = 2;
-	} else {
-		Gui::GuiScale = 1;
-	}
-
-	Gui::InvGuiScale = 1.0f / Gui::GuiScale;
-	if(this->platform()) {
-		float pv = this->options.getProgressValue(&Options::Option::PIXELS_PER_MILLIMETER);
-		this->pixelsPerMillimeter = pv;
-		this->field_C88 = 1.0f / pv;
-		this->field_C8C = pv * Gui::InvGuiScale;
-		this->field_C90 = 1.0f / this->field_C8C;
-	}
-	Config v18 = createConfig(this);
-	this->gui.onConfigChanged(v18);
-	if(this->currentScreen) {
-		this->currentScreen->setSize(this->width * Gui::InvGuiScale, this->height * Gui::InvGuiScale);
-		this->currentScreen->setupPositions();
-	}
-	if(this->inputHolder) {
-		this->inputHolder->onConfigChanged(v18);
-	}
-}
-void Minecraft::setTextboxText(const std::string& a2) {
-	if(this->currentScreen) this->currentScreen->setTextboxText(a2);
-}
-bool_t Minecraft::supportNonTouchScreen(void) {
-	return this->supportsNonTouchScreen;
-}
-void Minecraft::teardown(void) {
-	if(this->serverSideNetworkHandler) {
-		delete this->serverSideNetworkHandler;
-	}
-	if(this->rakNetInstance) {
-		delete this->rakNetInstance;
-	}
-	if(this->levelRenderer) {
-		delete this->levelRenderer;
-	}
-
-	if(this->gameRenderer) {
-		delete this->gameRenderer;
-	}
-
-	if(this->particleEngine) {
-		delete this->particleEngine;
-	}
-
-	if(this->soundEngine) {
-		delete this->soundEngine;
-	}
-
-	if(this->gameMode) {
-		delete this->gameMode;
-	}
-
-	if(this->font) {
-		delete this->font;
-	}
-
-	if(this->texturesPtr) {
-		delete this->texturesPtr;
-	}
-
-	this->mojangConnector = 0;
-	if(this->level) {
-		this->level->saveGame();
-		this->level->savePlayers();
-		if(this->level->getChunkSource()) {
-			this->level->getChunkSource()->saveAll(1);
-		}
-
-		LevelStorage* ls = this->level->getLevelStorage();
-		if(ls) delete ls;
-
-		if(this->level) delete this->level;
-		this->level = 0;
-	}
-	if(this->user) {
-		delete this->user;
-	}
-	if(this->inputHolder) {
-		delete this->inputHolder;
-	}
-	if(this->levelStorageSource) {
-		delete this->levelStorageSource;
-	}
-	if(this->perfRenderer) {
-		delete this->perfRenderer;
-	}
-
-	if(this->commandServer) {
-		delete this->commandServer;
-	}
-
-	if(this->cmutex) {
-		delete this->cmutex;
-	}
-
-	if(this->serverCmdParser) {
-		delete this->serverCmdParser;
-	}
-
-	MobFactory::getStaticTestMob(0, 0); //TODO used as param for destroy??
-	EntityRenderDispatcher::destroy();
-}
-void Minecraft::tick(int32_t a2, int32_t a3) {
-
-	if(this->_leaveGame) {
-		this->_leaveGame = 0;
-		this->leaveGame(0, 0);
-	}
-	if(this->field_D08 > 0) this->field_D08 -= 1;
-
-	if(!this->currentScreen) {
-		if(this->player) {
-			if(this->player->health <= 0) {
-				this->setScreen(new DeathScreen());
-			}
-		}
-	}
-
-	if(this->level) {
-		if(!this->field_16C) {
-			this->gameMode->tick();
-		}
-	}
-	if(this->level) {
-		if(this->commandServer) {
-			this->commandServer->tick();
-		}
-	}
-
-	this->tickInput();
-	this->gui.tick();
-
-	if(!this->field_CF4) {
-		if(!this->levelGenerated) {
-			if(this->prepareLevelThread) {
-				delete this->prepareLevelThread;
-				this->prepareLevelThread = 0;
-			}
-			this->_levelGenerated();
-		}
-
-		if(this->level) {
-			if(!this->field_16C) {
-				this->gameRenderer->tick(a2, a3);
-				this->levelRenderer->tick();
-				this->level->difficulty = this->options.difficulty;
-				if(this->level->isClient) this->level->difficulty = 1;
-				this->level->tickEntities();
-				this->level->tick();
-				if(this->player) {
-					float posX = this->player->posX;
-					int v15 = (int)posX;
-					bool v16 = posX < (float)(int)posX;
-					float posY = this->player->posY;
-					int v18 = (int)posY;
-					if(v16) {
-						--v15;
-					}
-					bool v19 = posY < (float)(int)posY;
-					float posZ = this->player->posZ;
-					int v21 = (int)posZ;
-					if(v19) {
-						--v18;
-					}
-					if(posZ < (float)(int)posZ) {
-						--v21;
-					}
-					this->level->animateTick(v15, v18, v21);
-				}
-			}
-		}
-
-		this->texturesPtr->loadAndBindTexture("terrain-atlas.tga");
-		if(this->field_16C) goto DONT_TICK_GAME;
-
-		if(this->currentScreen) {
-			if(!this->currentScreen->renderGameBehind()) {
-				goto DONT_TICK_GAME;
-			}
-		}
-
-		if(this->options.animateTextures) {
-			if(a2 == a3) this->texturesPtr->tick(1);
-		} else if(!this->animatedTextureTicked) {
-			int32_t maxTextureTicks = 40;
-			this->animatedTextureTicked = 1;
-			do {
-				this->texturesPtr->tick(0);
-				--maxTextureTicks;
-			} while(maxTextureTicks);
-			this->texturesPtr->tick(1);
-		}
-
-DONT_TICK_GAME:
-		this->particleEngine->tick();
-		if(this->currentScreen) {
-			this->field_D14 = 1;
-			this->currentScreen->tick();
-			this->field_D14 = 0;
-		}
-		Multitouch::reset();
 	}
 }
 void Minecraft::tickInput(void) {
@@ -1169,19 +960,106 @@ RESET_STUFF:
 	Mouse::reset();
 	Keyboard::reset();
 }
-bool_t Minecraft::transformResolution(int32_t* x, int32_t* y) {
-	if(this->isKindleFire(1)) {
-		if(*y >= 560 && *y <= 620) {
-			*y = 580;
-			return 1;
+void Minecraft::tick(int32_t a2, int32_t a3) {
+	if(this->_leaveGame) {
+		this->_leaveGame = 0;
+		this->leaveGame(0, 0);
+	}
+	if(this->field_D08 > 0) this->field_D08 -= 1;
+
+	if(!this->currentScreen) {
+		if(this->player) {
+			if(this->player->health <= 0) {
+				this->setScreen(new DeathScreen());
+			}
 		}
 	}
-	return 0;
-}
-void Minecraft::unlockControl(void) {
-	this->cmutex->unlock();
-}
 
+	if(this->level) {
+		if(!this->field_16C) {
+			this->gameMode->tick();
+		}
+	}
+	if(this->level) {
+		if(this->commandServer) {
+			this->commandServer->tick();
+		}
+	}
+
+	this->tickInput();
+	this->gui.tick();
+
+	if(!this->field_CF4) {
+		if(!this->levelGenerated) {
+			if(this->prepareLevelThread) {
+				delete this->prepareLevelThread;
+				this->prepareLevelThread = 0;
+			}
+			this->_levelGenerated();
+		}
+
+		if(this->level) {
+			if(!this->field_16C) {
+				this->gameRenderer->tick(a2, a3);
+				this->levelRenderer->tick();
+				this->level->difficulty = this->options.difficulty;
+				if(this->level->isClient) this->level->difficulty = 1;
+				this->level->tickEntities();
+				this->level->tick();
+				if(this->player) {
+					float posX = this->player->posX;
+					int v15 = (int)posX;
+					bool v16 = posX < (float)(int)posX;
+					float posY = this->player->posY;
+					int v18 = (int)posY;
+					if(v16) {
+						--v15;
+					}
+					bool v19 = posY < (float)(int)posY;
+					float posZ = this->player->posZ;
+					int v21 = (int)posZ;
+					if(v19) {
+						--v18;
+					}
+					if(posZ < (float)(int)posZ) {
+						--v21;
+					}
+					this->level->animateTick(v15, v18, v21);
+				}
+			}
+		}
+
+		this->texturesPtr->loadAndBindTexture("terrain-atlas.tga");
+		if(this->field_16C) goto DONT_TICK_GAME;
+
+		if(this->currentScreen) {
+			if(!this->currentScreen->renderGameBehind()) {
+				goto DONT_TICK_GAME;
+			}
+		}
+
+		if(this->options.animateTextures) {
+			if(a2 == a3) this->texturesPtr->tick(1);
+		} else if(!this->animatedTextureTicked) {
+			int32_t maxTextureTicks = 40;
+			this->animatedTextureTicked = 1;
+			do {
+				this->texturesPtr->tick(0);
+				--maxTextureTicks;
+			} while(maxTextureTicks);
+			this->texturesPtr->tick(1);
+		}
+
+DONT_TICK_GAME:
+		this->particleEngine->tick();
+		if(this->currentScreen) {
+			this->field_D14 = 1;
+			this->currentScreen->tick();
+			this->field_D14 = 0;
+		}
+		Multitouch::reset();
+	}
+}
 void Minecraft::update(void) {
 	this->cmutex->lock();
 	if(this->field_16C && this->level) {
@@ -1228,18 +1106,133 @@ void Minecraft::update(void) {
 	this->field_D34 = result - this->timeStartedAtMaybe;
 	this->timeStartedAtMaybe = result;
 }
-
-void Minecraft::updateStatusUserAttributes(void) {
-	this->platform()->updateStatsUserData((char_t*)glGetString(0x1f00), (char_t*)glGetString(0x1f01));
+static int sub_D65CF2E4(std::string s) {
+	int v11 = 0;
+	FILE* f = fopen(s.c_str(), "r");
+	if(!f || (fscanf(f, "%d", &v11), fclose(f), !v11)) {
+		FILE* v5 = fopen(s.c_str(), "w");
+		if(v5) {
+			int rawTimeS = getRawTimeS();
+			Random v10(1000 * rawTimeS);
+			unsigned char v7 = -24 * rawTimeS;
+			int v9 = v7 + (v10.genrand_int32() >> 1 << 8);
+			fprintf(v5, "%d", v9);
+			fclose(v5);
+		}
+	}
+	return v11;
+}
+void Minecraft::init(void) {
+	this->field_C5C = sub_D65CF2E4(this->field_D00 + "/clientId.txt");
+	this->supportsNonTouchScreen = !this->platform()->supportsTouchscreen();
+	this->options.init(this, this->field_D00);
+	this->options.update();
+	this->externalServerFile = std::shared_ptr<ExternalServerFile>(new ExternalServerFile(this->field_D00));
+	this->externalServerFile->load();
+	this->checkGlError("Init enter");
+	this->platform()->supportsTouchscreen(); //calls it again for some reason
+	this->user = new User(this->options.username, "");
+	this->setIsCreativeMode(0);
+	this->_reloadInput();
+	this->setSize(this->width, this->height);
+	this->mojangConnector = std::shared_ptr<MojangConnector>(new MojangConnector(this));
+	std::shared_ptr<LoginInformation> v20 = this->mojangConnector->getLoginInformation();
+	if(v20->accessToken != "") {
+		std::string v18 = MCOStringify::stringifyRefresh(v20->accessToken, v20->clientId, v20->profileId, Common::getGameVersionStringNet());
+		std::shared_ptr<RestRequestJob> v21 = RestRequestJob::CreateJob(RRT_POST, this->mojangConnector->getAccountService(), this);
+		v21->setMethod("/refresh");
+		v21->setBody(v18);
+		//something weird happens with v21 here
+		RestRequestJob::launchRequest(
+			v21,
+			this->mojangConnector->getThreadCollection(),
+			[this](int32_t a2, const std::string& a3, const RestCallTagData& a4, std::shared_ptr<RestRequestJob> v11) {
+				LoginInformation v14 = this->mojangConnector->getMCOParser()->parseMCOAccountValidSessionReturnValue(a3);
+				this->mojangConnector->setLoginInformation(v14);
+				this->platform()->statsTrackData("login", "{\"new_registration\": false, \"automatic_login\": true}");
+			},
+			[this](bool a2, bool a3, int32_t a4, const std::string& a5, const RestCallTagData&, std::shared_ptr<RestRequestJob> v9){
+			}
+			);
+	}
 }
 
-bool_t Minecraft::useTouchscreen(void) {
-#ifdef ANDROID
-	return this->options.useTouchscreen || !this->supportsNonTouchScreen;
-#else
-	//TODO touchscreen support
-	return this->options.useTouchscreen || !this->supportsNonTouchScreen;
-#endif
+
+void Minecraft::teardown(void) {
+	if(this->serverSideNetworkHandler) {
+		delete this->serverSideNetworkHandler;
+	}
+	if(this->rakNetInstance) {
+		delete this->rakNetInstance;
+	}
+	if(this->levelRenderer) {
+		delete this->levelRenderer;
+	}
+
+	if(this->gameRenderer) {
+		delete this->gameRenderer;
+	}
+
+	if(this->particleEngine) {
+		delete this->particleEngine;
+	}
+
+	if(this->soundEngine) {
+		delete this->soundEngine;
+	}
+
+	if(this->gameMode) {
+		delete this->gameMode;
+	}
+
+	if(this->font) {
+		delete this->font;
+	}
+
+	if(this->texturesPtr) {
+		delete this->texturesPtr;
+	}
+
+	this->mojangConnector = 0;
+	if(this->level) {
+		this->level->saveGame();
+		this->level->savePlayers();
+		if(this->level->getChunkSource()) {
+			this->level->getChunkSource()->saveAll(1);
+		}
+
+		LevelStorage* ls = this->level->getLevelStorage();
+		if(ls) delete ls;
+
+		if(this->level) delete this->level;
+		this->level = 0;
+	}
+	if(this->user) {
+		delete this->user;
+	}
+	if(this->inputHolder) {
+		delete this->inputHolder;
+	}
+	if(this->levelStorageSource) {
+		delete this->levelStorageSource;
+	}
+	if(this->perfRenderer) {
+		delete this->perfRenderer;
+	}
+
+	if(this->commandServer) {
+		delete this->commandServer;
+	}
+
+	if(this->cmutex) {
+		delete this->cmutex;
+	}
+
+	if(this->serverCmdParser) {
+		delete this->serverCmdParser;
+	}
+
+	MobFactory::getStaticTestMob(0, 0); //TODO used as param for destroy??
+	EntityRenderDispatcher::destroy();
 }
-Minecraft::~Minecraft() {
-}
+

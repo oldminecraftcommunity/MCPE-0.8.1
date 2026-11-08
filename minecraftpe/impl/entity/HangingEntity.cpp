@@ -108,23 +108,20 @@ void HangingEntity::setPosition(int32_t x, int32_t y, int32_t z) {
 	this->tileZ = z;
 }
 
-void HangingEntity::move(float a2, float a3, float a4) {
-	if(!this->level->isClient && !this->isDead && (float)((float)((float)(a3 * a3) + (float)(a2 * a2)) + (float)(a4 * a4)) > 0.0) {
+void HangingEntity::move(float x, float y, float z) {
+	if(!this->level->isClient && !this->isDead && ((x * x) + (y * y) + (z * z)) > 0) {
 		this->dropItem();
 		this->remove();
 	}
 }
 void HangingEntity::tick() {
-	int32_t surviveTicker; // r3
-
-	surviveTicker = this->surviveTicker;
-	this->surviveTicker = surviveTicker + 1;
-	if(surviveTicker == 100 && !this->level->isClient) {
-		this->surviveTicker = this->level->isClient;
-		if(!this->isDead && !this->survives()) {
-			this->remove();
-			this->dropItem();
-		}
+	this->surviveTicker += 1;
+	if(this->surviveTicker == 100 && !this->level->isClient) {
+		this->surviveTicker = 0;
+		if(this->isDead) return;
+		if(this->survives()) return;
+		this->remove();
+		this->dropItem();
 	}
 }
 float HangingEntity::getBrightness(float a2) {
@@ -257,27 +254,27 @@ bool_t HangingEntity::survives() {
 		if(this->direction == 2) {
 			float posX = this->posX;
 			int32_t v10 = this->getWidth();
-			tileX = Mth::floor(posX - (float)((float)v10 * 0.03125));
+			tileX = Mth::floor(posX - (float)((float)v10 * 0.03125f));
 		}
 		if(this->direction == 1) {
 			float posZ = this->posZ;
 			int32_t v12 = this->getWidth();
-			tileZ = Mth::floor(posZ - (float)((float)v12 * 0.03125));
+			tileZ = Mth::floor(posZ - (float)((float)v12 * 0.03125f));
 		}
 		if(this->direction == 0) {
 			float posX_2 = this->posX;
 			int32_t v14 = this->getWidth();
-			tileX = Mth::floor(posX_2 - (float)((float)v14 * 0.03125));
+			tileX = Mth::floor(posX_2 - (float)((float)v14 * 0.03125f));
 		}
 		if(this->direction == 3) {
 			float v15 = this->posZ;
 			int32_t v16 = this->getWidth();
-			tileZ = Mth::floor(v15 - (float)((float)v16 * 0.03125));
+			tileZ = Mth::floor(v15 - (float)((float)v16 * 0.03125f));
 		}
 		float posY = this->posY;
 		int32_t off = 0;
 		int32_t v19 = this->getHeight();
-		int32_t minY = Mth::floor(posY - (float)((float)v19 * 0.03125));
+		int32_t minY = Mth::floor(posY - (float)((float)v19 * 0.03125f));
 		int32_t y = minY;
 		while(1) {
 			int32_t direction = this->direction;

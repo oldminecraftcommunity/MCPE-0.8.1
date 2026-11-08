@@ -31,7 +31,7 @@ struct SoundRepository{
 		if (p == this->sounds.end()) {
 			return 0;
 		}
-		a3 = SoundDesc(p->second[Mth::random(p->second.size())]); //inlined
+		a3 = p->second[Mth::random(p->second.size())]; //inlined
 		return 1;
 	}
 };

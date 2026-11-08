@@ -73,36 +73,25 @@ void Dimension::init() {
 }
 
 Color4 Dimension::getFogColor(float a3, float a4) {
-	float v4; // r3
-	float v5; // s15
-	float v6; // s14
+	float v = Mth::cos((a3 * Mth::PI) * 2);
+	float v5 = 0.5f + v*2;
+	if(v5 > 1.0f) v5 = 1.0f;
+	if(v5 <= 0.0f) v5 = 0.0f;
 
-	v4 = Mth::cos((float)((float)(a3 * 3.1416) + (float)(a3 * 3.1416)));
-	v5 = (float)(v4 + v4) + 0.5;
-	if(v5 > 1.0) {
-		v5 = 1.0;
-	} else if(v5 <= 0.0) {
-		v5 = 0.0;
-	}
-	v6 = (float)(v5 * 0.94) + 0.06;
-	return Color4(v6 * 0.50196, v6 * 0.8549, v6, 1);
+	float v6 = (v5 * 0.94f) + 0.06f;
+	return Color4(v6 * 0.50196f, v6 * 0.8549f, v6, 1);
 }
 
 
 Color4 Dimension::getSunriseColor(float a3, float a4) {
-	float v4; // s15
-	float v5; // s15
-	float v6; // s13
-	float v7; // s10
-	float v8; // s15
-
-	v4 = Mth::cos((float)((float)(a3 * 3.1416) + (float)(a3 * 3.1416)));
-	if(v4 >= -0.4 && v4 <= 0.4) {
-		v5 = (float)((float)((float)(v4 + 0.0) / 0.4) * 0.5) + 0.5;
-		v6 = 1.0 - (float)((float)(1.0 - Mth::sin((float)(v5 * 3.1416))) * 0.99);
-		v7 = (float)(v5 * 0.3) + 0.7;
-		v8 = v5 * v5;
-		return Color4(v7, (float)(v8 * 0.7) + 0.2, (float)(v8 * 0.0) + 0.2, v6 * v6);
+	float v4 = Mth::cos((a3 * Mth::PI)*2);
+	if(v4 >= -0.4f && v4 <= 0.4f) {
+		//TODO inlined stuff
+		float v5 = (float)((float)((float)(v4 + 0.0f) / 0.4f) * 0.5f) + 0.5f;
+		float v6 = 1.0f - (float)((float)(1.0f - Mth::sin((float)(v5 * Mth::PI))) * 0.99f);
+		float v7 = (float)(v5 * 0.3f) + 0.7f;
+		float v8 = v5 * v5;
+		return Color4(v7, (float)(v8 * 0.7f) + 0.2f, (float)(v8 * 0.0f) + 0.2f, v6 * v6);
 	}
 	return Color4(0, 0, 0, 0);
 }

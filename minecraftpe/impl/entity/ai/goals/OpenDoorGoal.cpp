@@ -9,7 +9,7 @@ void OpenDoorGoal::tick() {
 
 void OpenDoorGoal::start(){
 	this->ticksLeft = 20;
-	DoorTile::setOpen(this->holder->level, this->doorX, this->doorY, this->doorZ, 1);
+	this->doorTile->setOpen(this->holder->level, this->doorX, this->doorY, this->doorZ, 1);
 }
 
 bool_t OpenDoorGoal::canContinueToUse() {
@@ -17,7 +17,7 @@ bool_t OpenDoorGoal::canContinueToUse() {
 }
 void OpenDoorGoal::stop() {
 	if(this->field_28) {
-		DoorTile::setOpen(this->holder->level, this->doorX, this->doorY, this->doorZ, 0);
+		this->doorTile->setOpen(this->holder->level, this->doorX, this->doorY, this->doorZ, 0);
 	}
 }
 

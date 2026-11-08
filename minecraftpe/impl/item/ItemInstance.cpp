@@ -305,12 +305,7 @@ ItemInstance* ItemInstance::use(Level* a2, Player* a3) {
 void ItemInstance::useAsFuel() {
 	if(this->count == 1 && this->itemClass == Item::bucket && this->getAuxValue() == Tile::lava->blockID) {
 		ItemInstance v7(this->itemClass, 1, 0);
-		//TODO there is some weird loop here
-		this->count = v7.count;
-		this->metadata = v7.metadata;
-		this->itemClass = v7.itemClass;
-		this->tileClass = v7.tileClass;
-		this->isValid = v7.isValid;
+		*this = v7;
 	} else {
 		this->count = this->count - 1;
 		if(!this->count) this->setNull();

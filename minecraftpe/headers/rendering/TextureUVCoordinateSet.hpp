@@ -22,9 +22,13 @@ struct TextureUVCoordinateSet{
 		this->maxY = 0;
 	}
 	static TextureUVCoordinateSet fromOldSystem(int32_t sprite) {
-		int32_t spx, spy;
-		spx = sprite % 16;
-		spy = sprite / 16;
-		return TextureUVCoordinateSet((16 * spx) * 0.0039062, (16 * spy) * 0.0039062, (16 * (spx + 1)) * 0.0039062, (16 * (spy + 1)) * 0.0039062, 256.0, 256.0);
+		int spx = sprite % 16;
+		int spy = sprite / 16;
+		float minX = (spx*16) / 256.0f;
+		float maxX = ((spx+1)*16) / 256.0f;
+
+		float minY = (spy*16) / 256.0f;
+		float maxY = ((spy + 1)*16) / 256.0f;
+		return TextureUVCoordinateSet(minX, minY, maxX, maxY, 256.0f, 256.0f);
 	}
 };

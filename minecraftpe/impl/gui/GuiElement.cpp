@@ -17,11 +17,6 @@ GuiElement::GuiElement(bool_t a2, bool_t a3, int32_t a4, int32_t a5, int32_t a6,
 	this->field_1C = 0;
 }
 
-void GuiElement::clearBackground(){
-	safeRemove(this->field_1C);
-	this->color = 0;
-}
-
 bool_t GuiElement::pointInside(int32_t x, int32_t y){
 	if(x < this->posX) return 0;
 	if(x > this->posX + this->width) return 0;
@@ -39,28 +34,31 @@ void GuiElement::render(struct Minecraft*, int32_t, int32_t){
 	}
 }
 
-void GuiElement::setActiveAndVisibility(bool_t b){
-	this->active = b;
-	this->visible = b;
+void GuiElement::setVisible(bool_t a2){
+	this->visible = a2;
 }
 void GuiElement::setActiveAndVisibility(bool_t act, bool_t vis){
 	this->active = act;
 	this->visible = vis;
 }
+void GuiElement::setActiveAndVisibility(bool_t b){
+	this->active = b;
+	this->visible = b;
+}
+void GuiElement::setBackground(uint32_t color){
+	safeRemove(this->field_1C);
+	this->color = color;
+}
+void GuiElement::clearBackground(){
+	safeRemove(this->field_1C);
+	this->color = 0;
+}
+
 void GuiElement::setBackground(Minecraft* mc, const std::string& path, const IntRectangle& rect, int32_t a5, int32_t a6){
 	safeRemove(this->field_1C);
 	this->color = 0;
 	NinePatchFactory factory(mc->texturesPtr, path);
 	this->field_1C = factory.createSymmetrical(rect, a5, a6, this->width, this->height);
-}
-
-void GuiElement::setBackground(uint32_t color){
-	safeRemove(this->field_1C);
-	this->color = color;
-}
-
-void GuiElement::setVisible(bool_t a2){
-	this->visible = a2;
 }
 
 GuiElement::~GuiElement(){

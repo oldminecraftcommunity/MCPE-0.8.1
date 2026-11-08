@@ -77,28 +77,19 @@ float PerlinNoise::getValue(float x, float y, float z){
 	return v5;
 }
 float* PerlinNoise::getRegion(float* array, float a3, float a4, float a5, int32_t a6, int32_t a7, int32_t a8, float a9, float a10, float a11){
-	int32_t totalSize;
-	float* arrayPtr;
-	int32_t i, octaveIndex;
-	float v19;
-	ImprovedNoise* octave;
 
-	totalSize = a8*a7*a6;
+	int totalSize = a6*a7*a8;
 	if(!array) array = new float[totalSize];
-	arrayPtr = array;
 
-	for(i = 0; i < totalSize; ++i){
-		arrayPtr[i] = 0;
+	for(int i = 0; i < totalSize; ++i){
+		array[i] = 0;
 	}
 
-	octaveIndex = 0;
-	v19 = 1;
-	while(octaveIndex < this->octavesAmount){
-		octave = this->octaves[octaveIndex];
-		++octaveIndex;
-
+	float v19 = 1;
+	for(int octaveIndex = 0; octaveIndex < this->octavesAmount; ++octaveIndex){
+		ImprovedNoise* octave = this->octaves[octaveIndex];
 		octave->add(array, a3, a4, a5, a6, a7, a8, a9*v19, a10*v19, a11*v19, v19);
-		v19 = v19 * 0.5;
+		v19 *= 0.5f;
 	}
 
 	return array;

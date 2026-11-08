@@ -9,9 +9,9 @@ struct Button : GuiElement{
 	bool_t pressed;
 	bool_t overridingScreenRendering;
 
-	Button(int32_t, int32_t, int32_t, int32_t, int32_t, const std::string&);
-	Button(int32_t, int32_t, int32_t, const std::string&);
 	Button(int32_t, const std::string&);
+	Button(int32_t, int32_t, int32_t, const std::string&);
+	Button(int32_t, int32_t, int32_t, int32_t, int32_t, const std::string&);
 
 	bool_t hovered(struct Minecraft*, int32_t, int32_t);
 	bool_t isInside(int32_t, int32_t);

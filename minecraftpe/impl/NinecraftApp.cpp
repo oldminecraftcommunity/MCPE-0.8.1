@@ -47,10 +47,9 @@ std::shared_ptr<TextureAtlas> NinecraftApp::getTextureAtlas(TextureAtlasId atlas
 	return std::shared_ptr<TextureAtlas>(NinecraftApp::_terrainTextureAtlas);
 }
 void NinecraftApp::handleBackNoReturn(void){
-	if(this->field_CF4){
-		if(this->currentScreen){
-			this->currentScreen->handleBackEvent(this->field_CF4);
-		}
+	if(this->field_CF4) return;
+	if(this->currentScreen){
+		this->currentScreen->handleBackEvent(this->field_CF4);
 	}
 }
 void NinecraftApp::initGLStates(){

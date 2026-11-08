@@ -8,7 +8,6 @@
 struct ChatPacket : Packet{
 	std::string message;
 	bool_t field_10;
-	int8_t field_11, field_12, field_13;
 	ChatPacket() {
 	}
 	ChatPacket(std::string a2, bool_t a3) {

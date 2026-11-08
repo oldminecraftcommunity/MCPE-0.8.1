@@ -56,16 +56,15 @@ bool_t DoorTile::isOpen(LevelSource* level, int32_t x, int32_t y, int32_t z) {
 	return ((uint32_t)DoorTile::getCompositeData(level, x, y, z) >> 2) & 1;
 }
 void DoorTile::setOpen(Level* level, int32_t x, int32_t y, int32_t z, bool_t open) {
-	uint32_t CompositeData; // r0
-
-	CompositeData = DoorTile::getCompositeData((LevelSource*)level, x, y, z);
-	if(((CompositeData >> 2) & 1) != open) {
-		if((CompositeData & 8) != 0) {
-			level->setData(x, y - 1, z, CompositeData & 7 ^ 4, 2);
-			level->setTilesDirty(x, y - 1, z, x, y, z);
-		} else {
-			level->setData(x, y, z, CompositeData & 7 ^ 4, 2);
+	uint32_t data = DoorTile::getCompositeData((LevelSource*)level, x, y, z);
+	if(((data >> 2) & 1) != open) {
+		int ndata = (data & 7) ^ 4;
+		if((data & 8) == 0){
+			level->setData(x, y, z, ndata, 2);
 			level->setTilesDirty(x, y, z, x, y, z);
+		}else{
+			level->setData(x, y - 1, z, ndata, 2);
+			level->setTilesDirty(x, y - 1, z, x, y, z);
 		}
 		level->levelEvent(0, 1003, x, y, z, 0);
 	}
@@ -330,16 +329,15 @@ int32_t DoorTile::getRenderLayer() {
 	return 1;
 }
 bool_t DoorTile::use(Level* level, int32_t x, int32_t y, int32_t z, Player* player) {
-	int8_t cdata; // r0
-
 	if(this->material != Material::metal) {
-		cdata = DoorTile::getCompositeData(level, x, y, z);
-		if((cdata & 8) != 0) {
-			level->setData(x, y - 1, z, cdata & 7 ^ 4, 2);
-			level->setTilesDirty(x, y - 1, z, x, y, z);
-		} else {
-			level->setData(x, y, z, cdata & 7 ^ 4, 2);
+		int cdata = DoorTile::getCompositeData(level, x, y, z);
+		int ndata = cdata & 7 ^ 4;
+		if((cdata & 8) == 0) {
+			level->setData(x, y, z, ndata, 2);
 			level->setTilesDirty(x, y, z, x, y, z);
+		} else {
+			level->setData(x, y - 1, z, ndata, 2);
+			level->setTilesDirty(x, y - 1, z, x, y, z);
 		}
 		level->levelEvent(player, 1003, x, y, z, 0);
 	}

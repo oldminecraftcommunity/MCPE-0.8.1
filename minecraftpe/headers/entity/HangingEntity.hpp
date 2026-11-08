@@ -14,7 +14,7 @@ struct HangingEntity: Entity
 	void setPosition(int32_t, int32_t, int32_t);
 
 	virtual ~HangingEntity(){}
-	virtual void move(float, float, float);
+	virtual void move(float x, float y, float z);
 	virtual void tick();
 	float getBrightness(float);
 	virtual bool_t interactWithPlayer(Player*);

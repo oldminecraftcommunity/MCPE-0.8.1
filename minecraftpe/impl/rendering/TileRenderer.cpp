@@ -32,7 +32,7 @@ bool_t TileRenderer::canRender(int32_t a1) {
 }
 
 TileRenderer::TileRenderer(struct LevelSource* a2) :
-	field_0(0), levelSource(a2), hasUVCoords(0),
+	normals(0), levelSource(a2), hasUVCoords(0),
 	field_8(),
 	field_21(0), disableCulling(0), enableAO(0), randomizeFace{0}
 {
@@ -181,7 +181,7 @@ void TileRenderer::renderEast(Tile* a2, float a3, float a4, float a5, const stru
 	v42 = a5 + a2->minZ;
 	v43 = a4 + a2->maxY;
 	v44 = a5 + a2->maxZ;
-	if(this->field_0) {
+	if(this->normals) {
 		Tesselator::instance.normal(Vec3::UNIT_X);
 	}
 	if (this->enableAO){
@@ -301,7 +301,7 @@ void TileRenderer::renderFaceDown(Tile* a2, float a3, float a4, float a5, const 
 	v39 = a4 + a2->minY;
 	v40 = a5 + a2->minZ;
 	v41 = a5 + a2->maxZ;
-	if(this->field_0) {
+	if(this->normals) {
 		Tesselator::instance.normal(Vec3::NEG_UNIT_Y);
 	}
 	if(this->enableAO) {
@@ -422,7 +422,7 @@ void TileRenderer::renderFaceUp(Tile* a2, float a3, float a4, float a5, const st
 	v39 = a3 + a2->maxX;
 	v40 = a5 + a2->minZ;
 	v41 = a5 + a2->maxZ;
-	if(this->field_0) {
+	if(this->normals) {
 		Tesselator::instance.normal(Vec3::UNIT_Y);
 	}
 
@@ -490,8 +490,8 @@ void TileRenderer::renderGuiTile(Tile* tile, int32_t a3, float a4, float a5) {
 	float v56;						   // [sp+8h] [bp-60h]
 
 	v5 = 0;
-	v6 = this->field_0;
-	this->field_0 = 0;
+	v6 = this->normals;
+	this->normals = 0;
 	v11 = tile->getRenderShape();
 	v12 = v11;
 	if(!v11 || v11 == 31 || tile == (Tile*)Tile::chest) {
@@ -695,7 +695,7 @@ LABEL_48:
 			EntityTileRenderer::instance->render(tile, a3, 1.0f);
 			break;
 	}
-	this->field_0 = v6;
+	this->normals = v6;
 }
 void TileRenderer::renderNorth(Tile* a2, float a3, float a4, float a5, const struct TextureUVCoordinateSet& _a6) {
 	float minX;	 // s16
@@ -809,7 +809,7 @@ void TileRenderer::renderNorth(Tile* a2, float a3, float a4, float a5, const str
 	v42 = a4 + a2->minY;
 	v43 = a4 + a2->maxY;
 	v44 = a5 + a2->minZ;
-	if(this->field_0) {
+	if(this->normals) {
 		Tesselator::instance.normal(Vec3::NEG_UNIT_Z);
 	}
 	if(this->enableAO) {
@@ -943,7 +943,7 @@ void TileRenderer::renderSouth(Tile* a2, float a3, float a4, float a5, const Tex
 	v42 = a4 + a2->minY;
 	v43 = a4 + a2->maxY;
 	v44 = a5 + a2->maxZ;
-	if(this->field_0) {
+	if(this->normals) {
 		Tesselator::instance.normal(Vec3::UNIT_Z);
 	}
 	if(this->enableAO) {
@@ -1009,7 +1009,7 @@ void TileRenderer::renderTile(Tile* tile, int32_t a3, bool_t a4) {
 	TextureUVCoordinateSet v50;		   // [sp+4h] [bp-54h]
 	TextureUVCoordinateSet v51;		   // [sp+4h] [bp-54h]
 
-	this->field_0 = a4;
+	this->normals = a4;
 	v7 = tile->getRenderShape();
 	switch(v7) {
 		case 0:
@@ -1212,7 +1212,7 @@ LABEL_42:
 			tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 			break;
 	}
-	this->field_0 = 0;
+	this->normals = 0;
 }
 void TileRenderer::renderWest(Tile* a2, float a3, float a4, float a5, const struct TextureUVCoordinateSet& _a6) {
 	float minX;	 // s16
@@ -1327,7 +1327,7 @@ void TileRenderer::renderWest(Tile* a2, float a3, float a4, float a5, const stru
 	v42 = a4 + a2->maxY;
 	v43 = a5 + a2->minZ;
 	v44 = a5 + a2->maxZ;
-	if(this->field_0) {
+	if(this->normals) {
 		Tesselator::instance.normal(Vec3::NEG_UNIT_X);
 	}
 	if(this->enableAO) {

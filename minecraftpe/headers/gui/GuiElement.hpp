@@ -10,12 +10,13 @@ struct GuiElement : GuiComponent{
 
 	GuiElement(bool_t, bool_t, int32_t, int32_t, int32_t, int32_t);
 
-	void clearBackground();
-	void setActiveAndVisibility(bool_t b);
-	void setActiveAndVisibility(bool_t act, bool_t vis);
 	void setBackground(struct Minecraft*, const std::string&, const struct IntRectangle&, int32_t, int32_t);
-	void setBackground(uint32_t);
+
 	void setVisible(bool_t);
+	void setActiveAndVisibility(bool_t act, bool_t vis);
+	void setActiveAndVisibility(bool_t b);
+	void setBackground(uint32_t);
+	void clearBackground();
 
 	virtual ~GuiElement();
 	virtual void tick(struct Minecraft*) {

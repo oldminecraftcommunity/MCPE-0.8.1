@@ -11,7 +11,7 @@ QuadrupedModel::QuadrupedModel(int32_t a2, float a3, int32_t a4, int32_t a5)
 	, field_318(0, 16, a4, a5) {
 	this->field_0 = 0;
 	this->field_14 = 1;
-	this->field_4 = 0;
+	this->riding = 0;
 	this->field_5 = 0;
 	AppPlatform::_singleton->addListener(this, 1.0); //inlined
 	this->field_398 = 8;

@@ -7,7 +7,7 @@ struct IDataInput;
 struct IDataOutput;
 
 struct Tag{
-	int32_t field_0;
+	int32_t err;
 	std::string tagName;
 
 	static std::string NullString;

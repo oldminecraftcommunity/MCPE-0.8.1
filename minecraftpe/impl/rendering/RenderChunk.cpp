@@ -195,29 +195,17 @@ void RenderChunk::setDirty(void) {
 	this->dirty = 1;
 }
 void RenderChunk::setPos(int32_t x, int32_t y, int32_t z) {
-	int32_t xSize; // r1
-	int32_t ySize; // r2
-	int32_t zSize; // r3
-
 	if(x != this->xPos || y != this->yPos || z != this->zPos) {
 		this->reset();
-		xSize = this->xSize;
 		this->xPos = x;
-		ySize = this->ySize;
 		this->yPos = y;
 		this->zPos = z;
-		this->blockX = x + xSize / 2;
-		this->blockY = y + ySize / 2;
-		zSize = this->zSize;
-		this->blockZ = z + zSize / 2;
-		this->frustumBB = {
-			(float)x - 1.0f,
-			(float)y,
-			(float)z - 1.0f,
-			(float)(x + xSize) + 1.0f,
-			(float)(y + ySize) + 2.0f,
-			(float)(z + zSize) + 1.0f
-		};
+
+		this->blockX = x + this->xSize / 2;
+		this->blockY = y + this->ySize / 2;
+		this->blockZ = z + this->zSize / 2;
+
+		this->frustumBB = AABB(x - 1.0f, y, z - 1.0f, x + this->xSize + 1.0f, y + this->ySize + 2.0f, z + this->zSize + 1.0f);
 		this->setDirty();
 	}
 }

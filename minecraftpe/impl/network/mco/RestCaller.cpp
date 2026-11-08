@@ -28,7 +28,7 @@ RestCaller* RestCaller::create(MCOConnector* a1, const std::string& a2) {
 #ifdef ANDROID
 	return new AndroidRestCaller(a1, a2);
 #endif
-	printf("RestCaller::create - not implemented\n");
+	printf("RestCaller::create (non-android platforms) - not implemented\n");
 	return 0;
 }
 void RestCaller::del(RestCallerInterup a2, const char_t* a3, void (MCOConnector::*a4)(int32_t, std::string, const RestCallTagData&), void (MCOConnector::*a5)(bool_t, bool_t, int32_t, std::string, const RestCallTagData&), const RestCallTagData& a6, int32_t a7) {

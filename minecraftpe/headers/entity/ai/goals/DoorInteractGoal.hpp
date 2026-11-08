@@ -2,20 +2,20 @@
 #include <entity/ai/Goal.hpp>
 
 struct Mob;
-struct Tile;
+struct DoorTile;
 
 struct DoorInteractGoal: Goal
 {
 	Mob* holder;
 	int32_t doorX, doorY, doorZ;
-	Tile* doorTile;
+	DoorTile* doorTile;
 	bool_t closeToTarget;
 	char align[3];
 	float targetX, targetZ;
 
 	DoorInteractGoal(Mob*);
 
-	Tile* getDoorTile(int32_t, int32_t, int32_t);
+	DoorTile* getDoorTile(int32_t, int32_t, int32_t);
 
 	virtual ~DoorInteractGoal() {
 	}

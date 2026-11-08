@@ -2,9 +2,7 @@
 #include <util/Util.hpp>
 
 std::string Common::getGameVersionString(){
-	std::string s = Common::getGameVersionStringNet();
-	s.insert(0, "v");
-	return s+" alpha";
+	return "v"+Common::getGameVersionStringNet()+" alpha";
 }
 
 std::string Common::getGameVersionStringNet(){

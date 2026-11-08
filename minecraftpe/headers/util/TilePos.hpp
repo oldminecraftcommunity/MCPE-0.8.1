@@ -25,8 +25,10 @@ struct TilePos{
 
 	}
 	TilePos(){}
-	bool_t operator<(const TilePos& a2) const {
-		return 981131 * this->y + 8976890 * this->x + this->z < (uint32_t) ((981131 * a2.y + 8976890 * a2.x + a2.z));
+	bool_t operator<(const TilePos& that) const {
+		uint32_t hash1 = this->x * 8976890 + this->y * 981131 + this->z;
+		uint32_t hash2 = that.x * 8976890 + that.y * 981131 + that.z;
+		return hash1 < hash2;
 	}
 	//inlined in std::_Hashtable<TilePos,std::pair<TilePos const,TileEntity *>,std::allocator<std::pair<TilePos const,TileEntity *>>,std::_Select1st<std::pair<TilePos const,TileEntity *>>,std::equal_to<TilePos>,std::hash<TilePos>,std::__detail::_Mod_range_hashing,std::__detail::_Default_ranged_hash,std::__detail::_Prime_rehash_policy,true,false,true>::_M_find_before_node(uint,TilePos const&,uint)
 	bool_t operator==(const TilePos& a2) const {
@@ -47,7 +49,7 @@ namespace std {
 	{
 		//i hate c++ so much
 		size_t operator()(const TilePos& a2) const noexcept {
-			return 0xEF88B * a2.y + 0x88F9FA * a2.x + a2.z;
+			return a2.x*8976890 + a2.y*981131 + a2.z;
 		}
 	};
 }

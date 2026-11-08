@@ -3,11 +3,11 @@
 
 struct PigZombie: Zombie
 {
-	int32_t field_C90, field_C94, field_C98;
+	int32_t anger, angrySoundCounter, noAttackTime;
 	ItemInstance itemInHand;
 
 	PigZombie(Level*);
-	int32_t alert(Entity*);
+	void alert(Entity*);
 
 	virtual ~PigZombie(){}
 	virtual void tick();

@@ -4,7 +4,7 @@
 
 struct OptionsGroup: GuiElementContainer
 {
-	std::string field_38;
+	std::string name;
 
 	OptionsGroup(std::string);
 	void addLoginItem(Minecraft*);

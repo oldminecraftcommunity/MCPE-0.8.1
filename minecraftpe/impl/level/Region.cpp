@@ -38,44 +38,47 @@ int32_t Region::getRawBrightness(int32_t x, int32_t y, int32_t z) {
 	return this->getRawBrightness(x, y, z, 1);
 }
 int32_t Region::getRawBrightness(int32_t x, int32_t y, int32_t z, bool_t complex) {
-	int32_t v9;			   // r0
-	int32_t rb; // r11
-	int32_t v11;		   // r10
-	int32_t v12;		   // r9
-	int32_t result;		   // r0
 	LevelChunk* v14;	   // r0
-	int32_t v15;		   // [sp+Ch] [bp-2Ch]
 
 	if(x < -32000000 || z < -32000000 || x > 31999999 || z > 32000000) {
 		return 15;
 	}
-	if(complex && ((v9 = this->getTile(x, y, z), v9 == Tile::stoneSlabHalf->blockID) || v9 == Tile::farmland->blockID || v9 == Tile::woodSlabHalf->blockID)) {
-		rb = this->getRawBrightness(x, y + 1, z, 0);
-		v15 = this->getRawBrightness(x + 1, y, z, 0);
-		v11 = this->getRawBrightness(x - 1, y, z, 0);
-		v12 = this->getRawBrightness(x, y, z + 1, 0);
-		result = this->getRawBrightness(x, y, z - 1, 0);
-		if(v15 >= rb) {
-			rb = v15;
+	if(complex) {
+		int id = this->getTile(x, y, z);
+		if(id == Tile::stoneSlabHalf->blockID || id == Tile::farmland->blockID || id == Tile::woodSlabHalf->blockID) {
+			int rb = this->getRawBrightness(x, y + 1, z, 0);
+			int v15 = this->getRawBrightness(x + 1, y, z, 0);
+			int v11 = this->getRawBrightness(x - 1, y, z, 0);
+			int v12 = this->getRawBrightness(x, y, z + 1, 0);
+			int result = this->getRawBrightness(x, y, z - 1, 0);
+			if(v15 >= rb) {
+				rb = v15;
+			}
+			if(rb >= v11) {
+				v11 = rb;
+			}
+			if(v11 >= v12) {
+				v12 = v11;
+			}
+			if(v12 >= result) {
+				return v12;
+			}
+			return result;
 		}
-		if(rb >= v11) {
-			v11 = rb;
-		}
-		if(v11 >= v12) {
-			v12 = v11;
-		}
-		if(v12 >= result) {
-			return v12;
-		}
-	} else if(y < 0) {
-		return 0;
-	} else if(y <= 127) {
-		v14 = this->chunks[(x >> 4) - this->minCX][(z >> 4) - this->minCZ];
-		return v14->getRawBrightness(x & 0xF, y, z & 0xF, this->level->skyDarken);
-	} else {
-		return (15 - this->level->skyDarken) & ~((15 - this->level->skyDarken) >> 31);
 	}
-	return result;
+
+	if(y < 0) return 0;
+	if(y > 127) {
+		int v = (15 - this->level->skyDarken);
+		if(v < 0) v = 0;
+		return v;
+	}
+
+	int xx = (x >> 4) - this->minCX;
+	int zz = (z >> 4) - this->minCZ;
+	v14 = this->chunks[xx][zz];
+	return v14->getRawBrightness(x & 0xF, y, z & 0xF, this->level->skyDarken);
+
 }
 Region::~Region() {
 	for(int32_t i = 0; i < this->sizeX; ++i) {

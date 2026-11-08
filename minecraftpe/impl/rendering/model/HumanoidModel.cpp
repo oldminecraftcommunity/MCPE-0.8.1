@@ -13,7 +13,7 @@ HumanoidModel::HumanoidModel(float a2, float a3)
 	, leftLegModel(0, 16, 64, 32) {
 	this->field_0 = 0;
 	this->field_14 = 1;
-	this->field_4 = 0;
+	this->riding = 0;
 	this->field_5 = 0;
 	AppPlatform::_singleton->addListener(this, 1);
 	this->field_318 = 0;
@@ -104,7 +104,7 @@ void HumanoidModel::setupAnim(float a2, float a3, float a4, float a5, float a6, 
 	this->rightArmModel.xRotAngle = v12 * a3;
 	this->rightLegModel.xRotAngle = v11 * 1.4;
 	this->leftLegModel.xRotAngle = (float)(v12 * a3) * 1.4;
-	if(this->field_4) {
+	if(this->riding) {
 		v14 = -(float)(3.1416 * 0.5);
 		this->rightArmModel.xRotAngle = (float)(v12 * a3) + (float)(v14 * 0.4);
 		this->rightLegModel.xRotAngle = v14 * 0.8;

@@ -169,7 +169,7 @@ Sensing* Mob::getSensing() {
 	return this->sensing;
 }
 bool_t Mob::getSharedFlag(int32_t a2) {
-	return (this->synchedEntityData.get<int8_t>(0) >> a2) & 1;
+	return this->synchedEntityData.getFlag(0, a2);
 }
 float Mob::getSpeed() {
 	if(this->useNewAi()) return this->speed;
@@ -1167,28 +1167,15 @@ float Mob::getAttackAnim(float a2) {
 	return v2 + (v3 * a2);
 }
 Vec3 Mob::getPos(float a3) {
-	float posY; // r2
-	float posX; // r1
-	float posZ; // r3
-	float prevZ; // s14
-	float v8; // s11
-	float v9; // s13
-	float v10; // s14
-
-	if(a3 == 1.0) {
-		posY = this->posY;
-		posX = this->posX;
-		posZ = this->posZ;
+	if(a3 == 1.0f) {
+		return Vec3(this->posX, this->posY, this->posZ);
 	} else {
-		prevZ = this->prevZ;
-		v8 = this->posZ - prevZ;
-		v9 = this->prevY + (float)((float)(this->posY - this->prevY) * a3);
-		posX = this->prevX + (float)((float)(this->posX - this->prevX) * a3);
-		v10 = prevZ + (float)(v8 * a3);
-		posY = v9;
-		posZ = v10;
+		return Vec3(
+			this->prevX + (this->posX - this->prevX) * a3,
+			this->prevY + (this->posY - this->prevY) * a3,
+			this->prevZ + (this->posZ - this->prevZ) * a3
+		);
 	}
-	return Vec3(posX, posY, posZ);
 }
 Vec3 Mob::getLookAngle() const {
 	return this->getViewVector(1);

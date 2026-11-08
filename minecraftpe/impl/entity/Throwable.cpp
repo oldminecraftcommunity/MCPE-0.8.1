@@ -205,7 +205,7 @@ LABEL_9:
 
 			std::vector<Entity*>* entities = this->level->getEntities(this, {minX - 1.0f, minY - 1.0f, minZ - 1.0f, maxX + 1.0f, maxY + 1.0f, maxZ + 1.0f});
 			for(int32_t v30 = 0; v30 < entities->size(); ++v30) {
-				v36 = entities->at(v30);
+				v36 = (*entities)[v30];
 				if(v36->isPickable()) {
 					if(v36->entityId != this->auxData || this->ticksInAir > 4) {
 						AABB v69{v36->boundingBox.minX - 0.3f, v36->boundingBox.minY - 0.3f, v36->boundingBox.minZ - 0.3f, v36->boundingBox.maxX + 0.3f, v36->boundingBox.maxY + 0.3f, v36->boundingBox.maxZ + 0.3f};

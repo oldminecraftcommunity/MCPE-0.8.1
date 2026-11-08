@@ -71,12 +71,14 @@ bool_t FleeSunGoal::canUse() {
 	if(!this->getHidePos(&v6)) {
 		return 0;
 	}
-	this->target = v6;
+	this->targetX = v6.x;
+	this->targetY = v6.y;
+	this->targetZ = v6.z;
 	return 1;
 }
 bool_t FleeSunGoal::canContinueToUse() {
-	return this->holder->getNavigation()->isDone();
+	return !this->holder->getNavigation()->isDone();
 }
 void FleeSunGoal::start() {
-	this->holder->getNavigation()->moveTo(this->target.x, this->target.y, this->target.z, this->speedMultiplier);
+	this->holder->getNavigation()->moveTo(this->targetX, this->targetY, this->targetZ, this->speedMultiplier);
 }

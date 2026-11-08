@@ -12,36 +12,28 @@ struct RedDustParticle: Particle
 
 	virtual ~RedDustParticle(){}
 	virtual void tick() {
-		int32_t maxAliveTime; // r2
-		int32_t ticksAlive;	  // r3
-		bool_t onGround;	  // r3
-		float v5;			  // s13
-		float v6;			  // s15
-
-		maxAliveTime = this->maxAliveTime;
+		int maxAliveTime = this->maxAliveTime;
 		this->prevX = this->posX;
 		this->prevY = this->posY;
 		this->prevZ = this->posZ;
-		ticksAlive = this->ticksAlive;
-		this->ticksAlive = ticksAlive + 1;
+		int ticksAlive = this->ticksAlive;
+		this->ticksAlive += 1;
 		if(ticksAlive >= maxAliveTime) {
 			this->remove();
 		}
 		this->texture = TextureUVCoordinateSet::fromOldSystem(-8 * this->ticksAlive / this->maxAliveTime + 7);
 		this->move(this->motionX, this->motionY, this->motionZ);
 		if(this->posY == this->prevY) {
-			this->motionX = this->motionX * 1.1;
-			this->motionZ = this->motionZ * 1.1;
+			this->motionX *= 1.1f;
+			this->motionZ *= 1.1f;
 		}
-		onGround = this->onGround;
-		v5 = this->motionX * 0.96;
-		this->motionY = this->motionY * 0.96;
-		v6 = this->motionZ * 0.96;
-		this->motionX = v5;
-		this->motionZ = v6;
-		if(onGround) {
-			this->motionX = v5 * 0.7;
-			this->motionZ = v6 * 0.7;
+
+		this->motionX *= 0.96f;
+		this->motionY *= 0.96f;
+		this->motionZ *= 0.96f;
+		if(this->onGround) {
+			this->motionX *= 0.7f;
+			this->motionZ *= 0.7f;
 		}
 	}
 	virtual void init(float a2, float a3, float a4, float a5, float a6, float a7, int32_t a8) {

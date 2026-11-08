@@ -1,5 +1,7 @@
 #pragma once
 #include <gui/pane/ScrollingPane.hpp>
+#include <rendering/states/DisableState.hpp>
+#include <rendering/states/EnableClientState.hpp>
 #include <AppPlatform.hpp>
 #include <rendering/MeshBuffer.hpp>
 #include <rendering/entity/ItemRenderChunkType.hpp>

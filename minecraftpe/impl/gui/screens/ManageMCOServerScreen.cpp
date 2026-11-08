@@ -263,7 +263,26 @@ void ManageMCOServerScreen::tick(){
 void ManageMCOServerScreen::onTextBoxUpdated(int32_t a2) {
 	if(a2 == this->serverNameTextBox->getKey()) {
 		if(this->item.worldName != *this->serverNameTextBox->getText()){
-			printf("ManageMCOServerScreen::onTextBoxUpdated - not implemented\n"); //TODO
+			if(this->serverNameTextBox->getText()->size()) {
+				this->item.worldName = *this->serverNameTextBox->getText();
+			} else {
+				std::shared_ptr<LoginInformation> ptr = this->minecraft->mojangConnector->getLoginInformation();
+				if(ptr->profileName.size()) {
+					this->item.worldName = ptr->profileName;
+				} else {
+					this->item.worldName = "My World";
+				}
+			}
+			this->field_FC = RestRequestJob::CreateJob(RRT_PUT, this->minecraft->mojangConnector->getMCOService(), this->minecraft);
+			this->field_FC->setMethod("/server/%?name=%", this->item.serverId, this->minecraft->mojangConnector->urlEncode(this->item.worldName));
+			RestRequestJob::launchRequest(
+				this->field_FC,
+				this->minecraft->mojangConnector->getThreadCollection(),
+				[](int32_t, const std::string&, const RestCallTagData&, std::shared_ptr<RestRequestJob>) {
+				},
+				[](bool, bool, int32_t, const std::string&, const RestCallTagData&, std::shared_ptr<RestRequestJob>){
+				}
+			);
 		}
 	} else if(a2 == this->playerNameTextBox->getKey()) {
 		if(this->_addInviteElement(*this->playerNameTextBox->getText())) {

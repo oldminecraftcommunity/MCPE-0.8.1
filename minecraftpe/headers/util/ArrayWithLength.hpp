@@ -7,6 +7,8 @@ struct arrayWithLength
 	T* array;
 	int32_t size;
 	arrayWithLength() {
+		this->array = 0;
+		this->size = 0;
 	}
 	arrayWithLength(int32_t size) {
 		this->size = size;

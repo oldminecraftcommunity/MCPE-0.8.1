@@ -215,7 +215,7 @@ struct Tile{
 	}
 	virtual bool_t isCubeShaped();
 	virtual int32_t getRenderShape();
-	virtual Tile* setShape(float, float, float, float, float, float);
+	virtual void setShape(float, float, float, float, float, float);
 	virtual void updateShape(LevelSource*, int32_t, int32_t, int32_t) {
 	}
 	virtual void updateDefaultShape(void) {

@@ -12,14 +12,13 @@
 
 void OptionsGroup::render(Minecraft* a2, int32_t a3, int32_t a4) {
 	if(this->children.begin() != this->children.end()) {
-		a2->font->drawShadow(this->field_38, (float)this->posX + 2.0, (float)this->posY, -1);
+		a2->font->drawShadow(this->name, (float)this->posX + 2.0, (float)this->posY, -1);
 		GuiElementContainer::render(a2, a3, a4);
 	}
 }
 OptionsGroup::OptionsGroup(std::string a2)
 	: GuiElementContainer(0, 1, 0, 0, 24, 24) {
-	this->field_38 = "";
-	this->field_38 = I18n::get(a2);
+	this->name = I18n::get(a2);
 }
 void OptionsGroup::setupPositions() {
 	if(this->children.begin() == this->children.end()) {
@@ -111,6 +110,7 @@ OptionsGroup* OptionsGroup::addOptionItem(const Options::Option* a2, Minecraft* 
 }
 
 void OptionsGroup::addLoginItem(Minecraft* a2) {
-	this->addChild(std::shared_ptr<LoginOption>(new LoginOption(a2)));
+	std::shared_ptr<LoginOption> ptr(new LoginOption(a2));
+	this->addChild(ptr);
 	this->setupPositions();
 }

@@ -177,7 +177,7 @@ void SoundEngine::playUI(const std::string& a2, float a3, float a4) {
 LABEL_6:
 			SoundDesc v8; // [sp+10h] [bp-38h] BYREF
 			if(this->sounds.get(a2, v8)) {
-				this->soundSystem.playAt(v8, 0.0, 0.0, 0.0, v6, a4);
+				this->soundSystem.playAt(v8, 0, 0, 0, v6, a4);
 			}
 		}
 	}

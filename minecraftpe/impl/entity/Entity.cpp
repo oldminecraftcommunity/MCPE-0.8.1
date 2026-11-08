@@ -1342,7 +1342,7 @@ bool_t Entity::load(CompoundTag* a2) {
 
 	this->setPos(this->posX, this->posY, this->posZ);
 	this->readAdditionalSaveData(a2);
-	return a2->field_0 == 0;
+	return a2->err == 0;
 }
 SynchedEntityData* Entity::getEntityData() {
 	return 0;

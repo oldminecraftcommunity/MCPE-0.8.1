@@ -5,14 +5,8 @@ HitResult::HitResult(void) : hitType(2), entity(0), field_24(0), hitVec(0, 0, 0)
 
 }
 
-HitResult::HitResult(int32_t a2, int32_t a3, int32_t a4, int32_t a5, const Vec3& a6) : hitVec(a6.x, a6.y, a6.z){
-	this->z = a4;
-	this->hitType = 0;
-	this->field_10 = a5;
-	this->x = a2;
-	this->y = a3;
-	this->entity = 0;
-	this->field_24 = 0;
+HitResult::HitResult(int32_t x, int32_t y, int32_t z, int32_t a5, const Vec3& a6) : hitType(0), x(x), y(y), z(z), field_10(a5), hitVec(a6), entity(0), field_24(0){
+
 }
 
 HitResult::HitResult(Entity* e)

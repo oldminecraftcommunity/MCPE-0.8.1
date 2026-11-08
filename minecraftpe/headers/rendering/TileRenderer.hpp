@@ -5,12 +5,12 @@
 struct Tile;
 struct TileRenderer
 {
-	int8_t field_0, field_1, field_2, field_3;
+	bool normals;
 	struct LevelSource* levelSource;
 	TextureUVCoordinateSet field_8;
-	bool_t hasUVCoords;
-	int8_t field_21;
-	bool_t disableCulling;
+	bool hasUVCoords;
+	bool field_21;
+	bool disableCulling;
 	bool enableAO;
 	//TODO take names from some java mod that added ao?
 	float redXeYs, redXsYs, redXsYe, redXeYe;
