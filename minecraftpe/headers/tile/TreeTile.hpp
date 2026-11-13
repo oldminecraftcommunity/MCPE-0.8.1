@@ -63,40 +63,19 @@ struct TreeTile : RotatedPillarTile{
 		return a2 & 3;
 	}
 	virtual TextureUVCoordinateSet* getDirTexture(int32_t a2, int32_t a3) {
-		int32_t v3; // r2
 		TextureUVCoordinateSet* v6; // r6
 
-		v3 = a3 & 3;
-		if((unsigned int)a2 > 1) {
-			switch(v3) {
-				case 1:
-					v6 = &this->field_E0;
-					break;
-				case 2:
-					v6 = &this->field_B0;
-					break;
-				case 3:
-					v6 = &this->field_110;
-					break;
-				default:
-					v6 = &this->field_80;
-					break;
-			}
+		int v3 = a3 & 3;
+		if((unsigned int)a2 <= 1) {
+			if(v3 == 1) v6 = &this->field_F8;
+			else if(v3 == 2) v6 = &this->field_C8;
+			else if(v3 == 3) v6 = &this->field_128;
+			else v6 = &this->field_98;
 		} else {
-			switch(v3) {
-				case 1:
-					v6 = &this->field_F8;
-					break;
-				case 2:
-					v6 = &this->field_C8;
-					break;
-				case 3:
-					v6 = &this->field_128;
-					break;
-				default:
-					v6 = &this->field_98;
-					break;
-			}
+			if(v3 == 1) v6 = &this->field_E0;
+			else if(v3 == 2) v6 = &this->field_B0;
+			else if(v3 == 3) v6 = &this->field_110;
+			else v6 = &this->field_80;
 		}
 		this->textureUV = *v6;
 		return &this->textureUV;

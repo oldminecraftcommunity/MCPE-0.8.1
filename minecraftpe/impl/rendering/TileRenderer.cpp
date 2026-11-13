@@ -34,7 +34,7 @@ bool_t TileRenderer::canRender(int32_t a1) {
 TileRenderer::TileRenderer(struct LevelSource* a2) :
 	normals(0), levelSource(a2), hasUVCoords(0),
 	field_8(),
-	field_21(0), disableCulling(0), enableAO(0), randomizeFace{0}
+	flipTexture(0), disableCulling(0), enableAO(0), randomizeFace{0}
 {
 }
 float TileRenderer::getWaterHeight(int32_t x, int32_t y, int32_t z, const struct Material* mat) {
@@ -69,137 +69,97 @@ float TileRenderer::getWaterHeight(int32_t x, int32_t y, int32_t z, const struct
 
 	return 1.0f - (v5 / v11);
 }
-void TileRenderer::renderEast(Tile* a2, float a3, float a4, float a5, const struct TextureUVCoordinateSet& _a6) {
-	float minX;	 // s16
-	float maxX;	 // s18
-	float v13;	 // s14
-	float maxZ;	 // s11
-	float minZ;	 // s10
-	float maxY;	 // s12
-	float v17;	 // s17
-	float minY;	 // s19
-	float v19;	 // s15
-	float v20;	 // s14
-	float v21;	 // s13
-	float v22;	 // s9
-	float v23;	 // s15
-	int32_t v24; // r3
-	float v25;	 // s14
-	float v26;	 // s20
-	float v27;	 // s15
-	float v28;	 // s20
-	float v29;	 // s22
-	float v30;	 // s23
-	float v31;	 // s21
-	float v32;	 // s21
-	float v33;	 // s17
-	float v34;	 // s15
-	float v35;	 // s14
-	float v36;	 // s18
-	float v37;	 // s15
-	float v38;	 // s17
-	float v39;	 // s15
-	float v40;	 // r6
-	float v41;	 // s27
-	float v42;	 // s26
-	float v43;	 // s25
-	float v44;	 // s24
-	TextureUVCoordinateSet* a6 = (TextureUVCoordinateSet*)&_a6;
+void TileRenderer::renderEast(Tile* a2, float x, float y, float z, const struct TextureUVCoordinateSet& _tex) {
+	TextureUVCoordinateSet* tex = (TextureUVCoordinateSet*)&_tex;
 	if(this->hasUVCoords) {
-		a6 = &this->field_8;
+		tex = &this->field_8;
 	}
-	minX = a6->minX;
-	maxX = a6->maxX;
-	v13 = maxX - a6->minX;
-	maxZ = a2->maxZ;
-	minZ = a2->minZ;
-	maxY = a2->maxY;
-	v17 = a6->maxY;
-	minY = a6->minY;
-	v19 = a6->minX + (float)(minZ * v13);
-	v20 = a6->minX + (float)(maxZ * v13);
-	v21 = a2->minY;
-	if(this->field_21) {
-		v22 = v19;
-		v19 = v20;
-		v20 = v22;
+
+	float tXeXeY = tex->minX + (a2->minZ * (tex->maxX - tex->minX));
+	float tXsXsY = tex->minX + (a2->maxZ * (tex->maxX - tex->minX));
+
+	float tYsXsY = tex->maxY - (a2->minY * (tex->maxY - tex->minY));
+	float tYeXeY = tex->maxY - (a2->maxY * (tex->maxY - tex->minY));
+
+	if(this->flipTexture) {
+		float tmp = tXeXeY;
+		tXeXeY = tXsXsY;
+		tXsXsY = tmp;
 	}
-	if(minZ >= 0.0f && maxZ <= 1.0f) {
-		maxX = v20;
-		minX = v19;
+
+	if(a2->minZ < 0.0f || a2->maxZ > 1.0f){
+		tXeXeY = tex->minX;
+		tXsXsY = tex->maxX;
 	}
-	if(v21 >= 0.0f && maxY <= 1.0f) {
-		v23 = v17 - minY;
-		v17 = v17 - (float)(v21 * (float)(v17 - minY));
-		minY = a6->maxY - (float)(maxY * v23);
+	if(a2->minY < 0.0f || a2->maxY > 1.0f){
+		tYeXeY = tex->minY;
+		tYsXsY = tex->maxY;
 	}
-	this->_randomizeFaceDirection(a2, 5, a3, a4, a5);
-	v24 = this->randomizeFace[5];
-	if(v24 == 2) {
-		v25 = a6->maxX - a6->minX;
-		v26 = a6->maxY;
-		minX = a6->minX + (float)(v25 * a2->minY);
-		v27 = v26 - a6->minY;
-		maxX = a6->minX + (float)(v25 * a2->maxY);
-		v28 = v26 - (float)(v27 * a2->minZ);
-		v29 = a6->maxY - (float)(v27 * a2->maxZ);
-		v30 = maxX;
-		v31 = minX;
-		v17 = v28;
-		minY = v29;
-	} else if(v24 == 1) {
-		v32 = a6->maxX;
-		v33 = a6->minY;
-		v34 = v32 - a6->minX;
-		v35 = a6->maxY - v33;
-		minY = v33 + (float)(v35 * a2->maxZ);
-		v17 = v33 + (float)(v35 * a2->minZ);
-		v30 = v32 - (float)(v34 * a2->maxY);
-		v31 = v32 - (float)(v34 * a2->minY);
-		v29 = a6->minY + (float)(v35 * a2->maxZ);
-		v28 = v17;
-		maxX = a6->maxX - (float)(v34 * a2->maxY);
-		minX = v31;
-	} else {
-		if(v24 == 3) {
-			v36 = a6->maxX;
-			v37 = v36 - a6->minX;
-			v38 = a6->minY;
-			minX = v36 - (float)(v37 * a2->minZ);
-			maxX = v36 - (float)(v37 * a2->maxZ);
-			v39 = a6->maxY - v38;
-			minY = v38 + (float)(v39 * a2->maxY);
-			v17 = v38 + (float)(v39 * a2->minY);
-		}
-		v29 = v17;
-		v28 = minY;
-		v30 = minX;
-		v31 = maxX;
+
+	this->_randomizeFaceDirection(a2, 5, x, y, z);
+	int face = this->randomizeFace[5];
+
+	float tYeXsY = tYsXsY;
+	float tYsXeY = tYeXeY;
+	float tXeXsY = tXeXeY;
+	float tXsXeY = tXsXsY;
+
+	if(face == 2) {
+		tXeXeY = tex->minX + ((tex->maxX - tex->minX) * a2->minY);
+		tXsXsY = tex->minX + ((tex->maxX - tex->minX) * a2->maxY);
+		tYsXeY = tex->maxY - ((tex->maxY - tex->minY) * a2->minZ);
+		tYeXsY = tex->maxY - ((tex->maxY - tex->minY) * a2->maxZ);
+
+		tXeXsY = tXsXsY;
+		tXsXeY = tXeXeY;
+		tYsXsY = tYsXeY;
+		tYeXeY = tYeXsY;
+	} else if(face == 1) {
+		tYeXeY = tex->minY + ((tex->maxY - tex->minY) * a2->maxZ);
+		tYsXsY = tex->minY + ((tex->maxY - tex->minY) * a2->minZ);
+		tXeXsY = tex->maxX - ((tex->maxX - tex->minX) * a2->maxY);
+		tXsXeY = tex->maxX - ((tex->maxX - tex->minX) * a2->minY);
+
+		tYeXsY = tYeXeY;
+		tYsXeY = tYsXsY;
+		tXsXsY = tXeXsY;
+		tXeXeY = tXsXeY;
+	} else if(face == 3){
+		tXeXeY = tex->maxX - ((tex->maxX - tex->minX) * a2->minZ);
+		tXsXsY = tex->maxX - ((tex->maxX - tex->minX) * a2->maxZ);
+		tYeXeY = tex->minY + ((tex->maxY - tex->minY) * a2->maxY);
+		tYsXsY = tex->minY + ((tex->maxY - tex->minY) * a2->minY);
+
+		tYeXsY = tYsXsY;
+		tYsXeY = tYeXeY;
+		tXeXsY = tXeXeY;
+		tXsXeY = tXsXsY;
 	}
-	v40 = a3 + a2->maxX;
-	v41 = a4 + a2->minY;
-	v42 = a5 + a2->minZ;
-	v43 = a4 + a2->maxY;
-	v44 = a5 + a2->maxZ;
-	if(this->normals) {
-		Tesselator::instance.normal(Vec3::UNIT_X);
-	}
+
+	float xMax = x + a2->maxX;
+	float yMin = y + a2->minY;
+	float zMin = z + a2->minZ;
+	float yMax = y + a2->maxY;
+	float zMax = z + a2->maxZ;
+	if(this->normals) Tesselator::instance.normal(Vec3::UNIT_X);
+
 	if (this->enableAO){
 		Tesselator::instance.color(this->redXeYs, this->greenXeYs, this->blueXeYs);
-		Tesselator::instance.vertexUV(v40, v41, v44, v30, v29);
+		Tesselator::instance.vertexUV(xMax, yMin, zMax, tXeXsY, tYeXsY);
 		Tesselator::instance.color(this->redXsYs, this->greenXsYs, this->blueXsYs);
-		Tesselator::instance.vertexUV(v40, v41, v42, maxX, v17);
+		Tesselator::instance.vertexUV(xMax, yMin, zMin, tXsXsY, tYsXsY);
 		Tesselator::instance.color(this->redXsYe, this->greenXsYe, this->blueXsYe);
-		Tesselator::instance.vertexUV(v40, v43, v42, v31, v28);
+		Tesselator::instance.vertexUV(xMax, yMax, zMin, tXsXeY, tYsXeY);
 		Tesselator::instance.color(this->redXeYe, this->greenXeYe, this->blueXeYe);
+		Tesselator::instance.vertexUV(xMax, yMax, zMax, tXeXeY, tYeXeY);
 	}else{
-		Tesselator::instance.vertexUV(v40, v41, v44, v30, v29);
-		Tesselator::instance.vertexUV(v40, v41, v42, maxX, v17);
-		Tesselator::instance.vertexUV(v40, v43, v42, v31, v28);
+		Tesselator::instance.vertexUV(xMax, yMin, zMax, tXeXsY, tYeXsY);
+		Tesselator::instance.vertexUV(xMax, yMin, zMin, tXsXsY, tYsXsY);
+		Tesselator::instance.vertexUV(xMax, yMax, zMin, tXsXeY, tYsXeY);
+		Tesselator::instance.vertexUV(xMax, yMax, zMax, tXeXeY, tYeXeY);
 	}
-	Tesselator::instance.vertexUV(v40, v43, v44, minX, minY);
 }
-void TileRenderer::renderFaceDown(Tile* a2, float a3, float a4, float a5, const struct TextureUVCoordinateSet& _a6) {
+void TileRenderer::renderFaceDown(Tile* tile, float a3, float a4, float a5, const struct TextureUVCoordinateSet& _a6) {
 	float minX;	 // s12
 	float v12;	 // s17
 	float maxX;	 // s19
@@ -210,7 +170,6 @@ void TileRenderer::renderFaceDown(Tile* a2, float a3, float a4, float a5, const 
 	float maxZ;	 // s13
 	float v19;	 // s15
 	float v20;	 // s15
-	int32_t v21; // r3
 	float v22;	 // s14
 	float v23;	 // s20
 	float v24;	 // s15
@@ -231,76 +190,76 @@ void TileRenderer::renderFaceDown(Tile* a2, float a3, float a4, float a5, const 
 	float v39;	 // r6
 	float v40;	 // s26
 	float v41;	 // s24
-	TextureUVCoordinateSet* a6 = (TextureUVCoordinateSet*)&_a6;
+	TextureUVCoordinateSet* tex = (TextureUVCoordinateSet*)&_a6;
 	if(this->hasUVCoords) {
-		a6 = &this->field_8;
+		tex = &this->field_8;
 	}
-	minX = a2->minX;
-	v12 = a6->minX;
-	maxX = a6->maxX;
-	v14 = a2->maxX;
-	minZ = a2->minZ;
-	minY = a6->minY;
-	maxY = a6->maxY;
-	maxZ = a2->maxZ;
+	minX = tile->minX;
+	v12 = tex->minX;
+	maxX = tex->maxX;
+	v14 = tile->maxX;
+	minZ = tile->minZ;
+	minY = tex->minY;
+	maxY = tex->maxY;
+	maxZ = tile->maxZ;
 	if(minX >= 0.0f && v14 <= 1.0f) {
 		v19 = maxX - v12;
 		v12 = v12 + (float)(minX * (float)(maxX - v12));
-		maxX = a6->minX + (float)(v14 * v19);
+		maxX = tex->minX + (float)(v14 * v19);
 	}
 	if(minZ >= 0.0f && maxZ <= 1.0f) {
 		v20 = maxY - minY;
 		minY = minY + (float)(minZ * (float)(maxY - minY));
-		maxY = a6->minY + (float)(maxZ * v20);
+		maxY = tex->minY + (float)(maxZ * v20);
 	}
-	this->_randomizeFaceDirection(a2, 0, a3, a4, a5);
-	v21 = this->randomizeFace[0];
-	if(v21 == 2) {
-		v22 = a6->maxX - a6->minX;
-		v23 = a6->maxY;
-		v12 = a6->minX + (float)(v22 * a2->minZ);
-		v24 = v23 - a6->minY;
-		maxX = a6->minX + (float)(v22 * a2->maxZ);
-		v25 = v23 - (float)(v24 * a2->maxX);
-		v26 = a6->maxY - (float)(v24 * a2->minX);
+	this->_randomizeFaceDirection(tile, 0, a3, a4, a5);
+	int face = this->randomizeFace[0];
+	if(face == 2) {
+		v22 = tex->maxX - tex->minX;
+		v23 = tex->maxY;
+		v12 = tex->minX + (float)(v22 * tile->minZ);
+		v24 = v23 - tex->minY;
+		maxX = tex->minX + (float)(v22 * tile->maxZ);
+		v25 = v23 - (float)(v24 * tile->maxX);
+		v26 = tex->maxY - (float)(v24 * tile->minX);
 		v27 = maxX;
 		v28 = v12;
 		maxY = v25;
 		minY = v26;
-	} else if(v21 == 1) {
-		v29 = a6->maxX;
-		v30 = a6->minY;
-		v31 = v29 - a6->minX;
-		v32 = a6->maxY - v30;
-		minY = v30 + (float)(v32 * a2->minX);
-		maxY = v30 + (float)(v32 * a2->maxX);
-		v27 = v29 - (float)(v31 * a2->maxZ);
-		v28 = v29 - (float)(v31 * a2->minZ);
-		v26 = a6->minY + (float)(v32 * a2->minX);
+	} else if(face == 1) {
+		v29 = tex->maxX;
+		v30 = tex->minY;
+		v31 = v29 - tex->minX;
+		v32 = tex->maxY - v30;
+		minY = v30 + (float)(v32 * tile->minX);
+		maxY = v30 + (float)(v32 * tile->maxX);
+		v27 = v29 - (float)(v31 * tile->maxZ);
+		v28 = v29 - (float)(v31 * tile->minZ);
+		v26 = tex->minY + (float)(v32 * tile->minX);
 		v25 = maxY;
-		maxX = a6->maxX - (float)(v31 * a2->maxZ);
+		maxX = tex->maxX - (float)(v31 * tile->maxZ);
 		v12 = v28;
 	} else {
-		if(v21 == 3) {
-			v33 = a6->maxX;
-			v34 = v33 - a6->minX;
-			v35 = a6->maxY;
-			v12 = v33 - (float)(v34 * a2->minX);
-			maxX = v33 - (float)(v34 * a2->maxX);
-			v36 = v35 - a6->minY;
-			minY = v35 - (float)(v36 * a2->minZ);
-			maxY = v35 - (float)(v36 * a2->maxZ);
+		if(face == 3) {
+			v33 = tex->maxX;
+			v34 = v33 - tex->minX;
+			v35 = tex->maxY;
+			v12 = v33 - (float)(v34 * tile->minX);
+			maxX = v33 - (float)(v34 * tile->maxX);
+			v36 = v35 - tex->minY;
+			minY = v35 - (float)(v36 * tile->minZ);
+			maxY = v35 - (float)(v36 * tile->maxZ);
 		}
 		v26 = maxY;
 		v25 = minY;
 		v27 = v12;
 		v28 = maxX;
 	}
-	v37 = a3 + a2->minX;
-	v38 = a3 + a2->maxX;
-	v39 = a4 + a2->minY;
-	v40 = a5 + a2->minZ;
-	v41 = a5 + a2->maxZ;
+	v37 = a3 + tile->minX;
+	v38 = a3 + tile->maxX;
+	v39 = a4 + tile->minY;
+	v40 = a5 + tile->minZ;
+	v41 = a5 + tile->maxZ;
 	if(this->normals) {
 		Tesselator::instance.normal(Vec3::NEG_UNIT_Y);
 	}
@@ -313,12 +272,13 @@ void TileRenderer::renderFaceDown(Tile* a2, float a3, float a4, float a5, const 
 		Tesselator::instance.color(this->redXsYe, this->greenXsYe, this->blueXsYe);
 		Tesselator::instance.vertexUV(v38, v39, v40, v28, v25);
 		Tesselator::instance.color(this->redXeYe, this->greenXeYe, this->blueXeYe);
+		Tesselator::instance.vertexUV(v38, v39, v41, maxX, maxY);
 	} else {
 		Tesselator::instance.vertexUV(v37, v39, v41, v27, v26);
 		Tesselator::instance.vertexUV(v37, v39, v40, v12, minY);
 		Tesselator::instance.vertexUV(v38, v39, v40, v28, v25);
+		Tesselator::instance.vertexUV(v38, v39, v41, maxX, maxY);
 	}
-	Tesselator::instance.vertexUV(v38, v39, v41, maxX, maxY);
 }
 void TileRenderer::renderFaceUp(Tile* a2, float a3, float a4, float a5, const struct TextureUVCoordinateSet& _a6) {
 	float minX;	 // s12
@@ -747,7 +707,7 @@ void TileRenderer::renderNorth(Tile* a2, float a3, float a4, float a5, const str
 	v19 = a6->minX + (float)(v15 * v13);
 	v20 = a6->minX + (float)(v14 * v13);
 	v21 = a2->minY;
-	if(this->field_21) {
+	if(this->flipTexture) {
 		v22 = v19;
 		v19 = v20;
 		v20 = v22;
@@ -881,7 +841,7 @@ void TileRenderer::renderSouth(Tile* a2, float a3, float a4, float a5, const Tex
 	v19 = v10->minX + (float)(v15 * v13);
 	v20 = v10->minX + (float)(v14 * v13);
 	v21 = a2->minY;
-	if(this->field_21) {
+	if(this->flipTexture) {
 		v22 = v19;
 		v19 = v20;
 		v20 = v22;
@@ -1265,7 +1225,7 @@ void TileRenderer::renderWest(Tile* a2, float a3, float a4, float a5, const stru
 	v19 = a6->minX + (float)(minZ * v13);
 	v20 = a6->minX + (float)(maxZ * v13);
 	v21 = a2->minY;
-	if(this->field_21) {
+	if(this->flipTexture) {
 		v22 = v19;
 		v19 = v20;
 		v20 = v22;
@@ -1432,7 +1392,6 @@ bool_t TileRenderer::tesselateBedInWorld(Tile* tile, int32_t x, int32_t y, int32
 			v33 = v26->maxX;
 			v34 = v33;
 			v35 = v32;
-LABEL_7:
 			v36 = v27;
 			goto LABEL_10;
 		case 2:
@@ -1443,7 +1402,8 @@ LABEL_7:
 			v29 = v31;
 			v27 = v26->maxX;
 			v35 = v32;
-			goto LABEL_7;
+			v36 = v27;
+			goto LABEL_10;
 		case 3:
 			v33 = v26->minX;
 			v34 = v26->maxX;
@@ -1486,7 +1446,7 @@ LABEL_10:
 			v45 = v11;
 		}
 		Tesselator::instance.color((float)(v45 * 0.8f), v45 * 0.8f, v45 * 0.8f);
-		this->field_21 = v44 == 2;
+		this->flipTexture = v44 == 2;
 		v46 = tile->getTexture(this->levelSource, x, y, z, 2);
 		this->renderNorth(tile, (float)x, (float)y, (float)z, *v46);
 	}
@@ -1498,7 +1458,7 @@ LABEL_18:
 				v47 = v11;
 			}
 			Tesselator::instance.color((float)(v47 * 0.8f), v47 * 0.8f, v47 * 0.8f);
-			this->field_21 = v44 == 3;
+			this->flipTexture = v44 == 3;
 			v53 = *tile->getTexture(this->levelSource, x, y, z, 3);
 			this->renderSouth(tile, (float)x, (float)y, (float)z, v53);
 		}
@@ -1512,7 +1472,7 @@ LABEL_18:
 			v48 = v11;
 		}
 		Tesselator::instance.color((float)(v48 * 0.6f), v48 * 0.6f, v48 * 0.6f);
-		this->field_21 = v44 == 4;
+		this->flipTexture = v44 == 4;
 		v49 = tile->getTexture(this->levelSource, x, y, z, 4);
 		this->renderWest(tile, (float)x, (float)y, (float)z, *v49);
 	}
@@ -1524,13 +1484,13 @@ LABEL_40:
 				v11 = v50;
 			}
 			Tesselator::instance.color((float)(v11 * 0.6f), v11 * 0.6f, v11 * 0.6f);
-			this->field_21 = v44 == 5;
+			this->flipTexture = v44 == 5;
 			v51 = tile->getTexture(this->levelSource, x, y, z, 5);
 			this->renderEast(tile, (float)x, (float)y, (float)z, *v51);
 		}
 	}
 	result = 1;
-	this->field_21 = 0;
+	this->flipTexture = 0;
 	return result;
 }
 bool_t TileRenderer::tesselateBlockInWorld(Tile* a2, int32_t a3, int32_t a4, int32_t a5) {
@@ -2167,7 +2127,7 @@ bool_t TileRenderer::tesselateDoorInWorld(Tile* tile, int32_t x, int32_t y, int3
 	Tesselator::instance.color((float)(v14 * 0.8f), v14 * 0.8f, v14 * 0.8f);
 	v15 = tile->getTexture(this->levelSource, x, y, z, 2);
 	this->renderNorth(tile, (float)x, (float)y, (float)z, *v15);
-	this->field_21 = 0;
+	this->flipTexture = 0;
 	v16 = tile->getBrightness(this->levelSource, x, y, z + 1);
 	if(tile->maxZ < 1.0f) {
 		v16 = v9;
@@ -2178,7 +2138,7 @@ bool_t TileRenderer::tesselateDoorInWorld(Tile* tile, int32_t x, int32_t y, int3
 	Tesselator::instance.color((float)(v16 * 0.8f), v16 * 0.8f, v16 * 0.8f);
 	v22 = *tile->getTexture(this->levelSource, x, y, z, 3);
 	this->renderSouth(tile, (float)x, (float)y, (float)z, v22);
-	this->field_21 = 0;
+	this->flipTexture = 0;
 	v17 = tile->getBrightness(this->levelSource, x - 1, y, z);
 	if(tile->minX > 0.0f) {
 		v17 = v9;
@@ -2189,7 +2149,7 @@ bool_t TileRenderer::tesselateDoorInWorld(Tile* tile, int32_t x, int32_t y, int3
 	Tesselator::instance.color((float)(v17 * 0.6f), v17 * 0.6f, v17 * 0.6f);
 	v18 = tile->getTexture(this->levelSource, x, y, z, 4);
 	this->renderWest(tile, (float)x, (float)y, (float)z, *v18);
-	this->field_21 = 0;
+	this->flipTexture = 0;
 	v19 = tile->getBrightness(this->levelSource, x + 1, y, z);
 	if(tile->maxX >= 1.0f) {
 		v9 = v19;
@@ -2200,7 +2160,7 @@ bool_t TileRenderer::tesselateDoorInWorld(Tile* tile, int32_t x, int32_t y, int3
 	Tesselator::instance.color((float)(v9 * 0.6f), v9 * 0.6f, v9 * 0.6f);
 	v20 = tile->getTexture(this->levelSource, x, y, z, 5);
 	this->renderEast(tile, (float)x, (float)y, (float)z, *v20);
-	this->field_21 = 0;
+	this->flipTexture = 0;
 	return 1;
 }
 bool_t TileRenderer::tesselateFenceGateInWorld(FenceGateTile* tile, int32_t x, int32_t y, int32_t z) {
@@ -3048,24 +3008,20 @@ void TileRenderer::tesselateStemDirTexture(Tile* a2, int32_t a3, int32_t a4, flo
 	Tesselator::instance.vertexUV(v23, v25, v24, v26, v27);
 }
 bool_t TileRenderer::tesselateStemInWorld(Tile* tile, int32_t x, int32_t y, int32_t z) {
-	float v9;			// s16
-	int32_t v10;		// r0
-	int32_t ConnectDir; // r9
-	int32_t v12;		// r0
-	int32_t v13;		// r0
-
-	v9 = tile->getBrightness(this->levelSource, x, y, z);
-	v10 = tile->getColor(this->levelSource, x, y, z);
-	Tesselator::instance.color(v9 * (float)((float)((v10 & 0xff0000) >> 16) / 255.0f), v9 * (float)((float)((v10 & 0xff00) >> 8) / 255.0f), v9 * (float)((float)(v10 & 0xff) / 255.0f));
+	float v9 = tile->getBrightness(this->levelSource, x, y, z);
+	int v10 = tile->getColor(this->levelSource, x, y, z);
+	Tesselator::instance.color(
+		v9 * (((v10 & 0xff0000) >> 16) / 255.0f),
+		v9 * (((v10 & 0xff00) >> 8) / 255.0f),
+		v9 * ((v10 & 0xff) / 255.0f)
+	);
 	tile->updateShape(this->levelSource, x, y, z);
-	ConnectDir = ((StemTile*)tile)->getConnectDir(this->levelSource, x, y, z);
-	v12 = this->levelSource->getData(x, y, z);
-	if(ConnectDir < 0) {
-		this->tesselateStemTexture(tile, v12, tile->maxY, (float)x, (float)y - 0.0625f, (float)z);
+	int dir = ((StemTile*)tile)->getConnectDir(this->levelSource, x, y, z);
+	if(dir < 0) {
+		this->tesselateStemTexture(tile, this->levelSource->getData(x, y, z), tile->maxY, x, y - 0.0625f, z);
 	} else {
-		this->tesselateStemTexture(tile, v12, 0.5f, (float)x, (float)y - 0.0625f, (float)z);
-		v13 = this->levelSource->getData(x, y, z);
-		this->tesselateStemDirTexture(tile, v13, ConnectDir, tile->maxY, (float)x, (float)y - 0.0625f, (float)z);
+		this->tesselateStemTexture(tile, this->levelSource->getData(x, y, z), 0.5f, x, y - 0.0625f, z);
+		this->tesselateStemDirTexture(tile, this->levelSource->getData(x, y, z), dir, tile->maxY, x, y - 0.0625f, z);
 	}
 	return 1;
 }

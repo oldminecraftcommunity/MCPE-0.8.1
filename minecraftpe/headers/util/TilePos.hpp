@@ -35,12 +35,7 @@ struct TilePos{
 		return this->x == a2.x && this->y == a2.y && this->z == a2.z;
 	}
 
-	TilePos& operator=(const TilePos& a2){
-		this->x = a2.x;
-		this->y = a2.y;
-		this->z = a2.z;
-		return *this;
-	}
+	TilePos& operator=(const TilePos& a2) = default;
 };
 
 namespace std {

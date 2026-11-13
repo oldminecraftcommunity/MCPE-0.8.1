@@ -5,6 +5,7 @@
 
 struct Frustum: FrustumData
 {
+	float somethingUnused[16*3];
 	static Frustum frustum;
 
 	void calculateFrustum(void) {

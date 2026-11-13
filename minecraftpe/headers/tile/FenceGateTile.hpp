@@ -3,6 +3,7 @@
 #include <entity/Player.hpp>
 #include <level/Level.hpp>
 #include <tile/material/Material.hpp>
+#include <math/Mth.hpp>
 
 struct FenceGateTile : Tile{
 	FenceGateTile(int32_t id, const std::string& n, Material* mat) :
@@ -82,10 +83,6 @@ struct FenceGateTile : Tile{
 		return 1;
 	}
 	virtual int32_t getPlacementDataValue(Level* level, int32_t x, int32_t y, int32_t z, int32_t, float, float, float, Mob* pl, int32_t) {
-		float v11 = (float) ((pl->yaw * 4)) / 360.0 + 0.5;
-		int32_t v12 = (int32_t) (v11);
-		if (v11 < v12) v12 = v12 - 1;
-
-		return v12 & 3;
+		return Mth::floor(((pl->yaw * 4)) / 360.0f + 0.5f) & 3;
 	}
 };

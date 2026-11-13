@@ -321,8 +321,8 @@ void LevelData::setTagData(struct CompoundTag* a2, struct CompoundTag* a3) {
 }
 struct CompoundTag* LevelData::createTag() {
 	CompoundTag* v2 = new CompoundTag();
-	if(this->playerTag) this->setTagData(v2, (CompoundTag*)this->playerTag->copy());
-	else this->setTagData(v2, 0);
+	CompoundTag* pt = this->playerTag ? (CompoundTag*)this->playerTag->copy() : 0;
+	this->setTagData(v2, pt);
 
 	return v2;
 }
@@ -331,7 +331,6 @@ struct CompoundTag* LevelData::createTag(const std::vector<struct Player*>& a2) 
 	CompoundTag* v7;
 	if(a2.empty()) {
 		v7 = 0;
-
 	} else {
 		if(a2[0]) {
 			v7 = new CompoundTag();

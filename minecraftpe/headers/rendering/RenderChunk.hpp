@@ -15,10 +15,9 @@ struct RenderChunk
 	AABB frustumBB;
 	int32_t field_48;
 	bool_t isInFrustumMaybe;
-	int8_t field_4D, field_4E, field_4F;
+	bool field_4D, field_4E;
 	int32_t field_50;
-	int8_t touchedSky;
-	int8_t field_55, field_56, field_57;
+	bool touchedSky;
 	MeshBuffer meshBuffers[4];
 	struct Tesselator* tessellator;
 	int32_t renderLists;

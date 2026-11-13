@@ -143,14 +143,14 @@ void ExternalFileLevelStorage::saveLevelData(const std::string& a1, LevelData& a
 	}
 }
 void ExternalFileLevelStorage::savePendingUnsavedChunks(int32_t a2) {
+	//TODO check
 	int v2 = a2;
-	if(a2 < 0) {
-		v2 = this->field_2C.size(); //loop in mcpe due to stlport implementation
-	}
+	if(a2 < 0) v2 = this->field_2C.size();
+
 	for(int v5 = 0; ++v5 <= v2;) {
 		if(this->field_2C.empty()) break;
 		UnsavedLevelChunk* ulv = &this->field_2C.front();
-		this->save(this->level, ulv->chunk); //TODO check
+		this->save(this->level, ulv->chunk);
 		this->field_2C.pop_front();
 	}
 }

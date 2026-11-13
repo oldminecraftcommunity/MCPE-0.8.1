@@ -21,8 +21,8 @@ void InBedScreen::init() {
 }
 void InBedScreen::setupPositions() {
 	this->leaveBedButton->width = this->width / 3;
-	this->leaveBedButton->height = (int32_t)(float)((float)this->height * 0.15);
-	this->leaveBedButton->posY = this->height - (int32_t)((double)this->leaveBedButton->height * 1.5);
+	this->leaveBedButton->height = (int32_t)(this->height * 0.15f);
+	this->leaveBedButton->posY = this->height - (int32_t)(this->leaveBedButton->height * 1.5); /*1.5 here must be double*/
 	this->leaveBedButton->posX = this->width / 2 - this->leaveBedButton->width / 2;
 }
 bool_t InBedScreen::handleBackEvent(bool_t a2) {

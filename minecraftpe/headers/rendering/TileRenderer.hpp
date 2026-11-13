@@ -9,7 +9,7 @@ struct TileRenderer
 	struct LevelSource* levelSource;
 	TextureUVCoordinateSet field_8;
 	bool hasUVCoords;
-	bool field_21;
+	bool flipTexture;
 	bool disableCulling;
 	bool enableAO;
 	//TODO take names from some java mod that added ao?
@@ -22,7 +22,7 @@ struct TileRenderer
 
 	TileRenderer(struct LevelSource*);
 	float getWaterHeight(int32_t, int32_t, int32_t, const struct Material*);
-	void renderEast(Tile*, float, float, float, const struct TextureUVCoordinateSet&);
+	void renderEast(Tile*, float x, float y, float z, const struct TextureUVCoordinateSet& _tex);
 	void renderFaceDown(Tile*, float, float, float, const struct TextureUVCoordinateSet&);
 	void renderFaceUp(Tile*, float, float, float, const struct TextureUVCoordinateSet&);
 	void renderGuiTile(Tile*, int32_t, float, float);

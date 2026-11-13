@@ -115,7 +115,9 @@ struct Vec3{
 		this->y = (zCoord * v5) + (yCoord * v4);
 		this->z = (zCoord * v4) + (yCoord * v5);
 	}
-
+	Vec3 add(float x, float y, float z) const {
+		return Vec3(this->x + x, this->y + y, this->z + z);
+	}
 	Vec3 add(const Vec3& v) const {
 		return Vec3(this->x + v.x, this->y + v.y, this->z + v.z);
 	}

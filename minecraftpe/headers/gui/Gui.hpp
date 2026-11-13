@@ -17,7 +17,7 @@ struct Gui : GuiComponent, IConfigListener, AppPlatform::Listener{
 	int32_t field_18;
 	std::vector<GuiMessage> chatMessages;
 	Random randomInst;
-	struct Minecraft* minecraftInst;
+	struct Minecraft* minecraft;
 	int32_t field_9FC;
 	float field_A00;
 	std::string nowPlayingMessage;

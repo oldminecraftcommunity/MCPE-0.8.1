@@ -671,30 +671,33 @@ void LevelChunk::addTileEntity(struct TileEntity* a2) {
 		this->level->tileEntities.push_back(a2);
 	}
 }
-void LevelChunk::removeEntity(struct Entity* a2, int32_t a3) {
-	if(a3 < 0) a3 = 0;
-	if(a3 >= 7) a3 = 7;
+void LevelChunk::removeEntity(struct Entity* a2, int32_t y) {
+	if(y < 0) y = 0;
+	if(y >= 7) y = 7;
 
-	auto e = std::find(this->miniChunkEntities[a3].begin(), this->miniChunkEntities[a3].end(), a2);
-	if(e != this->miniChunkEntities[a3].end()) {
-		this->miniChunkEntities[a3].erase(e);
+	auto e = std::find(this->miniChunkEntities[y].begin(), this->miniChunkEntities[y].end(), a2);
+	if(e != this->miniChunkEntities[y].end()) {
+		this->miniChunkEntities[y].erase(e);
 	}
 }
-void LevelChunk::getEntitiesOfClass(int32_t a2, const struct AABB& a3, std::vector<struct Entity*>& a4) {
-	int32_t minChunkY = Mth::floor((a3.minY - 2) * 0.0625);
-	int32_t maxChunkY = Mth::floor((a3.maxY + 2) * 0.0625);
-	if(minChunkY > 0b111) minChunkY = 0b111; //usat(3, v);
-	else if(minChunkY < 0) minChunkY = 0;
-	if(maxChunkY > 0b111) maxChunkY = 0b111; //usat(3, v);
-	else if(minChunkY < 0) minChunkY = 0;
 
-	while(minChunkY <= maxChunkY) {
-		for(auto e: this->miniChunkEntities[minChunkY]) {
+void LevelChunk::getEntitiesOfClass(int32_t a2, const struct AABB& a3, std::vector<struct Entity*>& a4) {
+	int32_t minChunkY = Mth::floor((a3.minY - 2) / 16);
+	int32_t maxChunkY = Mth::floor((a3.maxY + 2) / 16);
+	if(minChunkY < 0) minChunkY = 0;
+	else if(minChunkY > 7) minChunkY = 7;
+
+	if(maxChunkY < 0) maxChunkY = 0;
+	else if(maxChunkY > 7) maxChunkY = 7;
+
+	for(int y = minChunkY; y <= maxChunkY; ++y) {
+		std::vector<Entity*>& ents = this->miniChunkEntities[y];
+		for(int i = 0; i < ents.size(); ++i) {
+			Entity* e = ents[i];
 			if(e->getCreatureBaseType() == a2) {
 				a4.push_back(e);
 			}
 		}
-		++minChunkY;
 	}
 }
 void LevelChunk::getEntitiesOfType(int32_t a2, const struct AABB& a3, std::vector<struct Entity*>& a4) {

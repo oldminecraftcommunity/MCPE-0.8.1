@@ -116,7 +116,7 @@ struct Level : LevelSource{
 	int getDirectSignal(int32_t, int32_t, int32_t, int32_t);
 	std::vector<struct Entity*>* getEntities(struct Entity*, const AABB&);
 	int32_t getEntitiesOfClass(int32_t, const AABB&, std::vector<struct Entity*>&);
-	int32_t getEntitiesOfType(int32_t, const AABB&, std::vector<struct Entity*>&);
+	int32_t getEntitiesOfType(int32_t, const AABB&, std::vector<struct Entity*>& res);
 	struct Entity* getEntity(int32_t);
 	Color4 getFogColor(float);
 	int32_t getHeightmap(int32_t, int32_t);
@@ -203,7 +203,7 @@ struct Level : LevelSource{
 	void removeEntity(struct Entity*);
 	void removeListener(struct LevelListener*);
 	void removePlayer(struct Player*);
-	void removeTile(int32_t, int32_t, int32_t);
+	bool removeTile(int32_t, int32_t, int32_t);
 	void removeTileEntity(int32_t, int32_t, int32_t);
 	void saveGame();
 	void saveLevelData();

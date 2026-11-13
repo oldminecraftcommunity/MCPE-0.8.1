@@ -84,7 +84,15 @@ struct ListTag : public Tag{
 		}
 		ps.println("}");
 	}
-	//TODO there are other methods like this(FillingContainer & Player - inlined getCompound)
+	//always inlined? might be different~
+	struct Tag* getTag(int32_t n){
+		if (n >= this->value.size()) {
+			this->err |= 1;
+			return 0;
+		}
+		return this->value[n];
+	}
+
 	float getFloat(int32_t n) {
 		if (n >= (int)this->value.size()) {
 			this->err |= 1;

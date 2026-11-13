@@ -22,28 +22,17 @@ FurnaceTile::FurnaceTile(int32_t a2, bool_t a3)
 	this->textureUV = this->faceTexture;
 }
 void FurnaceTile::setLit(bool_t a1, Level* level, int32_t x, int32_t y, int32_t z) {
-	TileEntity* TileEntity; // r0
-	FurnaceTileEntity* v10; // r8
-	Tile* v11;				// r3
-	int32_t v12;				// [sp+Ch] [bp-2Ch]
-
-	v12 = level->getData(x, y, z);
-	TileEntity = level->getTileEntity(x, y, z);
-	v10 = (FurnaceTileEntity*)TileEntity;
-	if(TileEntity) {
-		if(TileEntity->isType(1)) {
-			v10->field_64 = 1;
-			FurnaceTile::noDrop = 1;
-			if(a1) {
-				v11 = Tile::furnace_lit;
-			} else {
-				v11 = Tile::furnace;
-			}
-			level->setTile(x, y, z, v11->blockID, 2);
-			FurnaceTile::noDrop = 0;
-			v10->field_64 = 0;
-			level->setData(x, y, z, v12, 2);
-		}
+	int v12 = level->getData(x, y, z);
+	TileEntity* te = level->getTileEntity(x, y, z);
+	if(te && te->isType(1)) {
+		FurnaceTileEntity* v10 = (FurnaceTileEntity*)te;
+		v10->field_64 = 1;
+		FurnaceTile::noDrop = 1;
+		Tile* v11 = a1 ? Tile::furnace_lit : Tile::furnace;
+		level->setTile(x, y, z, v11->blockID, 2);
+		FurnaceTile::noDrop = 0;
+		v10->field_64 = 0;
+		level->setData(x, y, z, v12, 2);
 	}
 }
 

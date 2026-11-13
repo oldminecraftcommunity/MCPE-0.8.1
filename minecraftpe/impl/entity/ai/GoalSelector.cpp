@@ -17,21 +17,12 @@ bool_t GoalSelector::canCoExist(GoalSelector::InternalGoal* a2, GoalSelector::In
 	return (a2->goal->getRequiredControlFlags() & cfags) == 0;
 }
 bool_t GoalSelector::canUseInSystem(GoalSelector::InternalGoal* a2) {
-	bool_t canCoExist;
-
 	for(auto& g: this->internalGoals) {
 		if(g != a2) {
-			if(a2->field_4 < g->field_4) {
-				if(g->field_9) {
-					canCoExist = g->goal->canInterrupt();
-					goto LABEL_6;
-				}
+			if(a2->field_4 >= g->field_4 && g->field_9){
+				if(!this->canCoExist(a2, g)) return 0;
 			} else if(g->field_9) {
-				canCoExist = this->canCoExist(a2, g);
-LABEL_6:
-				if(!canCoExist) {
-					return 0;
-				}
+				if(!g->goal->canInterrupt()) return 0;
 			}
 		}
 	}

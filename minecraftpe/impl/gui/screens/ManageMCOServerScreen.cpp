@@ -16,8 +16,6 @@
 #include <network/mco/MojangConnector.hpp>
 
 ManageMCOServerScreen::ManageMCOServerScreen(const MCOServerListItem& a2) {
-	this->item.worldName = "My World";
-	this->item.gamemodeName = "creative";
 	this->manageServerHeader = 0;
 	this->backButton = 0;
 	this->resetButton = 0;

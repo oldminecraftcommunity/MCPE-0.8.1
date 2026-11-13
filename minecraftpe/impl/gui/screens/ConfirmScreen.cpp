@@ -2,23 +2,14 @@
 #include <gui/buttons/Touch_TButton.hpp>
 
 
-ConfirmScreen::ConfirmScreen(Screen* a2, const std::string& a3, const std::string& a4, int32_t a5) {
-	this->parentScreen = a2;
-	this->confirmId = a5;
-	this->questionText = a3;
-	this->infoText = a4;
-	this->confirmButtonText = "Ok";
-	this->cancelButtonText = "Cancel";
+ConfirmScreen::ConfirmScreen(Screen* a2, const std::string& a3, const std::string& a4, int32_t a5) :
+	Screen(), parentScreen(a2), confirmId(a5), questionText(a3), infoText(a4), confirmButtonText("Ok"),
+	cancelButtonText("Cancel"){
 	this->confirmButton = 0;
 	this->cancelButton = 0;
 }
-ConfirmScreen::ConfirmScreen(Screen* a2, const std::string& a3, const std::string& a4, const std::string& a5, const std::string& a6, int32_t a7) {
-	this->parentScreen = a2;
-	this->confirmId = a7;
-	this->questionText = a3;
-	this->infoText = a4;
-	this->confirmButtonText = a5;
-	this->cancelButtonText = a6;
+ConfirmScreen::ConfirmScreen(Screen* a2, const std::string& a3, const std::string& a4, const std::string& a5, const std::string& a6, int32_t a7) :
+	Screen(), parentScreen(a2), confirmId(a7), questionText(a3), infoText(a4), confirmButtonText(a5), cancelButtonText(a6){
 }
 
 ConfirmScreen::~ConfirmScreen() {

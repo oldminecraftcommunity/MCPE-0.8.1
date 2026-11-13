@@ -88,8 +88,8 @@ void Level::addListener(struct LevelListener* ll) {
 	this->levelListeners.push_back(ll);
 }
 Particle* Level::addParticle(ParticleType pt, float x, float y, float z, float a6, float a7, float a8, int32_t a9) {
-	for(auto&& ll: this->levelListeners) {
-		Particle* p = ll->addParticle(pt, x, y, z, a6, a7, a8, a9);
+	for(int i = 0; i < this->levelListeners.size(); ++i){
+		Particle* p = this->levelListeners[i]->addParticle(pt, x, y, z, a6, a7, a8, a9);
 		if(p) return p;
 	}
 	return 0;
@@ -641,40 +641,34 @@ void Level::explode(struct Entity* ent, float x, float y, float z, float radius,
 	}
 }
 void Level::extinguishFire(int32_t x, int32_t y, int32_t z, int32_t side) {
-	int32_t v5; // r4
-	int32_t v6; // r6
-	int32_t v7; // r5
-	float f;	// s16
-	float f1;	// r0
-
-	v5 = z;
-	v6 = x;
-	v7 = y;
+	int xx = x;
+	int yy = y;
+	int zz = z;
 	switch(side) {
 		case 0:
-			v7 = y - 1;
+			yy -= 1;
 			break;
 		case 1:
-			v7 = y + 1;
+			yy += 1;
 			break;
 		case 2:
-			v5 = z - 1;
+			zz -= 1;
 			break;
 		case 3:
-			v5 = z + 1;
+			zz += 1;
 			break;
 		case 4:
-			v6 = x - 1;
+			xx -= 1;
 			break;
 		case 5:
-			v6 = x + 1;
+			xx += 1;
 			break;
 		default:
 			break;
 	}
-	if(this->getTile(v6, v7, v5) == Tile::fire->blockID) {
-		this->playSound((float)v6 + 0.5, (float)v7 + 0.5, (float)v5 + 0.5, "random.fizz", 0.5, (float)((float)(this->random.nextFloat() - this->random.nextFloat()) * 0.8) + 2.6);
-		this->removeTile(v6, v7, v5);
+	if(this->getTile(xx, yy, zz) == Tile::fire->blockID) {
+		this->playSound(xx + 0.5f, yy + 0.5f, zz + 0.5f, "random.fizz", 0.5f, ((this->random.nextFloat() - this->random.nextFloat()) * 0.8f) + 2.6f);
+		this->removeTile(xx, yy, zz);
 	}
 }
 
@@ -717,21 +711,12 @@ struct ChunkSource* Level::getChunkSource() {
 }
 
 Color4 Level::getCloudColor(float f) {
-	float timeOfDay; // r0
-	float v5;		 // r0
-	float v6;		 // s15
-	float v7;		 // s14
-
-	timeOfDay = this->getTimeOfDay(f);
-	v5 = Mth::cos((float)(timeOfDay * 3.1416) + (float)(timeOfDay * 3.1416));
-	v6 = (float)(v5 + v5) + 0.5;
-	if(v6 < 0.0) {
-		v6 = 0.0;
-	} else if(v6 > 1.0) {
-		v6 = 1.0;
-	}
-	v7 = (float)(v6 * 0.9) + 0.1;
-	return Color4(v7, v7, (float)(v6 * 0.85) + 0.15, 0);
+	float v5 = Mth::cos((this->getTimeOfDay(f) * Mth::PI) * 2);
+	float v6 = v5*2 + 0.5f;
+	if(v6 < 0) v6 = 0;
+	if(v6 > 1) v6 = 1;
+	float v7 = (v6 * 0.9f) + 0.1f;
+	return Color4(v7, v7, (v6 * 0.85f) + 0.15f, 0);
 }
 std::vector<AABB>* Level::getCubes(const struct Entity* a2, const AABB& a3, float* a4) {
 	int32_t xx;	  // r8
@@ -758,7 +743,7 @@ std::vector<AABB>* Level::getCubes(const struct Entity* a2, const AABB& a3, floa
 	minZ = Mth::floor(a3.minZ);
 	maxZ = Mth::floor(a3.maxZ + 1.0);
 	if(a4) {
-		*a4 = 0.0;
+		*a4 = 0;
 		v17 = 0x7FFFFFFF;
 		while(xx < maxX) {
 			for(i = minZ; i < maxZ; ++i) {
@@ -820,58 +805,36 @@ std::vector<struct Entity*>* Level::getEntities(struct Entity* a2, const AABB& a
 	return &this->entVec;
 }
 int32_t Level::getEntitiesOfClass(int32_t a2, const AABB& a3, std::vector<struct Entity*>& a4) {
-	int32_t minX;	   // r7
-	int32_t maxX;	   // r9
-	int32_t maxZ;	   // r0
-	int32_t v11;	   // r10
-	LevelChunk* chunk; // r0
-	int32_t i;		   // r6
-	int32_t minZ;	   // [sp+0h] [bp-38h]
-	int32_t v16;	   // [sp+4h] [bp-34h]
-
-	minX = Mth::floor((float)(a3.minX - 2.0) * 0.0625);
-	maxX = Mth::floor((float)(a3.maxX + 2.0) * 0.0625);
-	minZ = Mth::floor((float)(a3.minZ - 2.0) * 0.0625);
-	maxZ = Mth::floor((float)(a3.maxZ + 2.0) * 0.0625);
-	v16 = -a4.size();
-	v11 = maxZ;
-	while(minX <= maxX) {
-		for(i = minZ; i <= v11; ++i) {
-			if(this->hasChunk(minX, i)) {
-				chunk = this->getChunk(minX, i);
+	int minX = Mth::floor((a3.minX - 2.0f) * 0.0625f);
+	int maxX = Mth::floor((a3.maxX + 2.0f) * 0.0625f);
+	int minZ = Mth::floor((a3.minZ - 2.0f) * 0.0625f);
+	int maxZ = Mth::floor((a3.maxZ + 2.0f) * 0.0625f);
+	int v16 = -a4.size();
+	for(int x = minX; x <= maxX; ++x){
+		for(int z = minZ; z <= maxZ; ++z) {
+			if(this->hasChunk(x, z)) {
+				LevelChunk* chunk = this->getChunk(x, z);
 				chunk->getEntitiesOfClass(a2, a3, a4);
 			}
 		}
-		++minX;
 	}
 	return a4.size() - v16;
 }
-int32_t Level::getEntitiesOfType(int32_t a2, const AABB& a3, std::vector<struct Entity*>& a4) {
-	int32_t minX;	   // r7
-	int32_t maxX;	   // r9
-	int32_t maxZ;	   // r0
-	int32_t v11;	   // r10
-	LevelChunk* chunk; // r0
-	int32_t z;		   // r6
-	int32_t minZ;	   // [sp+0h] [bp-38h]
-	int32_t v16;	   // [sp+4h] [bp-34h]
-
-	minX = Mth::floor((float)(a3.minX - 2.0) * 0.0625);
-	maxX = Mth::floor((float)(a3.maxX + 2.0) * 0.0625);
-	minZ = Mth::floor((float)(a3.minZ - 2.0) * 0.0625);
-	maxZ = Mth::floor((float)(a3.maxZ + 2.0) * 0.0625);
-	v16 = -a4.size();
-	v11 = maxZ;
-	while(minX <= maxX) {
-		for(z = minZ; z <= v11; ++z) {
-			if(this->hasChunk(minX, z)) {
-				chunk = this->getChunk(minX, z);
-				chunk->getEntitiesOfType(a2, a3, a4);
+int32_t Level::getEntitiesOfType(int32_t type, const AABB& aabb, std::vector<struct Entity*>& res) {
+	int minX = Mth::floor((aabb.minX - 2.0f) * 0.0625f);
+	int maxX = Mth::floor((aabb.maxX + 2.0f) * 0.0625f);
+	int minZ = Mth::floor((aabb.minZ - 2.0f) * 0.0625f);
+	int maxZ = Mth::floor((aabb.maxZ + 2.0f) * 0.0625f);
+	int oldsize = -res.size();
+	for(int x = minX; x <= maxX; ++x) {
+		for(int z = minZ; z <= maxZ; ++z) {
+			if(this->hasChunk(x, z)) {
+				LevelChunk* chunk = this->getChunk(x, z);
+				chunk->getEntitiesOfType(type, aabb, res);
 			}
 		}
-		++minX;
 	}
-	return a4.size() - v16;
+	return res.size() - oldsize;
 }
 struct Entity* Level::getEntity(int32_t a2) {
 	auto&& e = this->eid2entity.find(a2);
@@ -952,7 +915,7 @@ Biome::MobSpawnerData Level::getRandomMobSpawnAt(const MobCategory& a3, int32_t 
 			v10 += v.rarity;
 		}
 
-		int v12 = this->random.genrand_int32() % v10;
+		int v12 = this->random.nextInt(v10);
 		for(auto&& v: v18) {
 			v12 -= v.rarity;
 			if(v12 < 0) {
@@ -1120,10 +1083,7 @@ float Level::getStarBrightness(float a2) {
 	return (float)(v4 * v4) * 0.5;
 }
 float Level::getSunAngle(float a2) {
-	float timeOfDay; // r0
-
-	timeOfDay = this->getTimeOfDay(a2);
-	return (float)(timeOfDay * 3.1416) + (float)(timeOfDay * 3.1416);
+	return (this->getTimeOfDay(a2) * Mth::PI) * 2;
 }
 float Level::getSunIntensity(float a2, struct Mob* a3, float a4) {
 	float v7; // s15
@@ -1140,7 +1100,7 @@ float Level::getSunIntensity(float a2, struct Mob* a3, float a4) {
 }
 Vec3 Level::getSunlightDirection(float a3) {
 	float sunAngle = this->getSunAngle(a3);
-	return Vec3(0.25, cosf(sunAngle), sinf(sunAngle));
+	return Vec3(0.25f, cosf(sunAngle), sinf(sunAngle));
 }
 Color4 Level::getSunriseColor(float a3) {
 	return this->dimensionPtr->getSunriseColor(this->getTimeOfDay(a3), a3);
@@ -1400,16 +1360,16 @@ bool_t Level::isTopSolidBlocking(int32_t x, int32_t y, int32_t z) {
 	return this->isTopSolidBlocking(v8, v9);
 }
 bool_t Level::isUnobstructed(const AABB& aabb) {
-	for(auto&& e: *this->getEntities(0, aabb)) {
-		if(!e->isDead && e->field_FC) {
-			return 0; //result = (unsigned __int8)v6->isDead;
-		}
+	std::vector<Entity*>* ents = this->getEntities(0, aabb);
+	for(int v6 = 0; v6 < ents->size(); ++v6) {
+		Entity* e = (*ents)[v6];
+		if(!e->isDead && e->field_FC) return 0;
 	}
 	return 1;
 }
 void Level::levelEvent(struct Player* player, int32_t a3, int32_t a4, int32_t a5, int32_t a6, int32_t a7) {
-	for(auto&& l: this->levelListeners) {
-		l->levelEvent(player, a3, a4, a5, a6, a7);
+	for(int i = 0; i < this->levelListeners.size(); ++i){
+		this->levelListeners[i]->levelEvent(player, a3, a4, a5, a6, a7);
 	}
 }
 void Level::levelEvent(int32_t a2, int32_t a3, int32_t a4, int32_t a5, int32_t a6) {
@@ -1475,13 +1435,11 @@ void Level::removeEntity(struct Entity* a2) {
 	if(a2->rider) a2->rider->ride(0);
 	if(a2->ridingAt) a2->ride(0);
 	a2->remove();
-	if(a2->isPlayer()) {
-		if(a2->field_108) {
-			//the cast to Player* is very important to match the original
-			auto&& p = std::find(this->players.begin(), this->players.end(), (Player*)a2);
-			if(p != this->players.end()) {
-				this->players.erase(p);
-			}
+	if(a2->isPlayer() && a2->field_108) {
+		//the cast to Player* is very important to match the original
+		auto&& p = std::find(this->players.begin(), this->players.end(), (Player*)a2);
+		if(p != this->players.end()) {
+			this->players.erase(p);
 		}
 	}
 }
@@ -1495,13 +1453,11 @@ void Level::removePlayer(struct Player* a2) {
 		}
 	}
 }
-void Level::removeTile(int32_t x, int32_t y, int32_t z) {
-	this->setTileAndData(x, y, z, 0, 0, 3);
+bool Level::removeTile(int32_t x, int32_t y, int32_t z) {
+	return this->setTileAndData(x, y, z, 0, 0, 3);
 }
 void Level::removeTileEntity(int32_t x, int32_t y, int32_t z) {
-	TileEntity* te; // r0
-
-	te = this->getTileEntity(x, y, z);
+	TileEntity* te = this->getTileEntity(x, y, z);
 	if(te) {
 		te->setRemoved();
 		auto&& a6 = std::find(this->scheduledTileEntityAdds.begin(), this->scheduledTileEntityAdds.end(), te);
@@ -1532,21 +1488,17 @@ void Level::savePlayers() {
 	}
 }
 void Level::sendTileUpdated(int32_t x, int32_t y, int32_t z) {
-	for(auto&& ll: this->levelListeners) {
-		ll->tileChanged(x, y, z);
+	for(int i = 0; i < this->levelListeners.size(); ++i){
+		this->levelListeners[i]->tileChanged(x, y, z);
 	}
 }
 void Level::setBrightness(const struct LightLayer& ll, int32_t x, int32_t y, int32_t z, int32_t b) {
-	int32_t v10;	   // r9
-	LevelChunk* chunk; // r0
-
 	if(y >= 0 && y <= 127) {
-		v10 = x >> 4;
 		if(this->hasChunk(x >> 4, z >> 4)) {
-			chunk = this->getChunk(v10, z >> 4);
+			LevelChunk* chunk = this->getChunk(x >> 4, z >> 4);
 			chunk->setBrightness(ll, x & 0xF, y, z & 0xF, b);
-			for(auto&& ll: this->levelListeners) {
-				ll->tileBrightnessChanged(x, y, z);
+			for(int i = 0; i < this->levelListeners.size(); ++i){
+				this->levelListeners[i]->tileBrightnessChanged(x, y, z);
 			}
 		}
 	}
@@ -1596,35 +1548,18 @@ void Level::setDayCycleActive(bool_t a2) {
 	}
 }
 void Level::setInitialSpawn(void) {
-	int32_t spawnZ;	  // r4
-	int32_t spawnX;	  // r5
-	Random* p_random; // r7
-	int8_t v5;		  // r8
-	int8_t v6;		  // r8
-
-	spawnZ = 128;
+	int spawnX = 128;
+	int spawnZ = 128;
 	this->searchingSpawn = 1;
-	spawnX = 128;
 
 	while(!this->dimensionPtr->isValidSpawn(spawnX, spawnZ)) {
-		v5 = this->random.genrand_int32();
-		spawnX += (v5 & 0x1F) - (this->random.genrand_int32() & 0x1F);
-		v6 = this->random.genrand_int32();
-		spawnZ += (v6 & 0x1F) - (this->random.genrand_int32() & 0x1F);
-		if(spawnX > 3) {
-			if(spawnX > 251) {
-				spawnX -= 32;
-			}
-		} else {
-			spawnX += 32;
-		}
-		if(spawnZ > 3) {
-			if(spawnZ > 251) {
-				spawnZ -= 32;
-			}
-		} else {
-			spawnZ += 32;
-		}
+		spawnX += this->random.nextInt(32) - this->random.nextInt(32);
+		spawnZ += this->random.nextInt(32) - this->random.nextInt(32);
+		if(spawnX <= 3) spawnX += 32;
+		else if(spawnX > 251) spawnX -= 32;
+
+		if(spawnZ <= 3) spawnZ += 32;
+		else if(spawnZ > 251) spawnZ -= 32;
 	}
 	this->levelData.setSpawn(spawnX, 64, spawnZ);
 	this->searchingSpawn = 0;
@@ -1671,8 +1606,8 @@ bool_t Level::setTileAndDataNoUpdate(int32_t x, int32_t y, int32_t z, int32_t id
 	return this->setTileAndData(x, y, z, id, meta, 4);
 }
 void Level::setTileDirty(int32_t x, int32_t y, int32_t z) {
-	for(auto&& ll: this->levelListeners) {
-		ll->setTilesDirty(x, y, z, x, y, z);
+	for(int i = 0; i < this->levelListeners.size(); ++i){
+		this->levelListeners[i]->setTilesDirty(x, y, z, x, y, z);
 	}
 }
 void Level::setTileEntity(int32_t x, int32_t y, int32_t z, struct TileEntity* te) {
@@ -1701,8 +1636,8 @@ bool_t Level::setTileNoUpdate(int32_t x, int32_t y, int32_t z, int32_t id) {
 	return this->setTileAndData(x, y, z, id, 0, 4);
 }
 void Level::setTilesDirty(int32_t x1, int32_t y1, int32_t z1, int32_t x2, int32_t y2, int32_t z2) {
-	for(auto&& ll: this->levelListeners) {
-		ll->setTilesDirty(x1, y1, z1, x2, y2, z2);
+	for(int i = 0; i < this->levelListeners.size(); ++i){
+		this->levelListeners[i]->setTilesDirty(x1, y1, z1, x2, y2, z2);
 	}
 }
 int32_t Level::setTime(long newTime) {	  //long
@@ -1745,8 +1680,8 @@ void Level::swap(int32_t x, int32_t y, int32_t z, int32_t x2, int32_t y2, int32_
 	this->updateNeighborsAt(x2, y2, z2, id1);
 }
 void Level::takePicture(struct TripodCamera* a2, struct Entity* a3) {
-	for(auto&& ll: this->levelListeners) {
-		ll->takePicture(a2, a3);
+	for(int i = 0; i < this->levelListeners.size(); ++i){
+		this->levelListeners[i]->takePicture(a2, a3);
 	}
 }
 void Level::tick(struct Entity* e) {
@@ -1946,9 +1881,8 @@ void Level::tileEntityChanged(int32_t x, int32_t y, int32_t z, struct TileEntity
 	if(this->hasChunkAt(x, y, z)) {
 		this->getChunkAt(x, z)->markUnsaved();
 	}
-
-	for(auto&& ll: this->levelListeners) {
-		ll->tileEntityChanged(x, y, z, te);
+	for(int i = 0; i < this->levelListeners.size(); ++i){
+		this->levelListeners[i]->tileEntityChanged(x, y, z, te);
 	}
 }
 void Level::tileEvent(int32_t x, int32_t y, int32_t z, int32_t a5, int32_t a6) {
@@ -2319,16 +2253,18 @@ void Level::addToTickNextTick(int32_t x, int32_t y, int32_t z, int32_t id, int32
 
 
 //no idea why are they stored in data
-static ChunkPos _offsets[] = {{-1, -4}, {0, -4}, {1, -4}, {-2, -3}, {-1, -3}, {0, -3}, {1, -3}, {2, -3}, {-3, -2}, {-2, -2}, {-1, -2}, {0, -2}, {1, -2}, {2, -2}, {3, -2}, {-4, -1}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {3, -1}, {4, -1}, {-4, 0}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {-4, 1}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1}, {-3, 2}, {-2, 2}, {-1, 2}, {0, 2}, {1, 2}, {2, 2}, {3, 2}, {-2, 3}, {-1, 3}, {0, 3}, {1, 3}, {2, 3}, {-1, 4}, {0, 4}, {1, 4}};
+//TODO should be in .rodata after Recipe:: constants
+//but currently due to compilation order it is before Recipe:: constants
+static const ChunkPos _offsets[] = {{-1, -4}, {0, -4}, {1, -4}, {-2, -3}, {-1, -3}, {0, -3}, {1, -3}, {2, -3}, {-3, -2}, {-2, -2}, {-1, -2}, {0, -2}, {1, -2}, {2, -2}, {3, -2}, {-4, -1}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {3, -1}, {4, -1}, {-4, 0}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {-4, 1}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1}, {-3, 2}, {-2, 2}, {-1, 2}, {0, 2}, {1, 2}, {2, 2}, {3, 2}, {-2, 3}, {-1, 3}, {0, 3}, {1, 3}, {2, 3}, {-1, 4}, {0, 4}, {1, 4}};
 
 void Level::tickTiles() {
 	this->somethingRelatedToChunkPos.clear();
 	for(auto& p: this->players) {
-		int32_t posX = Mth::floor(p->posX * 0.0625);
-		int32_t posZ = Mth::floor(p->posZ * 0.0625);
+		int32_t posX = Mth::floor(p->posX * 0.0625f);
+		int32_t posZ = Mth::floor(p->posZ * 0.0625f);
 
 		for(int32_t i = 0; i < 57; ++i) {
-			ChunkPos* off = &_offsets[i];
+			const ChunkPos* off = &_offsets[i];
 			int xx = (off->x + posX);
 			if((uint32_t)xx <= 0xf) {
 				int32_t zz = off->z + posZ;

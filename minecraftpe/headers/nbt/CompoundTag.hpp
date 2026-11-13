@@ -128,62 +128,45 @@ struct CompoundTag : public Tag{
 		return it->second;
 	}
 	char getByte(const std::string& name) const {
-		if (this->contains(name, 1)) {
-			ByteTag* tag = (ByteTag*) (this->get(name));
-			return tag->value;
-		}
-		return 0;
+		if (!this->contains(name, 1)) return 0;
+		ByteTag* tag = (ByteTag*) (this->get(name));
+		return tag->value;
 	}
 	CompoundTag* getCompound(const std::string& name) const {
-		if (this->contains(name, 10)) {
-			CompoundTag* tag = (CompoundTag*) (this->get(name));
-			return tag;
-		}
-		return new CompoundTag(name);
+		if (!this->contains(name, 10)) return new CompoundTag(name);
+		CompoundTag* tag = (CompoundTag*) (this->get(name));
+		return tag;
 	}
 	int32_t getInt(const std::string& name) const {
-		if (this->contains(name, 3)) {
-			IntTag* tag = (IntTag*) (this->get(name));
-			return tag->value;
-		}
-		return 0;
+		if (!this->contains(name, 3)) return 0;
+		IntTag* tag = (IntTag*) (this->get(name));
+		return tag->value;
 	}
 	float getFloat(const std::string& name) const {
-		if (this->contains(name, 5)) {
-			FloatTag* tag = (FloatTag*) (this->get(name));
-			return tag->value;
-		}
-		return 0;
+		if (!this->contains(name, 5)) return 0;
+		FloatTag* tag = (FloatTag*) (this->get(name));
+		return tag->value;
 	}
 	ListTag* getList(const std::string& name) const {
-		if (this->contains(name, 9)) {
-			ListTag* tag = (ListTag*) (this->get(name));
-			return tag;
-		}
-		return new ListTag(name);
+		if (!this->contains(name, 9)) return new ListTag(name);
+		ListTag* tag = (ListTag*) (this->get(name));
+		return tag;
 	}
 	int64_t getLong(const std::string& name) const {
-		if (this->contains(name, 4)) {
-			LongTag* tag = (LongTag*) (this->get(name));
-			return tag->value;
-		}
-		return 0;
+		if (!this->contains(name, 4)) return 0;
+		LongTag* tag = (LongTag*) (this->get(name));
+		return tag->value;
 	}
 	int16_t getShort(const std::string& name) const {
-		if (this->contains(name, 2)) {
-			ShortTag* tag = (ShortTag*) (this->get(name));
-			return tag->value;
-		}
-		return 0;
+		if (!this->contains(name, 2)) return 0;
+		ShortTag* tag = (ShortTag*) (this->get(name));
+		return tag->value;
 	}
 	std::string getString(const std::string& name) const {
-		if (this->contains(name, 8)) {
-			StringTag* tag = (StringTag*) (this->get(name));
-			return tag->value;
-		}
-		return "";
+		if(!this->contains(name, 8)) return "";
+		StringTag* tag = (StringTag*) (this->get(name));
+		return tag->value;
 	}
-
 	void put(const std::string& name, Tag* tag){
 		//i wonder is there some easier way to do it
 		this->value.insert(std::move<std::pair<std::string, Tag*>>({name, tag->setName(name)}));

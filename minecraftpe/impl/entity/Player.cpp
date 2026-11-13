@@ -279,30 +279,21 @@ void Player::setArmor(int32_t a2, const ItemInstance* a3) {
 	}
 }
 void Player::setBedOffset(int32_t a2) {
-	float v4; // r3
-	float v5; // r2
-
 	this->bedOffsetX = 0.0f;
 	this->bedOffsetZ = 0.0f;
 	switch(a2) {
 		case 0:
-			v4 = -1.8f;
-			goto LABEL_4;
-		case 1:
-			v5 = 1.8f;
-			goto LABEL_7;
-		case 2:
-			v4 = 1.8f;
-LABEL_4:
-			this->bedOffsetZ = v4;
-			return;
-		case 3:
-			v5 = -1.8f;
-LABEL_7:
-			this->bedOffsetX = v5;
+			this->bedOffsetZ = -1.8f;
 			break;
-		default:
-			return;
+		case 2:
+			this->bedOffsetZ = 1.8f;
+			break;
+		case 1:
+			this->bedOffsetX = 1.8f;
+			break;
+		case 3:
+			this->bedOffsetX = -1.8f;
+			break;
 	}
 }
 void Player::setDefaultHeadHeight() {
@@ -313,90 +304,23 @@ void Player::setRespawnPosition(const struct Pos& a2) {
 	this->spawn = a2;
 }
 void Player::spawnEatParticles(const ItemInstance* a2, int32_t a3) {
-	Level* level; // r5
-	float v8;	  // s22
-	float v9;	  // s23
-	float v10;	  // s17
-	float v11;	  // r0
-	float v12;	  // s22
-	float v13;	  // s15
-	float v14;	  // s17
-	float v15;	  // s14
-	float v16;	  // r0
-	float v17;	  // s17
-	float v18;	  // s15
-	float posX;	  // s22
-	float posY;	  // s17
-	float v22;	  // s14
-	float v23;	  // s13
-	Level* v24;	  // r0
-	float v25;	  // s15
-	float v26;	  // s13
-	int32_t v27;  // r6
-	Level* v28;	  // r6
-
 	if(a2->getUseAnimation() == 2) {
-		this->level->playSound(this, "random.drink", 0.5f, (float)(level->random.nextFloat() * 0.1f) + 0.9f);
-	} else {
-		if(a2->getUseAnimation() != 1) {
-			return;
-		}
-		v27 = 0;
-		while(v27 < a3) {
-			++v27;
-			v8 = -(float)(this->yaw * 3.1416f);
-			v9 = (float) - (float)(this->pitch * 3.1416f) / 180.0f;
-			v10 = this->random.nextFloat() - 0.5f;
-			v11 = Mth::random();
-			v12 = v8 / 180.0f;
-			v13 = (float)(v11 * 0.1f) + 0.1f;
-			v14 = v10 * 0.1f;
-			if(v14 == 0.0f) {
-				v14 = 0.0f;
-			}
-			if(v13 == 0.0f) {
-				v13 = 0.0f;
-			}
+		this->level->playSound(this, "random.drink", 0.5f, (float)(this->level->random.nextFloat() * 0.1f) + 0.9f);
+	} else if(a2->getUseAnimation() == 1) {
+		for(int v27 = 0; v27 < a3; ++v27){
+			float v9 = -(this->pitch * Mth::PI) / 180.0f;
+			float v8 = -(this->yaw * Mth::PI) / 180.0f;
 
-			Vec3 a6(v14, v13, 0.0f);
+			Vec3 a6((this->random.nextFloat() - 0.5f) * 0.1f, (Mth::random() * 0.1f) + 0.1f, 0.0f);
 			a6.xRot(v9);
-			a6.yRot(v12);
-			v15 = this->random.nextFloat();
-			v16 = this->random.nextFloat();
-			v17 = (float)(v15 - 0.5f) * 0.3f;
-			if(v17 == 0.0f) {
-				v17 = 0.0f;
-			}
-			v18 = (float) - (float)(v16 * 0.6f) - 0.3f;
-			if(v18 == 0.0f) {
-				v18 = 0.0f;
-			}
-			Vec3 vec(v17, v18, 0.6f);
+			a6.yRot(v8);
+			Vec3 vec((this->random.nextFloat() - 0.5f) * 0.3f, -this->random.nextFloat()*0.6f - 0.3f, 0.6f);
 			vec.xRot(v9);
-			vec.yRot(v12);
-			posX = this->posX;
-			posY = this->posY;
-			v22 = posX + vec.x;
-			if((float)(posX + vec.x) == 0.0f) {
-				v22 = 0.0f;
-			}
-			vec.x = v22;
-			v23 = this->getHeadHeight();
-			v24 = this->level;
-			v25 = (float)(posY + v23) + vec.y;
-			v26 = vec.z + this->posZ;
-			if(v25 == 0.0f) {
-				v25 = 0.0f;
-			}
-			vec.y = v25;
-			if(v26 == 0.0f) {
-				v26 = 0.0f;
-			}
-			vec.z = v26;
-			v24->addParticle(PT_BREAKING_ITEM_1, v22, v25, v26, a6.x, a6.y + 0.05f, a6.z, a2->itemClass->itemID);
+			vec.yRot(v8);
+			vec = vec.add(this->posX, (this->posY + this->getHeadHeight()), this->posZ);
+			this->level->addParticle(PT_BREAKING_ITEM_1, vec.x, vec.y, vec.z, a6.x, a6.y + 0.05f, a6.z, a2->itemClass->itemID);
 		}
-		v28 = this->level;
-		v28->playSound((Entity*)this, "random.eat", (float)((float)(this->random.genrand_int32() & 1) * 0.5f) + 0.5f, (float)((float)(this->random.nextFloat() - this->random.nextFloat()) * 0.2f) + 1.0f);
+		this->level->playSound(this, "random.eat", (this->random.nextInt(2) * 0.5f) + 0.5f, ((this->random.nextFloat() - this->random.nextFloat()) * 0.2f) + 1.0f);
 	}
 }
 void Player::startUsingItem(ItemInstance a2, int32_t a3) {
@@ -616,15 +540,9 @@ void Player::readAdditionalSaveData(CompoundTag* a2) {
 			int32_t v13 = v10->value.size();
 			if(v13 >= 4) v13 = 4;
 			while(v12 < v13) {
-				CompoundTag* v15;
-				if(v12 >= v10->value.size()) {
-					v15 = 0;
-					v10->err |= 1;
-				} else {
-					v15 = (CompoundTag*)v10->value[v12];
-				}
-				if(v15->getId() == 10) {
-					this->armorSlots[v12].load(v15);
+				Tag* tag = v10->getTag(v12);
+				if(tag->getId() == 10) {
+					this->armorSlots[v12].load((CompoundTag*) tag);
 				}
 				++v12;
 			}
@@ -739,8 +657,8 @@ void Player::aiStep() {
 		this->heal(1);
 	}
 	this->field_C74 = this->field_C78;
-	float v2 = sqrt((float)((float)(this->motionZ * this->motionZ) + (float)(this->motionX * this->motionX)));
-	float v18 = atan((float) - (float)(this->motionY * 0.2f));
+	float v2 = sqrt((this->motionX * this->motionX) + (this->motionZ * this->motionZ));
+	float v18 = atan(-(this->motionY * 0.2f));
 	if(v2 > 0.1f) v2 = 0.1f;
 
 	if(this->onGround) {
@@ -756,7 +674,7 @@ void Player::aiStep() {
 	this->field_C78 += (v2 - this->field_C78) * 0.4f;
 	this->field_15C += (v6 - this->field_15C) * 0.8f;
 	if(this->health > 0) {
-		std::vector<struct Entity*>* ents = this->level->getEntities(this, this->boundingBox.expand(1, 0, 1));
+		std::vector<struct Entity*>* ents = this->level->getEntities(this, this->boundingBox.grow(1, 0, 1));
 		for(int v13 = 0; v13 < ents->size(); ++v13){
 			Entity* v17 = ents->at(v13);
 			if(!v17->isDead) {

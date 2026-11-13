@@ -5,9 +5,8 @@
 struct RemovePlayerPacket : Packet{
 	int32_t eid;
 	RakNet::RakNetGUID clientId;
-	RemovePlayerPacket(int32_t eid, RakNet::RakNetGUID cid) :
-			clientId(cid) {
-		this->eid = eid;
+	RemovePlayerPacket(int32_t eid, const RakNet::RakNetGUID& cid) :
+		eid(eid), clientId(cid) {
 	}
 	RemovePlayerPacket() {
 	}

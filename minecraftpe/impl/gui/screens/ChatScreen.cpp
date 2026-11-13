@@ -12,14 +12,7 @@
 #include <util/Util.hpp>
 
 ChatScreen::ChatScreen()
-	: Screen() {
-	this->field_54 = "";
-	this->keyboardVisible = 0;
-	this->field_59 = 0;
-	this->closeButton = 0;
-	this->field_60 = 0;
-	this->field_64 = 0;
-	this->sendChatMessageButton = 0;
+	: Screen(), field_54(), keyboardVisible(0), field_59(0), closeButton(0), field_60(0), field_64(0), sendChatMessageButton(0) {
 }
 void ChatScreen::closeWindow() {
 	this->minecraft->platform()->hideKeyboard();
@@ -33,9 +26,9 @@ void ChatScreen::drawChatMessages(int32_t a2) {
 		});
 
 		if(msg.message[0] == '/') {
-			this->font->drawWordWrap(msg.fullMessage, 2.0, v20, this->width, Color4::GREY.toARGB(), 1, 0);
+			this->font->drawWordWrap(msg.fullMessage, 2.0f, v20, this->width, Color4::GREY.toARGB(), 1, 0);
 		} else {
-			this->font->drawWordWrap(msg.fullMessage, 2.0, v20, this->width, Color4::WHITE.toARGB(), 1, 0);
+			this->font->drawWordWrap(msg.fullMessage, 2.0f, v20, this->width, Color4::WHITE.toARGB(), 1, 0);
 		}
 	}
 }

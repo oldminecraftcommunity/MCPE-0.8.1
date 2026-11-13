@@ -8,7 +8,7 @@ struct Bush : Tile{
 	Bush(int32_t a2, const std::string& a3, Material* mat) :
 			Tile(a2, a3, mat) {
 		this->setTicking(1);
-		this->setShape(0.3, 0, 0.3, 0.7, 0.6, 0.7);
+		this->setShape(0.3f, 0.0f, 0.3f, 0.7f, 0.6f, 0.7f);
 	}
 	Bush(int32_t a2, const std::string& a3) :
 			Bush(a2, a3, Material::plant) {

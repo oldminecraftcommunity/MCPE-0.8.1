@@ -37,16 +37,11 @@ LABEL_8:
 	}
 }
 void MCOServerListItemElement::tick(Minecraft* a2) {
-	float v3; // s16
-	float v4; // s15
-	Button* v5; // r0
-	Button* v6; // r3
-
-	v3 = (float)Mouse::getX() * Gui::InvGuiScale;
-	v4 = (float)Mouse::getY() * Gui::InvGuiScale;
-	if(fabsf(v3 - this->field_24) > 20.0 || fabsf(v4 - this->field_28) > 20.0) {
-		v5 = this->field_7C;
-		v6 = this->field_2C;
+	float v3 = (float)Mouse::getX() * Gui::InvGuiScale;
+	float v4 = (float)Mouse::getY() * Gui::InvGuiScale;
+	if(fabsf(v3 - this->field_24) > 20.0f || fabsf(v4 - this->field_28) > 20.0f) {
+		Button* v5 = this->field_7C;
+		Button* v6 = this->field_2C;
 		if(v5 == v6 || (v5 = this->field_78) != 0 && v5 == v6) {
 			v5->released((int32_t)v3, (int32_t)v4);
 		}

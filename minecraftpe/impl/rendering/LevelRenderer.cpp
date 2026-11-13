@@ -698,8 +698,8 @@ int32_t LevelRenderer::renderFarChunks(float a2) {
 				MeshBuffer* rc = v6->getRenderChunk(0);
 				glPushMatrix();
 				glTranslatef(rc->transformX, rc->transformY, rc->transformZ);
-				int v9 = v4 + this->_renderChunk(*v6->getRenderChunk(3));
-				v4 = v9 + this->_renderChunk(*rc);
+				v4 += this->_renderChunk(*v6->getRenderChunk(3));
+				v4 += this->_renderChunk(*rc);
 				glPopMatrix();
 			}
 		}
@@ -1223,11 +1223,10 @@ void LevelRenderer::tileChanged(int32_t x, int32_t y, int32_t z) {
 }
 void LevelRenderer::skyColorChanged() {
 	for(int32_t i = 0; i < this->chunksToRenderSize; ++i) {
-		RenderChunk* rc = this->chunks[i];
-		if(rc->touchedSky) {
-			if(!rc->isDirty()) {
-				this->_renderChunks.push_back(rc);
-				rc->setDirty();
+		if(this->chunks[i]->touchedSky) {
+			if(!this->chunks[i]->isDirty()) {
+				this->_renderChunks.push_back(this->chunks[i]);
+				this->chunks[i]->setDirty();
 			}
 		}
 	}
@@ -1370,7 +1369,7 @@ void LevelRenderer::entityAdded(Entity* a2) {
 }
 void LevelRenderer::levelEvent(Player* player, int32_t event, int32_t x, int32_t y, int32_t z, int32_t) {
 	if(event == 1003) {
-		this->level->playSound((float)x + 0.5, (float)y + 0.5, (float)z + 0.5, Mth::random() >= 0.5 ? "random.door_close" : "random.door_open", 1.0, (float)(level->random.nextFloat() * 0.1) + 0.9);
+		this->level->playSound(x + 0.5f, y + 0.5f, z + 0.5f, Mth::random() >= 0.5f ? "random.door_close" : "random.door_open", 1.0f, (level->random.nextFloat() * 0.1f) + 0.9f);
 	}
 }
 void LevelRenderer::onAppSuspended() {

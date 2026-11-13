@@ -35,13 +35,11 @@ Entity* EntityFactory::CreateEntity(int32_t type, Level* level) {
 }
 Entity* EntityFactory::loadEntity(CompoundTag* tag, Level* level) {
 	int32_t id = tag->getInt("id");
-	if(id < 0) {
-		return 0;
-	}
+	if(id < 0) return 0;
+
 	Entity* v7 = id > 63 ? EntityFactory::CreateEntity(id, level) : MobFactory::CreateMob(id, level);
-	if(!v7) {
-		return 0;
-	}
+	if(!v7) return 0;
+
 	v7->load(tag);
 	if(v7->isItemEntity() && !((ItemEntity*)v7)->itemInstance.isValid) {
 		delete v7;

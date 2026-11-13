@@ -20,7 +20,7 @@ struct NetherReactorTileEntity: TileEntity
 	void clearDomeSpace(int32_t x, int32_t y, int32_t z);
 	void deterioateCrockedRoofVolume(bool_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t);
 	void deterioateDome(int32_t, int32_t, int32_t);
-	void deterioateHollowedVolume(int32_t, int32_t, int32_t, int32_t, int32_t, int32_t);
+	void deterioateHollowedVolume(int32_t x, int32_t y, int32_t z, int32_t radius, int32_t height, int32_t);
 	void finishReactorRun();
 	std::string getName() const;
 	int32_t getNumEnemiesPerLevel(int32_t);
@@ -38,7 +38,7 @@ struct NetherReactorTileEntity: TileEntity
 	void tickGlowingRedstoneTransformation(int32_t);
 	void trySpawnPigZombies(int32_t, int32_t);
 	void turnGlowingObsidianLayerToObsidian(int32_t);
-	void turnLayerToGlowingObsidian(int32_t, int32_t);
+	void turnLayerToGlowingObsidian(int32_t yoff, int32_t layerId);
 
 	virtual ~NetherReactorTileEntity(){}
 	virtual bool_t shouldSave();

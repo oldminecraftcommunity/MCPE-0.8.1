@@ -6,8 +6,12 @@ struct ListTag;
 struct ListTagFloatAdder
 {
 	ListTag* tag;
+	ListTagFloatAdder(float f)
+		: tag(0) {
+		(*this)(f);
+	}
 
-	ListTagFloatAdder& operator ()(float a2) {
+	ListTagFloatAdder& operator()(float a2) {
 		if (!this->tag) {
 			this->tag = new ListTag();
 		}

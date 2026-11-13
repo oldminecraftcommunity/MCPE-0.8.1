@@ -764,7 +764,8 @@ void ServerSideNetworkHandler::entityAdded(Entity* a2) {
 }
 void ServerSideNetworkHandler::entityRemoved(Entity* a2) {
 	if(a2->isPlayer()) {
-		RemovePlayerPacket v11(a2->entityId, ((Player*)a2)->rakNetGUID);
+		Player* player = (Player*) a2;
+		RemovePlayerPacket v11(player->entityId, player->rakNetGUID);
 		this->redistributePacket(&v11, this->rakPeer->GetMyGUID());
 	} else {
 		RemoveEntityPacket v11(a2->entityId);

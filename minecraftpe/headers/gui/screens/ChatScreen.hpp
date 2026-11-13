@@ -7,8 +7,8 @@ struct Minecraft;
 struct ChatScreen: Screen
 {
 	std::string field_54;
-	bool_t keyboardVisible;
-	int8_t field_59, field_5A, field_5B;
+	bool keyboardVisible;
+	bool field_59;
 	Button* closeButton;
 	Button* field_60;
 	ImageWithBackground* field_64;

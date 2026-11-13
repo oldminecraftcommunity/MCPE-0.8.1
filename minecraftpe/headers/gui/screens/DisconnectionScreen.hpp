@@ -9,9 +9,7 @@ struct DisconnectionScreen: Screen
 	std::string reason;
 	Touch::TButton* okButton;
 
-	DisconnectionScreen(const std::string& a2) {
-		this->reason = a2;
-		this->okButton = 0;
+	DisconnectionScreen(const std::string& a2) : Screen(), reason(a2), okButton(0){
 	}
 
 	virtual ~DisconnectionScreen() {

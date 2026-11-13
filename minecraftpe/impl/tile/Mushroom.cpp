@@ -2,7 +2,7 @@
 #include <level/Level.hpp>
 
 Mushroom::Mushroom(int32_t id, const std::string& name) : Bush(id, name){
-	this->setShape(0.3, 0.0, 0.3, 0.7, 0.4, 0.7);
+	this->setShape(0.3f, 0.0f, 0.3f, 0.7f, 0.4f, 0.7f);
 	this->setTicking(1);
 }
 

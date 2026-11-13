@@ -33,7 +33,7 @@ Gui::Gui(Minecraft* mc) {
 	this->field_10 = 0;
 	this->field_18 = 240;
 	this->field_14 = "";
-	this->minecraftInst = mc;
+	this->minecraft = mc;
 	this->field_9FC = 0;
 	this->field_A00 = 2;
 	this->nowPlayingMessage = "";
@@ -86,7 +86,7 @@ void Gui::onConfigChanged(const Config& a2) {
 	int v25;		   // [sp+14h] [bp-84h] BYREF
 
 	v4 = 0;
-	v5 = this->minecraftInst->platform();
+	v5 = this->minecraft->platform();
 	v6 = (float)(v5->getPixelsPerMillimeter() * 12.0) * 0.3333;
 	if(v6 >= 40.0) {
 		v6 = 40.0;
@@ -166,14 +166,14 @@ void Gui::addMessage(const std::string& a2, const std::string& a3, int32_t a4) {
 	GuiMessage* v7; // r0
 	char* v8;		// r0
 
-	if(this->minecraftInst->font) {
+	if(this->minecraft->font) {
 		const GuiMessage v13(a2, a3, a4);
 		this->chatMessages.insert(this->chatMessages.begin(), v13);
 
-		if(!this->minecraftInst->isOnlineClient() && v13.message[0] == '/') {
+		if(!this->minecraft->isOnlineClient() && v13.message[0] == '/') {
 			this->chatMessages.insert(
 				this->chatMessages.begin(),
-				GuiMessage("server", *this->minecraftInst->serverCmdParser->executeCommand(v13), 200)
+				GuiMessage("server", *this->minecraft->serverCmdParser->executeCommand(v13), 200)
 			);
 		}
 
@@ -199,22 +199,22 @@ int32_t Gui::getNumSlots() {
 	return this->slotsAmount;
 }
 RectangleArea Gui::getRectangleArea(int32_t a3) {
-	int cx = this->minecraftInst->width / 2;
+	int cx = this->minecraft->width / 2;
 	float v8 = (float)cx + 2.0;
 	float v10 = ((float)(10 * this->getNumSlots() + 3) + 1.0f) * Gui::GuiScale;
 	float v11 = Gui::GuiScale * 25.0f;
-	float v12 = (float)this->minecraftInst->height;
+	float v12 = (float)this->minecraft->height;
 	if(a3 < 0) {
 		return RectangleArea(1, 0, v12 - v11, (float)(v8 + v10) + 2, v12);
 	}
 	if(a3 == 0) {
 		return RectangleArea(1, v8 - v10, v12 - v11, (float)(v8 + v10) + 2, v12);
 	}
-	return RectangleArea(1, v8 - v10, v12 - v11, this->minecraftInst->width, v12);
+	return RectangleArea(1, v8 - v10, v12 - v11, this->minecraft->width, v12);
 }
 int32_t Gui::getSlotIdAt(int32_t a2, int32_t a3) {
-	int32_t v5 = (int32_t)(this->minecraftInst->width * Gui::InvGuiScale);
-	int32_t v6 = (int32_t)(this->minecraftInst->height * Gui::InvGuiScale);
+	int32_t v5 = (int32_t)(this->minecraft->width * Gui::InvGuiScale);
+	int32_t v6 = (int32_t)(this->minecraft->height * Gui::InvGuiScale);
 	int32_t v8 = (int32_t)(a3 * Gui::InvGuiScale);
 	if(v8 < v6 - 19) return -1;
 	if(v8 > v6) return -1;
@@ -231,7 +231,7 @@ int32_t Gui::getSlotPos(int32_t slot, int32_t& x, int32_t& y) {
 	int32_t v9;				  // r4
 	int32_t result;			  // r0
 
-	minecraftInst = this->minecraftInst;
+	minecraftInst = this->minecraft;
 	v8 = (int32_t)(float)((float)minecraftInst->height * Gui::InvGuiScale);
 	v9 = (int32_t)(float)((float)minecraftInst->width * Gui::InvGuiScale);
 	result = v9 / 2 - 10 * this->getNumSlots();
@@ -250,7 +250,7 @@ void Gui::handleClick(int32_t a2, int32_t a3, int32_t a4) {
 		SlotIdAt = this->getSlotIdAt(a3, a4);
 		if(SlotIdAt != -1) {
 			v6 = SlotIdAt == this->getNumSlots() - 1;
-			minecraftInst = this->minecraftInst;
+			minecraftInst = this->minecraft;
 			if(v6) {
 				Screen* currentScreen = minecraftInst->currentScreen.get();
 				if(currentScreen) {
@@ -268,13 +268,13 @@ void Gui::handleClick(int32_t a2, int32_t a3, int32_t a4) {
 }
 void Gui::handleKeyPressed(int32_t key) {
 	if(key == 99) { //prevslot
-		if(this->minecraftInst->player->inventory->selectedSlot <= 0) return;
-		this->minecraftInst->player->inventory->selectedSlot -= 1;
+		if(this->minecraft->player->inventory->selectedSlot <= 0) return;
+		this->minecraft->player->inventory->selectedSlot -= 1;
 	}else if(key == 4){ //nextslot
-		if(this->minecraftInst->player->inventory->selectedSlot >= this->getNumSlots() - 2) return;
-		this->minecraftInst->player->inventory->selectedSlot += 1;
+		if(this->minecraft->player->inventory->selectedSlot >= this->getNumSlots() - 2) return;
+		this->minecraft->player->inventory->selectedSlot += 1;
 	}else if(key == 100){ //inventory
-		this->minecraftInst->screenChooser.setScreen(ScreenId::INVENTORY_SCREEN);
+		this->minecraft->screenChooser.setScreen(ScreenId::INVENTORY_SCREEN);
 	}
 }
 void Gui::inventoryUpdated() {
@@ -288,8 +288,8 @@ static OffsetPosTranslator _spawnPos;
 static char_t _D6E05AAC[264];
 
 void Gui::onLevelGenerated() {
-	if(this->minecraftInst->level) {
-		TilePos res = this->minecraftInst->level->getSharedSpawnPos();
+	if(this->minecraft->level) {
+		TilePos res = this->minecraft->level->getSharedSpawnPos();
 		_spawnPos.y = -res.y;
 		_spawnPos.z = -res.z;
 		_spawnPos.x = -res.x;
@@ -325,14 +325,14 @@ void Gui::render(float a2, bool_t a3, int32_t a4, int32_t a5) {
 	float v23;				  // s17
 	int32_t v24;			  // r0
 
-	minecraftInst = this->minecraftInst;
+	minecraftInst = this->minecraft;
 	if(minecraftInst->level) {
 		if(minecraftInst->player) {
 			DisableState v25(GL_DEPTH_TEST);
-			v8 = this->minecraftInst;
+			v8 = this->minecraft;
 			font = v8->font;
 			v10 = v8->useTouchscreen();
-			v11 = this->minecraftInst;
+			v11 = this->minecraft;
 			v12 = v11->height;
 			v13 = Gui::InvGuiScale;
 			v14 = (float)v11->width * Gui::InvGuiScale;
@@ -343,8 +343,8 @@ void Gui::render(float a2, bool_t a3, int32_t a4, int32_t a5) {
 				this->renderProgressIndicator(v10, v15, v16, a2);
 			}
 			glColor4f(1.0, 1.0, 1.0, 1.0);
-			if(this->minecraftInst->gameMode->canHurtPlayer()) {
-				this->minecraftInst->texturesPtr->loadAndBindTexture("gui/icons.png");
+			if(this->minecraft->gameMode->canHurtPlayer()) {
+				this->minecraft->texturesPtr->loadAndBindTexture("gui/icons.png");
 				Tesselator::instance.beginOverride();
 				Tesselator::instance.colorABGR(-1);
 				this->renderHearts();
@@ -352,15 +352,15 @@ void Gui::render(float a2, bool_t a3, int32_t a4, int32_t a5) {
 				Tesselator::instance.endOverrideAndDraw();
 			}
 
-			if(this->minecraftInst->player->getSleepTimer() > 0) {
+			if(this->minecraft->player->getSleepTimer() > 0) {
 				this->renderSleepAnimation(v15, v16);
 			}
-			if(!this->minecraftInst->currentScreen) {
+			if(!this->minecraft->currentScreen) {
 				this->renderToolBar(a2, TouchscreenInput::BUTTONS_TRANSPARENCY);
 			}
 			v18 = this->tipTimeLeft;
 			if(v18 > 0.0) {
-				v19 = this->minecraftInst;
+				v19 = this->minecraft;
 				v20 = this->tipMessageLength;
 				v21 = (float)v19->width / Gui::GuiScale;
 				v22 = v18 / 20.0;
@@ -371,7 +371,7 @@ void Gui::render(float a2, bool_t a3, int32_t a4, int32_t a5) {
 				font->drawShadow(this->tipMessage, (float)(v21 * 0.5) - (float)(v20 * 0.5), v23, v24);
 			}
 			this->renderChatMessages(v15, v16, 0xAu, this->field_A94, font);
-			if(!this->minecraftInst->currentScreen) {
+			if(!this->minecraft->currentScreen) {
 				this->renderOnSelectItemNameText(v15, font, v16 - 19);
 			}
 
@@ -380,25 +380,12 @@ void Gui::render(float a2, bool_t a3, int32_t a4, int32_t a5) {
 	}
 }
 void Gui::renderBubbles() {
-	int32_t air; // r4
-	int32_t v3;						  // r10
-	int32_t v5;						  // r4
-	int32_t v6;						  // r3
-	int32_t v7;						  // r9
-
-	if(this->minecraftInst->player->isUnderLiquid(Material::water)) {
-		air = this->minecraftInst->player->air;
-		v3 = (int32_t)ceilf((float)((float)(air - 2) * 10.0f) / 300.0f);
-		v5 = 0;
-		v7 = (int32_t)ceilf((float)((float)air * 10.0) / 300.0f);
-		while(v5 < v7) {
-			if(v5 < v3) {
-				v6 = 16;
-			}
-			if(v5 >= v3) {
-				v6 = 25;
-			}
-			this->blit(8 * v5++ + 2, 12, v6, 18, 9, 9, 0, 0);
+	if(this->minecraft->player->isUnderLiquid(Material::water)) {
+		int v3 = (int)ceilf(((this->minecraft->player->air - 2) * 10.0f) / 300.0f);
+		int v7 = (int)ceilf((this->minecraft->player->air * 10.0f) / 300.0f);
+		for(int v5 = 0; v5 < v7; ++v5) {
+			int v8 = v5 < v3 ? 16 : 25;
+			this->blit(8 * v5 + 2, 12, v8, 18, 9, 9, 0, 0);
 		}
 	}
 }
@@ -418,10 +405,10 @@ void Gui::renderChatMessages(int32_t a2, int32_t a3, uint32_t a4, bool_t a5, str
 			while(v10 >= 0) {
 				GuiMessage* str = &this->chatMessages[v10];
 				if(str->tickCounter < str->ticksShown) {
-					float v20 = (float)(1.0 - (float)((float)str->tickCounter / (float)str->ticksShown)) * 10.0;
+					float v20 = (float)(1.0 - (float)((float)str->tickCounter / (float)str->ticksShown)) * 10.0f;
 					if(v20 < 0) v20 = 0;
 					else if(v20 > 1) v20 = 1;
-					int v21 = (int)(float)((float)(v20 * v20) * 255.0);
+					int v21 = (int)((v20 * v20) * 255);
 					if(v21 > 0) {
 						if(v7 <= 10) {
 							++v16;
@@ -453,7 +440,7 @@ void Gui::renderDebugInfo(void) {
 	float a3;			 // [sp+18h] [bp-20h] BYREF
 	float a4;			 // [sp+1Ch] [bp-1Ch] BYREF
 
-	player = this->minecraftInst->player;
+	player = this->minecraft->player;
 	v3 = player->posY - player->ridingHeight;
 	posX = player->posX;
 	posZ = player->posZ;
@@ -464,7 +451,7 @@ void Gui::renderDebugInfo(void) {
 	sprintf(_D6E05AAC, "pos: %3.1f, %3.1f, %3.1f\n", a2, a3, a4);
 	Tesselator::instance.beginOverride();
 	Tesselator::instance.scale2d(Gui::InvGuiScale, Gui::InvGuiScale);
-	this->minecraftInst->font->draw(_D6E05AAC, 2.0, 2.0, 0xFFFFFF);
+	this->minecraft->font->draw(_D6E05AAC, 2.0, 2.0, 0xFFFFFF);
 	Tesselator::instance.resetScale();
 	Tesselator::instance.endOverrideAndDraw();
 }
@@ -479,7 +466,7 @@ void Gui::renderHearts() {
 	int32_t health;			 // [sp+18h] [bp-38h]
 	int32_t prevHealthMaybe; // [sp+20h] [bp-30h]
 
-	player = this->minecraftInst->player;
+	player = this->minecraft->player;
 	field_DC = player->field_DC;
 	if(field_DC <= 9) {
 		v4 = 0;
@@ -490,7 +477,7 @@ void Gui::renderHearts() {
 	health = player->health;
 	prevHealthMaybe = player->prevHealthMaybe;
 	this->randomInst = Random(312871 * this->field_9FC);
-	v7 = this->minecraftInst->player->getArmorValue();
+	v7 = this->minecraft->player->getArmorValue();
 	do {
 		if(v7 > 0) {
 			v8 = 4 * v5 + 82;
@@ -535,7 +522,7 @@ void Gui::renderOnSelectItemNameText(int32_t a2, struct Font* a3, int32_t a4) {
 	int32_t v11;	   // r5
 
 	if(this->field_A00 < 1.0) {
-		sel = this->minecraftInst->player->inventory->getSelected();
+		sel = this->minecraft->player->inventory->getSelected();
 		if(sel) {
 			v10 = a3->width(sel->getName());
 			if(this->field_A00 <= 0.75) {
@@ -570,18 +557,18 @@ void Gui::renderProgressIndicator(bool_t a2, int32_t a3, int32_t a4, float a5) {
 	float v25;				   // s16
 	float v26;				   // r1
 
-	Selected = this->minecraftInst->player->inventory->getSelected();
+	Selected = this->minecraft->player->inventory->getSelected();
 	if(Selected) {
 		itemClass = Selected->itemClass;
 		v11 = itemClass == Item::bow;
-		v12 = itemClass == this->minecraftInst->player->getUseItem()->itemClass;
+		v12 = itemClass == this->minecraft->player->getUseItem()->itemClass;
 	} else {
 		v11 = 0;
 		v12 = 0;
 	}
-	if(!a2 || (minecraftInst = this->minecraftInst, minecraftInst->options.useJoypad)) {
+	if(!a2 || (minecraftInst = this->minecraft, minecraftInst->options.useJoypad)) {
 LABEL_8:
-		this->minecraftInst->texturesPtr->loadAndBindTexture("gui/icons.png");
+		this->minecraft->texturesPtr->loadAndBindTexture("gui/icons.png");
 		glBlendFunc(0x307u, 0x301u);
 		this->blit(a3 / 2 - 8, a4 / 2 - 8, 0, 0, 16, 16, 0, 0);
 		glBlendFunc(0x302u, 0x303u);
@@ -604,7 +591,7 @@ LABEL_12:
 			v17 = v15;
 LABEL_15:
 			DisableState v27(3553);
-			if(this->minecraftInst->selectedObject.hitType == 2) {
+			if(this->minecraft->selectedObject.hitType == 2) {
 				v21 = v17 * 0.4;
 				if(v21 < 0.4) {
 					v20 = v21;
@@ -615,7 +602,7 @@ LABEL_15:
 				v20 = v17 * 0.8;
 			}
 			glColor4f(1.0, 1.0, 1.0, v20);
-			v22 = this->minecraftInst->inputHolder;
+			v22 = this->minecraft->inputHolder;
 			v23 = Gui::InvGuiScale * v22->mouseX;
 			v24 = Gui::InvGuiScale * v22->mouseY;
 			glTranslatef(v23, v24, 0.0);
@@ -641,7 +628,7 @@ LABEL_21:
 	DisableState v27(3553);
 	glPushMatrix();
 	glColor4f(1.0, 1.0, 1.0, v15 * 0.8);
-	glTranslatef(Gui::InvGuiScale * this->minecraftInst->inputHolder->mouseX, Gui::InvGuiScale * this->minecraftInst->inputHolder->mouseY, 0.0);
+	glTranslatef(Gui::InvGuiScale * this->minecraft->inputHolder->mouseX, Gui::InvGuiScale * this->minecraft->inputHolder->mouseY, 0.0);
 	this->outerBreakRingMesh.render();
 	v26 = (float)((float)(v25 + (float)((float)(v19 - v25) * a5)) * 0.5) + 0.5;
 	glScalef(v26, v26, 1.0);
@@ -652,7 +639,7 @@ LABEL_21:
 	glPopMatrix();
 }
 void Gui::renderSleepAnimation(int32_t a2, int32_t a3) {
-	int32_t v6 = this->minecraftInst->player->getSleepTimer();
+	int32_t v6 = this->minecraft->player->getSleepTimer();
 	float v7 = (float)v6 / 100;
 	if(v7 > 1) v7 = 1 - (float)(v6 - 100) / 10.0f;
 	this->fill(0, 0, a2, a3, ((int32_t)(v7 * 220.0f) << 24) | 0x101020);
@@ -663,7 +650,7 @@ void Gui::renderSlot(int32_t a2, int32_t a3, int32_t a4, float a5) {
 	Item* itemClass;	 // r0
 	int32_t v12;		 // r2
 
-	player = this->minecraftInst->player;
+	player = this->minecraft->player;
 	if(player->abilities.instabuild) {
 		a2 += 9;
 	}
@@ -671,11 +658,11 @@ void Gui::renderSlot(int32_t a2, int32_t a3, int32_t a4, float a5) {
 	if(v9) {
 		itemClass = v9->itemClass;
 		if(itemClass->field_10) {
-			v12 = itemClass->getAnimationFrameFor(this->minecraftInst->player);
+			v12 = itemClass->getAnimationFrameFor(this->minecraft->player);
 		} else {
 			v12 = 0;
 		}
-		ItemRenderer::renderGuiItemNew(this->minecraftInst->texturesPtr, v9, v12, (float)a3, (float)a4, 1.0, 1.0, 1.0);
+		ItemRenderer::renderGuiItemNew(this->minecraft->texturesPtr, v9, v12, (float)a3, (float)a4, 1.0, 1.0, 1.0);
 	}
 }
 void Gui::renderSlotText(const struct ItemInstance* a2, float a3, float a4, bool_t a5, bool_t shadow) {
@@ -687,8 +674,8 @@ void Gui::renderSlotText(const struct ItemInstance* a2, float a3, float a4, bool
 			v15[0] = -99; //lobyte
 		}
 
-		if(shadow) this->minecraftInst->font->drawShadow(v15, a3, a4, a2->count > 0 ? 0xFFCCCCCC : 0x60CCCCCC);
-		else this->minecraftInst->font->draw(v15, a3, a4, a2->count > 0 ? 0xFFCCCCCC : 0x60CCCCCC);
+		if(shadow) this->minecraft->font->drawShadow(v15, a3, a4, a2->count > 0 ? 0xFFCCCCCC : 0x60CCCCCC);
+		else this->minecraft->font->draw(v15, a3, a4, a2->count > 0 ? 0xFFCCCCCC : 0x60CCCCCC);
 	}
 }
 void Gui::renderToolBar(float a2, float a3) {
@@ -719,13 +706,13 @@ void Gui::renderToolBar(float a2, float a3) {
 	int32_t sp;				  // [sp+24h] [bp-4Ch] BYREF
 	int32_t sp2;			  // [sp+28h] [bp-48h] BYREF
 
-	minecraftInst = this->minecraftInst;
+	minecraftInst = this->minecraft;
 	v7 = (int32_t)(float)((float)minecraftInst->width * Gui::InvGuiScale);
 	v8 = (int32_t)(float)((float)minecraftInst->height * Gui::InvGuiScale);
 	v9 = v8 - 19;
 	glColor4f(1.0, 1.0, 1.0, a3);
-	this->minecraftInst->texturesPtr->loadAndBindTexture("gui/gui.png");
-	inventory = this->minecraftInst->player->inventory;
+	this->minecraft->texturesPtr->loadAndBindTexture("gui/gui.png");
+	inventory = this->minecraft->player->inventory;
 	this->getSlotPos(0, sp, sp2);
 	v12 = (float)((float)sp + 3.0) + 1.0;
 	v13 = 20 * this->getNumSlots();
@@ -765,7 +752,7 @@ void Gui::renderToolBar(float a2, float a3) {
 		v17 = v17 + 20.0;
 	}
 	this->invUpdated = 0;
-	this->minecraftInst->texturesPtr->loadAndBindTexture("gui/gui.png");
+	this->minecraft->texturesPtr->loadAndBindTexture("gui/gui.png");
 	NumSlots = this->getNumSlots();
 	v23 = v8 - 13;
 	v24 = 0;
@@ -776,7 +763,7 @@ void Gui::renderToolBar(float a2, float a3) {
 		v25 = v12 - 1.0;
 		while(v24 < this->getNumSlots() - 1) {
 			v26 = v24++;
-			ItemRenderer::renderGuiItemDecorations(this->minecraftInst->player->inventory->getItem(v26), v25, (float)v9);
+			ItemRenderer::renderGuiItemDecorations(this->minecraft->player->inventory->getItem(v26), v25, (float)v9);
 			v25 = v25 + 20.0;
 		}
 		Tesselator::instance.endOverrideAndDraw();
@@ -786,11 +773,11 @@ void Gui::renderToolBar(float a2, float a3) {
 	glScalef(Gui::InvGuiScale + Gui::InvGuiScale, Gui::InvGuiScale + Gui::InvGuiScale, 1.0);
 	v29 = Gui::GuiScale;
 	Tesselator::instance.beginOverride();
-	if(this->minecraftInst->gameMode->isSurvivalType()) {
+	if(this->minecraft->gameMode->isSurvivalType()) {
 		v31 = 0;
 		v32 = v29 * 0.5;
 		while(v31 < this->getNumSlots() - 1) {
-			v34 = this->minecraftInst->player->inventory->getItem(v31);
+			v34 = this->minecraft->player->inventory->getItem(v31);
 			if(v34) {
 				if(v34->count >= 0) {
 					this->renderSlotText(v34, v32 * v12, (float)(v32 * (float)v9) + 1.0, 1, 1);
@@ -801,7 +788,7 @@ void Gui::renderToolBar(float a2, float a3) {
 		}
 	}
 
-	this->minecraftInst->texturesPtr->loadAndBindTexture("font/default8.png");
+	this->minecraft->texturesPtr->loadAndBindTexture("font/default8.png");
 	Tesselator::instance.endOverrideAndDraw();
 	glPopMatrix();
 }
@@ -815,7 +802,7 @@ void Gui::renderVignette(float a2, int32_t a3, int32_t a4) {
 	glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
 	glDepthMask(0);
 	glColor4f(this->field_A10, this->field_A10, this->field_A10, 1);
-	this->minecraftInst->texturesPtr->loadAndBindTexture("misc/vignette.png");
+	this->minecraft->texturesPtr->loadAndBindTexture("misc/vignette.png");
 	Tesselator::instance.begin(4);
 	Tesselator::instance.vertexUV(0, a4, -90, 0, 1);
 	Tesselator::instance.vertexUV(a3, a4, -90, 1, 1);
@@ -835,12 +822,12 @@ void Gui::setNowPlaying(const std::string& a2) {
 	this->field_A0C = 1;
 }
 void Gui::setScissorRect(const IntRectangle& a2) {
-	glScissor((uint32_t)(float)(Gui::GuiScale * (float)a2.minX), this->minecraftInst->height - (uint32_t)(float)(Gui::GuiScale * (float)(a2.height + a2.minY)), (uint32_t)(float)(Gui::GuiScale * (float)a2.width), (uint32_t)(float)(Gui::GuiScale * (float)a2.height));
+	glScissor((uint32_t)(float)(Gui::GuiScale * (float)a2.minX), this->minecraft->height - (uint32_t)(float)(Gui::GuiScale * (float)(a2.height + a2.minY)), (uint32_t)(float)(Gui::GuiScale * (float)a2.width), (uint32_t)(float)(Gui::GuiScale * (float)a2.height));
 }
 void Gui::showTipMessage(const std::string& a2) {
 	this->tipMessage = a2;
 	this->tipTimeLeft = 40;
-	this->tipMessageLength = this->minecraftInst->font->getPixelLength(a2);
+	this->tipMessageLength = this->minecraft->font->getPixelLength(a2);
 }
 void Gui::texturesLoaded(struct Textures*) {
 }
@@ -853,7 +840,7 @@ void Gui::tick() {
 	for(int i = 0; i < this->chatMessages.size(); ++i) {
 		++this->chatMessages[i].tickCounter;
 	}
-	if(!this->minecraftInst->isCreativeMode()) this->tickItemDrop();
+	if(!this->minecraft->isCreativeMode()) this->tickItemDrop();
 }
 
 void Gui::tickItemDrop(void) {
@@ -862,15 +849,15 @@ void Gui::tickItemDrop(void) {
 	if(Mouse::isButtonDown(1)) {
 		int slot = this->getSlotIdAt(Mouse::getX(), Mouse::getY());
 		if(slot >= 0 && slot < this->getNumSlots() - 1) {
-			if(slot != this->slotToDrop || this->minecraftInst->currentScreen) {
+			if(slot != this->slotToDrop || this->minecraft->currentScreen) {
 				this->slotDropCounter = 0.0f;
 				this->slotToDrop = slot;
 			}
 			droppingSlot = 1;
 			this->slotDropCounter += 1;
 			if(this->slotDropCounter >= 40) {
-				this->minecraftInst->player->inventory->dropSlot(slot, 0, 0);
-				this->minecraftInst->level->playSound(minecraftInst->player, "random.pop", 0.3f, 1.0f);
+				this->minecraft->player->inventory->dropSlot(slot, 0, 0);
+				this->minecraft->level->playSound(minecraft->player, "random.pop", 0.3f, 1.0f);
 				droppingSlot = 0;
 			}
 		}

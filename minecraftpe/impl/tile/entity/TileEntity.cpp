@@ -255,14 +255,15 @@ void TileEntity::setupLighting(bool_t a2, float a3) {
 	glColor4f(v22, v23, v24, 1.0);
 }
 TileEntity* TileEntity::loadStatic(CompoundTag* a2) {
-	TileEntity* te; // r0
-
-	std::string ss = a2->contains("id", 8) ? ((StringTag*)a2->get("id"))->value : ""; //Tag::NullString maybe?
+	std::string ss = a2->getString("id");
 
 	const auto& id = TileEntity::idClassMap.find(ss);
-	if(id == TileEntity::idClassMap.end() || (te = TileEntityFactory::createTileEntity(id->second)) == 0) {
+	if(id == TileEntity::idClassMap.end()) {
 		return 0;
 	}
+
+	TileEntity* te = TileEntityFactory::createTileEntity(id->second);
+	if(!te) return 0;
 	te->load(a2);
 	return te;
 }

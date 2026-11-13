@@ -16,10 +16,10 @@ Minecart::Minecart(Level* a2)
 	this->linkedEntity = 0;
 	this->field_FC = 1;
 	this->field_118 = "";
-	this->setSize(0.98, 0.7);
+	this->setSize(0.98f, 0.7f);
 	this->entityRenderId = MINECART;
 	this->field_110 = 0;
-	this->ridingHeight = this->entityHeight * 0.5;
+	this->ridingHeight = this->entityHeight * 0.5f;
 	this->synchedEntityData.define<int32_t>(17, 0);
 	this->synchedEntityData.define<int32_t>(18, 1);
 	this->synchedEntityData.define<float>(19, 0);
@@ -36,9 +36,11 @@ Minecart::Minecart(Level* a2, float a3, float a4, float a5)
 	: Minecart(a2) {
 	this->setPos(a3, a4, a5);
 	this->prevX = a3;
-	this->motionX = this->motionY = this->motionZ = 0;
-	this->prevY = 0;
-	this->prevZ = 0;
+	this->prevY = a4;
+	this->prevZ = a5;
+	this->motionX = 0;
+	this->motionY = 0;
+	this->motionZ = 0;
 }
 void Minecart::applyNaturalSlowdown() {
 	if(this->rider) {

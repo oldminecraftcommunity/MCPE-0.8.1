@@ -8,8 +8,8 @@ struct GoalSelector
 	{
 		struct Goal* goal;
 		int32_t field_4;
-		bool_t field_8;
-		int8_t field_9, field_A, field_B;
+		bool field_8;
+		bool field_9;
 
 		InternalGoal(int32_t, struct Goal*, bool_t);
 	};

@@ -377,15 +377,8 @@ void FillingContainer::load(ListTag* a2) {
 	} else {
 		this->clearInventory(-1);
 	}
-	int32_t v4 = a2->value.size() - 1;
-	while(v4 >= 0) {
-		Tag* v7;
-		if(v4 >= a2->value.size()) {
-			v7 = 0;
-			a2->err |= 1;
-		} else {
-			v7 = a2->value[v4];
-		}
+	for(int v4 = a2->value.size() - 1; v4 >= 0; --v4){
+		Tag* v7 = a2->getTag(v4);
 
 		if(v7->getId() == 10) { //nullptr ref is possible?
 			CompoundTag* v7_ = (CompoundTag*)v7;
@@ -402,16 +395,18 @@ void FillingContainer::load(ListTag* a2) {
 					} else {
 						v9->getId();
 					}
-					goto LABEL_46;
+					delete v9;
+					continue;
 				}
 				if(slot > 95 || slot < this->getLinkedSlotsCount() || !v9->count) {
-					goto LABEL_46;
+					delete v9;
+					continue;
 				}
 				if(!this->field_20 && slot >= this->items.size()) {
 					this->doDrop(v9, 1);
-LABEL_46:
+
 					delete v9;
-					goto LABEL_30;
+					continue;
 				}
 				if(slot < this->items.size()) {
 					this->fixBackwardCompabilityItem(*v9);
@@ -419,8 +414,6 @@ LABEL_46:
 				}
 			}
 		}
-LABEL_30:
-		--v4;
 	}
 	this->compressLinkedSlotList(0);
 }

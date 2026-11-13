@@ -1,22 +1,11 @@
 #include <level/NetherReactorPattern.hpp>
-#include <string.h>
 #include <tile/Tile.hpp>
 
 NetherReactorPattern::NetherReactorPattern() {
-	int32_t gold;		 // r5
-	int32_t stone;		 // r4
-	int32_t reactor;	 // r6
-	int32_t x;			 // r4
-	int32_t z;			 // r3
-	int32_t _z;			 // r6
-	int32_t y;			 // r5
-	int32_t id;			 // [sp+0h] [bp-98h]
-	int32_t pattern[27]; // [sp+Ch] [bp-8Ch] BYREF
-
-	gold = Tile::goldBlock->blockID;
-	stone = Tile::stoneBrick->blockID;
-	reactor = Tile::netherReactor->blockID;
-	memset(pattern, 0, sizeof(pattern));
+	int gold = Tile::goldBlock->blockID;
+	int stone = Tile::stoneBrick->blockID;
+	int reactor = Tile::netherReactor->blockID;
+	int pattern[27] = {0};
 	pattern[1] = stone;
 	pattern[3] = stone;
 	pattern[4] = stone;
@@ -31,22 +20,19 @@ NetherReactorPattern::NetherReactorPattern() {
 	pattern[22] = stone;
 	pattern[23] = stone;
 	pattern[25] = stone;
-	x = 0;
 	pattern[0] = gold;
 	pattern[2] = gold;
 	pattern[6] = gold;
 	pattern[8] = gold;
 	pattern[13] = reactor;
-	do {
-		for(y = 0; y != 3; ++y) {
-			for(_z = 0; _z != 3; ++_z) {
-				id = pattern[9 * x + 3 * y + _z];
-				z = _z;
-				this->setTileAt(x, y, z, id);
+
+	for(int x = 0; x < 3; ++x){
+		for(int y = 0; y < 3; ++y) {
+			for(int z = 0; z < 3; ++z) {
+				this->setTileAt(x, y, z, pattern[x*9 + y*3 + z]);
 			}
 		}
-		++x;
-	} while(x != 3);
+	}
 }
 int32_t NetherReactorPattern::getTileAt(int32_t x, int32_t y, int32_t z) {
 	return this->pattern[9 * x + 3 * y + z];

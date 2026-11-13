@@ -4,7 +4,7 @@
 #include <item/ItemInstance.hpp>
 
 StonecutterScreen::StonecutterScreen()
-	: PaneCraftingScreen(1) {
+	: PaneCraftingScreen(Recipe::SIZE_3X3) {
 	this->setSingleCategoryAndIcon(1, 5);
 }
 

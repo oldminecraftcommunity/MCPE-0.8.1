@@ -68,45 +68,35 @@ struct FenceTile : Tile{
 		this->setShape(minX, 0.0, minZ, maxX, 1.0, maxZ);
 	}
 	virtual AABB* getAABB(Level* level, int32_t x, int32_t y, int32_t z) {
-		bool_t zNeg; // r11
-		bool_t zPos; // r10
-		bool_t xNeg; // r9
-		bool_t xPos; // r0
-		float minX; // s12
-		float minZ; // s8
-		float maxZ; // s10
-		bool_t v16; // zf
-		float maxX; // s9
-		zNeg = this->connectsTo(level, x, y, z - 1);
-		zPos = this->connectsTo(level, x, y, z + 1);
-		xNeg = this->connectsTo(level, x - 1, y, z);
-		xPos = this->connectsTo(level, x + 1, y, z);
-		minX = 0.375;
+		bool zNeg = this->connectsTo(level, x, y, z - 1);
+		bool zPos = this->connectsTo(level, x, y, z + 1);
+		bool xNeg = this->connectsTo(level, x - 1, y, z);
+		bool xPos = this->connectsTo(level, x + 1, y, z);
+
+		float minX = 0.375f;
+		float minZ = 0.375f;
+		float maxX = 0.625f;
+		float maxZ = 0.625f;
+
 		if (zNeg) {
 			minZ = 0.0;
-		} else {
-			minZ = 0.375;
 		}
 		if (zPos) {
 			maxZ = 1.0;
-		} else {
-			maxZ = 0.625;
 		}
 		if (xNeg) {
 			minX = 0.0;
 		}
-		v16 = !xPos;
-		if (v16) {
-			maxX = 0.625;
-		} else {
+		if (xPos) {
 			maxX = 1.0;
 		}
-		this->aabb.minX = (float) (x) + minX;
-		this->aabb.maxX = (float) (x) + maxX;
-		this->aabb.minY = (float) (y);
-		this->aabb.minZ = (float) (z) + minZ;
-		this->aabb.maxZ = (float) (z) + maxZ;
-		this->aabb.maxY = (float) (y) + 1.5;
+
+		this->aabb.minX = x + minX;
+		this->aabb.maxX = x + maxX;
+		this->aabb.minY = y;
+		this->aabb.minZ = z + minZ;
+		this->aabb.maxZ = z + maxZ;
+		this->aabb.maxY = y + 1.5f;
 		return &this->aabb;
 	}
 	virtual bool_t isSolidRender() {

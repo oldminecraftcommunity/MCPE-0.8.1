@@ -91,51 +91,33 @@ void Entity::_init() {
 	this->fallDistance = 0.0;
 }
 void Entity::checkTileCollisions() {
-	int32_t minX; // r6
-	int32_t minY; // r9
-	int32_t minZ; // r10
-	int32_t maxZ; // r11
-	int32_t v6; // r0
-	int32_t j; // r7
-	int32_t i; // r5
-	int32_t v9; // r5
-	int32_t v10; // r3
-	int32_t v11; // r6
-	Level* level; // r6
-	float Float; // s16
-	float v14; // s15
-	int32_t maxX; // [sp+18h] [bp-48h]
-	int32_t maxY; // [sp+1Ch] [bp-44h]
-
-	minX = Mth::floor(this->boundingBox.minX);
-	minY = Mth::floor(this->boundingBox.minY);
-	minZ = Mth::floor(this->boundingBox.minZ);
-	maxX = Mth::floor(this->boundingBox.maxX);
-	maxY = Mth::floor(this->boundingBox.maxY);
-	maxZ = Mth::floor(this->boundingBox.maxZ);
+	int minX = Mth::floor(this->boundingBox.minX);
+	int minY = Mth::floor(this->boundingBox.minY);
+	int minZ = Mth::floor(this->boundingBox.minZ);
+	int maxX = Mth::floor(this->boundingBox.maxX);
+	int maxY = Mth::floor(this->boundingBox.maxY);
+	int maxZ = Mth::floor(this->boundingBox.maxZ);
 	if(this->level->hasChunksAt(minX, minY, minZ, maxX, maxY, maxZ)) {
-		while(minX <= maxX) {
-			for(i = minY; i <= maxY; ++i) {
-				for(j = minZ; j <= maxZ; ++j) {
-					v6 = this->level->getTile(minX, i, j);
-					if(v6 > 0) {
-						Tile::tiles[v6]->entityInside(this->level, minX, i, j, this);
+		for(int x = minX; x <= maxX; ++x){
+			for(int y = minY; y <= maxY; ++y) {
+				for(int z = minZ; z <= maxZ; ++z) {
+					int id = this->level->getTile(x, y, z);
+					if(id > 0) {
+						Tile::tiles[id]->entityInside(this->level, x, y, z, this);
 					}
 				}
 			}
-			++minX;
 		}
 	}
 	if(!this->field_112) {
-		v9 = this->isInWater();
+		bool v9 = this->isInWater();
 		if(this->level->containsFireTile(this->boundingBox)) {
 			this->burn(1);
 			if(v9) {
 LABEL_16:
 				if(this->isOnFire()) {
-					level = this->level;
-					v11 = 50;
-					level->playSound(this, "random.fizz", 0.7, (float)((float)(Entity::sharedRandom.nextFloat() - Entity::sharedRandom.nextFloat()) * 0.4) + 1.6);
+					int v11 = 50;
+					this->level->playSound(this, "random.fizz", 0.7f, (float)((float)(Entity::sharedRandom.nextFloat() - Entity::sharedRandom.nextFloat()) * 0.4) + 1.6);
 					this->fire = -this->field_E8;
 					do {
 						Vec3 a3 = this->getRandomPointInAABB(Entity::sharedRandom);
@@ -145,15 +127,11 @@ LABEL_16:
 				}
 				return;
 			}
-			v10 = this->fire + 1;
-			this->fire = v10;
-			if(!v10) {
-				this->fire = 300;
-			}
+			this->fire += 1;
+			if(this->fire == 0) this->fire = 300;
 		} else {
-			if(this->fire <= 0) {
-				this->fire = -this->field_E8;
-			}
+			if(this->fire <= 0) this->fire = -this->field_E8;
+
 			if(v9) {
 				goto LABEL_16;
 			}
@@ -399,29 +377,6 @@ void Entity::setPos(float x, float y, float z) {
 	this->boundingBox.maxZ = z + radius;
 }
 void Entity::move(float dx, float dy, float dz) {
-	float minY;			// s13
-	float v9;			// s14
-	float minZ;			// s13
-	float posX;			// s26
-	float posZ;			// s27
-	float maxX;			// s13
-	float maxY;			// s14
-	float maxZ;			// s15
-	float minX;			// s10
-	Level* level;		// r0
-	float v18;			// s12
-	float v20;			// s13
-	float v21;			// s14
-	float v22;			// s15
-	float v23;			// s10
-	Level* v24;			// r0
-	float v25;			// s12
-	float v27;			// s13
-	float v28;			// s14
-	float v29;			// s15
-	float v30;			// s10
-	Level* v31;			// r0
-	float v32;			// s12
 	int32_t v34;		// r9
 	float v36;			// s21
 	int32_t v37;		// r7
@@ -457,7 +412,6 @@ void Entity::move(float dx, float dy, float dz) {
 	int32_t v89;		// r10
 	int32_t v90;		// r0
 	int32_t blockID;	// r5
-	float field_BC;		// s15
 	uint32_t v93;		// [sp+Ch] [bp-A4h]
 	uint32_t v94;		// [sp+Ch] [bp-A4h]
 
@@ -466,15 +420,12 @@ void Entity::move(float dx, float dy, float dz) {
 	float movZ = dz;
 	if(this->noclip) {
 		this->boundingBox.move(dx, dy, dz);
-		minY = this->boundingBox.minY;
 		this->posX = (float)(this->boundingBox.minX + this->boundingBox.maxX) * 0.5f;
-		v9 = (float)(minY + this->ridingHeight) - this->ySize;
-		minZ = this->boundingBox.minZ;
-		this->posY = v9;
-		this->posZ = (float)(minZ + this->boundingBox.maxZ) * 0.5f;
+		this->posY = (this->boundingBox.minY + this->ridingHeight) - this->ySize;
+		this->posZ = (this->boundingBox.minZ + this->boundingBox.maxZ) * 0.5f;
 	} else {
-		posX = this->posX;
-		posZ = this->posZ;
+		float posX = this->posX;
+		float posZ = this->posZ;
 		if(this->maybeIsInWeb) {
 			this->maybeIsInWeb = 0;
 			this->motionX = 0.0f;
@@ -487,75 +438,40 @@ void Entity::move(float dx, float dy, float dz) {
 		AABB boundingBox = this->boundingBox;
 		if(this->onGround && this->isSneaking()) {
 			while(movX != 0.0f) {
-				maxX = this->boundingBox.maxX;
-				maxY = this->boundingBox.maxY;
-				maxZ = this->boundingBox.maxZ;
-				minX = this->boundingBox.minX;
-				level = this->level;
-				v18 = this->boundingBox.minZ + 0.0;
-				std::vector<AABB>* cubes = level->getCubes(this, {minX + movX, this->boundingBox.minY - 1.0f, v18, movX + maxX, maxY - 1.0f, maxZ + 0.0f}, 0);
-				if(cubes->begin() != cubes->end()) {
-					break;
-				}
+				std::vector<AABB>* cubes = this->level->getCubes(this, this->boundingBox.cloneMove(movX, -1, 0), 0);
+				if(cubes->begin() != cubes->end()) break;
+
 				if(movX < 0.05f && movX >= -0.05f) {
 					movX = 0.0;
 					break;
 				}
-				if(movX <= 0.0) {
-					movX = movX + 0.05f;
-				} else {
-					movX = movX - 0.05f;
-				}
+
+				if(movX <= 0.0) movX += 0.05f;
+				else movX -= 0.05f;
 			}
 			while(movZ != 0.0) {
-				v20 = this->boundingBox.maxX;
-				v21 = this->boundingBox.maxY;
-				v22 = this->boundingBox.maxZ;
-				v23 = this->boundingBox.minX;
-				v24 = this->level;
-				v25 = movZ + this->boundingBox.minZ;
-				std::vector<AABB>* v26 = v24->getCubes(this, {v23 + 0.0f, this->boundingBox.minY - 1.0f, v25, v20 + 0.0f, v21 - 1.0f, movZ + v22}, 0);
-				if(v26->begin() != v26->end()) {
+				std::vector<AABB>* v26 = this->level->getCubes(this, this->boundingBox.cloneMove(0, -1, movZ), 0);
+				if(v26->begin() != v26->end()) break;
+
+				if(movZ < 0.05f && movZ >= -0.05f) {
+					movZ = 0.0f;
 					break;
 				}
-				if(movZ < 0.05 && movZ >= -0.05) {
-					movZ = 0.0;
-					break;
-				}
-				if(movZ <= 0.0) {
-					movZ = movZ + 0.05;
-				} else {
-					movZ = movZ - 0.05;
-				}
+
+				if(movZ <= 0.0) movZ += 0.05f;
+				else movZ -= 0.05f;
 			}
-			while(movX != 0.0) {
-				if(movZ == 0.0) {
-					break;
-				}
-				v27 = this->boundingBox.maxX;
-				v28 = this->boundingBox.maxY;
-				v29 = this->boundingBox.maxZ;
-				v30 = this->boundingBox.minX;
-				v31 = this->level;
-				v32 = movZ + this->boundingBox.minZ;
-				std::vector<AABB>* v33 = v31->getCubes(this, {v30 + movX, this->boundingBox.minY - 1.0f, v32, movX + v27, v28 - 1.0f, movZ + v29}, 0);
-				if(v33->begin() != v33->end()) {
-					break;
-				}
-				if(movX < 0.05 && movX >= -0.05) {
-					movX = 0.0;
-				} else if(movX <= 0.0) {
-					movX = movX + 0.05;
-				} else {
-					movX = movX - 0.05;
-				}
-				if(movZ < 0.05 && movZ >= -0.05) {
-					movZ = 0.0;
-				} else if(movZ <= 0.0) {
-					movZ = movZ + 0.05;
-				} else {
-					movZ = movZ - 0.05;
-				}
+			while(movX != 0 && movZ != 0) {
+				std::vector<AABB>* v33 = this->level->getCubes(this, this->boundingBox.cloneMove(movX, -1, movZ), 0);
+				if(v33->begin() != v33->end()) break;
+
+				if(movX < 0.05f && movX >= -0.05f) movX = 0.0;
+				else if(movX <= 0.0) movX += 0.05f;
+				else movX -= 0.05f;
+
+				if(movZ < 0.05f && movZ >= -0.05f) movZ = 0.0f;
+				else if(movZ <= 0.0) movZ += 0.05f;
+				else movZ -= 0.05f;
 			}
 			v34 = 1;
 		} else {
@@ -698,13 +614,12 @@ void Entity::move(float dx, float dy, float dz) {
 					v90 = 0;
 				}
 			}
-			field_BC = this->field_BC;
-			if(field_BC > (float)this->field_114 && v90 > 0) {
-				this->field_114 = (int32_t)field_BC + 1;
+			if(this->field_BC > this->field_114 && v90 > 0) {
+				this->field_114 = (int32_t)this->field_BC + 1;
 				this->playStepSound(v87, v88, v89, v90);
 			}
 		}
-		this->ySize = this->ySize * 0.4;
+		this->ySize *= 0.4f;
 		this->checkTileCollisions();
 	}
 }
@@ -728,28 +643,18 @@ void Entity::moveTo(float x, float y, float z, float yaw, float pitch) {
 	this->setPos(x, y2, z);
 }
 void Entity::moveRelative(float fw, float sf, float speed) {
-	float v8; // s15
-	float v9; // s15
-	float v10; // s20
-	float v11; // s18
-	double v12; // d8
-	float v13; // s19
-	float v14; // s15
+	float dist = sqrt((fw * fw) + (sf * sf));
+	if(dist < 0.01f) return;
+	if(dist < 1.0) dist = 1.0f;
 
-	v8 = sqrt((float)((float)(sf * sf) + (float)(fw * fw)));
-	if(v8 >= 0.01) {
-		if(v8 < 1.0) {
-			v8 = 1.0;
-		}
-		v9 = speed / v8;
-		v10 = fw * v9;
-		v11 = sf * v9;
-		v12 = (float)((float)(this->yaw * 3.1416) / 180.0);
-		v13 = sin(v12);
-		v14 = cos(v12);
-		this->motionX = this->motionX + (float)((float)(v10 * v14) - (float)(v11 * v13));
-		this->motionZ = this->motionZ + (float)((float)(v10 * v13) + (float)(v11 * v14));
-	}
+	float v9 = speed / dist;
+	float v10 = fw * v9;
+	float v11 = sf * v9;
+
+	float v13 = sin((this->yaw * Mth::PI) / 180.0f);
+	float v14 = cos((this->yaw * Mth::PI) / 180.0f);
+	this->motionX += (v10 * v14) - (v11 * v13);
+	this->motionZ += (v11 * v14) + (v10 * v13);
 }
 void Entity::lerpTo(float x, float y, float z, float yaw, float pitch, int32_t a7) {
 	this->setPos(x, y, z);
@@ -774,17 +679,10 @@ void Entity::turn(float a2, float a3) {
 	this->prevPitch += this->pitch - pitch;
 }
 void Entity::interpolateTurn(float a2, float a3) {
-	float pitch; // s15
-
-	this->yaw = this->yaw + (float)(a2 * 0.15);
-	pitch = this->pitch - (float)(a3 * 0.15);
-	if(pitch < -90.0) {
-		pitch = -90.0;
-	}
-	this->pitch = pitch;
-	if(pitch > 90.0) {
-		this->pitch = 90.0;
-	}
+	this->yaw += (a2 * 0.15f);
+	this->pitch -= (a3 * 0.15f);
+	if(this->pitch < -90) this->pitch = -90;
+	if(this->pitch > 90) this->pitch = 90;
 }
 void Entity::tick() {
 	this->baseTick();
@@ -885,94 +783,36 @@ LABEL_23:
 	}
 	this->field_113 = 0;
 }
-void Entity::rideTick(){
-	Entity *ridingAt; // r3
-	bool_t isDead; // r5
-	Entity *v4; // r0
-	Entity *v5; // r3
-	float field_70; // s15
-	float v7; // s12
-	float field_6C; // s15
-	float v9; // s13
-	float v10; // s14
-	float v11; // s15
-
-	ridingAt = this->ridingAt;
-	isDead = ridingAt->isDead;
-	if ( ridingAt->isDead )
-	{
-		ridingAt->positionRider(0);
+void Entity::rideTick() {
+	if(this->ridingAt->isDead) {
+		this->ridingAt->positionRider(0);
 		this->ridingAt = 0;
-	}
-	else
-	{
-		this->motionX = 0.0;
-		this->motionY = 0.0;
-		this->motionZ = 0.0;
+	} else {
+		this->motionX = 0;
+		this->motionY = 0;
+		this->motionZ = 0;
 		this->tick();
-		v4 = this->ridingAt;
-		if ( v4 )
-		{
-			v4->positionRider(isDead);
-			v5 = this->ridingAt;
-			this->field_70 = this->field_70 + (float)(v5->yaw - v5->prevYaw);
-			this->field_6C = this->field_6C + (float)(v5->pitch - v5->prevPitch);
-			while ( 1 )
-			{
-				field_70 = this->field_70;
-				if ( field_70 < 180.0 )
-				{
-					break;
-				}
-				this->field_70 = field_70 - 360.0;
-			}
-			while ( 1 )
-			{
-				v7 = this->field_70;
-				if ( v7 >= -180.0 )
-				{
-					break;
-				}
-				this->field_70 = v7 + 360.0;
-			}
-			while ( 1 )
-			{
-				field_6C = this->field_6C;
-				if ( field_6C < 180.0 )
-				{
-					break;
-				}
-				this->field_6C = field_6C - 360.0;
-			}
-			while ( 1 )
-			{
-				v9 = this->field_6C;
-				if ( v9 >= -180.0 )
-				{
-					break;
-				}
-				this->field_6C = v9 + 360.0;
-			}
-			v10 = v7 * 0.5;
-			v11 = v9 * 0.5;
-			if ( (float)(v7 * 0.5) > 10.0 )
-			{
-				v10 = 10.0;
-			}
-			else if ( v10 < -10.0 )
-			{
-				v10 = -10.0;
-			}
-			if ( v11 > 10.0 )
-			{
-				v11 = 10.0;
-			}
-			else if ( v11 < -10.0 )
-			{
-				v11 = -10.0;
-			}
-			this->field_70 = v7 - v10;
-			this->field_6C = v9 - v11;
+		if(this->ridingAt) {
+			this->ridingAt->positionRider(0);
+			this->field_70 += (this->ridingAt->yaw - this->ridingAt->prevYaw);
+			this->field_6C += (this->ridingAt->pitch - this->ridingAt->prevPitch);
+
+			while(this->field_70 >= 180.0f) this->field_70 -= 360.0f;
+			while(this->field_70 < -180.0f) this->field_70 += 360.0f;
+
+			while(this->field_6C >= 180.0f) this->field_6C -= 360.0f;
+			while(this->field_6C < -180.0f) this->field_6C += 360.0f;
+
+			float v10 = this->field_70 * 0.5f;
+			float v11 = this->field_6C * 0.5f;
+			if(v10 > 10) v10 = 10;
+			if(v10 < -10) v10 = -10;
+
+			if(v11 > 10) v11 = 10;
+			if(v11 < -10) v11 = -10;
+
+			this->field_70 -= v10;
+			this->field_6C -= v11;
 		}
 	}
 }
@@ -1095,18 +935,13 @@ bool Entity::isSkyLit(float) {
 	}
 }
 float Entity::getBrightness(float a2) {
-	int32_t x; // r6
-	int32_t y; // r5
-	int32_t z; // r7
-
-	x = Mth::floor(this->posX);
-	y = Mth::floor((float)(this->posY - this->ridingHeight) + (float)((float)(this->boundingBox.maxY - this->boundingBox.minY) * 0.66));
-	z = Mth::floor(this->posZ);
+	int x = Mth::floor(this->posX);
+	int y = Mth::floor((this->posY - this->ridingHeight) + (this->boundingBox.maxY - this->boundingBox.minY) * 0.66f);
+	int z = Mth::floor(this->posZ);
 	if(this->level->hasChunkAt(x, y, z)) {
 		return this->level->getBrightness(x, y, z);
-	} else {
-		return 255.0;
 	}
+	return 255;
 }
 bool_t Entity::interactPreventDefault() {
 	return 0;
@@ -1117,49 +952,25 @@ bool_t Entity::interactWithPlayer(Player*) {
 void Entity::playerTouch(Player*) {
 }
 void Entity::push(Entity* a2) {
-	float v4;	// s17
-	float posZ; // s15
-	float v6;	// s16
-	float v7;	// s14
-	float v8;	// s15
-	float v11;	// s15
-	float v12;	// s16
-	float v13;	// s17
-	float v14;	// s15
-	float v15;	// s14
-	float v16;	// s16
-	float v17;	// s17
-
 	if(a2->rider != this && a2->ridingAt != this) {
-		v4 = a2->posX - this->posX;
-		posZ = this->posZ;
-		v6 = a2->posZ - posZ;
-		if(v4 >= 0.0) {
-			v7 = a2->posX - this->posX;
-		} else {
-			v7 = -v4;
-		}
-		if(v6 >= 0.0) {
-			v8 = a2->posZ - posZ;
-		} else {
-			v8 = -v6;
-		}
-		if(v7 > v8) {
-			v8 = v7;
-		}
-		if(v8 >= 0.01) {
-			v11 = sqrt(v8);
-			v12 = v6 / v11;
-			v13 = v4 / v11;
-			v14 = 1.0 / v11;
-			if(v14 > 1.0) {
-				v14 = 1.0;
-			}
-			v15 = 1.0 - this->field_D4;
-			v16 = (float)((float)(v12 * v14) * 0.05) * v15;
-			v17 = (float)((float)(v13 * v14) * 0.05) * v15;
-			this->push(-v17, 0.0, -v16);
-			a2->push(v17, 0.0, v16);
+		float v4 = a2->posX - this->posX;
+		float v6 = a2->posZ - this->posZ;
+		float v7 = v4 < 0 ? -v4 : v4;
+		float v8 = v6 < 0 ? -v6 : v6;
+		if(v7 > v8) v8 = v7;
+
+		if(v8 >= 0.01f) {
+			float v11 = sqrt(v8);
+			float v12 = v6 / v11;
+			float v13 = v4 / v11;
+			float v14 = 1.0f / v11;
+			if(v14 > 1.0f) v14 = 1.0f;
+
+			float v15 = 1.0f - this->field_D4;
+			float v16 = ((v12 * v14) * 0.05f) * v15;
+			float v17 = ((v13 * v14) * 0.05f) * v15;
+			this->push(-v17, 0, -v16);
+			a2->push(v17, 0, v16);
 		}
 	}
 }
@@ -1247,9 +1058,9 @@ bool_t Entity::save(CompoundTag* a2) {
 	return 0;
 }
 void Entity::saveWithoutId(CompoundTag* tag) {
-	tag->put("Pos", ListTagFloatAdder()(this->posX)(this->posY)(this->posZ).tag); //what the cliff is this </3
-	tag->put("Motion", ListTagFloatAdder()(this->motionX)(this->motionY)(this->motionZ).tag);
-	tag->put("Rotation", ListTagFloatAdder()(this->yaw)(this->pitch).tag);
+	tag->put("Pos", ListTagFloatAdder(this->posX)(this->posY)(this->posZ).tag);
+	tag->put("Motion", ListTagFloatAdder(this->motionX)(this->motionY)(this->motionZ).tag);
+	tag->put("Rotation", ListTagFloatAdder(this->yaw)(this->pitch).tag);
 	tag->putFloat("FallDistance", this->fallDistance);
 	tag->putShort("Fire", this->fire);
 	tag->putShort("Air", this->air);
@@ -1392,39 +1203,28 @@ void Entity::outOfWorld() {
 	this->remove();
 }
 void Entity::checkFallDamage(float fdChange, bool_t a3) {
-	int32_t x;		// r6
-	int32_t y;		// r7
-	int32_t z;		// r5
-	int32_t tileID; // r0
-
-	if(a3) {
-		if(this->fallDistance <= 0.0) {
-			return;
-		}
-		if(!this->isMob()) {
-			goto NOT_MOB_FORCE_JUMP;
-		}
-		x = Mth::floor(this->posX);
-		y = Mth::floor((float)(this->posY - 0.2) - this->ridingHeight);
-		z = Mth::floor(this->posZ);
-		tileID = this->level->getTile(x, y, z);
-		if(!tileID) {
-			if(this->level->getTile(x, y - 1, z) != Tile::fence->blockID) {
-NOT_MOB_FORCE_JUMP:
-				this->causeFallDamage(this->fallDistance);
-				this->fallDistance = 0.0;
-				return;
+	if(!a3) {
+		if(fdChange < 0) this->fallDistance -= fdChange;
+		return;
+	}
+	if(this->fallDistance <= 0) return;
+	if(this->isMob()) {
+		int x = Mth::floor(this->posX);
+		int y = Mth::floor((this->posY - 0.2f) - this->ridingHeight);
+		int z = Mth::floor(this->posZ);
+		int tileID = this->level->getTile(x, y, z);
+		if(tileID == 0) {
+			if(this->level->getTile(x, y - 1, z) == Tile::fence->blockID) {
+				tileID = this->level->getTile(x, y - 1, z);
 			}
-			tileID = this->level->getTile(x, y - 1, z);
 		}
 		if(tileID > 0) {
 			Tile::tiles[tileID]->fallOn(this->level, x, y, z, this, this->fallDistance);
 		}
-		goto NOT_MOB_FORCE_JUMP;
 	}
-	if(fdChange < 0.0) {
-		this->fallDistance = this->fallDistance - fdChange;
-	}
+	this->causeFallDamage(this->fallDistance);
+	this->fallDistance = 0;
+
 }
 void Entity::causeFallDamage(float a2) {
 	if(this->rider) rider->causeFallDamage(a2);
@@ -1444,9 +1244,8 @@ void Entity::lavaHurt() {
 	}
 }
 void Entity::playStepSound(int32_t x, int32_t y, int32_t z, int32_t id) {
-	const Tile::SoundType* soundType; // r5
 
-	soundType = Tile::tiles[id]->soundType;
+	const Tile::SoundType* soundType = Tile::tiles[id]->soundType;
 	if(this->level->getTile(x, y + 1, z) == Tile::topSnow->blockID) {
 		soundType = Tile::topSnow->soundType;
 	} else {
@@ -1454,36 +1253,25 @@ void Entity::playStepSound(int32_t x, int32_t y, int32_t z, int32_t id) {
 			return;
 		}
 	}
-	this->level->playSound(this, soundType->soundName, soundType->field_0 * 0.25, soundType->field_4);
+	this->level->playSound(this, soundType->soundName, soundType->field_0 * 0.25f, soundType->field_4);
 }
 void Entity::checkInsideTiles() {
-	int32_t minX; // r6
-	int32_t minY; // r9
-	int32_t minZ; // r8
-	int32_t maxZ; // r11
-	int32_t id;	  // r0
-	int32_t z;	  // r7
-	int32_t y;	  // r5
-	int32_t maxX; // [sp+10h] [bp-38h]
-	int32_t maxY; // [sp+14h] [bp-34h]
-
-	minX = Mth::floor(this->boundingBox.minX + 0.001);
-	minY = Mth::floor(this->boundingBox.minY + 0.001);
-	minZ = Mth::floor(this->boundingBox.minZ + 0.001);
-	maxX = Mth::floor(this->boundingBox.maxX - 0.001);
-	maxY = Mth::floor(this->boundingBox.maxY - 0.001);
-	maxZ = Mth::floor(this->boundingBox.maxZ - 0.001);
+	int minX = Mth::floor(this->boundingBox.minX + 0.001f);
+	int minY = Mth::floor(this->boundingBox.minY + 0.001f);
+	int minZ = Mth::floor(this->boundingBox.minZ + 0.001f);
+	int maxX = Mth::floor(this->boundingBox.maxX - 0.001f);
+	int maxY = Mth::floor(this->boundingBox.maxY - 0.001f);
+	int maxZ = Mth::floor(this->boundingBox.maxZ - 0.001f);
 	if(this->level->hasChunksAt(minX, minY, minZ, maxX, maxY, maxZ)) {
-		while(minX <= maxX) {
-			for(y = minY; y <= maxY; ++y) {
-				for(z = minZ; z <= maxZ; ++z) {
-					id = this->level->getTile(minX, y, z);
+		for(int x = minX; x <= maxX; ++x){
+			for(int y = minY; y <= maxY; ++y) {
+				for(int z = minZ; z <= maxZ; ++z) {
+					int id = this->level->getTile(x, y, z);
 					if(id > 0) {
-						Tile::tiles[id]->entityInside(this->level, minX, y, z, this);
+						Tile::tiles[id]->entityInside(this->level, x, y, z, this);
 					}
 				}
 			}
-			++minX;
 		}
 	}
 }

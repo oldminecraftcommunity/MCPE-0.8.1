@@ -84,26 +84,16 @@ void NinecraftApp::initGLStates(){
 	this->powerVR = this->platform()->isPowerVR();
 }
 
-void NinecraftApp::restartServer(){
-	Level* levelPtr; // r3
-	Level* v6; // r0
-	Entity* v7; // r1
-	ServerSideNetworkHandler* serverSideNetworkHandler; // r0
-
-	levelPtr = this->level;
-	if(levelPtr) {
-		for(int32_t i = levelPtr->players.size() - 1; i >= 0; --i) {
-			Player* player = levelPtr->players.back();
-			this->level->removePlayer(player);
-			levelPtr->players.pop_back();
+void NinecraftApp::restartServer() {
+	if(this->level) {
+		for(int32_t i = this->level->players.size() - 1; i >= 0; --i) {
+			Player* player = this->level->players[i];
+			if(player != this->player) this->level->removeEntity(player);
 		}
 		this->rakNetInstance->resetIsBroken();
 		this->gui.addMessage("server", "This server has restarted!", 200);
 		this->hostMultiplayer(19132);
-		if ( this->serverSideNetworkHandler )
-		{
-			serverSideNetworkHandler->levelGenerated(this->level);
-		}
+		if (this->serverSideNetworkHandler) this->serverSideNetworkHandler->levelGenerated(this->level);
 	}
 }
 void NinecraftApp::updateStats(){
@@ -150,10 +140,8 @@ void NinecraftApp::update(void){
 #endif
 	Mouse::reset2();
 	if(this->level){
-		if(this->rakNetInstance->isProbablyBroken()){
-			if(this->rakNetInstance->isServer()){
-				this->restartServer();
-			}
+		if(this->rakNetInstance->isProbablyBroken() && this->rakNetInstance->isServer()){
+			this->restartServer();
 		}
 	}
 	this->updateStats();

@@ -23,18 +23,7 @@ struct MCOServerListItem
 		this->gamemodeName = "creative";
 	}
 
-	MCOServerListItem& operator=(const MCOServerListItem& a2) {
-		this->serverId = a2.serverId;
-		this->worldName = a2.worldName;
-		this->open = a2.open;
-		this->ownerName = a2.ownerName;
-		this->myWorld = a2.myWorld;
-		this->maxNrPlayers = a2.maxNrPlayers;
-		this->gamemodeName = a2.gamemodeName;
-		this->playerNames = a2.playerNames;
-		this->invited = a2.invited;
-		return *this;
-	}
+	MCOServerListItem& operator=(const MCOServerListItem& a2) = default;
 	MCOServerListItem& operator=(MCOServerListItem&&) = default;
 	~MCOServerListItem(){}
 };

@@ -17,13 +17,8 @@ struct TextureAtlasTextureItem{
 	const TextureUVCoordinateSet* getUV(int32_t) const;
 	int32_t getUVCount(void) const;
 
-	TextureAtlasTextureItem* operator=(const TextureAtlasTextureItem & a2) {
-		this->name = a2.name;
-		this->uvCoords = a2.uvCoords;
-		this->uv = a2.uv;
-		this->uvCount = a2.uvCount;
-		return this;
-	}
+	TextureAtlasTextureItem& operator=(TextureAtlasTextureItem&& a2) = default;
+	TextureAtlasTextureItem& operator=(const TextureAtlasTextureItem& a2) = default;
 	~TextureAtlasTextureItem() {
 	}
 };

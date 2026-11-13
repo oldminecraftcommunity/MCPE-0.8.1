@@ -631,7 +631,10 @@ void Minecraft::onMojangConnectorStatus(enum MojangConnectionStatus a2) {
 	if(this->currentScreen) this->currentScreen->onMojangConnectorStatus(a2);
 }
 void Minecraft::updateStatusUserAttributes(void) {
-	this->platform()->updateStatsUserData((char_t*)glGetString(0x1f00), (char_t*)glGetString(0x1f01));
+	std::string vendor = (char*) glGetString(GL_VENDOR);
+	std::string renderer = (char*) glGetString(GL_RENDERER);
+
+	this->platform()->updateStatsUserData(vendor, renderer);
 }
 void Minecraft::setLeaveGame(void) {
 	this->_leaveGame = 1;
