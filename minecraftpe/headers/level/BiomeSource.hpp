@@ -15,7 +15,7 @@ struct BiomeSource
 	int32_t field_10, field_14, field_18, field_1C;
 	Biome** biomes;
 	PerlinNoise* rainfallNoise;
-	PerlinNoise* perlinNoisePtr2;
+	PerlinNoise* temperatureNoise;
 	PerlinNoise* detailNoise;
 	Random randomInstance1, randomInstance2, randomInstance3;
 
@@ -25,7 +25,7 @@ struct BiomeSource
 	virtual ~BiomeSource();
 	virtual Biome* getBiome(const struct ChunkPos&);
 	virtual Biome* getBiome(int32_t, int32_t);
-	virtual float* getTemperatureBlock(int32_t, int32_t, int32_t, int32_t);
+	virtual float* getTemperatureBlock(int32_t, int32_t, int32_t xSize, int32_t zSize);
 	virtual Biome** getBiomeBlock(int32_t, int32_t, int32_t, int32_t);
-	virtual Biome** getBiomeBlock(Biome**, int32_t, int32_t, int32_t, int32_t);
+	virtual Biome** getBiomeBlock(Biome**, int32_t x, int32_t, int32_t xSize, int32_t);
 };

@@ -55,9 +55,9 @@ struct ChunkCache: ChunkSource
 		if (!sub_D66664FE(x, z) || x == this->lastChunkX && z == this->lastChunkZ && this->lastChunk) {
 			return 1;
 		}
-		LevelChunk* c = this->chunks[16 * (z & 0xF) + (x & 0xF)];
-		if(c) return c == this->emptyChunk || c->isAt(x, z);
-		return 0;
+		LevelChunk* c = this->chunks[(x & 0xF) + (z & 0xF) * 16];
+		if(!c) return 0;
+		return c == this->emptyChunk || c->isAt(x, z);
 	}
 	virtual LevelChunk* getChunk(int32_t x, int32_t z) {
 		LevelChunk* result; // r0

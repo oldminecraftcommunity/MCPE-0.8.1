@@ -26,8 +26,12 @@
 PlayScreen::PlayScreen(bool_t a2) : field_50(0), field_51(0), header(0),
 	backButton(0), newButton(0), externalButton(0), frame(0), field_74(0), field_78(0),
 	spinner(0), editButton(0), field_84(0), field_B4(0), field_118(a2 ? PlayScreenState::ELEVEN : PlayScreenState::ZERO){
-	std::string v6 = "Welcome to the Minecraft Realms Alpha! We're still testing out features, but eventually Realms will let up to 10" " Pocket Edition users play together online. It's currently free, and limited to a set amount of servers. \n" "\n" "\n" "Realms will be an optional, paid service once it's released. Have fun!";
-	std::string v7 = "Minecraft Realms is currently in a limited alpha test. More servers will be available to register from this page" " as the service is developed, so check back soon.\n" "\n" "Realms servers may be down or be reset while we are working toward the beta release.";
+	std::string v6 = "Welcome to the Minecraft Realms Alpha! We're still testing out features, but eventually Realms will let up to 10"
+					 " Pocket Edition users play together online. It's currently free, and limited to a set amount of servers. \n"
+					 "\n" "\n" "Realms will be an optional, paid service once it's released. Have fun!";
+	std::string v7 = "Minecraft Realms is currently in a limited alpha test. More servers will be available to register from this page"
+					 " as the service is developed, so check back soon.\n" "\n"
+					 "Realms servers may be down or be reset while we are working toward the beta release.";
 	std::string v8 = "Tap 'New' to create your own Realms server!\n\nFree during alpha.";
 	this->setPlayScreenStateSetting(PlayScreenState::ZERO, 0, 0, 0, 0, 0, 0, PlayScreenPanel::NONE, "");
 	this->setPlayScreenStateSetting(PlayScreenState::ONE, 0, 0, 0, 1, 0, 0, PlayScreenPanel::MESSAGE, v6);
@@ -542,7 +546,7 @@ void PlayScreen::tick() {
 		if(this->field_88.size() == v8->size()) {
 			int v11 = this->field_88.size() - 1;
 			while(v11 >= 0) {
-				if(this->field_88[v11].field_4 != v8->at(v11).field_4 || this->field_88[v11].field_0 != v8->at(v11).field_0) {
+				if(this->field_88[v11].field_4 != (*v8)[v11].field_4 || this->field_88[v11].field_0 != (*v8)[v11].field_0) {
 					this->field_88 = *v8;
 					this->buildLocalServerList();
 				}

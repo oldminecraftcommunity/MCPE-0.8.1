@@ -687,7 +687,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& a2, struct Conta
 					//XXX why v6 is not freed???
 					this->minecraft->player->openFurnace(v6);
 					if(this->minecraft->player->currentContainer) {
-						this->minecraft->player->currentContainer->field_0 = (uint8_t)a3->field_C;
+						this->minecraft->player->currentContainer->containerId = (uint8_t)a3->field_C;
 					}
 				}
 				if(a3->containerId == 0) {
@@ -696,7 +696,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& a2, struct Conta
 						if(TileEntity::isType(tile, 2)) {
 							this->minecraft->player->openContainer((ChestTileEntity*)tile);
 							if(this->minecraft->player->currentContainer) {
-								this->minecraft->player->currentContainer->field_0 = (uint8_t)a3->field_C;
+								this->minecraft->player->currentContainer->containerId = (uint8_t)a3->field_C;
 							}
 						}
 					}
@@ -722,7 +722,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& a2, struct Conta
 	if(player) {
 		currentContainer = player->currentContainer;
 		if(currentContainer) {
-			if(currentContainer->field_0 == (uint8_t)a3->field_10) {
+			if(currentContainer->containerId == (uint8_t)a3->field_10) {
 				currentContainer->setData(a3->field_C, a3->field_E);
 			}
 		}
@@ -731,8 +731,8 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& a2, struct Conta
 void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID&, struct ContainerSetSlotPacket* a3) {
 	if(this->minecraft->player) {
 		if(this->minecraft->player->currentContainer) {
-			if(this->minecraft->player->currentContainer->field_0 == (uint8_t)a3->field_D) {
-				this->minecraft->player->currentContainer->setSlot(a3->field_E, &a3->field_10);
+			if(this->minecraft->player->currentContainer->containerId == (uint8_t)a3->field_D) {
+				this->minecraft->player->currentContainer->setSlot(a3->slot, &a3->field_10);
 				if(this->minecraft->currentScreen) {
 					this->minecraft->currentScreen->onInternetUpdate();
 				}
@@ -751,7 +751,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& a2, struct Conta
 					}
 				} else {
 					if(this->minecraft->player->currentContainer) {
-						if(this->minecraft->player->currentContainer->field_0 == v7) {
+						if(this->minecraft->player->currentContainer->containerId == v7) {
 							for(int j = 0; j < a3->field_10.size(); ++j) {
 								this->minecraft->player->currentContainer->setSlot(j, &a3->field_10[j]);
 							}

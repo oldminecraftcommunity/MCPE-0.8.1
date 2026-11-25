@@ -19,8 +19,7 @@ DyePowderItem::DyePowderItem(int32_t a2)
 }
 
 const TextureUVCoordinateSet* DyePowderItem::getIcon(int32_t a2, int32_t, bool_t) const{
-	if(a2 > 0b1111) a2 = 0b1111; //usat(4, v);
-	return this->field_48.getUV(a2);
+	return this->field_48.getUV(a2 > 15 ? 15 : (a2 < 0 ? 0 : a2));
 }
 bool_t DyePowderItem::useOn(ItemInstance* item, Player* player, Level* level, int32_t x, int32_t y, int32_t z, int32_t face, float fx, float fy, float fz) {
 	Tile* result; // r0

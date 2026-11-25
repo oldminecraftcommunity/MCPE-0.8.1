@@ -6,8 +6,8 @@
 struct NetEventCallback;
 
 struct Packet{
-	PacketPriority packetPriorityMaybe;
-	PacketReliability packetReliabilityMaybe;
+	PacketPriority packetPriority;
+	PacketReliability packetReliability;
 
 	Packet();
 

@@ -592,29 +592,17 @@ LevelChunk::~LevelChunk() {
 	if(this->field_258) delete this->tiles;
 }
 LevelChunk::LevelChunk(struct Level* a2, uint8_t* a3, int32_t x, int32_t z)
-	: tileMeta(32768)
-	, skyLight(32768)
-	, blockLight(32768) {
-	this->level = a2;
-	this->chunkX = x;
-	this->chunkZ = z;
-	this->chunkXworld = 16 * x;
-	this->chunkZworld = 16 * z;
+	: level(a2), field_4(32768),
+	tileMeta(32768), skyLight(32768), blockLight(32768),
+	chunkX(x), chunkZ(z), chunkXworld(x*16), chunkZworld(z*16){
 	this->tiles = a3;
 	this->field_258 = 0;
 	this->init();
 }
 LevelChunk::LevelChunk(struct Level* a2, int32_t a3, int32_t a4)
-	: tileMeta(32768)
-	, skyLight(32768)
-	, blockLight(32768) {
-	this->level = a2;
-	this->field_4 = 32768;
-	this->field_258 = 1;
-	this->chunkX = a3;
-	this->chunkZ = a4;
-	this->chunkXworld = a3 * 16;
-	this->chunkZworld = a4 * 16;
+	: level(a2), field_4(32768),
+	tileMeta(32768), skyLight(32768), blockLight(32768),
+	field_258(1), chunkX(a3), chunkZ(a4), chunkXworld(a3*16), chunkZworld(a4*16){
 	this->tiles = new uint8_t[0x8000];
 	memset(this->tiles, 0, 0x8000);
 	this->init();

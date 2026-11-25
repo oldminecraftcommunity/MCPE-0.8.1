@@ -10,7 +10,7 @@ struct TerrainParticle: Particle
 	TextureUVCoordinateSet field_168;
 	TerrainParticle(Level* level, ParticleType pt, const std::string& a2)
 		: Particle(level, pt, a2) {
-		this->rColMul = this->gColMul = this->bColMul = 0.6;
+		this->rColMul = this->gColMul = this->bColMul = 0.6f;
 	}
 
 	virtual ~TerrainParticle() {

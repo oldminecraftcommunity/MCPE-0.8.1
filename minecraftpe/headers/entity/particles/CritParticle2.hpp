@@ -9,7 +9,7 @@ struct CritParticle2: Particle
 	CritParticle2(Level* level, ParticleType pt, const std::string& a2)
 		: Particle(level, pt, a2) {
 		this->field_164 = 1;
-		this->texture = {0.0625, 0.25, 0.125, 0.3125, 256, 256};
+		this->texture = {0.0625f, 0.25f, 0.125f, 0.3125f, 256, 256};
 		this->noclip = 0;
 	}
 	virtual ~CritParticle2() {

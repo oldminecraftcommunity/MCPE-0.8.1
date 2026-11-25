@@ -7,7 +7,7 @@
 #include <rendering/TextureAtlasTextureItem.hpp>
 
 StemTile::StemTile(int32_t a2, Tile* a3)
-	: Bush(a2, "melon_stem", Material::plant) {
+	: Bush(a2, "melon_stem") {
 	this->grownTile = a3;
 	this->setTicking(1);
 	this->setShape(0.375, 0.0, 0.375, 0.625, 0.25, 0.625);

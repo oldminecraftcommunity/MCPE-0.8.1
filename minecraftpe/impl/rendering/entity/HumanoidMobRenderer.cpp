@@ -22,11 +22,11 @@ void HumanoidMobRenderer::renderHand() {
 void HumanoidMobRenderer::render(Entity* a2_, float a3, float a4, float a5, float a6, float a7) {
 	Mob* a2 = (Mob*)a2_;
 	if(a2->getCarriedItem()) {
-		this->hmodel->field_319 = 1;
+		this->hmodel->carryingItem = 1;
 	}
-	this->hmodel->field_31A = a2->isSneaking();
+	this->hmodel->sneaking = a2->isSneaking();
 	MobRenderer::render(a2, a3, a4, a5, a6, a7);
-	this->hmodel->field_319 = 0;
+	this->hmodel->carryingItem = 0;
 }
 void HumanoidMobRenderer::additionalRendering(Mob* a2, float a3) {
 	ItemInstance* v5; // r0

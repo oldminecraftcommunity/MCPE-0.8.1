@@ -41,17 +41,17 @@ ChickenModel::ChickenModel()
 
 void ChickenModel::render(Entity* a2, float a3, float a4, float a5, float a6, float a7, float a8) {
 	this->setupAnim(a3, a4, a5, a6, a7, a8);
-	glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0);
+	glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1);
 	if(this->field_14) {
 		glPushMatrix();
-		glTranslatef(0.0, a8 * 5.0, a8 + a8);
+		glTranslatef(0.0, a8 * 5, a8 * 2);
 		this->headModel.render(a8);
 		this->beakModel.render(a8);
 		this->redThingModel.render(a8); //actual name from b1.2 btw (except ...Model thingy)
 		glPopMatrix();
 		glPushMatrix();
-		glScalef(0.5, 0.5, 0.5);
-		glTranslatef(0.0, a8 * 24.0, 0.0);
+		glScalef(0.5f, 0.5f, 0.5f);
+		glTranslatef(0.0, a8 * 24, 0.0);
 		this->bodyModel.render(a8);
 		this->leg1Model.render(a8);
 		this->leg2Model.render(a8);
@@ -68,20 +68,18 @@ void ChickenModel::render(Entity* a2, float a3, float a4, float a5, float a6, fl
 		this->wing1Model.render(a8);
 		this->wing2Model.render(a8);
 	}
-	glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 0.0);
+	glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 0);
 }
 void ChickenModel::setupAnim(float a2, float a3, float a4, float a5, float a6, float a7){
 
-	float v7 = a5 / (180.0f / 3.1416f);
-	float v8 = -(a6 / (180.0f / 3.1416f));
-	this->headModel.yRotAngle = v7;
-	this->beakModel.yRotAngle = v7;
-	this->headModel.xRotAngle = v8;
-	this->beakModel.xRotAngle = v8;
+	float v7 = a5 / (180.0f / Mth::PI);
+	float v8 = -(a6 / (180.0f / Mth::PI));
+	this->beakModel.yRotAngle = this->headModel.yRotAngle = v7;
+	this->beakModel.xRotAngle = this->headModel.xRotAngle = v8;
 	this->redThingModel.xRotAngle = v8;
 	this->redThingModel.yRotAngle = v7;
-	this->bodyModel.xRotAngle = 90.0f / (180.0f / 3.1416f);
-	float v9 = Mth::cos(a2 * 0.6662) * 1.4;
+	this->bodyModel.xRotAngle = 90.0f / (180.0f / Mth::PI);
+	float v9 = Mth::cos(a2 * 0.6662f) * 1.4f;
 	this->wing1Model.zRotAngle = a4;
 	float v10 = v9 * a3;
 	this->leg1Model.xRotAngle = v10;

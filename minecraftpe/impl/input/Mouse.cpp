@@ -26,14 +26,8 @@ bool_t MouseAction::isButton() const{
 	return (uint32_t)(uint8_t)this->evButton - 1 <= 1;
 }
 
-MouseDevice::MouseDevice(){
-	this->hasDX = -9999;
-	this->eventId = -1;
-	this->hasDY = -9999;
-	this->mouseX = 0;
-	this->mouseY = 0;
-	this->prevMouseX = 0;
-	this->prevMouseY = 0;
+MouseDevice::MouseDevice() : hasDX(-9999), eventId(-1), hasDY(-9999),
+	mouseX(0), mouseY(0), prevMouseX(0), prevMouseY(0) {
 	this->firstMovement = 0;
 	this->buttonStates[0] = 0;
 	this->buttonStates[1] = 0;

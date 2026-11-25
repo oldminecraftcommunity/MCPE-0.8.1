@@ -4,15 +4,13 @@
 #include <network/NetEventCallback.hpp>
 #include <network/Packet.hpp>
 
-static RakNet::SystemAddress _D6E0A1B0;
-
 RakNetInstance::RakNetInstance() {
 	this->rakPeerInstance = 0;
 	this->_isServer = 0;
 	this->loggedIn = 0;
 	this->isPingingHostsMaybe = 0; //XXX doesnt seem to exist in mcpe
 	this->rakPeerInstance = (RakNet::RakPeer*)RakNet::RakPeerInterface::GetInstance();
-	this->rakPeerInstance->SetTimeoutTime(20000, _D6E0A1B0);
+	this->rakPeerInstance->SetTimeoutTime(20000, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 	this->rakPeerInstance->SetOccasionalPing(1);
 }
 int32_t RakNetInstance::handleUnconnectedPong(const RakNet::RakString& a2, const RakNet::Packet* a3, const char_t* a4, bool_t a5) {
@@ -75,7 +73,7 @@ bool_t RakNetInstance::host(const std::string& a2, int32_t port, int32_t maxConn
 	rakPeerInstance = this->rakPeerInstance;
 	v11 = 2;
 	rakPeerInstance->SetMaximumIncomingConnections(maxConnections);
-	this->rakPeerInstance->SetTimeoutTime(10000u, _D6E0A1B0);
+	this->rakPeerInstance->SetTimeoutTime(10000u, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 	v8 = this->rakPeerInstance->Startup(maxConnections, &v10, 1u, -99999);
 	this->_isServer = 1;
 	this->isPingingHostsMaybe = 0;
@@ -225,15 +223,15 @@ void RakNetInstance::send(Packet& a2) {
 	RakNet::BitStream v14;
 	a2.write(&v14);
 	if(this->_isServer) {
-		this->rakPeerInstance->Send(&v14, a2.packetPriorityMaybe, a2.packetReliabilityMaybe, 0, _D6E0A1B0, 1, 0);
+		this->rakPeerInstance->Send(&v14, a2.packetPriority, a2.packetReliability, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, 1, 0);
 	} else {
-		this->rakPeerInstance->Send(&v14, a2.packetPriorityMaybe, a2.packetReliabilityMaybe, 0, RakNet::AddressOrGUID(this->field_8), 0, 0);
+		this->rakPeerInstance->Send(&v14, a2.packetPriority, a2.packetReliability, 0, RakNet::AddressOrGUID(this->field_8), 0, 0);
 	}
 }
 void RakNetInstance::send(const RakNet::RakNetGUID& a2, Packet& a3) {
 	RakNet::BitStream v11;
 	a3.write(&v11);
-	this->rakPeerInstance->Send(&v11, a3.packetPriorityMaybe, a3.packetReliabilityMaybe, 0, RakNet::AddressOrGUID(a2), 0, 0);
+	this->rakPeerInstance->Send(&v11, a3.packetPriority, a3.packetReliability, 0, RakNet::AddressOrGUID(a2), 0, 0);
 }
 void RakNetInstance::send(Packet* a2) {
 	this->send(*a2);

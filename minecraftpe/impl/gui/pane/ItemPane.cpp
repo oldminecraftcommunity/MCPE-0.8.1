@@ -105,7 +105,7 @@ void ItemPane::renderBatch(std::vector<ScrollingPane::GridItem>& a2, float a3, f
 			textures = this->textures;
 			v15 = v13++;
 			v16 = &a2[v15];
-			v37 = &v7->at(a2[v15].field_0)->field_0;
+			v37 = &(*v7)[a2[v15].field_0]->field_0;
 			v39 = Gui::floorAlignToScreenPixel((float)((float)this->field_4C.width + a2[v15].field_C) - 16.0);
 			v17 = Gui::floorAlignToScreenPixel(v16->field_10 + 2.0);
 			ItemRenderer::renderGuiItemNew(textures, v37, 0, v39, v17, 1.0, 1.0, 1.0);
@@ -114,7 +114,7 @@ void ItemPane::renderBatch(std::vector<ScrollingPane::GridItem>& a2, float a3, f
 		Tesselator::instance.beginOverride();
 		while(v19 < a2.size()) {
 			v20 = &a2[v19];
-			v21 = v7->at(v20->field_0);
+			v21 = (*v7)[v20->field_0];
 			std::string v42 = Util::toString(v21->field_24);
 			font = this->font;
 			v23 = v20->field_C - 1.0;

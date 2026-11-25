@@ -7,7 +7,7 @@ struct BaseRailTile : Tile{
 	struct Rail{
 		struct Level* level;
 		int32_t x, y, z;
-		int8_t field_10, field_11, field_12, field_13;
+		bool canRotate;
 		std::vector<TilePos> connections;
 
 		Rail(struct Level*, int32_t, int32_t, int32_t);
@@ -24,8 +24,7 @@ struct BaseRailTile : Tile{
 		void updateConnections(int32_t);
 	};
 
-	bool_t useDataBit;
-	int8_t field_7D, field_7E, field_7F;
+	bool_t canRotate;
 
 	static bool_t isRail(int32_t);
 	static bool_t isRail(struct Level*, int32_t, int32_t, int32_t);

@@ -15,8 +15,8 @@ struct MobFlameParticle: Particle
 		this->noclip = 1;
 		this->bColMul = this->gColMul = this->rColMul = 1;
 		this->xOff = this->yOff = this->zOff = 0;
-		this->coordMultiplier = -0.25;
-		this->texture = TextureUVCoordinateSet(0, 0, 1, 0.03125, 16, 512);
+		this->coordMultiplier = -0.25f;
+		this->texture = TextureUVCoordinateSet(0.0f, 0.0f, 1.0f, 0.03125f, 16, 512);
 
 	}
 
@@ -77,25 +77,20 @@ struct MobFlameParticle: Particle
 		return 1;
 	}
 	virtual void init(float a2, float a3, float a4, float a5, float a6, float a7, int32_t a8) {
-		float v8; // s15
-		float motionY; // s10
-		float motionX; // s9
-		float scale; // s14
-		v8 = a7 + (float) ((this->motionZ * 0.1));
-		motionY = this->motionY;
-		motionX = this->motionX;
 		this->entity = 0;
 		this->maxAliveTime = 25;
-		this->motionZ = v8;
-		scale = this->_scale;
-		this->motionX = a5 + (float) ((motionX * 0.1));
-		this->motionY = a6 + (float) ((motionY * 0.1));
-		this->_scale = scale * 3.0;
-		this->field_164 = scale * 3.0;
+
+		this->motionX *= 0.1f;
+		this->motionY *= 0.1f;
+		this->motionZ *= 0.1f;
+		this->motionX += a5;
+		this->motionY += a6;
+		this->motionZ += a7;
+
+		this->_scale *= 3.0f;
+		this->field_164 = this->_scale;
 	}
 	virtual void setEntity(Entity* a2) {
-		float posX; // s16
-		float entityWidth; // s21
 		float v6; // s16
 		float f; // r0
 		float v8; // s21
@@ -105,12 +100,11 @@ struct MobFlameParticle: Particle
 		float f2; // r0
 		float v13; // s14
 		this->entity = a2;
-		posX = this->posX;
-		this->posY = this->posY + 0.7;
-		entityWidth = a2->entityWidth;
-		v6 = posX - a2->posX;
+		this->posY += 0.7f;
+
+		v6 = this->posX - a2->posX;
 		f = Entity::sharedRandom.nextFloat();
-		v8 = entityWidth * 0.5;
+		v8 = a2->entityWidth * 0.5;
 		v9 = (float) ((v6 * v8)) + (float) (((float) (((float) ((f + f)) - 1.0)) * 0.1));
 		v10 = this->posY - a2->posY;
 		v11 = (float) ((this->posZ - a2->posZ)) * v8;
@@ -135,10 +129,9 @@ struct MobFlameParticle: Particle
 		this->tick();
 	}
 	virtual void render(Tesselator& a2, float a3, float a4, float a5, float a6, float a7, float a8) {
-		float v12; // s13
-		v12 = floorf((float) (((float) (((float) (this->ticksAlive) + a3)) / (float) (this->maxAliveTime))) * 32.0);
-		this->texture.minY = v12 * 0.03125;
-		this->texture.maxY = (float) ((v12 * 0.03125)) + 0.03125;
+		float v12 = floorf(((this->ticksAlive + a3) / this->maxAliveTime) * 32);
+		this->texture.minY = v12 * 0.03125f;
+		this->texture.maxY = (v12 * 0.03125f) + 0.03125f;
 		Particle::render(a2, a3, a4, a5, a6, a7, a8);
 	}
 };

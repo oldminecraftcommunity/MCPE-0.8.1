@@ -8,7 +8,7 @@ struct FlameParticle: Particle
 	FlameParticle(Level* level, ParticleType pt, const std::string& a2)
 		: Particle(level, pt, a2) {
 		this->noclip = 1;
-		this->texture = TextureUVCoordinateSet(0, 0.1875, 0.0625, 0.25, 256, 256);
+		this->texture = TextureUVCoordinateSet(0.0f, 0.1875f, 0.0625f, 0.25f, 256, 256);
 	}
 
 	virtual ~FlameParticle() {

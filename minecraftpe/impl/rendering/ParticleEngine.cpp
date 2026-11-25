@@ -21,9 +21,7 @@
 #include <rendering/Tesselator.hpp>
 #include <sstream>
 
-ParticleEngine::ParticleEngine(Level* a2, Textures* a3) {
-	this->level = a2;
-	this->textures = a3;
+ParticleEngine::ParticleEngine(Level* a2, Textures* a3) : level(a2), textures(a3){
 	a3->loadTexture("particles.png", 1, 0);
 }
 Particle* ParticleEngine::_get(ParticleType a2) {
@@ -125,41 +123,20 @@ Particle* ParticleEngine::create(ParticleType a2) {
 	}
 }
 void ParticleEngine::destroy(int32_t x, int32_t y, int32_t z) {
-	int32_t id; // r5
-	int32_t meta; // r0
-	Tile* v10; // r11
-	int32_t v11; // r5
-	int32_t v12; // r8
-	float v13; // s13
-	int32_t v14; // r6
-	int32_t v15; // r4
-	float v16; // s14
-	float v17; // s21
-	float v18; // s18
-	float v19; // s19
-
-	id = this->level->getTile(x, y, z);
+	int id = this->level->getTile(x, y, z);
 	if(id) {
-		meta = this->level->getData(x, y, z);
-		v10 = Tile::tiles[id];
-		v11 = 0;
-		v12 = meta << 16;
-		do {
-			v15 = 1;
-			v19 = (float)y;
-			do {
-				v14 = 0;
-				do {
-					v13 = (float)v14++;
-					v18 = (float)z;
-					v17 = (float)x + (float)((float)((float)v11 + 0.5) / 3.0);
-					v16 = (float)((float)(v19 + (float)((float)((float)v15 + 0.5) / 3.0)) - v19) - 0.5;
-					this->instance(PT_TERRAIN, v17, v19 + (float)((float)((float)v15 + 0.5) / 3.0), v18 + (float)((float)(v13 + 0.5) / 3.0), (float)((float)(v17 - (float)x) - 0.5) + (float)((float)(v17 - (float)x) - 0.5), v16 + v16, (float)((float)((float)(v18 + (float)((float)(v13 + 0.5) / 3.0)) - v18) - 0.5) + (float)((float)((float)(v18 + (float)((float)(v13 + 0.5) / 3.0)) - v18) - 0.5), v12 | v10->blockID);
-				} while(v14 != 3);
-				++v15;
-			} while(v15 != 3);
-			++v11;
-		} while(v11 != 3);
+		int meta = this->level->getData(x, y, z);
+		Tile* tile = Tile::tiles[id];
+		for(int xo = 0; xo != 3; ++xo) {
+			for(int yo = 1; yo != 3; ++yo) {
+				for(int zo = 0; zo != 3; ++zo) {
+					float xx = x + ((xo + 0.5f) / 3.0f);
+					float yy = y + ((yo + 0.5f) / 3.0f);
+					float zz = z + ((zo + 0.5f) / 3.0f);
+					this->instance(PT_TERRAIN, xx, yy, zz, ((xx - x) - 0.5f) * 2, ((yy - y) - 0.5f) * 2, ((zz - z) - 0.5f) * 2, (meta << 16) | tile->blockID);
+				}
+			}
+		}
 	}
 }
 Particle* ParticleEngine::instance(ParticleType a2, float a3, float a4, float a5, float a6, float a7, float a8, int32_t a9) {
@@ -176,32 +153,18 @@ Particle* ParticleEngine::instance(ParticleType a2, float a3, float a4, float a5
 	return v16;
 }
 void ParticleEngine::render(Entity* a2, float a3) {
-	float yaw; // s11
-	float v7; // s11
-	float v8; // s17
-	float v9; // s18
-	float v10; // s14
-	float v11; // s13
-	float posY; // s14
-	float v14; // r9
-	float v15; // s15
-	float posZ; // s14
+	Particle::playerViewDir = ((Mob*)a2)->getViewVector(a3);
 
-	Vec3 v21 = ((Mob*)a2)->getViewVector(a3);
-	yaw = a2->yaw;
-	Particle::playerViewDir = v21;
-	v7 = (float)((float)(3.1416 * yaw) / 180.0);
-	v8 = Mth::cos(v7);
-	v9 = Mth::sin(v7);
-	v10 = (float)((float)(3.1416 * a2->pitch) / 180.0);
-	v11 = Mth::sin(v10);
-	posY = a2->posY;
-	v14 = Mth::cos(v10);
-	Particle::xOff = a2->prevPosX + (float)((float)(a2->posX - a2->prevPosX) * a3);
-	v15 = a2->prevPosY + (float)((float)(posY - a2->prevPosY) * a3);
-	posZ = a2->posZ;
-	Particle::yOff = v15;
-	Particle::zOff = a2->prevPosZ + (float)((float)(posZ - a2->prevPosZ) * a3);
+	float v8 = Mth::cos((Mth::PI * a2->yaw) / 180.0f);
+	float v9 = Mth::sin((Mth::PI * a2->yaw) / 180.0f);
+
+	float v11 = -v9 * Mth::sin((Mth::PI * a2->pitch) / 180.0f);
+	float v12 = v8 * Mth::sin((Mth::PI * a2->pitch) / 180.0f);
+	float v14 = Mth::cos((Mth::PI * a2->pitch) / 180.0f);
+
+	Particle::xOff = a2->prevPosX + (a2->posX - a2->prevPosX) * a3;
+	Particle::yOff = a2->prevPosY + (a2->posY - a2->prevPosY) * a3;
+	Particle::zOff = a2->prevPosZ + (a2->posZ - a2->prevPosZ) * a3;
 	glEnable(GL_ALPHA_TEST);
 	glDisable(GL_BLEND);
 	for(auto& p: this->string2ParticleVec) {
@@ -210,7 +173,7 @@ void ParticleEngine::render(Entity* a2, float a3) {
 			Tesselator::instance.begin(p.second.size() & 0xFFFFFFFC); //TODO ????
 			for(int32_t i = 0; i < p.second.size(); ++i) {
 				Particle* v19 = p.second[i];
-				v19->render(Tesselator::instance, a3, v8, v14, v9, -(float)(v9 * v11), v8 * v11);
+				v19->render(Tesselator::instance, a3, v8, v14, v9, v11, v12);
 			}
 			Tesselator::instance.draw(1);
 		}

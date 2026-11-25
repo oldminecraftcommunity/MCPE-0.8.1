@@ -2611,48 +2611,26 @@ bool_t TileRenderer::tesselateFireInWorld(Tile* tile, int32_t x, int32_t y, int3
 	return 1;
 }
 bool_t TileRenderer::tesselateInWorld(Tile* a2, int32_t a3, int32_t a4, int32_t a5) {
-	int32_t v9; // r9
-
-	v9 = a2->getRenderShape();
+	int shape = a2->getRenderShape();
 	a2->updateShape(this->levelSource, a3, a4, a5);
-	switch(v9) {
-		case 0:
-			return this->tesselateBlockInWorld(a2, a3, a4, a5);
-		case 4:
-			return this->tesselateWaterInWorld(a2, a3, a4, a5);
-		case 13:
-			return this->tesselateCactusInWorld(a2, a3, a4, a5);
-		case 1:
-			return this->tesselateCrossInWorld(a2, a3, a4, a5);
-		case 19:
-			return this->tesselateStemInWorld(a2, a3, a4, a5);
-		case 6:
-			return this->tesselateRowInWorld(a2, a3, a4, a5);
-		case 2:
-			return this->tesselateTorchInWorld(a2, a3, a4, a5);
-		case 3:
-			return this->tesselateFireInWorld(a2, a3, a4, a5);
-		case 8:
-			return this->tesselateLadderInWorld(a2, a3, a4, a5);
-		case 7:
-			return this->tesselateDoorInWorld(a2, a3, a4, a5);
-		case 9:
-			return this->tesselateRailInWorld((BaseRailTile*)a2, a3, a4, a5);
-		case 10:
-			return this->tesselateStairsInWorld((StairTile*)a2, a3, a4, a5);
-		case 11:
-			return this->tesselateFenceInWorld((FenceTile*)a2, a3, a4, a5);
-		case 21:
-			return this->tesselateFenceGateInWorld((FenceGateTile*)a2, a3, a4, a5);
-		case 32:
-			return this->tesselateWallInWorld((WallTile*)a2, a3, a4, a5);
-		case 18:
-			return this->tesselateThinFenceInWorld((ThinFenceTile*)a2, a3, a4, a5);
-		case 31:
-			return this->tesselateTreeInWorld(a2, a3, a4, a5);
-		case 14:
-			return this->tesselateBedInWorld(a2, a3, a4, a5);
-	}
+	if(shape == 0) return this->tesselateBlockInWorld(a2, a3, a4, a5);
+	if(shape == 4) return this->tesselateWaterInWorld(a2, a3, a4, a5);
+	if(shape == 13) return this->tesselateCactusInWorld(a2, a3, a4, a5);
+	if(shape == 1) return this->tesselateCrossInWorld(a2, a3, a4, a5);
+	if(shape == 19) return this->tesselateStemInWorld(a2, a3, a4, a5);
+	if(shape == 6) return this->tesselateRowInWorld(a2, a3, a4, a5);
+	if(shape == 2) return this->tesselateTorchInWorld(a2, a3, a4, a5);
+	if(shape == 3) return this->tesselateFireInWorld(a2, a3, a4, a5);
+	if(shape == 8) return this->tesselateLadderInWorld(a2, a3, a4, a5);
+	if(shape == 7) return this->tesselateDoorInWorld(a2, a3, a4, a5);
+	if(shape == 9) return this->tesselateRailInWorld((BaseRailTile*)a2, a3, a4, a5);
+	if(shape == 10) return this->tesselateStairsInWorld((StairTile*)a2, a3, a4, a5);
+	if(shape == 11) return this->tesselateFenceInWorld((FenceTile*)a2, a3, a4, a5);
+	if(shape == 21) return this->tesselateFenceGateInWorld((FenceGateTile*)a2, a3, a4, a5);
+	if(shape == 32) return this->tesselateWallInWorld((WallTile*)a2, a3, a4, a5);
+	if(shape == 18) return this->tesselateThinFenceInWorld((ThinFenceTile*)a2, a3, a4, a5);
+	if(shape == 31) return this->tesselateTreeInWorld(a2, a3, a4, a5);
+	if(shape == 14) return this->tesselateBedInWorld(a2, a3, a4, a5);
 	return 0;
 }
 bool_t TileRenderer::tesselateInWorld(Tile* a2, int32_t a3, int32_t a4, int32_t a5, const struct TextureUVCoordinateSet& a6) {
@@ -3606,66 +3584,22 @@ void TileRenderer::tesselateTorch(Tile* tile, float a3, float a4, float a5, floa
 	Tesselator::instance.vertexUV(v25 - 0.0625f, a4 + 0.61875f, v26, v14, v16);
 }
 bool_t TileRenderer::tesselateTorchInWorld(Tile* tile, int32_t x, int32_t y, int32_t z) {
-	int32_t v9;		   // r7
-	float v10;		   // r1
-	float v11;		   // s15
-	float v12;		   // s16
-	float v13;		   // s14
-	TileRenderer* v14; // r0
-	Tile* v15;		   // r1
-	float v16;		   // r3
-	float v17;		   // r2
-	float v19;		   // [sp+0h] [bp-38h]
-	float v20;		   // [sp+4h] [bp-34h]
-	float v21;		   // [sp+8h] [bp-30h]
+	int data = this->levelSource->getData(x, y, z);
+	float b = tile->getBrightness(this->levelSource, x, y, z);
+	if(Tile::lightEmission[tile->blockID] > 0) b = 1.0f;
 
-	v9 = this->levelSource->getData(x, y, z);
-	v10 = tile->getBrightness(this->levelSource, x, y, z);
-	if(Tile::lightEmission[tile->blockID] > 0) {
-		v10 = 1.0f;
+	Tesselator::instance.color(b, b, b);
+	if(data == 1){
+		this->tesselateTorch(tile, x - 0.1f, y + 0.2f, z, -0.4f, 0);
+	}else if(data == 2){
+		this->tesselateTorch(tile, x + 0.1f, y + 0.2f, z, 0.4f, 0);
+	}else if(data == 3){
+		this->tesselateTorch(tile, x, y + 0.2f, z - 0.1f, 0, -0.4f);
+	}else if(data == 4){
+		this->tesselateTorch(tile, x, y + 0.2f, z + 0.1f, 0, 0.4f);
+	}else{
+		this->tesselateTorch(tile, x, y, z, 0, 0);
 	}
-	Tesselator::instance.color(v10, v10, v10);
-	v11 = (float)x;
-	if(v9 != 1) {
-		v12 = (float)z;
-		v13 = (float)y;
-		if(v9 == 2) {
-			v19 = (float)z;
-			v21 = 0.0f;
-			v14 = this;
-			v15 = tile;
-			v20 = 0.4f;
-			v11 = v11 + 0.1f;
-		} else {
-			if(v9 == 3) {
-				v20 = 0.0f;
-				v16 = -0.4f;
-				v19 = v12 - 0.1f;
-			} else {
-				if(v9 != 4) {
-					v17 = (float)x;
-					v14 = this;
-					v15 = tile;
-					v19 = (float)z;
-					v20 = 0.0f;
-					v21 = 0.0f;
-					goto LABEL_14;
-				}
-				v16 = 0.4f;
-				v20 = 0.0f;
-				v19 = v12 + 0.1f;
-			}
-			v14 = this;
-			v15 = tile;
-			v21 = v16;
-		}
-		v17 = v11;
-		v13 = v13 + 0.2f;
-LABEL_14:
-		v14->tesselateTorch(v15, v17, v13, v19, v20, v21);
-		return 1;
-	}
-	this->tesselateTorch(tile, v11 - 0.1f, (float)y + 0.2f, (float)z, -0.4f, 0.0f);
 	return 1;
 }
 bool_t TileRenderer::tesselateTreeInWorld(Tile* tile, int32_t x, int32_t y, int32_t z) {

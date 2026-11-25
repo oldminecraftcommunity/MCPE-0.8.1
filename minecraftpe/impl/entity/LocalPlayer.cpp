@@ -43,7 +43,7 @@ LocalPlayer::LocalPlayer(Minecraft* a2, Level* a3, User* a4, int32_t a5, bool_t 
 	this->minecraft = a2;
 	this->currentItemID = -1;
 	this->currentItemMeta = -1;
-	this->field_DCC = 1000000.0;
+	this->lastSentHeadYaw = 1000000.0;
 	this->lastSentArmorHash = 0;
 	this->dimension = a5;
 	this->_init();
@@ -64,62 +64,26 @@ void LocalPlayer::_init() {
 	this->currentItemMeta = sel ? sel->getAuxValue() : 0;
 }
 void LocalPlayer::calculateFlight(float a2, float a3, float a4) {
-	Minecraft* minecraft; // r2
-	float v6;			  // s15
-	float v9;			  // s18
+	float v6 = this->minecraft->options.field_F4;
+	float v9 = 0;
+	if(Keyboard::_states[103] == 1) v9 = 0.2f * v6;
+	if(Keyboard::_states[102] == 1) v9 = -0.2f * v6;
 
-	minecraft = this->minecraft;
-	v6 = minecraft->options.field_F4;
-	if(Keyboard::_states[103] == 1) {
-		v9 = 0.2;
-	} else {
-		v9 = 0.0;
-	}
-	if(Keyboard::_states[103] == 1) {
-		v9 = v6 * v9;
-	}
-	if(Keyboard::_states[102] == 1) {
-		v9 = -0.2;
-	}
-	if(Keyboard::_states[102] == 1) {
-		v9 = v6 * v9;
-	}
-	this->field_D90 = this->field_D9C.getNewDeltaValue(a2 * v6, minecraft->options.sensitity * 0.35) * 10.0;
-	this->field_D94 = this->field_DA8.getNewDeltaValue(v9, this->minecraft->options.sensitity * 0.35) * 10.0;
-	this->field_D98 = this->field_DB4.getNewDeltaValue(a4 * v6, this->minecraft->options.sensitity * 0.35) * 10.0;
+	this->field_D90 = this->field_D9C.getNewDeltaValue(a2 * v6, this->minecraft->options.sensitity * 0.35f) * 10.0f;
+	this->field_D94 = this->field_DA8.getNewDeltaValue(v9, this->minecraft->options.sensitity * 0.35f) * 10.0f;
+	this->field_D98 = this->field_DB4.getNewDeltaValue(a4 * v6, this->minecraft->options.sensitity * 0.35f) * 10.0f;
 }
-float LocalPlayer::getFieldOfViewModifier(){
-	float v1; // s18
-	float v3; // s17
-	float v4; // s17
-	float v5; // s15
-	float v6; // s15
+float LocalPlayer::getFieldOfViewModifier() {
+	float v1 = 1.1f;
+	if(!this->abilities.flying) v1 = 1.0;
 
-	v1 = 1.1;
-	if ( !this->abilities.flying )
-	{
-		v1 = 1.0;
-	}
-	v3 = this->getBaseSpeed();
-	v4 = v1
-		 * (float)((float)((float)((float)(v3 * this->getWalkingSpeedModifier()) / Player::DEFAULT_WALK_SPEED)
-						   + 1.0)
-				   * 0.5);
-	if ( this->isUsingItem() && Item::bow == this->getUseItem()->itemClass )
-	{
-		if ( Item::bow )
-		{
-			v6 = (float)this->getTicksUsingItem() / 20.0;
-			if ( v6 > 1.0 )
-			{
-				v5 = 1.0;
-			}
-			else
-			{
-				v5 = v6 * v6;
-			}
-			return v4 * (float)(1.0 - (float)(v5 * 0.15));
-		}
+	float v3 = this->getBaseSpeed();
+	float v4 = v1 * ((((v3 * this->getWalkingSpeedModifier()) / Player::DEFAULT_WALK_SPEED) + 1.0f) * 0.5f);
+
+	if(this->isUsingItem() && this->getUseItem()->isItem(Item::bow)) {
+		float v6 = this->getTicksUsingItem() / 20.0f;
+		float v5 = v6 > 1 ? 1 : v6 * v6;
+		return v4 * (1.0 - (v5 * 0.15f));
 	}
 	return v4;
 }
@@ -168,12 +132,12 @@ void LocalPlayer::sendPosition() {
 	MovePlayerPacket v18(this->entityId, this->posX, this->posY - this->ridingHeight, this->posZ, this->pitch, this->yaw, this->headYaw);
 
 	this->minecraft->rakNetInstance->send(v18);
-	this->field_BC8 = this->posX;
-	this->field_BCC = this->posY;
-	this->field_BD0 = this->posZ;
-	this->field_DCC = this->headYaw;
-	this->field_BD4 = this->pitch;
-	this->field_BD8 = this->yaw;
+	this->lastSentX = this->posX;
+	this->lastSentY = this->posY;
+	this->lastSentZ = this->posZ;
+	this->lastSentHeadYaw = this->headYaw;
+	this->lastSentPitch = this->pitch;
+	this->lastSentYaw = this->yaw;
 	if(this->isRiding()) {
 		PlayerInputPacket v17(this->moveForward, this->moveStrafe, this->isJumping, this->isSneaking());
 		this->minecraft->rakNetInstance->send(v17);
@@ -285,7 +249,7 @@ void LocalPlayer::tick() {
 		}
 	}
 	if(this->minecraft->isOnline()) {
-		if(this->isRiding() || fabsf(this->posX - this->field_BC8) > 0.1 || fabsf(this->posY - this->field_BCC) > 0.01 || fabsf(this->posZ - this->field_BD0) > 0.1 || fabsf(this->field_BD4 - this->pitch) > 1.0 || fabsf(this->field_BD8 - this->yaw) > 1.0 || fabsf(this->field_DCC - this->headYaw) > 1.0) {
+		if(this->isRiding() || fabsf(this->posX - this->lastSentX) > 0.1 || fabsf(this->posY - this->lastSentY) > 0.01 || fabsf(this->posZ - this->lastSentZ) > 0.1 || fabsf(this->lastSentPitch - this->pitch) > 1.0 || fabsf(this->lastSentYaw - this->yaw) > 1.0 || fabsf(this->lastSentHeadYaw - this->headYaw) > 1.0) {
 			this->sendPosition();
 		}
 		if(this->level->isClient) {
@@ -442,8 +406,8 @@ void LocalPlayer::swing() {
 	Mob::swing();
 	if(this->field_B6C == -1) {
 		AnimatePacket v2(this->entityId, 1);
-		v2.packetReliabilityMaybe = PacketReliability::UNRELIABLE;
-		v2.packetPriorityMaybe = PacketPriority::MEDIUM_PRIORITY;
+		v2.packetReliability = PacketReliability::UNRELIABLE;
+		v2.packetPriority = PacketPriority::MEDIUM_PRIORITY;
 		this->minecraft->rakNetInstance->send(v2);
 	}
 }
@@ -521,7 +485,8 @@ bool_t LocalPlayer::isLocalPlayer() {
 }
 void LocalPlayer::closeContainer() {
 	if(this->level->isClient) {
-		ContainerClosePacket v3(this->currentContainer->field_0);
+		ContainerClosePacket v3(this->currentContainer->containerId);
+		v3.packetReliability = PacketReliability::RELIABLE_ORDERED;
 		this->minecraft->rakNetInstance->send(v3);
 	}
 	Player::closeContainer();
@@ -529,9 +494,9 @@ void LocalPlayer::closeContainer() {
 }
 void LocalPlayer::refreshContainer(BaseContainerMenu*, const std::vector<ItemInstance>&) {
 }
-void LocalPlayer::slotChanged(BaseContainerMenu* a2, int32_t a3, const ItemInstance& a4, bool_t a5) {
+void LocalPlayer::slotChanged(BaseContainerMenu* a2, int32_t slot, const ItemInstance& a4, bool_t a5) {
 	if(this->level->isClient && a2 == &this->inventoryMenu) {
-		ContainerSetSlotPacket v8(0, 0, a3, a4);
+		ContainerSetSlotPacket v8(0, 0, slot, a4);
 		this->minecraft->rakNetInstance->send(v8);
 	}
 }

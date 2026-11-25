@@ -35,14 +35,14 @@ float EntityRenderDispatcher::xOff = 0, EntityRenderDispatcher::yOff = 0, Entity
 EntityRenderDispatcher::EntityRenderDispatcher() {
 	this->assign(ITEM_ENTITY, new ItemRenderer());
 	this->assign(HUMANOID, new HumanoidMobRenderer(0, 0));
-	this->assign(PIG, new PigRenderer(new PigModel(0.0), 0.7));
+	this->assign(PIG, new PigRenderer(new PigModel(0.0), 0.7f));
 	this->assign(COW, new MobRenderer(new CowModel(), 0));
 	this->assign(CHICKEN, new ChickenRenderer(new ChickenModel(), 0));
 	this->assign(SHEEP, new SheepRenderer(new SheepModel(0), new SheepModel(1), 0));
-	this->assign(SKELETON, new HumanoidMobRenderer(new SkeletonModel(), 0.5));
-	this->assign(ZOMBIE, new HumanoidMobRenderer(new ZombieModel(), 0.5));
-	this->assign(CREEPER, new CreeperRenderer(new CreeperModel(0), 0.5));
-	this->assign(SPIDER, new SpiderRenderer(new SpiderModel(), 1.0));
+	this->assign(SKELETON, new HumanoidMobRenderer(new SkeletonModel(), 0.5f));
+	this->assign(ZOMBIE, new HumanoidMobRenderer(new ZombieModel(), 0.5f));
+	this->assign(CREEPER, new CreeperRenderer(0.5f));
+	this->assign(SPIDER, new SpiderRenderer(1.0));
 	this->assign(TNT, new TntRenderer());
 	this->assign(ARROW, new ArrowRenderer());
 	this->assign(PLAYER, new PlayerRenderer(new HumanoidModel(0, 0), 0));
@@ -51,15 +51,14 @@ EntityRenderDispatcher::EntityRenderDispatcher() {
 	this->assign(PAINTING, new PaintingRenderer());
 	this->assign(FALLINGTILE, new FallingTileRenderer());
 	this->assign(MINECART, new MinecartRenderer());
-	for(auto&& p: this->renderers) {
-		p->init(this);
+	for(auto p: this->renderers) {
+		if(p != 0) p->init(this);
 	}
 }
 void EntityRenderDispatcher::assign(EntityRendererId a2, EntityRenderer* a3) {
-	int32_t v4 = 0;
-	while(this->renderers[v4].get() != a3) {
-		if(++v4 == 22) {
-			this->renderers[a2] = std::shared_ptr<EntityRenderer>(a3);
+	for(int v4 = 0; v4 != EntityRendererId::LENGTH; ++v4) {
+		if(this->renderers[v4].get() == a3) {
+			this->renderers[v4].reset(a3);
 			return;
 		}
 	}
@@ -72,7 +71,7 @@ void EntityRenderDispatcher::destroy() {
 	}
 }
 float EntityRenderDispatcher::distanceToSqr(float x, float y, float z) {
-	return (float)((float)((float)(y - this->field_24) * (float)(y - this->field_24)) + (float)((float)(x - this->field_20) * (float)(x - this->field_20))) + (float)((float)(z - this->field_28) * (float)(z - this->field_28));
+	return (x - this->field_20) * (x - this->field_20) + (y - this->field_24) * (y - this->field_24) + (z - this->field_28) * (z - this->field_28);
 }
 Font* EntityRenderDispatcher::getFont() {
 	return this->font;

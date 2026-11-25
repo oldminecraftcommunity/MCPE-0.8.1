@@ -106,12 +106,12 @@ BinaryBlob BundledLevelStorage::getChunkData(int32_t x, int32_t z) {
 	}
 	uLongf destLen = *(int*)file.bytes;
 	if(destLen == 0) {
-		delete file.bytes;
+		delete[] file.bytes;
 		return BinaryBlob(0, -1);
 	}
 	Bytef* v15 = new Bytef[destLen];
 	uncompress(v15, &destLen, file.bytes + sizeof(int), file.length - sizeof(int));
-	delete file.bytes;
+	delete[] file.bytes;
 	return BinaryBlob((char*)v15, destLen);
 }
 void BundledLevelStorage::freeChunkData(int32_t a2, int32_t a3, BinaryBlob* a4) {

@@ -8,11 +8,10 @@ struct HitResult{
 	int32_t x;
 	int32_t y;
 	int32_t z;
-	int32_t field_10;
+	int32_t face;
 	Vec3 hitVec;
 	Entity* entity;
-	char_t field_24;
-	char field_25, field_26, field_27;
+	bool field_24;
 
 	HitResult(Entity*);
 	HitResult(const HitResult&);

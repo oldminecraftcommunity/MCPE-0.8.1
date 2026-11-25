@@ -118,7 +118,7 @@ bool_t ChestScreen::handleAddItem(FillingContainer* a2, FillingContainer* a3, in
 			this->field_190.push_back(v39);
 			if(!(a2 == te) && this->minecraft->level->isClient) {
 				const ItemInstance* v23 = vec2[vec[v15]];
-				ContainerSetSlotPacket v38(0, this->field_50->field_0, vec[v15], v23 ? ItemInstance(*v23) : ItemInstance());
+				ContainerSetSlotPacket v38(0, this->field_50->containerId, vec[v15], v23 ? ItemInstance(*v23) : ItemInstance());
 				this->minecraft->rakNetInstance->send(v38);
 			}
 		}
@@ -126,7 +126,7 @@ bool_t ChestScreen::handleAddItem(FillingContainer* a2, FillingContainer* a3, in
 	}
 
 	if(a2 == te) {
-		ContainerSetSlotPacket v39(0, this->field_50->field_0, v29, v7->count > 0 ? ItemInstance(*v7) : ItemInstance());
+		ContainerSetSlotPacket v39(0, this->field_50->containerId, v29, v7->count > 0 ? ItemInstance(*v7) : ItemInstance());
 		this->minecraft->rakNetInstance->send(v39);
 	}
 	if(v7->count <= 0) {

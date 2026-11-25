@@ -9,7 +9,7 @@
 
 ChestTileEntity::ChestTileEntity()
 	: TileEntity(2)
-	, FillingContainer(0x1B, 0, 0, 0) {
+	, FillingContainer(27, 0, 0, 0) {
 	this->field_8C = 0;
 	this->field_90 = 0;
 	this->pair = 0;

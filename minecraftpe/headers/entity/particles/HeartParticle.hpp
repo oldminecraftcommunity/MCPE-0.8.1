@@ -8,7 +8,7 @@ struct HeartParticle: Particle
 		: Particle(level, pt, a2) {
 		this->maxAliveTime = 16;
 		this->noclip = 0;
-		this->texture = TextureUVCoordinateSet(0, 0.3125, 0.0625, 0.375, 256, 256);
+		this->texture = TextureUVCoordinateSet(0.0f, 0.3125f, 0.0625f, 0.375f, 256, 256);
 	}
 	virtual ~HeartParticle(){}
 	virtual void tick();

@@ -29,10 +29,9 @@ struct Mth{
 	}
 	static float wrapDegrees(float f){
 		float v1 = fmodf(f, 360.0f);
-		float v2 = v1;
-		if(v1 >= 180.0f) v2 = v1 - 360;
-		if(v1 < -180.0f) return v2 + 360;
-		return v2;
+		if(v1 >= 180.0f) v1 -= 360;
+		if(v1 < -180.0f) v1 += 360;
+		return v1;
 	}
 	static uint32_t fastRandom(void) {
 		static uint32_t x = 123456789;

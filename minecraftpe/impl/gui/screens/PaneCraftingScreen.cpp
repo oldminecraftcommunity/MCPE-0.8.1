@@ -63,7 +63,7 @@ void PaneCraftingScreen::_resortRecipes() {
 }
 void PaneCraftingScreen::addItem(Recipe* a2) {
 	const std::vector<ItemInstance>* v4 = a2->getResultItem();
-	ItemInstance is(v4->at(0));
+	ItemInstance is((*v4)[0]);
 	CItem* v6 = new CItem(is, a2, is.getName());
 	if(Tile::cloth == is.tileClass && Tile::cloth) {
 		v6->field_1C = "Wool " + v6->field_18;
@@ -136,8 +136,8 @@ void PaneCraftingScreen::initCategories() {
 	std::vector<Recipe*> a3;
 	a3.reserve(vec->size());
 	for(int j = 0; j < vec->size(); ++j) {
-		if(this->field_17C >= vec->at(j)->getCraftingSize()) {
-			a3.push_back(vec->at(j));
+		if(this->field_17C >= (*vec)[j]->getCraftingSize()) {
+			a3.push_back((*vec)[j]);
 		}
 	}
 	this->filterRecipes(a3);
@@ -418,7 +418,7 @@ void PaneCraftingScreen::buttonClicked(Button* a2) {
 	if(v4 <= 0x63) {
 		std::vector<CItem*>* v5 = &this->field_6C[v4];
 		if(v5->begin() != v5->end()) {
-			this->onItemSelected(a2->buttonID - 100, v5->at(0));
+			this->onItemSelected(a2->buttonID - 100, (*v5)[0]);
 			this->scrollingPane->setSelected(0, 1);
 		}
 		this->field_78 = v4;

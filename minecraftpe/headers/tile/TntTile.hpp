@@ -52,10 +52,8 @@ struct TntTile : Tile{
 		return 1;
 	}
 	virtual void wasExploded(Level* level, int32_t x, int32_t y, int32_t z) {
-		PrimedTnt* v7; // r4
-		uint32_t v8; // r6
-		v7 = new PrimedTnt(level, (float) (x) + 0.5, (float) (y) + 0.5, (float) (z) + 0.5);
-		v8 = v7->ticksUntilExplode / 4;
+		PrimedTnt* v7 = new PrimedTnt(level, x + 0.5f, y + 0.5f, z + 0.5f);
+		uint32_t v8 = v7->ticksUntilExplode / 4;
 		v7->ticksUntilExplode = level->random.genrand_int32() % v8 + v7->ticksUntilExplode / 8;
 		level->addEntity(v7);
 	}

@@ -41,11 +41,11 @@ TouchscreenInput::TouchscreenInput(Minecraft* a2, Options* a3)
 	this->releaseAllKeys();
 	this->onConfigChanged(createConfig(a2));
 
-	_D6E0665C = Color4(0.75294, 0.75294, 0.75294, 0.49804).toARGB();
-	_D6E06660 = Color4(1, 1, 1, 0.49804).toARGB();
-	_D6E06658 = Color4(1, 1, 1, 0.49804).toARGB();
-	_D6E06664 = Color4(0.75294, 0.75294, 0.75294, 0.31373).toARGB();
-	_D6E06668 = Color4(0.75294, 0.75294, 0.75294, 0.31373).toARGB();
+	_D6E0665C = Color4(0.75294f, 0.75294f, 0.75294f, 0.49804f).toARGB();
+	_D6E06660 = Color4(1, 1, 1, 0.49804f).toARGB();
+	_D6E06658 = Color4(1, 1, 1, 0.49804f).toARGB();
+	_D6E06664 = Color4(0.75294f, 0.75294f, 0.75294f, 0.31373f).toARGB();
+	_D6E06668 = Color4(0.75294f, 0.75294f, 0.75294f, 0.31373f).toARGB();
 }
 void TouchscreenInput::clear() {
 	this->touchAreaModel.clear();

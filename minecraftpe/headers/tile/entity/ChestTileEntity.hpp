@@ -11,11 +11,9 @@ struct ChestTileEntity: TileEntity, FillingContainer, EntityTileRenderer
 	int32_t field_90;
 	ChestTileEntity* pair;
 	bool_t isUnpaired;
-	int8_t field_99, field_9A, field_9B;
 	int32_t field_9C, field_A0;
 	bool_t field_A4;
 	bool_t pairSameXPos;
-	int8_t field_A6, field_A7;
 	int32_t field_A8;
 	Player* openedBy;
 

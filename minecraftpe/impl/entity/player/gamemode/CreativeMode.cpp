@@ -14,17 +14,16 @@ void CreativeMode::creativeDestroyBlock(int32_t x, int32_t y, int32_t z, int32_t
 }
 
 void CreativeMode::startDestroyBlock(int32_t x, int32_t y, int32_t z, int32_t side) {
-	if(!this->minecraft->player->getCarriedItem() || Item::bow != this->minecraft->player->getCarriedItem()->itemClass || !Item::bow) {
+
+	if(!this->minecraft->player->getCarriedItem() || !this->minecraft->player->getCarriedItem()->isItem(Item::bow)) {
 		this->creativeDestroyBlock(x, y, z, side);
 		this->delay = 10;
 	}
 }
 void CreativeMode::continueDestroyBlock(int32_t x, int32_t y, int32_t z, int32_t side) {
-	if(this->delay - 1 <= 0) {
+	if(--this->delay <= 0) {
 		this->delay = 10;
 		this->creativeDestroyBlock(x, y, z, side);
-	} else {
-		--this->delay;
 	}
 }
 void CreativeMode::stopDestroyBlock() {

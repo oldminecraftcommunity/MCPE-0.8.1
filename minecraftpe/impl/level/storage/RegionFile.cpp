@@ -10,22 +10,14 @@ void RegionFile::close() {
 }
 
 bool_t RegionFile::readChunk(int32_t chunkX, int32_t chunkZ, RakNet::BitStream** a4) {
-	int32_t result; // r0
-	FILE* fileRaw; // r3
-	uint8_t* v8; // r7
-	int32_t n; // [sp+4h] [bp-1Ch] OVERLAPPED BYREF
-	int32_t useless; // [sp+8h] [bp-18h]
-
-	n = chunkX;
-	useless = chunkZ;
-	result = this->locTable[32 * chunkZ + chunkX];
+	int result = this->locTable[32 * chunkZ + chunkX];
 	if(result) {
 		fseek(this->fileRaw, result >> 8 << 12, 0);
-		fileRaw = this->fileRaw;
-		n = 0;
+		FILE* fileRaw = this->fileRaw;
+		int n = 0;
 		fread(&n, 4u, 1u, fileRaw);
 		n -= 4;
-		v8 = new uint8_t[n];
+		uint8_t* v8 = new uint8_t[n];
 		fread(v8, 1u, n, this->fileRaw);
 		*a4 = new RakNet::BitStream(v8, n, 0);
 		return 1;

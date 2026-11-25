@@ -5,12 +5,15 @@
 #ifdef __WIN32__
 #define FUNC_ERRNO _errno2
 #define FUNC_MKDIR _mkdir2
+
 #else
 #define FUNC_ERRNO _errno
 #define FUNC_MKDIR _mkdir
+#define FUNC_ACCESS _access2
 #endif
-int FUNC_MKDIR(const char*);
 
+int FUNC_MKDIR(const char*);
+int FUNC_ACCESS(const char* a, int b);
 int FUNC_ERRNO();
 bool exists(const char* a1);
 bool createFolderIfNotExists(const char*);

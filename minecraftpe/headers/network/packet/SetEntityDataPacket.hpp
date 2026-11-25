@@ -9,16 +9,14 @@
 struct DataItem;
 struct SetEntityDataPacket : Packet{
 	int32_t entityId;
-	int8_t needsMemoryFreeing, field_11, field_12, field_13;
+	bool needsMemoryFreeing;
 	std::vector<DataItem*> data;
 
 	SetEntityDataPacket() {
 		this->needsMemoryFreeing = 0;
 	}
-	SetEntityDataPacket(int32_t entityId, int8_t f10, std::vector<DataItem*> data) {
-		this->entityId = entityId;
-		this->needsMemoryFreeing = f10;
-		this->data = data;
+	SetEntityDataPacket(int32_t entityId, bool f10, std::vector<DataItem*> data) :
+		entityId(entityId), needsMemoryFreeing(f10), data(data){
 	}
 	virtual ~SetEntityDataPacket() {
 		if (this->needsMemoryFreeing) {

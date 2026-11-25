@@ -482,7 +482,7 @@ void Entity::move(float dx, float dy, float dz) {
 		std::vector<AABB>* v38 = this->level->getCubes(this, this->boundingBox.expand(movX, movY, movZ), &this->field_74);
 		v40 = v38->size();
 		while(v37 != v40) {
-			v41 = v38->at(v37).clipYCollide(this->boundingBox, v36);
+			v41 = (*v38)[v37].clipYCollide(this->boundingBox, v36);
 			++v37;
 			v36 = v41;
 		}
@@ -500,7 +500,7 @@ void Entity::move(float dx, float dy, float dz) {
 		v47 = v38->size();
 		while(v45 != v47) {
 			v93 = v47;
-			v48 = v38->at(v45).clipXCollide(this->boundingBox, v43);
+			v48 = (*v38)[v45].clipXCollide(this->boundingBox, v43);
 			v47 = v93;
 			++v45;
 			v43 = v48;
@@ -515,7 +515,7 @@ void Entity::move(float dx, float dy, float dz) {
 		v51 = v38->size();
 		while(v49 != v51) {
 			v94 = v51;
-			v52 = v38->at(v49).clipZCollide(this->boundingBox, v42);
+			v52 = (*v38)[v49].clipZCollide(this->boundingBox, v42);
 			v51 = v94;
 			++v49;
 			v42 = v52;
@@ -1244,14 +1244,11 @@ void Entity::lavaHurt() {
 	}
 }
 void Entity::playStepSound(int32_t x, int32_t y, int32_t z, int32_t id) {
-
 	const Tile::SoundType* soundType = Tile::tiles[id]->soundType;
 	if(this->level->getTile(x, y + 1, z) == Tile::topSnow->blockID) {
 		soundType = Tile::topSnow->soundType;
-	} else {
-		if(Tile::tiles[id]->material->isLiquid()) {
-			return;
-		}
+	} else if(Tile::tiles[id]->material->isLiquid()) {
+		return;
 	}
 	this->level->playSound(this, soundType->soundName, soundType->field_0 * 0.25f, soundType->field_4);
 }

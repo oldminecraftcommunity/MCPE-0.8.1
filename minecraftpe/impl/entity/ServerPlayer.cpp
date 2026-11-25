@@ -23,7 +23,7 @@ ServerPlayer::ServerPlayer(Minecraft* a2, Level* a3)
 	: Player(a3, a2->isCreativeMode()) {
 	this->minecraft = a2;
 	this->lastSentHealth = -999;
-	this->field_D60 = 1;
+	this->containerCounter = 1;
 	this->field_CB4 = 1;
 	this->stepHeight = 0;
 }
@@ -42,13 +42,9 @@ void ServerPlayer::doCloseContainer() {
 	this->setContainerMenu(0);
 }
 void ServerPlayer::nextContainerCounter() {
-	int32_t v1; // r3
-
-	v1 = this->field_D60 + 1;
-	if(v1 > 99) {
-		v1 = 1;
-	}
-	this->field_D60 = v1;
+	int v1 = this->containerCounter + 1;
+	if(v1 > 99) v1 = 1;
+	this->containerCounter = v1;
 }
 void ServerPlayer::setContainerMenu(BaseContainerMenu* a2) {
 	if(this->currentContainer != a2) {
@@ -57,7 +53,7 @@ void ServerPlayer::setContainerMenu(BaseContainerMenu* a2) {
 		}
 		this->currentContainer = a2;
 		if(a2) {
-			a2->field_0 = this->field_D60;
+			a2->containerId = this->containerCounter;
 			this->currentContainer->setListener(this);
 		}
 	}
@@ -122,7 +118,7 @@ void ServerPlayer::take(Entity* a2, int32_t a3) {
 }
 void ServerPlayer::openContainer(ChestTileEntity* a2) {
 	this->nextContainerCounter();
-	int32_t v4 = this->field_D60;
+	int32_t v4 = this->containerCounter;
 	int8_t v5 = a2->getContainerSize();
 	int32_t posZ = a2->posZ;
 	int32_t posX = a2->posX;
@@ -134,7 +130,7 @@ void ServerPlayer::openContainer(ChestTileEntity* a2) {
 }
 void ServerPlayer::openFurnace(FurnaceTileEntity* a2) {
 	this->nextContainerCounter();
-	ContainerOpenPacket v13(this->field_D60, 2, a2->getContainerSize(), a2->posX, a2->posY, a2->posZ);
+	ContainerOpenPacket v13(this->containerCounter, 2, a2->getContainerSize(), a2->posX, a2->posY, a2->posZ);
 	this->minecraft->rakNetInstance->send(this->rakNetGUID, v13);
 	this->setContainerMenu(new FurnaceMenu(a2));
 }
@@ -150,22 +146,22 @@ void ServerPlayer::stopSleepInBed(bool_t a2, bool_t a3, bool_t a4) {
 	Player::stopSleepInBed(a2, a3, a4);
 }
 void ServerPlayer::closeContainer() {
-	ContainerClosePacket v3(this->currentContainer->field_0);
-	v3.packetReliabilityMaybe = PacketReliability::RELIABLE_ORDERED;
+	ContainerClosePacket v3(this->currentContainer->containerId);
+	v3.packetReliability = PacketReliability::RELIABLE_ORDERED;
 	this->minecraft->rakNetInstance->send(this->rakNetGUID, v3);
 	this->doCloseContainer();
 }
 void ServerPlayer::setContainerData(BaseContainerMenu* a2, int32_t a3, int32_t a4) {
-	ContainerSetDataPacket v10(a3, a4, a2->field_0);
+	ContainerSetDataPacket v10(a3, a4, a2->containerId);
 	this->minecraft->rakNetInstance->send(this->rakNetGUID, v10);
 }
 void ServerPlayer::slotChanged(BaseContainerMenu* a2, int32_t a3, const ItemInstance& a4, bool_t a5){
 	if ( !a5 ){
-		ContainerSetSlotPacket v9(0, a2->field_0, a3, a4);
+		ContainerSetSlotPacket v9(0, a2->containerId, a3, a4);
 		this->minecraft->rakNetInstance->send(this->rakNetGUID, v9);
 	}
 }
 void ServerPlayer::refreshContainer(BaseContainerMenu* a2, const std::vector<ItemInstance>& a3) {
-	ContainerSetContentPacket v10(a2->field_0, a2->getItems(), 0); //inlined
+	ContainerSetContentPacket v10(a2->containerId, a2->getItems(), 0); //inlined
 	this->minecraft->rakNetInstance->send(this->rakNetGUID, v10);
 }

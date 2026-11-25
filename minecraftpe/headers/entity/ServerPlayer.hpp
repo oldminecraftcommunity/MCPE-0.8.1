@@ -6,7 +6,7 @@ struct Minecraft;
 struct ServerPlayer: Player, IContainerListener
 {
 	Minecraft* minecraft;
-	int32_t lastSentHealth, field_D60, field_D64;
+	int32_t lastSentHealth, containerCounter, field_D64;
 
 	ServerPlayer(Minecraft*, Level*);
 	void disconnect();

@@ -4,12 +4,6 @@
 #include <unistd.h>
 #include <string>
 
-#ifdef __WIN32__
-#define FUNC_ACCESS _access2
-#else
-#define FUNC_ACCESS _access
-#endif
-
 int FUNC_MKDIR(const char* a1) {
 #ifdef __WIN32__
 	return mkdir(a1);

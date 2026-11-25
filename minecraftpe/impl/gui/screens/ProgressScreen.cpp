@@ -22,9 +22,8 @@ ProgressScreen::~ProgressScreen() {
 		this->cancelButton = 0;
 	}
 }
-static char_t* _SYMS = "-\\|/";
+
 void ProgressScreen::render(int32_t a2, int32_t a3, float a4) {
-	int32_t field_CBC;		   // r11
 	int32_t v11;			   // r10
 	int32_t v12;			   // r3
 	float v13;			   // s16
@@ -44,21 +43,22 @@ void ProgressScreen::render(int32_t a2, int32_t a3, float a4) {
 		this->minecraft->setScreen(0);
 	} else {
 		this->renderBackground(0);
+
 		this->minecraft->texturesPtr->loadAndBindTexture("gui/background.png");
 		Tesselator::instance.begin(4);
-		Tesselator::instance.color(4210752);
+		Tesselator::instance.color(0x404040);
 		Tesselator::instance.vertexUV(0.0, (float)this->height, 0.0, 0.0, (float)this->height * 0.03125);
 		Tesselator::instance.vertexUV((float)this->width, (float)this->height, 0.0, (float)this->width * 0.03125, (float)this->height * 0.03125);
 		Tesselator::instance.vertexUV((float)this->width, 0.0, 0.0, (float)this->width * 0.03125, 0.0);
 		Tesselator::instance.vertexUV(0.0, 0.0, 0.0, 0.0, 0.0);
 		Tesselator::instance.draw(1);
-		field_CBC = this->minecraft->field_CBC;
-		if(field_CBC >= 0) {
+
+		if(this->minecraft->field_CBC >= 0) {
 			v26 = this->width / 2;
 			v11 = this->height / 2;
-			glDisable(0xDE1u);
+			glDisable(GL_TEXTURE_2D);
 			Tesselator::instance.begin(8);
-			Tesselator::instance.color(8421504);
+			Tesselator::instance.color(0x808080);
 			v12 = v11 + 16;
 			v11 += 18;
 			v13 = (float)v12;
@@ -66,14 +66,14 @@ void ProgressScreen::render(int32_t a2, int32_t a3, float a4) {
 			Tesselator::instance.vertex((float)(v26 - 50), (float)v11, 0.0);
 			Tesselator::instance.vertex((float)(v26 + 50), (float)v11, 0.0);
 			Tesselator::instance.vertex((float)(v26 + 50), v13, 0.0);
-			Tesselator::instance.color(8454016);
+			Tesselator::instance.color(0x80FF80);
 			Tesselator::instance.vertex((float)(v26 - 50), v13, 0.0);
 			Tesselator::instance.vertex((float)(v26 - 50), (float)v11, 0.0);
-			v14 = field_CBC + v26 - 50;
+			v14 = this->minecraft->field_CBC + v26 - 50;
 			Tesselator::instance.vertex((float)v14, (float)v11, 0.0);
 			Tesselator::instance.vertex((float)v14, v13, 0.0);
 			Tesselator::instance.draw(1);
-			glEnable(0xDE1u);
+			glEnable(GL_TEXTURE_2D);
 		}
 		width = this->width;
 		font = this->minecraft->font;
@@ -86,7 +86,7 @@ void ProgressScreen::render(int32_t a2, int32_t a3, float a4) {
 		this->minecraft->font->drawShadow(v20, (float)v23, (float)v22, 0xFFFFFF);
 		if(!this->minecraft->getProgressStatusId() || this->minecraft->getProgressStatusId() == 4) {
 			v25 = this->minecraft->font;
-			this->drawCenteredString(v25, std::string(1, _SYMS[(int32_t)(getTimeS() * 5.5) % 4]), v23 + v21 + 6, v22, -1);
+			this->drawCenteredString(v25, std::string(1, "-\\|/"[(int32_t)(getTimeS() * 5.5) % 4]), v23 + v21 + 6, v22, -1);
 		}
 		Screen::render(a2, a3, a4);
 		sleepMs(50);

@@ -1,7 +1,6 @@
 #include <tile/EntityTile.hpp>
 #include <level/Level.hpp>
 #include <tile/entity/TileEntity.hpp>
-#include <tile/entity/TileEntityFactory.hpp>
 
 EntityTile::EntityTile(int32_t id, const struct Material* mat)
 	: Tile(id, mat) {

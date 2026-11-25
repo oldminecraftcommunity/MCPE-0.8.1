@@ -12,7 +12,7 @@ struct OptionsScreen: Screen
 {
 	Touch::THeader* headerOptions;
 	Touch::TButton* buttonBack;
-	ImageButton* field_5C;
+	ImageButton* highlightedCategory;
 	std::vector<ImageButton*> field_60;
 	std::vector<struct OptionsPane*> optionPanes;
 	struct OptionsPane* selectedCategory;

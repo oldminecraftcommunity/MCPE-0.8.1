@@ -4,9 +4,9 @@
 #include <tile/material/Material.hpp>
 
 CropTile::CropTile(int32_t id, const std::string& a3)
-	: Bush(id, a3, Material::plant) {
+	: Bush(id, a3) {
 	this->setTicking(1);
-	this->setShape(0, 0, 0, 1, 0.25, 1);
+	this->setShape(0, 0, 0, 1, 0.25f, 1);
 	this->texture2 = *this->getTextureItem("wheat_stage_x");
 }
 float CropTile::getGrowthSpeed(Level* level, int32_t x, int32_t y, int32_t z){
@@ -89,7 +89,7 @@ void CropTile::tick(Level* level, int32_t x, int32_t y, int32_t z, Random* rng) 
 		int32_t meta = level->getData(x, y, z);
 		if(meta <= 6) {
 			float speed = this->getGrowthSpeed(level, x, y, z);
-			if(rng->genrand_int32() % (int32_t)(25.0 / speed)) {
+			if(rng->nextInt((int32_t)(25.0f / speed)) == 0) {
 				level->setData(x, y, z, meta + 1, 2);
 			}
 		}
@@ -102,29 +102,20 @@ int32_t CropTile::getResource(int32_t a2, Random*) {
 int32_t CropTile::getResourceCount(Random*) {
 	return 1;
 }
-void CropTile::spawnResources(Level* level, int32_t a3, int32_t a4, int32_t a5, int32_t a6, float a7) {
-	int32_t v11;	 // r6
-	const Item* v15; // r0
-	float v16;		 // s10
-	ItemEntity* v17; // r5
-	float v18;		 // s12
-	float v19;		 // s14
-
-	Tile::spawnResources(level, a3, a4, a5, a6, a7);
+void CropTile::spawnResources(Level* level, int32_t x, int32_t y, int32_t z, int32_t a6, float a7) {
+	Tile::spawnResources(level, x, y, z, a6, a7);
 	if(!level->isClient) {
-		v11 = 3;
-		do {
-			if((int32_t)(level->random.genrand_int32() % 0xF) <= a6) {
-				v15 = (const Item*)this->getBaseSeed();
-				v16 = level->random.nextFloat();
-				v18 = level->random.nextFloat();
-				v19 = level->random.nextFloat();
-				v17 = new ItemEntity(level, (float)a3 + (float)((float)(v16 * 0.7) + 0.15), (float)a4 + (float)((float)(v18 * 0.7) + 0.15), (float)a5 + (float)((float)(v19 * 0.7) + 0.15), ItemInstance(v15));
+		for(int i = 0; i != 3; ++i){
+			if(level->random.nextInt(15) <= a6) {
+				const Item* v15 = (const Item*)this->getBaseSeed();
+				float v16 = level->random.nextFloat();
+				float v18 = level->random.nextFloat();
+				float v19 = level->random.nextFloat();
+				ItemEntity* v17 = new ItemEntity(level, x + (v16 * 0.7f) + 0.15f, y + (v18 * 0.7f) + 0.15f, z + (v19 * 0.7f) + 0.15f, ItemInstance(v15));
 				v17->delayBeforePickup = 10;
 				level->addEntity(v17);
 			}
-			--v11;
-		} while(v11);
+		}
 	}
 }
 bool_t CropTile::mayPlaceOn(int32_t a2) {

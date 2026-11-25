@@ -19,8 +19,7 @@ ItemRenderer::ItemRenderer()
 	: EntityRenderer() {
 	if(!ItemRenderer::inited) {
 		for(float& f: ItemRenderer::rndFloats) {
-			float ff = Mth::random();
-			f = (ff + ff) - 1.0;
+			f = Mth::random()*2 - 1;
 		}
 		ItemRenderer::inited = 1;
 	}

@@ -6,8 +6,8 @@
 struct SpiderRenderer: MobRenderer
 {
 	SpiderModel::Eyes spiderEyes;
-	SpiderRenderer(Model* a2, float a3) :
-			MobRenderer(a2, a3), spiderEyes() {
+	SpiderRenderer(float a3) :
+			MobRenderer(new SpiderModel(), a3), spiderEyes() {
 		this->setArmor(&this->spiderEyes);
 	}
 

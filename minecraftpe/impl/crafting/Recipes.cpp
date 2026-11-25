@@ -117,9 +117,7 @@ void Recipes::addShapedRecipe(const ItemInstance& a2, const std::string& a3, con
 	this->addShapedRecipe(a2, Recipes::Shape(a3), a4);
 }
 void Recipes::addShapedRecipe(const ItemInstance& a2, const std::vector<std::string>& a3, const std::vector<Recipes::Type>& a4) {
-	std::vector<ItemInstance> v7;
-	v7.push_back(ItemInstance(a2));
-	this->addShapedRecipe(v7, a3, a4); //TODO check
+	this->addShapedRecipe(std::vector<ItemInstance>({ItemInstance(a2)}), a3, a4);
 }
 void Recipes::addShapedRecipe(const std::vector<ItemInstance>& results, const std::vector<std::string>& shape, const std::vector<Recipes::Type>& ingridients) {
 	if(shape.begin() != shape.end()) {
@@ -183,20 +181,15 @@ Recipes* Recipes::getInstance() {
 Recipe* Recipes::getRecipeFor(const ItemInstance& a2) {
 	for(uint32_t i = 0; i < this->recipes.size(); ++i) {
 		Recipe* v5 = this->recipes[i];
-		ItemInstance v10(v5->getResultItem()->at(0));
-		if ( !a2.sameItem(&v10) )
-		{
-			if (a2.count == 0 )
-			{
-				if ( a2.getAuxValue() == v10.getAuxValue() )
-				{
+		ItemInstance v10((*v5->getResultItem())[0]);
+		if(!a2.sameItem(&v10)) {
+			if(a2.count == 0) {
+				if(a2.getAuxValue() == v10.getAuxValue()) {
 					return v5;
 				}
 			}
-			if ( a2.count == v10.count )
-			{
-				if ( a2.getAuxValue() == v10.getAuxValue() )
-				{
+			if(a2.count == v10.count) {
+				if(a2.getAuxValue() == v10.getAuxValue()) {
 					return v5;
 				}
 			}

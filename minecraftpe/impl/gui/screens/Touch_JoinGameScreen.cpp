@@ -86,8 +86,8 @@ void Touch::JoinGameScreen::tick() {
 		std::vector<PingedCompatibleServer>* v3 = this->minecraft->rakNetInstance->getServerList();
 		std::vector<PingedCompatibleServer> v14;
 		for(unsigned int v2 = 0; v2 < v3->size(); ++v3) {
-			if(v3->at(v2).field_0.GetLength() != 0) {
-				v14.push_back(v3->at(v2));
+			if((*v3)[v2].field_0.GetLength() != 0) {
+				v14.push_back((*v3)[v2]);
 			}
 
 			if(v14.size() == this->field_F0->servers.size()) {

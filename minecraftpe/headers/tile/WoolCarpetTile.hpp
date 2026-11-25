@@ -21,7 +21,7 @@ struct WoolCarpetTile : Tile{
 	virtual bool_t mayPlace(Level*, int32_t, int32_t, int32_t);
 	virtual void neighborChanged(Level*, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t);
 	virtual float getThickness() {
-		return 0.07;
+		return 0.07f;
 	}
 	virtual bool_t canSurvive(Level*, int32_t, int32_t, int32_t);
 	virtual int32_t getSpawnResourcesAuxValue(int32_t);

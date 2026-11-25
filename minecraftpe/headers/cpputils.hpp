@@ -26,7 +26,3 @@ inline void safeStopAndRemove(std::shared_ptr<RestRequestJob>& a2) {
 		a2 = std::shared_ptr<RestRequestJob>(); //TODO check
 	}
 }
-
-void splitString(const std::string&, char_t, std::vector<std::string>&);
-int recursiveDelete(const char_t*);
-bool_t DeleteDirectory(const std::string& a1, bool_t);

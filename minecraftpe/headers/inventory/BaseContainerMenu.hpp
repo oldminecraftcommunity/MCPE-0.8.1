@@ -6,10 +6,10 @@ struct IContainerListener;
 
 struct BaseContainerMenu
 {
-	int32_t field_0;
-	int32_t containerID;
+	int32_t containerId;
+	int32_t containerType;
 	IContainerListener* containerListener;
-	std::vector<ItemInstance> field_C;
+	std::vector<ItemInstance> items;
 
 	BaseContainerMenu(int32_t);
 

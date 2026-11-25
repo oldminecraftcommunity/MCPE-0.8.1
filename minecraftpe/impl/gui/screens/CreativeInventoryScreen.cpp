@@ -231,7 +231,7 @@ CreativeInventoryScreen::~CreativeInventoryScreen() {
 void CreativeInventoryScreen::render(int32_t a2, int32_t a3, float a4) {
 	this->renderBackground(0);
 	this->minecraft->gui.renderToolBar(a4, 1);
-	static Color4 _D6E05DF0(0.75, 0.75, 0.75, 1.0);
+	static Color4 _D6E05DF0(0.75f, 0.75f, 0.75f, 1.0f);
 	for(auto v27: this->field_98) {
 		if(v27.field_4.get() != this->field_A4) {
 			v27.field_4->color = _D6E05DF0;
@@ -352,8 +352,7 @@ void CreativeInventoryScreen::setupPositions()
 
 std::shared_ptr<ImageButton> CreativeInventoryScreen::createInventoryTabButton(int32_t a3, int32_t a4) {
 	std::shared_ptr<ImageButton> res(new CategoryButton(a3, this->field_70.get(), this->field_70.get(), &this->field_A4));
-	res->height = this->field_58;
-	res->width = this->field_58;
+	res->width = res->height = this->field_58;
 	res->setOverrideScreenRendering(1);
 	return res;
 }
@@ -396,7 +395,7 @@ bool_t CreativeInventoryScreen::addItem(const Touch::InventoryPane* a2, int32_t 
 	if(a3 >= v7->size()) {
 		return 0;
 	}
-	const ItemInstance* v8 = &v7->at(a3);
+	const ItemInstance* v8 = &(*v7)[a3];
 	int32_t id = v8->getId();
 	int32_t auxv = v8->getAuxValue();
 	int32_t slot = this->minecraft->player->inventory->getLinkedSlotForItemIdAndAux(id, auxv);

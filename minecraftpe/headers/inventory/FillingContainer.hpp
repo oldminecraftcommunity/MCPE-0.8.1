@@ -12,7 +12,6 @@ struct FillingContainer: Container
 	std::vector<FillingContainer::LinkedSlot> linkedSlots;
 	std::vector<ItemInstance *> items;
 	bool_t field_20;
-	int8_t field_21, field_22, field_23;
 
 	FillingContainer(int32_t, int32_t, int32_t, bool_t);
 	int32_t addItem(ItemInstance*);

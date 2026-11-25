@@ -3,7 +3,7 @@
 #include <item/Item.hpp>
 
 DeadBush::DeadBush(int32_t id, const std::string& name)
-	: Bush(id, name) {
+	: Bush(id, name, Material::replaceable_plant) {
 	this->textureUV = this->getTextureUVCoordinateSet(name, 1);
 }
 

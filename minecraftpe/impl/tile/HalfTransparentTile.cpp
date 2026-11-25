@@ -1,2 +1,0 @@
-#include <tile/HalfTransparentTile.hpp>
-

@@ -676,7 +676,7 @@ void Player::aiStep() {
 	if(this->health > 0) {
 		std::vector<struct Entity*>* ents = this->level->getEntities(this, this->boundingBox.grow(1, 0, 1));
 		for(int v13 = 0; v13 < ents->size(); ++v13){
-			Entity* v17 = ents->at(v13);
+			Entity* v17 = (*ents)[v13];
 			if(!v17->isDead) {
 				this->touch(v17);
 			}

@@ -41,8 +41,7 @@ struct QuartzBlockTile : Tile{
 		}
 	}
 	virtual std::string getDescriptionId(const ItemInstance* a2) const {
-		int32_t v4; // r0
-		v4 = a2->getAuxValue() & 0xF;
+		int v4 = a2->getAuxValue() & 0xF;
 		if (v4 == 1) {
 			return Tile::TILE_DESCRIPTION_PREFIX + "quartzBlockChiseled";
 		} else if (v4 == 2) {

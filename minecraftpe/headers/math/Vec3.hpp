@@ -95,10 +95,8 @@ struct Vec3{
 	Vec3 normalized(void) const {
 		float length;
 		length = sqrt((this->x * this->x) + (this->y * this->y) + (this->z * this->z));
-		if (length >= 0.0001f) {
-			return Vec3(this->x / length, this->y / length, this->z / length);
-		}
-		return Vec3::ZERO;
+		if(length < 0.0001f) return Vec3::ZERO;
+		return Vec3(this->x / length, this->y / length, this->z / length);
 	}
 	void xRot(float v){
 		double v2;

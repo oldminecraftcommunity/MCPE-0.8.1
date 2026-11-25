@@ -219,8 +219,8 @@ void Minecraft::handleMouseDown(int32_t a2, bool_t a3) {
 				this->player->stopDestroying();
 				this->gameMode->stopDestroyBlock();
 			} else {
-				this->gameMode->continueDestroyBlock(this->selectedObject.x, this->selectedObject.y, this->selectedObject.z, this->selectedObject.field_10);
-				this->particleEngine->crack(this->selectedObject.x, this->selectedObject.y, this->selectedObject.z, this->selectedObject.field_10);
+				this->gameMode->continueDestroyBlock(this->selectedObject.x, this->selectedObject.y, this->selectedObject.z, this->selectedObject.face);
+				this->particleEngine->crack(this->selectedObject.x, this->selectedObject.y, this->selectedObject.z, this->selectedObject.face);
 			}
 		}
 	}
@@ -294,7 +294,7 @@ LABEL_27:
 		v9 = this->selectedObject.x;
 		v10 = this->selectedObject.y;
 		v11 = this->selectedObject.z;
-		v12 = this->selectedObject.field_10;
+		v12 = this->selectedObject.face;
 		Tile* v13 = Tile::tiles[this->level->getTile(v9, v10, v11)];
 		if(!a2->isRemove()) {
 			ItemInstance* v14 = this->player->inventory->getSelected();
@@ -316,8 +316,8 @@ LABEL_27:
 			goto LABEL_27;
 		}
 		if(v13 && !v13->isLiquidTile() && !this->player->isDestroying) {
-			this->level->extinguishFire(v9, v10, v11, this->selectedObject.field_10);
-			this->gameMode->startDestroyBlock(v9, v10, v11, this->selectedObject.field_10);
+			this->level->extinguishFire(v9, v10, v11, this->selectedObject.face);
+			this->gameMode->startDestroyBlock(v9, v10, v11, this->selectedObject.face);
 			this->player->startDestroying();
 			goto LABEL_27;
 		}

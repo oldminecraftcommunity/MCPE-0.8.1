@@ -1,6 +1,7 @@
 #include <tile/StairTile.hpp>
 #include <entity/Mob.hpp>
 #include <math/HitResult.hpp>
+#include <math/Mth.hpp>
 
 const  int StairTile::DEAD_SPACES[8][2] = {{2, 6}, {3, 7}, {2, 3}, {6, 7}, {0, 4}, {1, 5}, {0, 1}, {4, 5}};
 
@@ -345,30 +346,12 @@ HitResult StairTile::clip(Level* level, int32_t x, int32_t y, int32_t z, const V
 }
 
 int32_t StairTile::getPlacementDataValue(Level* level, int32_t x, int32_t y, int32_t z, int32_t data, float a7, float a8, float a9, Mob* a10, int32_t a11) {
-	int8_t v11; // r0
-	int32_t result; // r0
-	float v13; // s15
-	int32_t v14; // r3
-	int32_t v15; // r3
+	if(!data || data != 1 && a8 > 0.5) a11 |= 4;
+	int result = a11 & 4;
+	int v13 = Mth::floor(((a10->yaw * 4) / 360) + 0.5) & 3;
 
-	v11 = a11;
-	if(!data || data != 1 && a8 > 0.5) {
-		v11 = a11 | 4;
-	}
-	result = v11 & 4;
-	v13 = (float)((float)(a10->yaw * 4.0) / 360.0) + 0.5;
-	v14 = (int32_t)v13;
-	if(v13 < (float)(int32_t)v13) {
-		/*LOBYTE(v14)*/ v14 = v14 - 1;
-	}
-	v15 = v14 & 3;
-	switch(v15) {
-		case 0:
-			return result | 2;
-		case 1:
-			return result | 1;
-		case 2:
-			return result | 3;
-	}
+	if(v13 == 0) return result | 2;
+	if(v13 == 1) return result | 1;
+	if(v13 == 2) return result | 3;
 	return result;
 }

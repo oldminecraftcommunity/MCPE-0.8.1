@@ -12,12 +12,14 @@ RandomStrollGoal::RandomStrollGoal(PathfinderMob* ent, float speed)
 }
 
 bool_t RandomStrollGoal::canUse() {
-	if(this->holder->getNoActionTime() > 99 || this->holder->level->random.genrand_int32() % 120) {
-		return 0;
-	}
+	if(this->holder->getNoActionTime() > 99) return 0;
+	if(this->holder->level->random.nextInt(120)) return 0;
+
 	Vec3 v3(0, 0, 0);
 	if(RandomPos::generateRandomPos(v3, this->holder, 10, 7, 0)) {
-		this->target = v3;
+		this->targetX = v3.x;
+		this->targetY = v3.y;
+		this->targetZ = v3.z;
 		return 1;
 	}
 	return 0;
@@ -26,5 +28,5 @@ bool_t RandomStrollGoal::canContinueToUse() {
 	return !this->holder->getNavigation()->isDone();
 }
 void RandomStrollGoal::start() {
-	this->holder->getNavigation()->moveTo(this->target.x, this->target.y, this->target.z, this->speedMultiplier);
+	this->holder->getNavigation()->moveTo(this->targetX, this->targetY, this->targetZ, this->speedMultiplier);
 }

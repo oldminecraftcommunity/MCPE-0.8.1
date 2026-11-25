@@ -8,7 +8,6 @@ struct Motive;
 struct PaintingRenderer: EntityRenderer, AppPlatform::Listener
 {
 	std::unordered_map<const Motive*, MeshBuffer> motives;
-	int32_t field_20, field_24;
 
 	PaintingRenderer()
 		: EntityRenderer() {

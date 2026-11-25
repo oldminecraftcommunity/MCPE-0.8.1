@@ -21,7 +21,7 @@ struct CompoundTag : public Tag{
 	}
 	CompoundTag(const CompoundTag& tag) : Tag(tag.getName()), value(tag.value){
 	}
-	CompoundTag(void) : CompoundTag(""){}
+	CompoundTag(void) : Tag(""){}
 
 	bool_t contains(const std::string& name) const {
 		return this->value.find(name) != this->value.end();

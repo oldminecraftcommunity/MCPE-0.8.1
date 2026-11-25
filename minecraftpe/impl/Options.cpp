@@ -74,7 +74,7 @@ bool_t Options::canModify(const Options::Option* a2) {
 	return &Options::Option::NAME != a2 || this->minecraft->mojangConnector->getConnectionStatus() == STATUS_0;
 }
 std::string Options::getDescription(const Options::Option*, std::string a4) {
-	return a4;
+	return std::string(a4);
 }
 float Options::getProgrssMax(const Options::Option* a2) {
 	if(a2 == &Options::Option::MUSIC || a2 == &Options::Option::SOUND || a2 == &Options::Option::SENSITIVITY) {
@@ -218,88 +218,63 @@ bool_t Options::readBool(const std::string& r0, bool_t& a2) {
 }
 void Options::update() {
 	std::vector<std::string> v13 = this->settingFolderPath.getOptionStrings();
-	for(int i = 0;; i += 2) {
-		if(i >= v13.size()) break;
+	for(int i = 0; i < v13.size(); i += 2) {
 		if(v13[i] == OptionStrings::Multiplayer_Username) {
 			if(v13[i + 1].size()) {
 				this->username = v13[i + 1];
 			} else {
 				this->username = "Steve";
 			}
-		} else {
-			if(v13[i] == OptionStrings::Multiplayer_ServerVisible) {
-				this->readBool(v13[i + 1], this->serverVisible);
-			} else if(v13[i] == OptionStrings::Controls_Sensitivity) {
-				float v12;
-				if(this->readFloat(v13[i + 1], v12)) {
-					this->sensitity = (float)(powf(v12 * 1.1, 1.3) * 0.42) + 0.3;
-				}
-			} else {
-				if(v13[i] == OptionStrings::Controls_InvertMouse) {
-					this->readBool(v13[i + 1], this->invertMouse);
-				} else if(v13[i] == OptionStrings::Controls_IsLefthanded) {
-					this->readBool(v13[i + 1], this->leftHanded);
-				} else if(v13[i] == OptionStrings::Controls_UseTouchJoypad) {
-					this->readBool(v13[i + 1], this->useJoypad);
-					if(!this->minecraft->useTouchscreen()) {
-						this->useJoypad = 0;
-					}
-				} else {
-					if(v13[i] == OptionStrings::Controls_FeedbackVibration) {
-						this->readBool(v13[i + 1], this->destroyVibration);
-					} else if(v13[i] == OptionStrings::Graphics_RenderDistance) {
-						this->readInt(v13[i + 1], this->renderDistance);
-					} else if(v13[i] == OptionStrings::Graphics_PixelsPerMilimeter) {
-						this->readFloat(v13[i + 1], this->pixelDensity);
-						if(this->pixelDensity > 12) {
-							this->pixelDensity = 12;
-						} else if(this->pixelDensity <= 3) {
-							this->pixelDensity = 3;
-						}
-					} else {
-						if(v13[i] == OptionStrings::Graphics_FancyGraphics) {
-							this->readBool(v13[i + 1], this->graphics);
-						} else if(v13[i] == OptionStrings::Graphics_FancySkies) {
-							this->readBool(v13[i + 1], this->fancySkies);
-						} else if(v13[i] == OptionStrings::Graphics_AnimateTextures) {
-							this->readBool(v13[i + 1], this->animateTextures);
-						} else if(v13[i] == OptionStrings::Game_ThirdPerson) {
-							this->readBool(v13[i + 1], this->thirdPerson);
-						} else if(v13[i] == OptionStrings::Controls_UseTouchScreen) {
-							if(this->minecraft->supportNonTouchScreen()) {
-								this->readBool(v13[i + 1], this->useTouchscreen);
-							}
-							this->useTouchscreen = 0;
-						} else {
-							if(v13[i] == OptionStrings::Graphics_HideGUI) {
-								this->readBool(v13[i + 1], this->hideGUI);
-							} else if(v13[i] == OptionStrings::AUDIO_Sound) {
-								this->readFloat(v13[i + 1], this->soundVolume);
-							} else if(!(v13[i] == OptionStrings::Game_DifficultyLevel)) {
-								if(v13[i] == OptionStrings::Last_Game_Version_Major) {
-									this->readInt(v13[i + 1], this->major);
-								} else if(v13[i] == OptionStrings::Last_Game_Version_Minor) {
-									this->readInt(v13[i + 1], this->minor);
-								} else if(v13[i] == OptionStrings::Last_Game_Version_Patch) {
-									this->readInt(v13[i + 1], this->patch);
-								} else {
-									if(!(v13[i] == OptionStrings::Last_Game_Version_Beta)) {
-										continue;
-									}
-									this->readInt(v13[i + 1], this->beta);
-								}
-							} else {
-								this->readInt(v13[i + 1], this->difficulty);
-								if(this->difficulty) {
-									if(this->difficulty != 2) {
-										this->difficulty = 2;
-									}
-								}
-							}
-						}
-					}
-				}
+		} else if(v13[i] == OptionStrings::Multiplayer_ServerVisible) {
+			this->readBool(v13[i + 1], this->serverVisible);
+		} else if(v13[i] == OptionStrings::Controls_Sensitivity) {
+			float v12;
+			if(this->readFloat(v13[i + 1], v12)) {
+				this->sensitity = (powf(v12 * 1.1f, 1.3f) * 0.42f) + 0.3f;
 			}
+		} else if(v13[i] == OptionStrings::Controls_InvertMouse) {
+			this->readBool(v13[i + 1], this->invertMouse);
+		} else if(v13[i] == OptionStrings::Controls_IsLefthanded) {
+			this->readBool(v13[i + 1], this->leftHanded);
+		} else if(v13[i] == OptionStrings::Controls_UseTouchJoypad) {
+			this->readBool(v13[i + 1], this->useJoypad);
+			if(!this->minecraft->useTouchscreen()) this->useJoypad = 0;
+		} else if(v13[i] == OptionStrings::Controls_FeedbackVibration) {
+			this->readBool(v13[i + 1], this->destroyVibration);
+		} else if(v13[i] == OptionStrings::Graphics_RenderDistance) {
+			this->readInt(v13[i + 1], this->renderDistance);
+		} else if(v13[i] == OptionStrings::Graphics_PixelsPerMilimeter) {
+			this->readFloat(v13[i + 1], this->pixelDensity);
+			if(this->pixelDensity > 12) this->pixelDensity = 12;
+			if(this->pixelDensity <= 3) this->pixelDensity = 3;
+		} else if(v13[i] == OptionStrings::Graphics_FancyGraphics) {
+			this->readBool(v13[i + 1], this->graphics);
+		} else if(v13[i] == OptionStrings::Graphics_FancySkies) {
+			this->readBool(v13[i + 1], this->fancySkies);
+		} else if(v13[i] == OptionStrings::Graphics_AnimateTextures) {
+			this->readBool(v13[i + 1], this->animateTextures);
+		} else if(v13[i] == OptionStrings::Game_ThirdPerson) {
+			this->readBool(v13[i + 1], this->thirdPerson);
+		} else if(v13[i] == OptionStrings::Controls_UseTouchScreen) {
+			if(this->minecraft->supportNonTouchScreen()) this->readBool(v13[i + 1], this->useTouchscreen);
+			this->useTouchscreen = 0;
+		} else if(v13[i] == OptionStrings::Graphics_HideGUI) {
+			this->readBool(v13[i + 1], this->hideGUI);
+		} else if(v13[i] == OptionStrings::AUDIO_Sound) {
+			this->readFloat(v13[i + 1], this->soundVolume);
+		} else if((v13[i] == OptionStrings::Game_DifficultyLevel)) {
+			this->readInt(v13[i + 1], this->difficulty);
+			if(this->difficulty && this->difficulty != 2) this->difficulty = 2;
+		} else if(v13[i] == OptionStrings::Last_Game_Version_Major) {
+			this->readInt(v13[i + 1], this->major);
+		} else if(v13[i] == OptionStrings::Last_Game_Version_Minor) {
+			this->readInt(v13[i + 1], this->minor);
+		} else if(v13[i] == OptionStrings::Last_Game_Version_Patch) {
+			this->readInt(v13[i + 1], this->patch);
+		} else if(v13[i] == OptionStrings::Last_Game_Version_Beta){
+			this->readInt(v13[i + 1], this->beta);
+		}else{
+			continue;
 		}
 	}
 }

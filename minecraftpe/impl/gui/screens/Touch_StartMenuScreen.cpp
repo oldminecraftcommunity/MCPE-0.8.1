@@ -337,21 +337,24 @@ Touch::StartMenuScreen::StartMenuScreen() :
 void Touch::StartMenuScreen::_updateLicense(){
 	bool_t v4;
 	int32_t licenseId = this->minecraft->getLicenseId();
-	if(licenseId < 0) v4 = 0;
-	else if(licenseId > 1) {
-		this->minecraft->setScreen(new InvalidLicenseScreen(licenseId, this->minecraft->platform()->hasBuyButtonWhenInvalidLicense()));
-		return;
-	} else v4 = 1;
+	if(licenseId < 0) {
+		v4 = 0;
+	} else {
+		if(licenseId > 1) {
+			this->minecraft->setScreen(new InvalidLicenseScreen(licenseId, this->minecraft->platform()->hasBuyButtonWhenInvalidLicense()));
+			return;
+		}
+		v4 = 1;
+	}
 
-	this->playOnRealmsButton.active = v4;
-	this->playButton.active = v4;
+	this->playButton.active = this->playOnRealmsButton.active = v4;
 }
 
 void Touch::StartMenuScreen::chooseRandomSplash(){
 	Random rng;
 	int32_t splashcnt = 0;
-	while(gSplashes[splashcnt]) ++splashcnt;
-	Touch::StartMenuScreen::currentSplash = rng.genrand_int32() % splashcnt;
+	while(gSplashes[splashcnt++]);
+	Touch::StartMenuScreen::currentSplash = rng.nextInt(splashcnt);
 
 }
 void Touch::StartMenuScreen::setupPlayButtons(bool_t a2){
@@ -424,16 +427,14 @@ void Touch::StartMenuScreen::init(){
 	this->playButton.init(this->minecraft);
 	this->playOnRealmsButton.init(this->minecraft);
 	this->settingsButtonMaybe = new ImageWithBackground(4);
-	ImageDef v13;
-	//v13.field_0 = 120; wat *(_QWORD *)&v13.field_0 = 120i64;
-	v13.yOff = 8;
-	v13.width = 67;
+
 	this->settingsButtonMaybe->init(this->minecraft->texturesPtr, 32, 32, IntRectangle(112, 0, 8, 67), IntRectangle(0x78, 0, 8, 0x43), 2, 2, "gui/spritesheet.png");
+	ImageDef v13;
 	v13.texWidth = 1;
 	v13.texHeight = 1;
 	v13.texture = ""; //*(_QWORD *)&v13.field_0 = (unsigned int)&_used_as_empty_string__[8];
 	v13.xOff = 0;
-	v13.yOff = 0x00000000;
+	v13.yOff = 0;
 	v13.width = 16;
 	v13.height = 16;
 	v13.texXStart = 0;

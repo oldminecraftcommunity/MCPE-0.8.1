@@ -15,8 +15,6 @@ StartMenuScreen::StartMenuScreen()
 	, optionsButton(4, 0, 0, 78, 22, "Options")
 	, createButton(999, 0, 0, 78, 22, "Create")
 	, buyButton(5, 0, 0, 78, 22, "Buy") {
-	this->mojangABMaybe = "";
-	this->gameVersion = "";
 }
 void StartMenuScreen::_updateLicense() {
 	bool_t v4;

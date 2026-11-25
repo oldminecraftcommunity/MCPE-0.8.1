@@ -37,9 +37,6 @@ struct TouchscreenInput: IMoveInput, GuiComponent
 	int8_t field_7F;
 	MeshBuffer field_80;
 	bool_t field_A8;
-	int8_t field_A9;
-	int8_t field_AA;
-	int8_t field_AB;
 	float field_AC;
 	bool field_B0[8];
 

@@ -47,23 +47,12 @@ Touch::TButton::~TButton(){
 	safeRemove(this->field_30);
 }
 void Touch::TButton::renderBg(struct Minecraft* mc, int32_t x, int32_t y){
-	NinePatchLayer* layer;
-	float posX;
-	int32_t posY;
-
 	this->field_2C->setSize(this->width, this->height);
 	this->field_30->setSize(this->width, this->height);
 
-
 	if(this->active && this->pressed && x >= this->posX && y >= this->posY && x < (this->posX+this->width) && y < (this->posY+this->height)){
-		layer = this->field_30;
-		posX = this->posX;
-		posY = this->posY;
+		this->field_30->draw(Tesselator::instance, this->posX, this->posY);
 	}else{
-		layer = this->field_2C;
-		posY = this->posY;
-		posX = this->posX;
+		this->field_2C->draw(Tesselator::instance, this->posX, this->posY);
 	}
-
-	layer->draw(Tesselator::instance, posX, posY);
 }

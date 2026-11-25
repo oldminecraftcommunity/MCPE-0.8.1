@@ -11,7 +11,9 @@ struct Bush : Tile{
 		this->setShape(0.3f, 0.0f, 0.3f, 0.7f, 0.6f, 0.7f);
 	}
 	Bush(int32_t a2, const std::string& a3) :
-			Bush(a2, a3, Material::plant) {
+			Tile(a2, a3, Material::plant) {
+		this->setTicking(1);
+		this->setShape(0.3f, 0.0f, 0.3f, 0.7f, 0.6f, 0.7f);
 	}
 	bool_t checkAlive(Level* level, int32_t x, int32_t y, int32_t z) {
 		if(this->canSurvive(level, x, y, z)) return 1;

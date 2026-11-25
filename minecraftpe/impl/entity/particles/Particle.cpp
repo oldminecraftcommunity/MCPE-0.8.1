@@ -81,47 +81,30 @@ void Particle::tick() {
 }
 
 void Particle::render(Tesselator& a2, float pt, float a4, float a5, float a6, float a7, float a8) {
-	float minX;			   // r7
-	float maxX;			   // r9
-	float v2;			   // r8
-	float v1;			   // r6
-	float v15;			   // s16
-	float coordMultiplier; // s14
-	float v17;			   // s19
-	float v18;			   // s20
-	float v19;			   // s18
-	float v21;			   // s23
-	float v22;			   // s17
-	float v23;			   // s22
-	float v24;			   // s26
-	float v25;			   // s16
-	float v26;			   // s21
-	float v27;			   // s20
-	float v28;			   // s19
-	float v29;			   // s18
+	float texMinX = this->texture.minX;
+	float texMaxX = this->texture.maxX;
+	float texMinY = this->texture.minY;
+	float texMaxY = this->texture.maxY;
+	float scale = this->_scale * 0.1f;
+	float x = (this->prevX + (this->posX - this->prevX) * pt) - Particle::xOff + Particle::playerViewDir.x*this->coordMultiplier;
+	float y = (this->prevY + (this->posY - this->prevY) * pt) - Particle::yOff + Particle::playerViewDir.y*this->coordMultiplier;
+	float z = (this->prevZ + (this->posZ - this->prevZ) * pt) - Particle::zOff + Particle::playerViewDir.z*this->coordMultiplier;
+	float b = this->getBrightness(pt);
+	a2.color(b * this->rColMul, b * this->gColMul, b * this->bColMul);
 
-	minX = this->texture.minX;
-	maxX = this->texture.maxX;
-	v2 = this->texture.minY;
-	v1 = this->texture.maxY;
-	v15 = this->_scale * 0.1f;
-	coordMultiplier = this->coordMultiplier;
-	v17 = (this->prevX + (this->posX - this->prevX) * pt) - Particle::xOff + coordMultiplier * Particle::playerViewDir.x;
-	v18 = (this->prevY + (this->posY - this->prevY) * pt) - Particle::yOff + coordMultiplier * Particle::playerViewDir.y;
-	v19 = (this->prevZ + (this->posZ - this->prevZ) * pt) - Particle::zOff + coordMultiplier * Particle::playerViewDir.z;
-	float brightness = this->getBrightness(pt);
-	a2.color(brightness * this->rColMul, brightness * this->gColMul, brightness * this->bColMul);
-	v21 = a4 * v15;
-	v22 = a7 * v15;
-	v23 = a6 * v15;
-	v24 = a5 * v15;
-	v25 = a8 * v15;
-	v26 = v18 - v24;
-	a2.vertexUV((float)(v17 - v21) - v22, v18 - v24, (float)(v19 - v23) - v25, maxX, v1);
-	v27 = v18 + v24;
-	a2.vertexUV((float)(v17 - v21) + v22, v27, (float)(v19 - v23) + v25, maxX, v2);
-	v28 = v17 + v21;
-	v29 = v19 + v23;
-	a2.vertexUV(v28 + v22, v27, v29 + v25, minX, v2);
-	a2.vertexUV(v28 - v22, v26, v29 - v25, minX, v1);
+
+	//<dir> offset <texture dir> texture scaled
+	//no idea how else to name it
+	//probably something related to rotation?
+	//(based on ParticleEngine::render using cos/sin stuff)
+	float xoxts = a4 * scale;
+	float xoyts = a7 * scale;
+	float zoxts = a6 * scale;
+	float yoyts = a5 * scale;
+	float zoyts = a8 * scale;
+
+	a2.vertexUV((x - xoxts) - xoyts, y - yoyts, (z - zoxts) - zoyts, texMaxX, texMaxY);
+	a2.vertexUV((x - xoxts) + xoyts, y + yoyts, (z - zoxts) + zoyts, texMaxX, texMinY);
+	a2.vertexUV((x + xoxts) + xoyts, y + yoyts, (z + zoxts) + zoyts, texMinX, texMinY);
+	a2.vertexUV((x + xoxts) - xoyts, y - yoyts, (z + zoxts) - zoyts, texMinX, texMaxY);
 }

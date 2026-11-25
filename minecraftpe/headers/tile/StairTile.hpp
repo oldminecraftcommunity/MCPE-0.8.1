@@ -20,8 +20,7 @@ struct StairTile : Tile{
 		this->field_5C = a3->field_5C;
 	}
 	static bool_t isLockAttached(LevelSource* level, int32_t x, int32_t y, int32_t z, int32_t a6) {
-		int32_t v9; // r0
-		v9 = level->getTile(x, y, z);
+		int v9 = level->getTile(x, y, z);
 		return StairTile::isStairs(v9) && level->getData(x, y, z) == a6;
 	}
 	static bool_t isStairs(int32_t id) {

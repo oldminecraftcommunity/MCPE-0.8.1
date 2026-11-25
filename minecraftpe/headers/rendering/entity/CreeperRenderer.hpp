@@ -1,13 +1,14 @@
 #pragma once
 #include <rendering/entity/MobRenderer.hpp>
+#include <rendering/model/CreeperModel.hpp>
 #include <math/Mth.hpp>
 #include <entity/Creeper.hpp>
 #include <unigl.hpp>
 
 struct CreeperRenderer: MobRenderer
 {
-	CreeperRenderer(Model* a2, float a3) :
-			MobRenderer(a2, a3) {
+	CreeperRenderer(float a3) :
+			MobRenderer(new CreeperModel(0), a3) {
 	}
 
 	virtual ~CreeperRenderer() {

@@ -3,30 +3,21 @@
 #include <unigl.hpp>
 #include <rendering/states/DisableState.hpp>
 #include <rendering/Font.hpp>
+GuiComponent::~GuiComponent(){
 
+}
 GuiComponent::GuiComponent(){
 	this->zLayer = 0;
 }
 
-void GuiComponent::blit(float x, float y, int32_t a4, int32_t a5, float a6, float a7, int32_t a8, int32_t a9){
-	int32_t v10, v14;
-	float v15, v16;
 
-	v10 = a8;
-	v14 = a9;
-	if(!a8) v10 = (int32_t)a6;
-	if(!a9) v14 = (int32_t)a7;
-
-	Tesselator::instance.begin(4);
-	v15 = (float)(v14+a5) * 0.0039062;
-	Tesselator::instance.vertexUV(x, y+a7, this->zLayer, (float)a4*0.0039062, v15);
-	v16 = (float)(v10+a4) * 0.0039062;
-	Tesselator::instance.vertexUV(x+a6, y+a7, this->zLayer, v16, v15);
-	Tesselator::instance.vertexUV(x+a6, y, this->zLayer, v16, (float)a5*0.0039062);
-	Tesselator::instance.vertexUV(x, y, this->zLayer,(float)a4*0.0039062, (float)a5*0.0039062);
-	Tesselator::instance.draw(1);
+void GuiComponent::drawCenteredString(struct Font* font, const std::string& s, int32_t x, int32_t y, int32_t color){
+	int32_t w = font->width(s);
+	font->drawShadow(s, (float)(x-w/2), y, color);
 }
-
+void GuiComponent::drawString(struct Font* font, const std::string& s, int32_t x, int32_t y, int32_t color){
+	font->drawShadow(s, x, y, color);
+}
 
 void GuiComponent::blit(int32_t x, int32_t y, int32_t a4, int32_t a5, int32_t a6, int32_t a7, int32_t a8, int32_t a9){
 	int32_t v13, v14, v15;
@@ -46,24 +37,23 @@ void GuiComponent::blit(int32_t x, int32_t y, int32_t a4, int32_t a5, int32_t a6
 	Tesselator::instance.vertexUV(v16, y, this->zLayer, (float)a4*0.0039062, (float)a5*0.0039062);
 	Tesselator::instance.draw(1);
 }
-void GuiComponent::drawCenteredString(struct Font* font, const std::string& s, int32_t x, int32_t y, int32_t color){
-	int32_t w = font->width(s);
-	font->drawShadow(s, (float)(x-w/2), y, color);
-}
-void GuiComponent::drawRect(int32_t a2, int32_t a3, int32_t a4, int32_t a5, int32_t color, int32_t a7){
-	this->fill(a2, a3, a4, a3 + a7, color);
-	this->fill(a2, a5 - a7, a4, a5, color);
-	this->fill(a2, a3, a2 + a7, a5, color);
-	this->fill(a4 - a7, a3, a4, a5, color);
-}
-void GuiComponent::drawRect(int32_t a2, int32_t a3, int32_t a4, int32_t a5, int32_t color1, int32_t color2, int32_t color3, int32_t color4, int32_t a10){
-	this->fill(a2, a3, a2 + a10, a5, color3);
-	this->fill(a4 - a10, a3, a4, a5, color4);
-	this->fill(a2, a3, a4, a3 + a10, color1);
-	this->fill(a2, a5 - a10, a4, a5, color2);
-}
-void GuiComponent::drawString(struct Font* font, const std::string& s, int32_t x, int32_t y, int32_t color){
-	font->drawShadow(s, x, y, color);
+void GuiComponent::blit(float x, float y, int32_t a4, int32_t a5, float a6, float a7, int32_t a8, int32_t a9){
+	int32_t v10, v14;
+	float v15, v16;
+
+	v10 = a8;
+	v14 = a9;
+	if(!a8) v10 = (int32_t)a6;
+	if(!a9) v14 = (int32_t)a7;
+
+	Tesselator::instance.begin(4);
+	v15 = (float)(v14+a5) * 0.0039062;
+	Tesselator::instance.vertexUV(x, y+a7, this->zLayer, (float)a4*0.0039062, v15);
+	v16 = (float)(v10+a4) * 0.0039062;
+	Tesselator::instance.vertexUV(x+a6, y+a7, this->zLayer, v16, v15);
+	Tesselator::instance.vertexUV(x+a6, y, this->zLayer, v16, (float)a5*0.0039062);
+	Tesselator::instance.vertexUV(x, y, this->zLayer,(float)a4*0.0039062, (float)a5*0.0039062);
+	Tesselator::instance.draw(1);
 }
 void GuiComponent::fill(float a2, float a3, float a4, float a5, int32_t color){
 	DisableState state(0xDE1);
@@ -131,7 +121,15 @@ void GuiComponent::fillHorizontalGradient(float a2, float a3, float a4, float a5
 void GuiComponent::fillHorizontalGradient(int32_t a2, int32_t a3, int32_t a4, int32_t a5, int32_t a6, int32_t a7) {
 	this->fillHorizontalGradient((float)a2, (float)a3, (float)a4, (float)a5, a6, a7);
 }
-
-GuiComponent::~GuiComponent(){
-
+void GuiComponent::drawRect(int32_t a2, int32_t a3, int32_t a4, int32_t a5, int32_t color, int32_t a7){
+	this->fill(a2, a3, a4, a3 + a7, color);
+	this->fill(a2, a5 - a7, a4, a5, color);
+	this->fill(a2, a3, a2 + a7, a5, color);
+	this->fill(a4 - a7, a3, a4, a5, color);
+}
+void GuiComponent::drawRect(int32_t a2, int32_t a3, int32_t a4, int32_t a5, int32_t color1, int32_t color2, int32_t color3, int32_t color4, int32_t a10){
+	this->fill(a2, a3, a2 + a10, a5, color3);
+	this->fill(a4 - a10, a3, a4, a5, color4);
+	this->fill(a2, a3, a4, a3 + a10, color1);
+	this->fill(a2, a5 - a10, a4, a5, color2);
 }

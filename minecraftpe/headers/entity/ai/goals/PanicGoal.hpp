@@ -1,13 +1,12 @@
 #pragma once
 #include <entity/ai/Goal.hpp>
-#include <math/Vec3.hpp>
 
 struct PathfinderMob;
 struct PanicGoal: Goal
 {
 	PathfinderMob* holder;
 	float speedMultiplier;
-	Vec3 target;
+	float targetX, targetY, targetZ;
 
 	PanicGoal(PathfinderMob*, float);
 

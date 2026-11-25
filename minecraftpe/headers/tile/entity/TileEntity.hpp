@@ -7,6 +7,12 @@
 
 struct Packet;
 struct CompoundTag;
+
+struct TileEntityFactory
+{
+	static struct TileEntity* createTileEntity(int32_t type);
+};
+
 struct TileEntity
 {
 	static std::map<std::string, int32_t> idClassMap;

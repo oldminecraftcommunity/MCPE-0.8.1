@@ -3,6 +3,6 @@
 #include <ReliabilityLayer.h>
 
 Packet::Packet(){
-	this->packetPriorityMaybe = PacketPriority::HIGH_PRIORITY; //1
-	this->packetReliabilityMaybe = PacketReliability::RELIABLE; //2
+	this->packetPriority = PacketPriority::HIGH_PRIORITY; //1
+	this->packetReliability = PacketReliability::RELIABLE; //2
 }

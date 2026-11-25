@@ -24,7 +24,7 @@ struct LocalPlayer: Player, IContainerListener
 	SmoothFloat field_D9C, field_DA8, field_DB4;
 	int32_t field_DC0;
 	int32_t currentItemID, currentItemMeta;
-	float field_DCC;
+	float lastSentHeadYaw;
 	int32_t lastSentArmorHash;
 	ItemInstance field_DD4[4];
 	int32_t field_E24;

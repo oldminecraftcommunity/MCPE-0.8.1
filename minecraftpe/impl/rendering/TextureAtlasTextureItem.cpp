@@ -2,19 +2,12 @@
 
 TextureAtlasTextureItem::TextureAtlasTextureItem(void){
 	this->name = "error";
-	this->uvCoords.minX = -1;
-	this->uvCoords.maxY = -1;
-	this->uvCoords.maxX = -1;
-	this->uvCoords.maxY = -1;
-	this->uvCoords.width = 0;
-	this->uvCoords.height = 0;
+	this->uvCoords = TextureUVCoordinateSet(-1, -1, -1, -1, 0, 0);
 	this->uv.push_back(this->uvCoords);
 	this->uvCount = this->uv.size();
 }
 
-TextureAtlasTextureItem::TextureAtlasTextureItem(const std::string& a2, const TextureUVCoordinateSet& a3, const std::vector<TextureUVCoordinateSet>& a4) {
-	this->name = a2;
-	this->uvCoords = a3;
+TextureAtlasTextureItem::TextureAtlasTextureItem(const std::string& a2, const TextureUVCoordinateSet& a3, const std::vector<TextureUVCoordinateSet>& a4) : name(a2), uvCoords(a3) {
 	this->uv.push_back(this->uvCoords);
 
 	for(auto pp: a4) {

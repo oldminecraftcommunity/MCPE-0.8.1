@@ -29,7 +29,7 @@ struct Random{
 		}
 	}
 	float nextFloat(void){
-		return this->genrand_int32() * 2.32830644e-10;
+		return this->genrand_int32() * 2.3283064365386963e-10;
 	}
 	//should be always inlined
 	int nextInt(int limit) {

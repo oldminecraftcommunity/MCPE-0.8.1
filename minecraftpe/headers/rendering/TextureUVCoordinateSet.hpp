@@ -13,14 +13,13 @@ struct TextureUVCoordinateSet{
 		this->maxX = maxX;
 		this->maxY = maxY;
 	}
-
-
 	TextureUVCoordinateSet(){
 		this->minX = 0;
 		this->minY = 0;
 		this->maxX = 0;
 		this->maxY = 0;
 	}
+
 	static TextureUVCoordinateSet fromOldSystem(int32_t sprite) {
 		int spx = sprite % 16;
 		int spy = sprite / 16;

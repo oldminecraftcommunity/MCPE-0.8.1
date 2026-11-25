@@ -48,8 +48,8 @@ struct Mob : Entity{
 	int32_t field_BA4, field_BA8;
 	float lerpX, lerpY, lerpZ, lerpYaw, lerpPitch;
 	int32_t field_BC0, field_BC4;
-	float field_BC8, field_BCC, field_BD0, field_BD4;
-	float field_BD8, field_BDC, field_BE0, field_BE4;
+	float lastSentX, lastSentY, lastSentZ, lastSentPitch;
+	float lastSentYaw, field_BDC, field_BE0, field_BE4;
 	int32_t field_BE8;
 	int8_t field_BEC;
 	bool_t isJumping;
@@ -150,7 +150,7 @@ struct Mob : Entity{
 	virtual float getAttackAnim(float);
 	virtual Vec3 getPos(float);
 	virtual Vec3 getLookAngle() const;
-	virtual Vec3 getViewVector(float) const;
+	virtual Vec3 getViewVector(float pt) const;
 	virtual int32_t getMaxSpawnClusterSize();
 	virtual bool_t isBaby() {
 		return 0;

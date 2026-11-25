@@ -10,7 +10,7 @@ struct LavaParticle: Particle
 		: Particle(level, pt, a2) {
 		this->bColMul = this->gColMul = this->rColMul = 1;
 		this->noclip = 0;
-		this->texture = TextureUVCoordinateSet(0, 0.1875, 0.125, 0.25, 256, 256);
+		this->texture = TextureUVCoordinateSet(0.0f, 0.1875f, 0.125f, 0.25f, 256, 256);
 	}
 
 	virtual ~LavaParticle() {

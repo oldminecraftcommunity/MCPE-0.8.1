@@ -114,7 +114,7 @@ bool_t FurnaceScreen::handleAddItem(int32_t a2, const ItemInstance* a3) {
 	}
 
 	if(this->minecraft->level->isClient) {
-		ContainerSetSlotPacket v14(0, this->field_50->field_0, a2, *v6);
+		ContainerSetSlotPacket v14(0, this->field_50->containerId, a2, *v6);
 		this->minecraft->rakNetInstance->send(v14);
 	}
 	return this->player->inventory->getEmptySlotsCount() != esc;
@@ -241,7 +241,7 @@ void FurnaceScreen::takeAndClearSlot(int32_t a2) {
 	ItemInstance v11;
 	this->tileEntity->setItem(a2, &v11);
 	if(this->minecraft->level->isClient) {
-		ContainerSetSlotPacket v12(0, this->field_50->field_0, a2, v11);
+		ContainerSetSlotPacket v12(0, this->field_50->containerId, a2, v11);
 		this->minecraft->rakNetInstance->send(v12);
 	}
 	int32_t esc = this->minecraft->player->inventory->getEmptySlotsCount();

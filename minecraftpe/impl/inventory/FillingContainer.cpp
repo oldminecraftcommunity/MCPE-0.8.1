@@ -5,14 +5,14 @@
 #include <nbt/ListTag.hpp>
 #include <nbt/CompoundTag.hpp>
 
-FillingContainer::FillingContainer(int32_t a2, int32_t a3, int32_t a4, bool_t a5) {
+FillingContainer::FillingContainer(int32_t size, int32_t a3, int32_t a4, bool_t a5) {
 	this->field_4 = a4;
 	this->field_0 = -1;
 	this->field_20 = a5;
 	if(a3) {
 		this->linkedSlots.resize(a3); //_M_default_append
 	}
-	this->items.resize(a2);
+	this->items.resize(size);
 }
 int32_t FillingContainer::addItem(ItemInstance* a2) {
 	for(int32_t i = this->getLinkedSlotsCount(); i < this->getContainerSize(); ++i) {
@@ -583,7 +583,7 @@ ItemInstance* FillingContainer::getItem(int32_t a2) {
 	if(a2 >= this->items.size()) return 0;
 	ItemInstance* result;
 	if(a2 >= this->getLinkedSlotsCount()) {
-		result = this->getSlotList(v2)->at(a2);
+		result = (*this->getSlotList(v2))[a2];
 	} else {
 		result = this->getLinked(a2);
 	}

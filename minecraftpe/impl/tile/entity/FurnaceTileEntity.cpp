@@ -72,10 +72,8 @@ bool_t FurnaceTileEntity::shouldSave() {
 	return 1;
 }
 bool_t FurnaceTileEntity::stillValid(Player* a2) {
-	TileEntity* te; // r0
-
-	te = this->level->getTileEntity(this->posX, this->posY, this->posZ);
-	return te == this && a2->distanceToSqr((float)te->posX + 0.5, (float)te->posY + 0.5, (float)te->posZ + 0.5) <= 64.0;
+	TileEntity* te = this->level->getTileEntity(this->posX, this->posY, this->posZ);
+	return te == this && a2->distanceToSqr(te->posX + 0.5, te->posY + 0.5, te->posZ + 0.5) <= 64;
 }
 
 FurnaceTileEntity::FurnaceTileEntity()

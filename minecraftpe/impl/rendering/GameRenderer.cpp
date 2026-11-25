@@ -361,7 +361,7 @@ void GameRenderer::pick(float a2) {
 					Entity* v43 = 0;
 					std::vector<Entity*>* ents = this->minecraft->level->getEntities(this->minecraft->viewEntity, AABB{v31 - 1, v32 - 1, v33 - 1, v34 + 1, v35 + 1, v37 + 1});
 					for(int v41 = 0; v41 < ents->size(); ++v41) {
-						Entity* v47 = ents->at(v41);
+						Entity* v47 = (*ents)[v41];
 						if(v47->isPickable()) {
 							float v48 = v47->getPickRadius();
 							float v49 = v47->boundingBox.minZ;
@@ -431,7 +431,7 @@ void GameRenderer::pick(float a2) {
 								} else {
 									v66 = 4;
 								}
-								this->minecraft->selectedObject.field_10 = v66;
+								this->minecraft->selectedObject.face = v66;
 							}
 						}
 					}

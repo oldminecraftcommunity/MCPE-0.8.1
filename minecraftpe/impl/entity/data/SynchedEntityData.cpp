@@ -1,6 +1,7 @@
 #include <entity/data/SynchedEntityData.hpp>
 #include <util/output/IDataOutput.hpp>
 #include <util/input/IDataInput.hpp>
+#include <item/Item.hpp>
 
 SynchedEntityData::SynchedEntityData() {
 	this->isDirty = 0;
@@ -81,23 +82,20 @@ void SynchedEntityData::assignValues(std::vector<DataItem*>* a2) {
 }
 int8_t SynchedEntityData::getByte(int32_t a2) const{
 	auto&& v = this->data.find(a2);
-	if(v == this->data.end() || v->second->typeId != 0) {
-		return 0;
-	}
+	if(v == this->data.end()) return 0;
+	if(v->second->typeId != 0) return 0;
 	return ((DataItem2<int8_t>*)v->second)->value;
 }
 float SynchedEntityData::getFloat(int32_t a2) const{
 	auto&& v = this->data.find(a2);
-	if(v == this->data.end() || v->second->typeId != 3) {
-		return 0;
-	}
+	if(v == this->data.end()) return 0;
+	if(v->second->typeId != 3) return 0;
 	return ((DataItem2<float>*)v->second)->value;
 }
 int32_t SynchedEntityData::getInt(int32_t a2) const{
 	auto&& v = this->data.find(a2);
-	if(v == this->data.end() || v->second->typeId != 2) {
-		return 0;
-	}
+	if(v == this->data.end()) return 0;
+	if(v->second->typeId != 2) return 0;
 	return ((DataItem2<int32_t>*)v->second)->value;
 }
 ItemInstance SynchedEntityData::getItemInstance(int32_t a2) {
@@ -110,15 +108,14 @@ ItemInstance SynchedEntityData::getItemInstance(int32_t a2) {
 Pos SynchedEntityData::getPos(int32_t a2) const{
 	auto&& v = this->data.find(a2);
 	if(v == this->data.end() || v->second->typeId != 6) {
-		return {0, 0, 0};
+		return Pos(0, 0, 0);
 	}
 	return ((DataItem2<Pos>*)v->second)->value;
 }
 int16_t SynchedEntityData::getShort(int32_t a2) const{
 	auto&& v = this->data.find(a2);
-	if(v == this->data.end() || v->second->typeId != 1) {
-		return 0;
-	}
+	if(v == this->data.end()) return 0;
+	if(v->second->typeId != 1) return 0;
 	return ((DataItem2<int16_t>*)v->second)->value;
 }
 std::string SynchedEntityData::getString(int32_t a2) const{
@@ -130,8 +127,8 @@ std::string SynchedEntityData::getString(int32_t a2) const{
 }
 void SynchedEntityData::pack(std::vector<DataItem*>* a1, IDataOutput* a2) {
 	if(a1) {
-		for(auto&& v: *a1) {
-			SynchedEntityData::writeDataItem(a2, v);
+		for(std::vector<DataItem*>::iterator v = a1->begin(); v != a1->end(); ++v){
+			SynchedEntityData::writeDataItem(a2, *v);
 		}
 	}
 	a2->writeByte(127);
@@ -192,7 +189,7 @@ std::vector<DataItem*> SynchedEntityData::unpack(IDataInput* a2) {
 }
 
 void SynchedEntityData::writeDataItem(IDataOutput* a1, const DataItem* a2) {
-	a1->writeByte(a2->dataId & 0x1F | (32 * a2->typeId));
+	a1->writeByte((a2->typeId << 5) | (a2->dataId & 0x1F));
 	switch(a2->typeId) {
 		case 0:
 			a1->writeByte(((const DataItem2<int8_t>*)a2)->value);
@@ -210,7 +207,7 @@ void SynchedEntityData::writeDataItem(IDataOutput* a1, const DataItem* a2) {
 			a1->writeString(((const DataItem2<std::string>*)a2)->value);
 			break;
 		case 5:
-			a1->writeShort(((const DataItem2<ItemInstance>*)a2)->value.getId());
+			a1->writeShort(((const DataItem2<ItemInstance>*)a2)->value.itemClass->itemID);
 			a1->writeByte(((const DataItem2<ItemInstance>*)a2)->value.count);
 			a1->writeShort(((const DataItem2<ItemInstance>*)a2)->value.getAuxValue());
 			break;

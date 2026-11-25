@@ -208,6 +208,13 @@ void Font::drawWordWrap(const std::string& a2, float x, float y, float wrapAfter
 		v13 += this->field_C;
 	});
 }
+
+void splitString(const std::string& a1, char_t a2, std::vector<std::string>& a3) {
+	std::stringstream v9(a1);
+	for(std::string v7; std::getline(v9, v7, a2);) {
+		a3.push_back(v7);
+	}
+}
 std::vector<std::vector<std::string>> Font::getParagraphs(const std::string& a3) {
 	std::vector<std::vector<std::string>> a1;
 	std::vector<std::string> v13;

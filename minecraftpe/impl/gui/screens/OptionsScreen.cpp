@@ -14,7 +14,7 @@ OptionsScreen::OptionsScreen(bool_t a2) {
 	this->isInWorld = a2;
 	this->headerOptions = 0;
 	this->buttonBack = 0;
-	this->field_5C = 0;
+	this->highlightedCategory = 0;
 	this->field_7C = 0;
 	this->field_80 = 0;
 	this->field_84 = 0;
@@ -29,7 +29,7 @@ void OptionsScreen::closeScreen() {
 	}
 }
 int32_t OptionsScreen::createCategoryButton(int32_t a2, int32_t a3, struct ImageDef& a4, int32_t a5, int32_t a6, int32_t a7, int32_t a8) {
-	ImageButton* v12 = new CategoryButton(a2, this->field_7C, this->field_80, (Button**)&this->field_5C);
+	ImageButton* v12 = new CategoryButton(a2, this->field_7C, this->field_80, (Button**)&this->highlightedCategory);
 	a4.initialized = 1;
 	a4.texXStart = a5;
 	a4.texYStart = a6;
@@ -74,11 +74,13 @@ void OptionsScreen::generateOptionScreens(void) {
 void OptionsScreen::selectCategory(int32_t a2) {
 	int32_t v2 = 0;
 	for(auto&& p: this->field_60) {
-		bool_t v5 = a2 == v2++;
-		if(v5) {
-			this->field_5C = p;
+		if(a2 == v2) {
+			this->highlightedCategory = p;
+			p->highlight = 1;
+		} else {
+			p->highlight = 0;
 		}
-		p->highlight = v5;
+		++v2;
 	}
 	if(a2 < this->optionPanes.size()) {
 		this->selectedCategory = this->optionPanes[a2];

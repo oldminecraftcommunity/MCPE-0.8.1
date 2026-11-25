@@ -25,7 +25,7 @@ Stopwatch* StopwatchHandler::get(const std::string& a2) {
 }
 void StopwatchHandler::print() {
 	for(auto&& p: this->field_0) {
-		p.second->print(p.first);
+		p.second->print(std::string(p.first));
 	}
 }
 void StopwatchHandler::printEvery(int32_t a2) {

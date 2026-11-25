@@ -24,7 +24,7 @@ struct CropTile : Bush{
 	virtual void tick(Level*, int32_t, int32_t, int32_t, Random*);
 	virtual int32_t getResource(int32_t, Random*);
 	virtual int32_t getResourceCount(Random*);
-	virtual void spawnResources(Level*, int32_t, int32_t, int32_t, int32_t, float);
+	virtual void spawnResources(Level*, int32_t x, int32_t, int32_t, int32_t, float);
 	virtual bool_t mayPlaceOn(int32_t);
 	virtual struct Item* getBaseSeed();
 	virtual int32_t getBasePlantId();

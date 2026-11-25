@@ -17,8 +17,8 @@ HumanoidModel::HumanoidModel(float a2, float a3)
 	this->field_5 = 0;
 	AppPlatform::_singleton->addListener(this, 1);
 	this->field_318 = 0;
-	this->field_319 = 0;
-	this->field_31A = 0;
+	this->carryingItem = 0;
+	this->sneaking = 0;
 	this->isUsingBow = 0;
 	this->headModel.setModel(this);
 	this->bodyModel.setModel(this);
@@ -116,7 +116,7 @@ void HumanoidModel::setupAnim(float a2, float a3, float a4, float a5, float a6, 
 	if(this->field_318) {
 		this->leftArmModel.xRotAngle = (float)(this->leftArmModel.xRotAngle * 0.5) - (float)((float)(3.1416 * 0.5) * 0.2);
 	}
-	if(this->field_319) {
+	if(this->carryingItem) {
 		this->rightArmModel.xRotAngle = (float)(this->rightArmModel.xRotAngle * 0.5) - (float)((float)(3.1416 * 0.5) * 0.2);
 	}
 	v15 = this->field_0;
@@ -142,7 +142,7 @@ void HumanoidModel::setupAnim(float a2, float a3, float a4, float a5, float a6, 
 		this->rightArmModel.xRotAngle = this->rightArmModel.xRotAngle - (float)((float)((float)-(float)(v23 * v22) * 0.75) + (float)(v21 * 1.2));
 		this->rightArmModel.zRotAngle = Mth::sin(v19 * 3.1416) * -0.4;
 	}
-	if(this->field_31A) {
+	if(this->sneaking) {
 		v24 = this->rightArmModel.xRotAngle + 0.4;
 		this->bodyModel.xRotAngle = 0.5;
 		this->rightLegModel.zOffset = 4.0;

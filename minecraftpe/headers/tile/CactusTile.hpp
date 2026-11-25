@@ -42,7 +42,7 @@ struct CactusTile : Tile{
 		return &this->aabb;
 	}
 	virtual AABB getTileAABB(Level* level, int32_t x, int32_t y, int32_t z) {
-		return AABB { (float) (x) + 0.0625f, (float) (y), (float) (z) + 0.0625f, (float) ((x + 1)) - 0.0625f, (float) (y) + 1.0f, (float) ((z + 1)) - 0.0625f };
+		return AABB(x, y, z).grow(-0.0625f, 0, -0.0625f);
 	}
 	virtual bool_t isSolidRender() {
 		return 0;

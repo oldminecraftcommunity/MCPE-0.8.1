@@ -188,10 +188,10 @@ struct AABB{
 
 	//the method names was taken from b1.2, should always be inlined
 	AABB grow(float x, float y, float z) {
-		return AABB{this->minX - x, this->minY - y, this->minZ - z, this->maxX + x, this->maxY + y, this->maxZ + z};
+		return AABB(this->minX - x, this->minY - y, this->minZ - z, this->maxX + x, this->maxY + y, this->maxZ + z);
 	}
 	AABB cloneMove(float x, float y, float z) {
-		return AABB{this->minX + x, this->minY + y, this->minZ + z, this->maxX + x, this->maxY + y, this->maxZ + z};
+		return AABB(this->minX + x, this->minY + y, this->minZ + z, this->maxX + x, this->maxY + y, this->maxZ + z);
 	}
 	bool contains(const Vec3& vec){
 		return vec.x > this->minX && vec.x < this->maxX && vec.y > this->minY && vec.y < this->maxY && vec.z > this->minZ && vec.z < this->maxZ;

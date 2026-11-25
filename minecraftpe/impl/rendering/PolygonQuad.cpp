@@ -50,43 +50,15 @@ void PolygonQuad::mirror(void){
 }
 
 void PolygonQuad::render(Tesselator& a2, float a3, int32_t a4){
-	//TODO inlined vec3 math probably
-	float diffX01 = this->verticies[0].vec.x - this->verticies[1].vec.x;
-	float diffY01 = this->verticies[0].vec.y - this->verticies[1].vec.y;
-	float diffZ01 = this->verticies[0].vec.z - this->verticies[1].vec.z;
-	float diffX03 = this->verticies[0].vec.x - this->verticies[3].vec.x;
-	float diffY03 = this->verticies[0].vec.y - this->verticies[3].vec.y;
-	float diffZ03 = this->verticies[0].vec.z - this->verticies[3].vec.z;
-	//useless but libminecraftpe.so has this for some reason?
-	if(diffX01 == 0) diffX01 = 0;
-	if(diffY01 == 0) diffY01 = 0;
-	if(diffZ01 == 0) diffZ01 = 0;
-	if(diffX03 == 0) diffX03 = 0;
-	if(diffY03 == 0) diffY03 = 0;
-	if(diffZ03 == 0) diffZ03 = 0;
+	Vec3 diff01 = this->verticies[0].vec.sub(this->verticies[1].vec);
+	Vec3 diff03 = this->verticies[0].vec.sub(this->verticies[3].vec);
+	Vec3 v15 = Vec3(
+		diff01.y * diff03.z - diff01.z * diff03.y,
+		diff01.z * diff03.x - diff01.x * diff03.z,
+		diff01.x * diff03.y - diff01.y * diff03.x
+	).normalized();
 
-	float v15 = (diffY01*diffZ03) - (diffZ01*diffY03);
-	float v16 = (diffZ01*diffX03) - (diffX01*diffZ03);
-	float v18 = (diffX01*diffY03) - (diffY01*diffX03);
-	if(v15 == 0) v15 = 0;
-	if(v16 == 0) v16 = 0;
-	if(v18 == 0) v18 = 0;
-
-	float v19 = sqrt(v16*v16 + v15*v15 + v18*v18);
-	float xCoord, yCoord, zCoord;
-	if(v19 >= 0.0001){
-		xCoord = v15/v19;
-		yCoord = v16/v19;
-		zCoord = v18/v19;
-		if(xCoord == 0) xCoord = 0;
-		if(yCoord == 0) yCoord = 0;
-		if(zCoord == 0) zCoord = 0;
-	}else{
-		xCoord = Vec3::ZERO.x;
-		yCoord = Vec3::ZERO.y;
-		zCoord = Vec3::ZERO.z;
-	}
-	a2.normal(xCoord, yCoord, zCoord);
+	a2.normal(v15.x, v15.y, v15.z);
 	for(int32_t v23 = 0; v23 != 4; ++v23){
 		VertexPT* v = &this->verticies[v23];
 		a2.vertexUV(a3*v->vec.x, a3*v->vec.y, a3*v->vec.z, v->u, v->v);

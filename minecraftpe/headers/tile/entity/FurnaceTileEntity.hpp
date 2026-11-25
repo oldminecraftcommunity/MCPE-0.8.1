@@ -6,13 +6,11 @@ struct FurnaceTileEntity: TileEntity, Container
 {
 	int32_t field_5C, field_60;
 	bool_t field_64;
-	int8_t field_65, field_66, field_67;
 	int32_t burnTime;
 	int32_t field_6C;
 	int32_t cookTime;
 	ItemInstance inventory[3];
 	bool_t field_B0, field_B1;
-	int8_t field_B2, field_B3;
 
 	static int32_t getBurnDuration(const ItemInstance&);
 	static bool_t isFuel(const ItemInstance&);

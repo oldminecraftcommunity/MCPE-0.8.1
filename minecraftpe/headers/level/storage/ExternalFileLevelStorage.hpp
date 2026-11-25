@@ -7,7 +7,7 @@ struct RegionFile;
 struct ExternalFileLevelStorage: LevelStorage, ChunkStorage
 {
 	std::string field_8;
-	std::string anotherDataFolder, dataFolder;
+	std::string dataFolder, playersDataFolder;
 	LevelData* levelData;
 	RegionFile* regionFile;
 	int32_t field_1C;

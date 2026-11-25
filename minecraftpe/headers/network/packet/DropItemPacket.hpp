@@ -7,14 +7,11 @@
 struct DropItemPacket : Packet{
 	int32_t eid;
 	uint8_t motionType;
-	char align, align1, align2;
 	ItemInstance itemInstance;
 	DropItemPacket() {
 	}
 	DropItemPacket(int32_t eid, uint8_t mt, const ItemInstance& a2) :
-			itemInstance(a2) {
-		this->eid = eid;
-		this->motionType = mt;
+			eid(eid), motionType(mt), itemInstance(a2) {
 	}
 
 	virtual ~DropItemPacket() {

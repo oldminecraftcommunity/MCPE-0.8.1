@@ -113,6 +113,7 @@ struct ServerCommandParser
 			return &this->retStr;
 		}
 		std::string v19 = v24[0].isEmpty ? Util::EMPTY_STRING : v24[0].field_0;
+
 		auto&& cmd = this->commands.find(v19);
 		v24[0] = ServerCommandParser::Token(msg.author); //inlined
 		if (cmd == this->commands.end()) {

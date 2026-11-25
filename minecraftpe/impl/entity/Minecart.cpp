@@ -15,7 +15,6 @@ Minecart::Minecart(Level* a2)
 	: Entity(a2) {
 	this->linkedEntity = 0;
 	this->field_FC = 1;
-	this->field_118 = "";
 	this->setSize(0.98f, 0.7f);
 	this->entityRenderId = MINECART;
 	this->field_110 = 0;
@@ -35,12 +34,12 @@ Minecart::Minecart(Level* a2)
 Minecart::Minecart(Level* a2, float a3, float a4, float a5)
 	: Minecart(a2) {
 	this->setPos(a3, a4, a5);
-	this->prevX = a3;
-	this->prevY = a4;
-	this->prevZ = a5;
 	this->motionX = 0;
 	this->motionY = 0;
 	this->motionZ = 0;
+	this->prevX = a3;
+	this->prevY = a4;
+	this->prevZ = a5;
 }
 void Minecart::applyNaturalSlowdown() {
 	if(this->rider) {
@@ -54,41 +53,22 @@ void Minecart::applyNaturalSlowdown() {
 	}
 }
 void Minecart::comeOffTrack(float a2) {
-	float v2; // s14
-	bool_t onGround; // r3
-	float motionX; // s13
-	bool_t v6; // fzf
-	bool_t v7; // fnf
-	float motionZ; // s13
+	if(this->motionX < -a2) this->motionX = -a2;
+	if(this->motionX > a2) this->motionX = a2;
 
-	v2 = -a2;
-	onGround = this->onGround;
-	if(this->motionX < (float)-a2) {
-		this->motionX = v2;
-	}
-	motionX = this->motionX;
-	v6 = motionX == a2;
-	v7 = motionX < a2;
-	motionZ = this->motionZ;
-	if(!v7 && !v6) {
-		this->motionX = a2;
-	}
-	if(motionZ < v2) {
-		this->motionZ = v2;
-	}
-	if(this->motionZ > a2) {
-		this->motionZ = a2;
-	}
-	if(onGround) {
-		this->motionX = this->motionX * 0.5;
-		this->motionY = this->motionY * 0.5;
-		this->motionZ = this->motionZ * 0.5;
+	if(this->motionZ < -a2) this->motionZ = -a2;
+	if(this->motionZ > a2) this->motionZ = a2;
+
+	if(this->onGround) {
+		this->motionX *= 0.5f;
+		this->motionY *= 0.5f;
+		this->motionZ *= 0.5f;
 	}
 	this->move(this->motionX, this->motionY, this->motionZ);
 	if(!this->onGround) {
-		this->motionX = this->motionX * 0.95;
-		this->motionY = this->motionY * 0.95;
-		this->motionZ = this->motionZ * 0.95;
+		this->motionX *= 0.95f;
+		this->motionY *= 0.95f;
+		this->motionZ *= 0.95f;
 	}
 }
 Minecart* Minecart::createMinecart(Level* a1, float a2, float a3, float a4, int32_t a5) {

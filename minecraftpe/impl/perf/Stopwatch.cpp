@@ -83,23 +83,15 @@ void Stopwatch::printEvery(int32_t a2, const std::string& a3) {
 }
 
 void Stopwatch::stop() {
-	double diffTime;	   // d7
-	double maxDiffTime; // d6
-	double v4;		   // d7
-	int32_t count;	   // r3
-
 	if(this->startTime != -1.0) {
-		diffTime = getTimeS() - this->startTime;
-		maxDiffTime = this->maxDiffTime;
-		this->lastDiffTime = diffTime;
-		if(diffTime > maxDiffTime) {
-			this->maxDiffTime = diffTime;
+		this->lastDiffTime = getTimeS() - this->startTime;
+		if(this->lastDiffTime > this->maxDiffTime) {
+			this->maxDiffTime = this->lastDiffTime;
 		}
-		v4 = diffTime + this->total;
-		count = this->count;
+
+		this->count += 1;
+		this->total += this->lastDiffTime;
 		this->startTime = -1.0;
-		this->count = count + 1;
-		this->total = v4;
 	}
 }
 double Stopwatch::stopContinue() {
@@ -142,5 +134,5 @@ void StopwatchNLast::stop() {
 		this->field_34 = 0;
 	}
 	this->field_38[this->field_34] = last;
-	this->field_40 = this->field_40 + last - v6;
+	this->field_40 += last - v6;
 }

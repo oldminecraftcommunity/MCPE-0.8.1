@@ -13,7 +13,7 @@ struct ZombieModel: HumanoidModel
 	virtual void setupAnim(float a2, float a3, float a4, float a5, float a6, float a7) {
 
 		HumanoidModel::setupAnim(a2, a3, a4, a5, a6, a7);
-		if(!this->field_318 && !this->field_319) {
+		if(!this->field_318 && !this->carryingItem) {
 			float v9 = this->field_0;
 			float v10 = Mth::sin(v9 * 3.1416f);
 			float v11 = Mth::sin((1.0f - ((1.0f - v9) * (1.0f - v9))) * 3.1416f);

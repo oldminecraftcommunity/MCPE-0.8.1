@@ -11,9 +11,9 @@ struct Button;
 struct ExternalServer;
 struct LocalServerListItemElement: GuiElement
 {
-	float field_24, field_28;
+	float clickedMouseX, clickedMouseY;
 	Button* field_2C;
-	Button * field_30;
+	Button* elementClicked;
 	ImageWithBackground* deleteElementButton;
 	ExternalServer* server;
 	PingedCompatibleServer* field_3C;
@@ -21,7 +21,6 @@ struct LocalServerListItemElement: GuiElement
 	std::string field_44;
 	int32_t field_48;
 	bool_t isEditing;
-	int8_t field_4D, field_4E, field_4F;
 	int32_t field_50;
 	PlayScreen* field_54;
 	int field_58;

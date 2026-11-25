@@ -42,16 +42,10 @@ struct Sapling: Bush
 		return 1;
 	}
 	virtual TextureUVCoordinateSet* getTexture(int32_t a2, int32_t a3) {
-		int32_t v3; // r2
-		v3 = a3 & 3;
-		switch (v3) {
-		case 1:
-			return &this->field_B0;
-		case 2:
-			return &this->field_98;
-		case 3:
-			return &this->field_C8;
-		}
+		int data = a3 & 3;
+		if(data == 1) return &this->field_B0;
+		if(data == 2) return &this->field_98;
+		if(data == 3) return &this->field_C8;
 		return &this->field_80;
 	}
 	virtual void tick(Level* level, int32_t x, int32_t y, int32_t z, Random* rng) {

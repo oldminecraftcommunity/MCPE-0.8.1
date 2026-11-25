@@ -81,7 +81,7 @@ ServerPlayer* ServerSideNetworkHandler::createNewPlayer(const RakNet::RakNetGUID
 		v7->field_CA8 = a3->clientId;
 		std::stringstream v15;
 		v15 << a3->clientId;
-		v7->field_CA4 = v15.str();
+		v7->clientIdStr = v15.str();
 		this->level->getLevelStorage()->load(v7);
 		this->minecraft->gameMode->initAbilities(v7->abilities);
 		this->players.push_back(v7);
@@ -208,7 +208,7 @@ Player* ServerSideNetworkHandler::popPendingPlayer(const RakNet::RakNetGUID& a2)
 void ServerSideNetworkHandler::redistributePacket(Packet* a2, const RakNet::RakNetGUID& a3) {
 	RakNet::BitStream v11;
 	a2->write(&v11);
-	this->rakPeer->Send(&v11, a2->packetPriorityMaybe, a2->packetReliabilityMaybe, 0, RakNet::AddressOrGUID(a3), 1, 0);
+	this->rakPeer->Send(&v11, a2->packetPriority, a2->packetReliability, 0, RakNet::AddressOrGUID(a3), 1, 0);
 }
 void ServerSideNetworkHandler::sendLoginMessageLocal(int32_t a2, const RakNet::RakNetGUID& a3, LoginPacket* a4) {
 	RakNet::BitStream v13;
@@ -617,15 +617,15 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& a2, struct Conta
 			int32_t v8 = (uint8_t)a3->field_D;
 			if(a3->field_D) {
 				if(v8 == 120) {
-					player->setArmor(a3->field_E, &a3->field_10);
+					player->setArmor(a3->slot, &a3->field_10);
 				} else {
 					if(player->currentContainer) {
-						if(player->currentContainer->field_0 == v8) {
-							if(player->currentContainer->containerID == 2) {
-								player->currentContainer->setSlot(a3->field_E, &a3->field_10);
+						if(player->currentContainer->containerId == v8) {
+							if(player->currentContainer->containerType == 2) {
+								player->currentContainer->setSlot(a3->slot, &a3->field_10);
 							}
-							if(player->currentContainer->containerID == 0) {
-								player->currentContainer->setSlot(a3->field_E, &a3->field_10);
+							if(player->currentContainer->containerType == 0) {
+								player->currentContainer->setSlot(a3->slot, &a3->field_10);
 								if(this->minecraft->currentScreen) {
 									this->minecraft->currentScreen->onInternetUpdate();
 								}
@@ -634,7 +634,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& a2, struct Conta
 					}
 				}
 			} else {
-				player->inventory->setItem(a3->field_E + 9, &a3->field_10);
+				player->inventory->setItem(a3->slot + 9, &a3->field_10);
 			}
 		}
 	}
@@ -711,7 +711,6 @@ void ServerSideNetworkHandler::onPlayerVerifiedFailed(const RestCallTagData& a2)
 	this->rakPeer->Send(&v8, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE_ORDERED, 0, RakNet::AddressOrGUID(RakNet::RakNetGUID(a2.guid_g)), 0, 0);
 }
 
-static RakNet::SystemAddress _d6e0a1f0; //TODO check is this thing initialized correctly
 void ServerSideNetworkHandler::tileChanged(int32_t x, int32_t y, int32_t z) {
 	int32_t id = this->level->getTile(x, y, z);
 	int32_t meta = this->level->getData(x, y, z);
@@ -719,7 +718,7 @@ void ServerSideNetworkHandler::tileChanged(int32_t x, int32_t y, int32_t z) {
 	UpdateBlockPacket v14(x, y, z, id, meta);
 	RakNet::BitStream v17;
 	v14.write(&v17);
-	this->rakPeer->Send(&v17, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE_ORDERED, 0, _d6e0a1f0, 1, 0);
+	this->rakPeer->Send(&v17, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, 1, 0);
 	if(Tile::isEntityTile[id]) {
 		TileEntity* te = this->level->getTileEntity(x, y, z);
 		if(te) {

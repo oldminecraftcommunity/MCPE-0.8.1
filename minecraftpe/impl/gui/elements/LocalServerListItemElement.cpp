@@ -23,16 +23,10 @@
 #include <ExternalServer.hpp>
 
 LocalServerListItemElement::LocalServerListItemElement(Minecraft* a2, ExternalServer a3, bool_t editing, PlayScreen* a5)
-	: GuiElement(1, 1, 0, 0, 24, 24) {
-	this->field_24 = this->field_28 = 0; //XXX doesnt seem to be in mcpe
-	this->field_2C = 0;
-	this->field_30 = 0;
-	this->deleteElementButton = 0;
-	this->field_3C = 0;
-	this->levelSummary = 0;
-	this->isEditing = editing;
-	this->field_50 = 0;
-	this->field_54 = a5;
+	: GuiElement(1, 1, 0, 0, 24, 24),
+	field_2C(0), elementClicked(0), deleteElementButton(0),
+	field_3C(0), levelSummary(0), isEditing(editing), field_50(0), field_54(a5) {
+	//this->clickedMouseX = this->clickedMouseY = 0; //XXX doesnt seem to be in mcpe
 	this->height = 32;
 	this->server = new ExternalServer(a3);
 	if(editing) {
@@ -54,21 +48,16 @@ LocalServerListItemElement::LocalServerListItemElement(Minecraft* a2, ExternalSe
 	}
 }
 LocalServerListItemElement::LocalServerListItemElement(Minecraft* a2, const LevelSummary& a3, bool_t a4)
-	: GuiElement(1, 1, 0, 0, 24, 24) {
-	this->field_24 = this->field_28 = 0; //XXX doesnt seem to be in mcpe
-	this->field_2C = 0;
-	this->field_30 = 0;
-	this->deleteElementButton = 0;
-	this->server = 0;
-	this->isEditing = a4;
-	this->field_50 = 0;
-	this->field_54 = 0;
+	: GuiElement(1, 1, 0, 0, 24, 24),
+	field_2C(0), elementClicked(0), deleteElementButton(0),
+	server(0), isEditing(a4), field_50(0), field_54(0)  {
+	//this->clickedMouseX = this->clickedMouseY = 0; //XXX doesnt seem to be in mcpe
 	this->height = 32;
 	this->field_3C = 0;
 	this->levelSummary = new LevelSummary(a3);
 	if(a4) {
 		this->deleteElementButton = new ImageWithBackground(-1);
-		this->deleteElementButton->init(a2->texturesPtr, 32, 32, {112, 0, 8, 67}, {120, 0, 8, 67}, 2, 2, "gui/spritesheet.png");
+		this->deleteElementButton->init(a2->texturesPtr, 32, 32, IntRectangle(112, 0, 8, 67), IntRectangle(120, 0, 8, 67), 2, 2, "gui/spritesheet.png");
 		ImageDef v15;
 		v15.texture = "gui/gui.png";
 		v15.initialized = 1;
@@ -89,35 +78,28 @@ LocalServerListItemElement::LocalServerListItemElement(Minecraft* a2, const Leve
 	}
 }
 LocalServerListItemElement::LocalServerListItemElement(const PingedCompatibleServer& a2)
-	: GuiElement(1, 1, 0, 0, 24, 24) {
-	this->field_24 = this->field_28 = 0; //XXX doesnt seem to be in mcpe
-	this->field_2C = 0;
-	this->field_30 = 0;
-	this->deleteElementButton = 0;
-	this->server = 0;
-	this->field_50 = 0;
-	this->field_54 = 0;
+	: GuiElement(1, 1, 0, 0, 24, 24),
+	field_2C(0), elementClicked(0), deleteElementButton(0), server(0), field_50(0), field_54(0)  {
+	//this->clickedMouseX = this->clickedMouseY = 0; //XXX doesnt seem to be in mcpe
 	this->height = 32;
 	this->field_3C = new PingedCompatibleServer(a2);
 	this->levelSummary = 0;
 }
 std::string LocalServerListItemElement::getLastPlayedString() {
-	int32_t v3; // r0
 	char_t s[32]; // [sp+4h] [bp-34h] BYREF
 
-	if(!this->levelSummary) {
-		return "";
-	}
-	v3 = getEpochTimeS() - this->levelSummary->lastPlayed;
-	if(v3 > 86399) {
-		if(v3 > 172799) {
-			if(v3 > 604799) {
-				if(v3 > 2419199) {
+	if(!this->levelSummary) return "";
+
+	int td = getEpochTimeS() - this->levelSummary->lastPlayed;
+	if(td > 86399) {
+		if(td > 172799) {
+			if(td > 604799) {
+				if(td > 2419199) {
 					return "long ago";
 				}
-				sprintf(s, "%d weeks ago", v3 / 604800);
+				sprintf(s, "%d weeks ago", td / 604800);
 			} else {
-				sprintf(s, "%d days ago", v3 / 86400);
+				sprintf(s, "%d days ago", td / 86400);
 			}
 			return s;
 		} else {
@@ -126,6 +108,13 @@ std::string LocalServerListItemElement::getLastPlayedString() {
 	} else {
 		return "Today";
 	}
+	/*v3 = getEpochTimeS() - this->levelSummary->lastPlayed;
+	if(v3 < (3600 * 24)) return "Today";
+	if(v3 < (3600 * 48)) return "Yesterday";
+	if(v3 > (3600 * 24 * 28)) return "long ago"; //4 weeks
+	if(v3 > (3600 * 24 * 7)) sprintf(s, "%d weeks ago", v3 / 604800);
+	else sprintf(s, "%d days ago", v3 / 86400);
+	return s;*/
 }
 void LocalServerListItemElement::init(Minecraft* a2) {
 	Touch::TButton* v4 = new Touch::TButton(1, "", 0);
@@ -166,34 +155,29 @@ void LocalServerListItemElement::tick(Minecraft* a2) {
 
 	x = (float)Mouse::getX() * Gui::InvGuiScale;
 	y = (float)Mouse::getY() * Gui::InvGuiScale;
-	if(fabsf(x - this->field_24) > 20.0 || fabsf(y - this->field_28) > 20.0) {
+	if(fabsf(x - this->clickedMouseX) > 20.0 || fabsf(y - this->clickedMouseY) > 20.0) {
 		deleteElementButton = this->field_2C;
-		v6 = this->field_30;
+		v6 = this->elementClicked;
 		if(deleteElementButton == v6 || (deleteElementButton = this->deleteElementButton) != 0 && deleteElementButton == v6) {
 			deleteElementButton->released((int32_t)x, (int32_t)y);
 		}
-		this->field_30 = 0;
+		this->elementClicked = 0;
 	}
 	++this->field_50;
 }
 void LocalServerListItemElement::render(Minecraft* a2, int32_t a3, int32_t a4) {
-	ImageWithBackground* deleteElementButton; // r2
-	int32_t width; // r8
-	bool_t isPressed; // r0
-	LevelSummary* levelSummary; // r9
-	int32_t v12; // r0
-	int32_t v14; // r11
-	ImageWithBackground* v15; // r3
-	Font* font; // r6
-	int32_t v17; // r11
-	PingedCompatibleServer* v20; // r3
-	ExternalServer* server; // r3
-	ExternalServer* v23; // r3
-	ImageWithBackground* v25; // r3
-	char_t v29[128]; // [sp+2Ch] [bp-B4h] BYREF
+	int32_t width;							  // r8
+	int32_t v12;							  // r0
+	int32_t v14;							  // r11
+	Font* font;								  // r6
+	int32_t v17;							  // r11
+	ExternalServer* server;					  // r3
+	ExternalServer* v23;					  // r3
+	ImageWithBackground* v25;				  // r3
+	char_t v29[128];						  // [sp+2Ch] [bp-B4h] BYREF
 
-	if(this->levelSummary && (deleteElementButton = this->deleteElementButton) != 0) {
-		width = this->width - deleteElementButton->width;
+	if(this->levelSummary && this->deleteElementButton != 0) {
+		width = this->width - this->deleteElementButton->width;
 	} else {
 		width = this->width;
 	}
@@ -201,22 +185,19 @@ void LocalServerListItemElement::render(Minecraft* a2, int32_t a3, int32_t a4) {
 	this->field_2C->posY = this->posY;
 	this->field_2C->width = width;
 	this->field_2C->render(a2, a3, a4);
-	isPressed = this->field_2C->isPressed(a3, a4);
-	levelSummary = this->levelSummary;
-	if(isPressed) {
+	if(this->field_2C->isPressed(a3, a4)) {
 		v12 = 0xFFFFA0;
 	} else {
 		v12 = 0xFFFFFFFF;
 	}
-	if(levelSummary) {
-		a2->font->drawShadow(levelSummary->levelName, (float)this->posX + 5.0, (float)this->posY + 5.0, v12);
+	if(this->levelSummary) {
+		a2->font->drawShadow(this->levelSummary->levelName, (float)this->posX + 5.0, (float)this->posY + 5.0, v12);
 		std::string ss = this->levelSummary->gamemode == 1 ? "Creative" : "Survival";
 		v14 = a2->font->width(ss);
 		a2->font->drawShadow(ss, (float)this->posX + 5.0, (float)this->posY + 16.0, 0xFFBBBBBB);
 		a2->font->drawShadow(this->getLastPlayedString(), (float)((float)((float)this->posX + 5.0) + (float)v14) + 10.0, (float)this->posY + 16.0, 0xFFBBBBBB);
-		v15 = this->deleteElementButton;
-		if(v15) {
-			v15->posX = this->posX + this->width - v15->width;
+		if(this->deleteElementButton) {
+			this->deleteElementButton->posX = this->posX + this->width - this->deleteElementButton->width;
 			this->deleteElementButton->posY = this->posY;
 			this->deleteElementButton->render(a2, a3, a4);
 		}
@@ -227,105 +208,59 @@ void LocalServerListItemElement::render(Minecraft* a2, int32_t a3, int32_t a4) {
 			a2->font->drawShadow(this->field_44, (float)(width + this->posX - this->field_48) - 5.0, (float)this->posY + 16.0, 0xFFBBBBBB);
 		}
 	} else {
-		v20 = this->field_3C;
-		if(v20) {
-			a2->font->drawShadow(v20->field_0, (float)this->posX + 5.0, (float)this->posY + 5.0, -4473857);
+		if(this->field_3C) {
+			a2->font->drawShadow(this->field_3C->field_0, (float)this->posX + 5.0, (float)this->posY + 5.0, 0xFFBBBBFF);
 			this->field_3C->field_4.ToString(0, v29, '|');
-			a2->font->drawShadow(
-				std::string("World on wifi: ").append(v29),
-				(float)this->posX + 5.0,
-				(float)this->posY + 16.0,
-				0xFFBBBBBB);
+			a2->font->drawShadow(std::string("World on wifi: ").append(v29), (float)this->posX + 5.0, (float)this->posY + 16.0, 0xFFBBBBBB);
 			a2->texturesPtr->loadAndBindTexture("gui/spritesheet.png");
 			glColor4f(1.0, 1.0, 1.0, 1.0);
-			this->blit(
-				(float)this->width - 14.0f,
-				(float)this->posY + 9.0f,
-				192,
-				-24 * (this->field_50 / 4 % 3) + 48,
-				12.0,
-				12.0,
-				24,
-				24);
-		}
-		else
-		{
+			this->blit((float)this->width - 14.0f, (float)this->posY + 9.0f, 192, -24 * (this->field_50 / 4 % 3) + 48, 12.0, 12.0, 24, 24);
+		} else {
 			server = this->server;
-			if ( !server )
-			{
+			if(!server) {
 				return;
 			}
-			a2->font->drawShadow(
-				server->name,
-				(float)this->posX + 5.0,
-				(float)this->posY + 5.0,
-				v12);
+			a2->font->drawShadow(server->name, (float)this->posX + 5.0, (float)this->posY + 5.0, v12);
 			//copyRawCharArrayInside(&v28, "Survival");
 			v23 = this->server;
-			if ( v23->ip.size() <= 0x80u )
-			{
+			if(v23->ip.size() <= 0x80u) {
 				sprintf(v29, "%s:%d", v23->ip.c_str(), v23->port);
-			}
-			else
-			{
+			} else {
 				sprintf(v29, "...:%d", v23->port);
 			}
-			a2->font->drawShadow(
-				v29,
-				(float)this->posX + 5.0,
-				(float)this->posY + 16.0,
-				-4473925);
-			if ( this->isEditing )
-			{
+			a2->font->drawShadow(v29, (float)this->posX + 5.0, (float)this->posY + 16.0, 0xFFBBBBBB);
+			if(this->isEditing) {
 				v25 = this->deleteElementButton;
-				if ( v25 )
-				{
+				if(v25) {
 					v25->posX = this->posX + this->width - v25->width;
 					this->deleteElementButton->posY = this->posY;
-					this->deleteElementButton->render(
-						a2,
-						a3,
-						a4);
+					this->deleteElementButton->render(a2, a3, a4);
 				}
 			}
 		}
 	}
 }
-void LocalServerListItemElement::mouseClicked(Minecraft* a2, int32_t a3, int32_t a4, int32_t a5){
-	float v9; // s17
-	int32_t v10; // s15
-	ImageWithBackground *deleteElementButton; // r0
-	float v12; // s16
-	Button *v13; // r0
+void LocalServerListItemElement::mouseClicked(Minecraft* a2, int32_t a3, int32_t a4, int32_t a5) {
+	float mxScaled = Mouse::getX() * Gui::InvGuiScale;
+	float myScaled = Mouse::getY() * Gui::InvGuiScale;
+	if(this->deleteElementButton && this->deleteElementButton->clicked(a2, a3, a4)) {
+		this->clickedMouseX = mxScaled;
+		this->clickedMouseY = myScaled;
 
-	v9 = (float)Mouse::getX() * Gui::InvGuiScale;
-	v10 = Mouse::getY();
-	deleteElementButton = this->deleteElementButton;
-	v12 = (float)v10 * Gui::InvGuiScale;
-	if ( deleteElementButton
-	   && deleteElementButton->clicked(a2, a3, a4) )
-	{
-		v13 = this->deleteElementButton;
-		this->field_24 = v9;
-		this->field_28 = v12;
+		this->elementClicked = this->deleteElementButton;
+		this->deleteElementButton->setPressed();
+	} else if(this->field_2C->clicked(a2, a3, a4)) {
+		this->clickedMouseX = mxScaled;
+		this->clickedMouseY = myScaled;
+
+		this->elementClicked = this->field_2C;
+		this->field_2C->setPressed();
 	}
-	else
-	{
-		if ( !this->field_2C->clicked(a2, a3, a4) )
-		{
-			return;
-		}
-		this->field_24 = v9;
-		this->field_28 = v12;
-		v13 = this->field_2C;
-	}
-	this->field_30 = v13;
-	v13->setPressed();
 }
 
 void LocalServerListItemElement::mouseReleased(Minecraft* a2, int32_t a3, int32_t a4, int32_t a5)
 {
-	if(this->deleteElementButton && this->field_30 == this->deleteElementButton) {
+	if(this->deleteElementButton && this->elementClicked == this->deleteElementButton) {
 		if(this->deleteElementButton->clicked(a2, a3, a4)) {
 			if(this->server) {
 				a2->externalServerFile->removeSevrer(this->server->id);
@@ -336,16 +271,16 @@ void LocalServerListItemElement::mouseReleased(Minecraft* a2, int32_t a3, int32_
 			return;
 		}
 		this->deleteElementButton->released(a3, a4);
-		this->field_30 = 0;
+		this->elementClicked = 0;
 		return;
 	}
-	if(this->field_30 != this->field_2C) {
+	if(this->elementClicked != this->field_2C) {
 		return;
 	}
 
-	if(!this->field_30->clicked(a2, a3, a4)) {
+	if(!this->elementClicked->clicked(a2, a3, a4)) {
 		this->field_2C->released(a3, a4);
-		this->field_30 = 0;
+		this->elementClicked = 0;
 		return;
 	}
 

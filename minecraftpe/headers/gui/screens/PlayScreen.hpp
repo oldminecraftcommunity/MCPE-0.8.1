@@ -16,7 +16,7 @@
 
 struct PlayScreen: Screen
 {
-	int8_t field_50, field_51, field_52, field_53;
+	bool field_50, field_51;
 	std::shared_ptr<std::unordered_map<long long, MCOServerListItem>> field_54;
 	std::string field_5C;
 	Touch::THeader* header;

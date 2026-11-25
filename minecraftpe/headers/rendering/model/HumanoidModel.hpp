@@ -7,9 +7,7 @@ struct HumanoidModel: Model
 	ModelPart headModel, bodyModel;
 	ModelPart rightArmModel, leftArmModel;
 	ModelPart rightLegModel, leftLegModel;
-	int8_t field_318, field_319, field_31A;
-	bool_t isUsingBow;
-	int32_t field_31C;
+	bool field_318, carryingItem, sneaking, isUsingBow;
 
 	HumanoidModel(float, float);
 

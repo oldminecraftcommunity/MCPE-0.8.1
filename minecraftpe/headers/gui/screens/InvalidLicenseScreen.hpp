@@ -20,9 +20,6 @@ struct InvalidLicenseScreen: Screen
 	InvalidLicenseScreen(int32_t err, int8_t v8) {
 		this->err = err;
 		this->field_6C = v8;
-		this->field_58 = "";
-		this->field_5C = "";
-		this->field_60 = "";
 		this->okButton = 0;
 		this->buyButton = 0;
 		this->field_70 = 0;

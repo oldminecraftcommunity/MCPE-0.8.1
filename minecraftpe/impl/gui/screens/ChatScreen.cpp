@@ -113,42 +113,33 @@ ChatScreen::~ChatScreen() {
 	safeRemove<ImageWithBackground>(this->sendChatMessageButton);
 }
 void ChatScreen::render(int32_t a2, int32_t a3, float a4) {
-	int32_t height; // r6
-	int32_t v9;		// kr00_4
 	int32_t v10;	// r5
-	int32_t v11;	// r0
-	int32_t v12;	// r7
-	int32_t v13;	// r6
 
 	this->renderBackground(0);
-	height = this->height;
+	int height = this->height;
 	if(this->keyboardVisible) {
-		v9 = this->height;
 		height /= 2;
 		v10 = this->width - this->field_64->width - this->sendChatMessageButton->width;
 	} else {
 		v10 = this->width - this->field_64->width;
 	}
-	v11 = this->font->height(this->field_54, v10 - 4) + 4;
-	if(v11 < this->field_64->height) {
-		v12 = this->field_64->height;
-	} else {
-		v12 = v11;
-	}
-	v13 = height - v12;
+	int v11 = this->font->height(this->field_54, v10 - 4) + 4;
+	if(v11 < this->field_64->height) v11 = this->field_64->height;
+
+	int v13 = height - v11;
 	this->drawChatMessages(v13);
 	Screen::render(a2, a3, a4);
 	this->field_60->posX = 0;
-	this->field_60->posY = this->height - v12;
+	this->field_60->posY = this->height - v11;
 	this->field_60->width = v10;
-	this->field_60->height = v12;
-	this->fill(0, v13, v10, this->height, -16777216);
+	this->field_60->height = v11;
+	this->fill(0, v13, v10, this->height, 0xFF000000);
 	{
 		std::string ss = this->field_54;
 		if(this->keyboardVisible) {
 			ss += '_';
 		}
-		this->font->drawWordWrap(ss, 2.0, (float)v13 + 2.0, (float)v10 - 4.0, -1, 1, 0);
+		this->font->drawWordWrap(ss, 2.0f, v13 + 2.0f, v10 - 4.0f, -1, 1, 0);
 	}
 }
 void ChatScreen::init() {

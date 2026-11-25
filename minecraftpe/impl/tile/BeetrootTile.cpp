@@ -16,22 +16,20 @@ void BeetrootTile::spawnItem(Level* level, int32_t x, int32_t y, int32_t z, cons
 	v11 = level->random.nextFloat();
 	v13 = level->random.nextFloat();
 	v14 = level->random.nextFloat();
-	v12 = new ItemEntity(level, (float)x + (float)((float)(v11 * 0.7) + 0.15), (float)y + (float)((float)(v13 * 0.7) + 0.15), (float)z + (float)((float)(v14 * 0.7) + 0.15), item);
+	v12 = new ItemEntity(level, x + ((v11 * 0.7f) + 0.15f), y + ((v13 * 0.7f) + 0.15f), z + ((v14 * 0.7f) + 0.15f), item);
 	v12->delayBeforePickup = 10;
 	level->addEntity(v12);
 }
-const TextureUVCoordinateSet* BeetrootTile::getTexture(int32_t a2, int32_t a3) {
-	int32_t v4; // r1
 
-	if(a3 > 6) {
-		v4 = 3;
-	} else {
-		if(a3 == 6) {
-			a3 = 5;
-		}
-		v4 = a3 >> 1;
+static inline int _texIndex(int a3){
+	if(a3 > 6) return 3;
+	else {
+		if(a3 == 6) a3 = 5;
+		return a3 >> 1;
 	}
-	return this->texture3.getUV(v4);
+}
+const TextureUVCoordinateSet* BeetrootTile::getTexture(int32_t a2, int32_t a3) {
+	return this->texture3.getUV(_texIndex(a3));
 }
 void BeetrootTile::spawnResources(Level* level, int32_t x, int32_t y, int32_t z, int32_t a6, float a7) {
 	const Item* v11;	  // r0

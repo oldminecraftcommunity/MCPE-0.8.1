@@ -20,84 +20,34 @@
 #include <network/RakNetInstance.hpp>
 
 Mob::Mob(Level* a2)
-	: Entity(a2) {
-	this->field_124 = 0.0;
-	this->field_128 = 0.0;
-	this->prevHeadYaw = 0.0;
-	this->field_118 = 20;
-	this->field_134 = 0.0;
-	this->field_138 = 0.0;
-	this->field_168 = 0.0;
-	this->field_16C = 0.0;
-	this->field_170 = 0.0;
-	this->field_174.x = 0.0;
-	this->field_174.y = 0.0;
-	this->field_174.z = 0.0;
-	this->field_180 = 0;
-	this->field_184 = 0;
-	this->hasArmorMaybe = 0;
-	this->field_B68 = 0;
-	this->field_B6C = 0;
-	this->field_B74 = 0.0;
-	this->jumpMovementFactor = 0.02;
-	this->field_B7C = 1.0;
-	this->skin = "mob/char.png";
-	this->field_B84 = "";
-	this->field_B88 = 0;
-	this->field_B8C = 0.0;
-	this->field_B90 = 0.0;
-	this->field_B94 = 0.0;
-	this->field_B98 = 0.0;
-	this->field_BA0 = 1.0;
-	this->field_BA4 = 0;
-	this->field_BA8 = 0;
-	this->lerpX = 0.0;
-	this->lerpY = 0.0;
-	this->lerpZ = 0.0;
-	this->lerpYaw = 0.0;
-	this->lerpPitch = 0.0;
-	this->field_BC0 = 0;
-	this->field_BC4 = 0;
-	this->field_BC8 = 0.0;
-	this->field_BCC = 0.0;
-	this->field_BD0 = 0.0;
-	this->field_BD4 = 0.0;
-	this->field_BD8 = 0.0;
-	this->field_BDC = 0.0;
-	this->field_BE0 = 0.0;
-	this->field_BE4 = 0.0;
-	this->field_BE8 = 0;
-	this->field_BEC = 1;
-	this->isJumping = 0;
-	this->field_BEE = 1;
-	this->targetEID = 0;
-	this->maybeEntityWhichIsBeingLookedByThisEntity = 0;
-	this->field_C58 = 0;
-	this->field_C5C = 0;
-	this->field_C60 = 0;
-	this->speed = 0.0;
+	: Entity(a2),
+	field_124(0), field_128(0), prevHeadYaw(0), field_118(20), field_134(0),
+	field_138(0), field_168(0), field_16C(0), field_170(0), field_174(),
+	field_180(0), field_184(0), hasArmorMaybe(0), field_B68(0), field_B6C(0),
+	field_B74(0), jumpMovementFactor(0.02f), field_B7C(1), skin("mob/char.png"),
+	field_B84(), field_B88(0), field_B8C(0), field_B90(0), field_B94(0), field_B98(0),
+	field_BA0(1), field_BA4(0), field_BA8(0), lerpX(0), lerpY(0), lerpZ(0), lerpYaw(0),
+	lerpPitch(0), field_BC0(0), field_BC4(0), lastSentX(0), lastSentY(0), lastSentZ(0),
+	lastSentPitch(0), lastSentYaw(0), field_BDC(0), field_BE0(0), field_BE4(0), field_BE8(0),
+	field_BEC(1), isJumping(0), field_BEE(1), targetEID(0), maybeEntityWhichIsBeingLookedByThisEntity(0),
+	field_C58(0), field_C5C(0), field_C60(0), speed(0)
+{
 	this->synchedEntityData.define<int8_t>(0, 0);
 	this->synchedEntityData.define<int16_t>(1, 300);
 	this->_init();
 	this->health = 10;
 	this->field_FC = 1;
-	this->field_C64 = -(a2->random.genrand_int32() % 0x64);
-	float posY = this->posY;
-	float posX = this->posX;
-	float posZ = this->posZ;
-	this->field_120 = (float)(Mth::random() + 1.0) * 0.01;
-	this->setPos(posX, posY, posZ);
-	this->field_11C = Mth::random() * 12398.0;
-	float v11 = Mth::random();
-	this->stepHeight = 0.5;
-	float v12 = (float)(v11 * 3.1416) + (float)(v11 * 3.1416);
-	this->yaw = v12;
-	this->headYaw = v12;
+	this->field_C64 = -a2->random.nextInt(100);
+	this->field_120 = (Mth::random() + 1) * 0.01f;
+	this->setPos(this->posX, this->posY, this->posZ);
+	this->field_11C = Mth::random() * 12398.0f;
+	this->stepHeight = 0.5f;
+	this->headYaw = this->yaw = (Mth::random() * Mth::PI) * 2;
 	this->lookControl = new LookControl(this);
 	this->moveControl = new MoveControl(this);
 	this->jumpControl = new JumpControl(this);
 	this->bodyControl = new BodyControl(this);
-	this->navigation = new PathNavigation(this, a2, 16.0);
+	this->navigation = new PathNavigation(this, a2, 16);
 	this->sensing = new Sensing(this);
 }
 void Mob::_init() {
@@ -200,9 +150,9 @@ void Mob::pushEntities() {
 		v7 = 0;
 		maxZ = this->boundingBox.maxZ;
 
-		std::vector<struct Entity*>* ents = level->getEntities(this, {minX - 0.2f, this->boundingBox.minY, v3, maxX + 0.2f, maxY + 0.0f, maxZ + 0.2f});
+		std::vector<Entity*>* ents = level->getEntities(this, {minX - 0.2f, this->boundingBox.minY, v3, maxX + 0.2f, maxY + 0.0f, maxZ + 0.2f});
 		while(v7 < ents->size()) {
-			v10 = (Mob*)ents->at(v7);
+			v10 = (Mob*) (*ents)[v7];
 			if(!v10->isPlayer() || !v10->isSleeping()) {
 				if(v10->isPushable()) {
 					v10->push(this);
@@ -565,14 +515,14 @@ void Mob::baseTick() {
 	this->prevHeadYaw = this->headYaw;
 	if(!this->level->isClient) {
 		if(this->field_BEE) {
-			v38 = &this->field_BD0;
-			v39 = &this->field_BD4;
-			v40 = &this->field_BD8;
-			if(fabsf(this->posX - this->field_BC8) > 0.1 || fabsf(this->posY - this->field_BCC) > 0.05 || fabsf(this->posZ - *v38) > 0.1 || fabsf(*v39 - pitch) > 1.0 || fabsf(*v40 - yaw) > 1.0) {
+			v38 = &this->lastSentZ;
+			v39 = &this->lastSentPitch;
+			v40 = &this->lastSentYaw;
+			if(fabsf(this->posX - this->lastSentX) > 0.1 || fabsf(this->posY - this->lastSentY) > 0.05 || fabsf(this->posZ - *v38) > 0.1 || fabsf(*v39 - pitch) > 1.0 || fabsf(*v40 - yaw) > 1.0) {
 				MoveEntityPacket_PosRot movePacket(this);
 				this->level->rakNetInstance->send(movePacket);
-				this->field_BC8 = this->posX;
-				this->field_BCC = this->posY;
+				this->lastSentX = this->posX;
+				this->lastSentY = this->posY;
 				*v38 = this->posZ;
 				*v39 = this->pitch;
 				*v40 = this->yaw;
@@ -747,29 +697,13 @@ void Mob::outOfWorld() {
 	}
 }
 void Mob::causeFallDamage(float a2) {
-	int32_t v3; // r5
-	Level* level; // r7
-	int32_t v6; // r0
-	Level* v7; // r5
-	int32_t v8; // r9
-	int32_t v9; // r8
-	int32_t v10; // r0
-	int32_t v11; // r0
-	const Tile::SoundType* soundType; // r2
-
-	v3 = (int32_t)ceil((float)(a2 - 3.0));
-	if(v3 > 0) {
-		level = this->level;
-		level->playSound(this, v3 <= 4 ? "damage.fallsmall" : "damage.fallbig", 0.75, 1.0);
-		this->hurt(0, v3);
-		v6 = Mth::floor(this->posX);
-		v7 = this->level;
-		v8 = v6;
-		v9 = Mth::floor((float)(this->posY - 0.2) - this->ridingHeight);
-		v10 = Mth::floor(this->posZ);
-		v11 = v7->getTile(v8, v9, v10);
+	int dmg = (int32_t)ceil(a2 - 3.0f);
+	if(dmg > 0) {
+		this->level->playSound(this, dmg > 4 ? "damage.fallbig" : "damage.fallsmall", 0.75f, 1.0f);
+		this->hurt(0, dmg);
+		int v11 = this->level->getTile(Mth::floor(this->posX), Mth::floor((this->posY - 0.2f) - this->ridingHeight), Mth::floor(this->posZ));
 		if(v11 > 0) {
-			soundType = Tile::tiles[v11]->soundType;
+			const Tile::SoundType* soundType = Tile::tiles[v11]->soundType;
 			this->level->playSound(this, soundType->soundName, soundType->field_0 * 0.5, soundType->field_4 * 0.75);
 		}
 	}
@@ -1180,45 +1114,20 @@ Vec3 Mob::getPos(float a3) {
 Vec3 Mob::getLookAngle() const {
 	return this->getViewVector(1);
 }
-Vec3 Mob::getViewVector(float a3) const {
-	float v5; // s16
-	float v6; // s18
-	float v7; // r0
-	float v8; // s17
-	float v9; // s19
-	float v10; // s16
-	float v11; // r0
-	float v12; // s19
-	float v13; // s16
-	float v14; // r1
-	float v15; // s16
-	float v16; // s17
-	float v17; // s19
-	float v18; // s20
-	float v19; // s16
-
-	if(a3 == 1.0) {
-		v5 = (float) - (float)(this->yaw * 0.017453) - 3.1416;
-		v6 = Mth::cos(v5);
-		v7 = Mth::sin(v5);
-		v8 = -(float)(this->pitch * 0.017453);
-		v9 = v7;
-		v10 = -Mth::cos(v8);
-		v11 = Mth::sin(v8);
-		v12 = v9 * v10;
-		v13 = v6 * v10;
-		v14 = v12;
-	} else {
-		v15 = (float) - (float)((float)(this->prevYaw + (float)((float)(this->yaw - this->prevYaw) * a3)) * 0.017453) - 3.1416;
-		v16 = -(float)((float)(this->prevPitch + (float)((float)(this->pitch - this->prevPitch) * a3)) * 0.017453);
-		v17 = Mth::cos(v15);
-		v18 = Mth::sin(v15);
-		v19 = -Mth::cos(v16);
-		v11 = Mth::sin(v16);
-		v14 = v18 * v19;
-		v13 = v17 * v19;
+Vec3 Mob::getViewVector(float pt) const {
+	if(pt == 1) {
+		float yawcos = Mth::cos(-Mth::deg2rad(this->yaw) - Mth::PI);
+		float yawsin = Mth::sin(-Mth::deg2rad(this->yaw) - Mth::PI);
+		float v10 = -Mth::cos(-Mth::deg2rad(this->pitch));
+		return Vec3(yawsin * v10, Mth::sin(-Mth::deg2rad(this->pitch)), yawcos * v10);
 	}
-	return Vec3(v14, v11, v13);
+
+	float pitch = this->prevPitch + ((this->pitch - this->prevPitch) * pt);
+	float yaw = this->prevYaw + ((this->yaw - this->prevYaw) * pt);
+	float yawcos = Mth::cos(-Mth::deg2rad(yaw) - Mth::PI);
+	float yawsin = Mth::sin(-Mth::deg2rad(yaw) - Mth::PI);
+	float v19 = -Mth::cos(-Mth::deg2rad(pitch));
+	return Vec3(yawsin * v19, Mth::sin(-Mth::deg2rad(pitch)), yawcos * v19);
 }
 int32_t Mob::getMaxSpawnClusterSize() {
 	return 4;

@@ -1,12 +1,11 @@
 #pragma once
 #include <entity/ai/Goal.hpp>
-#include <math/Vec3.hpp>
 
 struct PathfinderMob;
 struct RandomStrollGoal: Goal
 {
 	PathfinderMob* holder;
-	Vec3 target;
+	float targetX, targetY, targetZ;
 	float speedMultiplier;
 
 	RandomStrollGoal(PathfinderMob*, float);

@@ -3,15 +3,11 @@
 #include <tile/material/Material.hpp>
 #include <level/Level.hpp>
 
-BaseRailTile::Rail::Rail(struct Level* a2, int32_t x, int32_t y, int32_t z) {
-	this->level = a2;
-	this->x = x;
-	this->y = y;
-	this->z = z;
-	int32_t v9 = a2->getTile(x, y, z);
-	int32_t v10 = a2->getData(x, y, z);
-	this->field_10 = ((BaseRailTile*)Tile::tiles[v9])->useDataBit;
-	this->updateConnections(v10);
+BaseRailTile::Rail::Rail(struct Level* lvl, int32_t x, int32_t y, int32_t z) : level(lvl), x(x), y(y), z(z) {
+	int32_t id = lvl->getTile(x, y, z);
+	int32_t meta = lvl->getData(x, y, z); //ur supposed to be in r1 vro </3
+	this->canRotate = ((BaseRailTile*)Tile::tiles[id])->canRotate;
+	this->updateConnections(meta);
 }
 bool_t BaseRailTile::Rail::canConnectTo(BaseRailTile::Rail* a2) {
 	return this->connectsTo(a2) || this->connections.size() != 2;
@@ -35,7 +31,7 @@ void BaseRailTile::Rail::connectTo(BaseRailTile::Rail* a2) {
 	} else if(v8) {
 		v9 = 1;
 	}
-	if(!this->field_10) {
+	if(!this->canRotate) {
 		if(v6) {
 			if(v8) {
 				if(!hasConnection && !v7) {
@@ -80,14 +76,15 @@ LABEL_25:
 		v9 = 0;
 	}
 LABEL_42:
-	if(this->field_10) {
+	if(this->canRotate) {
 		this->level->getData(this->x, this->y, this->z);
 	}
 	this->level->setData(this->x, this->y, this->z, v9, 3);
 }
 bool_t BaseRailTile::Rail::connectsTo(BaseRailTile::Rail* a2) {
-	for(auto& a: this->connections) {
-		if(a.x == a2->x && a.z == a2->z) return 1;
+	for(int i = 0; i != this->connections.size(); ++i) {
+		TilePos con = this->connections[i];
+		if(con.x == a2->x && con.z == a2->z) return 1;
 	}
 	return 0;
 }
@@ -120,8 +117,9 @@ std::shared_ptr<BaseRailTile::Rail> BaseRailTile::Rail::getRail(const TilePos& a
 	return 0;
 }
 bool_t BaseRailTile::Rail::hasConnection(int32_t a2, int32_t a3, int32_t a4) {
-	for(auto& a: this->connections) {
-		if(a.x == a2 && a.z == a4) return 1;
+	for(int i = 0; i != this->connections.size(); ++i) {
+		TilePos& con = this->connections[i];
+		if(con.x == a2 && con.z == a4) return 1;
 	}
 	return 0;
 }
@@ -183,7 +181,7 @@ LABEL_10:
 		}
 	}
 LABEL_15:
-	if(this->field_10) {
+	if(this->canRotate) {
 		goto LABEL_29;
 	}
 	if(v7) {
@@ -225,7 +223,7 @@ LABEL_29:
 	} else if(v9) {
 		v10 = 1;
 	}
-	if(this->field_10) {
+	if(this->canRotate) {
 		goto LABEL_67;
 	}
 	if(!v3) {
@@ -293,7 +291,7 @@ LABEL_67:
 	}
 LABEL_81:
 	this->updateConnections(v11);
-	if(this->field_10) {
+	if(this->canRotate) {
 		this->level->getData(this->x, this->y, this->z);
 	}
 	if(v4 || this->level->getData(this->x, this->y, this->z) != v11) {
@@ -359,7 +357,7 @@ void BaseRailTile::Rail::updateConnections(int32_t a2) {
 
 BaseRailTile::BaseRailTile(int32_t a2, bool_t a3)
 	: Tile(a2, Material::decoration) {
-	this->useDataBit = a3;
+	this->canRotate = a3;
 	this->setShape(0, 0, 0, 1, 0.125, 1);
 	this->textureUV = this->getTextureUVCoordinateSet("rail_normal", 0);
 }
@@ -372,8 +370,8 @@ int32_t BaseRailTile::getRenderShape() {
 }
 void BaseRailTile::updateShape(LevelSource* a2, int32_t a3, int32_t a4, int32_t a5) {
 	float v6;
-	if((uint32_t)(a2->getData(a3, a4, a5) - 2) > 3) v6 = 0.125;
-	else v6 = 0.625;
+	if((uint32_t)(a2->getData(a3, a4, a5) - 2) > 3) v6 = 0.125f;
+	else v6 = 0.625f;
 	this->setShape(0, 0, 0, 1, v6, 1);
 }
 AABB* BaseRailTile::getAABB(Level*, int32_t, int32_t, int32_t) {
@@ -389,7 +387,7 @@ void BaseRailTile::neighborChanged(Level* a2, int32_t a3, int32_t a4, int32_t a5
 	if(a2->isClient) return;
 	int32_t v15 = a2->getData(a3, a4, a5);
 	int32_t v14 = v15;
-	if(this->useDataBit) v15 &= 7;
+	if(this->canRotate) v15 &= 7;
 	bool_t v16 = !a2->isTopSolidBlocking(a3, a4 - 1, a5);
 	int32_t v18, v19, v20;
 	switch(v15) {
@@ -427,16 +425,16 @@ LABEL_12:
 void BaseRailTile::onPlace(Level* a2, int32_t a3, int32_t a4, int32_t a5) {
 	if(!a2->isClient) {
 		this->updateDir(a2, a3, a4, a5, 1);
-		if(this->useDataBit) {
+		if(this->canRotate) {
 			this->neighborChanged(a2, a3, a4, a5, a3, a4, a5, this->blockID);
 		}
 	}
 }
 void BaseRailTile::onRemove(Level* a2, int32_t a3, int32_t a4, int32_t a5) {
 	int32_t v9 = a2->getData(a3, a4, a5);
-	if(this->useDataBit) v9 &= 7;
+	if(this->canRotate) v9 &= 7;
 	if((uint32_t)(v9 - 2) <= 3) a2->updateNeighborsAt(a3, a4 + 1, a5, this->blockID);
-	if(this->useDataBit) {
+	if(this->canRotate) {
 		a2->updateNeighborsAt(a3, a4, a5, this->blockID);
 		a2->updateNeighborsAt(a3, a4 - 1, a5, this->blockID);
 	}
@@ -463,7 +461,7 @@ bool_t BaseRailTile::isRail(int32_t a1) {
 	return a1 == Tile::rail->blockID || a1 == Tile::goldenRail->blockID;
 }
 bool_t BaseRailTile::isUsesDataBit() {
-	return this->useDataBit;
+	return this->canRotate;
 }
 void BaseRailTile::updateDir(Level* a2, int32_t a3, int32_t a4, int32_t z, bool_t a6) {
 	if(!a2->isClient) {

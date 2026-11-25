@@ -22,8 +22,7 @@
 ExternalFileLevelStorage::ExternalFileLevelStorage(const std::string& a2, const std::string& a3)
 	: field_8(a2),
 	field_2C(),
-	anotherDataFolder(a3) {
-	this->dataFolder = a3 + "/players";
+	dataFolder(a3), playersDataFolder(a3 + "/players") {
 	this->field_28 = 3;
 	this->levelData = 0;
 	this->regionFile = 0;
@@ -31,14 +30,14 @@ ExternalFileLevelStorage::ExternalFileLevelStorage(const std::string& a2, const 
 	this->field_1C = 0;
 	this->level = 0;
 	this->field_24 = 0;
-	createFolderIfNotExists(this->anotherDataFolder.c_str());
-	if(this->anotherDataFolder.find(LevelStorageSource::TempLevelId, 0) == -1) {
-		createFolderIfNotExists(this->dataFolder.c_str());
+	createFolderIfNotExists(this->dataFolder.c_str());
+	if(this->dataFolder.find(LevelStorageSource::TempLevelId, 0) == -1) {
+		createFolderIfNotExists(this->playersDataFolder.c_str());
 	}
-	std::string v11 = this->anotherDataFolder + "/" + "level.dat";
-	std::string a1a = this->anotherDataFolder + "/" + "player.dat";
+	std::string v11 = this->dataFolder + "/" + "level.dat";
+	std::string a1a = this->dataFolder + "/" + "player.dat";
 	this->levelData = new LevelData();
-	if(ExternalFileLevelStorage::readLevelData(this->anotherDataFolder, *this->levelData)) {
+	if(ExternalFileLevelStorage::readLevelData(this->dataFolder, *this->levelData)) {
 		this->field_28 = this->levelData->getStorageVersion();
 		ExternalFileLevelStorage::readPlayerData(a1a, *this->levelData);
 	} else {
@@ -143,15 +142,21 @@ void ExternalFileLevelStorage::saveLevelData(const std::string& a1, LevelData& a
 	}
 }
 void ExternalFileLevelStorage::savePendingUnsavedChunks(int32_t a2) {
-	//TODO check
 	int v2 = a2;
 	if(a2 < 0) v2 = this->field_2C.size();
 
 	for(int v5 = 0; ++v5 <= v2;) {
 		if(this->field_2C.empty()) break;
-		UnsavedLevelChunk* ulv = &this->field_2C.front();
-		this->save(this->level, ulv->chunk);
-		this->field_2C.pop_front();
+		UnsavedLevelChunk* tosave = &this->field_2C.front();
+		std::list<UnsavedLevelChunk>::iterator savepos = this->field_2C.begin();
+		for(std::list<UnsavedLevelChunk>::iterator it = this->field_2C.begin(); it != this->field_2C.end(); ++it) {
+			if(it->timeMs < tosave->timeMs) {
+				tosave = &*it;
+				savepos = it;
+			}
+		}
+		this->field_2C.erase(savepos);
+		this->save(this->level, tosave->chunk);
 	}
 }
 bool_t ExternalFileLevelStorage::writeLevelData(const std::string& a1, LevelData& a2, const std::vector<Player*>* a3) {
@@ -200,7 +205,7 @@ LevelData* ExternalFileLevelStorage::prepareLevel(Level* a2) {
 }
 
 void ExternalFileLevelStorage::saveLevelData(LevelData& a2, std::vector<Player*>* a3) {
-	ExternalFileLevelStorage::saveLevelData(this->anotherDataFolder, a2, a3);
+	ExternalFileLevelStorage::saveLevelData(this->dataFolder, a2, a3);
 }
 
 static std::string sub_D6677960(std::string& a2, std::string& a3) {
@@ -209,7 +214,7 @@ static std::string sub_D6677960(std::string& a2, std::string& a3) {
 
 bool_t ExternalFileLevelStorage::load(Player* a2) {
 	if(!a2) return 0;
-	FILE* v4 = fopen(sub_D6677960(this->dataFolder, a2->field_CA4).c_str(), "rb");
+	FILE* v4 = fopen(sub_D6677960(this->playersDataFolder, a2->clientIdStr).c_str(), "rb");
 	if(!v4) return 0;
 	int sz, v11, n;
 	fread(&sz, 1, sizeof(sz), v4);
@@ -237,7 +242,8 @@ bool_t ExternalFileLevelStorage::load(Player* a2) {
 	}
 
 }
-static int _d6753BB8 = 0x524C50;
+static const char HEADER_PLR[] = "PLR";
+static const char HEADER_ENT[] = "ENT";
 bool_t ExternalFileLevelStorage::save(Player* a2) {
 	RakNet::BitStream v12;
 	RakDataOutput v10(&v12);
@@ -247,13 +253,13 @@ bool_t ExternalFileLevelStorage::save(Player* a2) {
 		Tag::writeNamedTag(&v11, &v10);
 		v11.deleteChildren();
 	}
-	std::string newa = sub_D6677960(this->dataFolder, a2->field_CA4); //TODO check
+	std::string newa = sub_D6677960(this->playersDataFolder, a2->clientIdStr); //TODO check
 	std::string v11 = newa + ".tmp";
 	FILE* v5 = fopen(v11.c_str(), "wb");
 	if(v5) {
 		int size = 1;
 		size_t n = v12.GetNumberOfBytesUsed();
-		fwrite(&_d6753BB8, 1u, 4u, v5);
+		fwrite(HEADER_PLR, 1u, sizeof(HEADER_PLR), v5);
 		fwrite(&size, 4u, 1u, v5);
 		fwrite(&n, 4u, 1u, v5);
 		fwrite(v12.GetData(), 1u, n, v5);
@@ -272,7 +278,7 @@ void ExternalFileLevelStorage::saveGame(Level* a2) {
 }
 void ExternalFileLevelStorage::loadEntities(Level* a2, LevelChunk* a3) {
 	this->field_34 = this->field_24;
-	FILE* v4 = fopen((this->anotherDataFolder + "/entities.dat").c_str(), "rb");
+	FILE* v4 = fopen((this->dataFolder + "/entities.dat").c_str(), "rb");
 	if(v4) {
 		int v35;
 		char dest[4];
@@ -355,7 +361,7 @@ void ExternalFileLevelStorage::loadEntities(Level* a2, LevelChunk* a3) {
 	}
 }
 LevelChunk* ExternalFileLevelStorage::load(Level* a2, int32_t a3, int32_t a4) {
-	if(this->regionFile || (this->regionFile = new RegionFile(this->anotherDataFolder), this->regionFile->open())) {
+	if(this->regionFile || (this->regionFile = new RegionFile(this->dataFolder), this->regionFile->open())) {
 		RegionFile* regionFile = this->regionFile;
 		RakNet::BitStream* v22 = 0;
 		if(regionFile->readChunk(a3, a4, &v22)) {
@@ -408,7 +414,7 @@ LevelChunk* ExternalFileLevelStorage::load(Level* a2, int32_t a3, int32_t a4) {
 }
 void ExternalFileLevelStorage::save(Level* a2, LevelChunk* a3) {
 	RegionFile* v5;
-	if(this->regionFile || (v5 = new RegionFile(this->anotherDataFolder), this->regionFile = v5, v5->open())) {
+	if(this->regionFile || (v5 = new RegionFile(this->dataFolder), this->regionFile = v5, v5->open())) {
 		RakNet::BitStream v7;
 		v7.Write((const char*)a3->tiles, 0x8000);
 		v7.Write((const char*)a3->tileMeta.data, 0x4000);
@@ -455,10 +461,10 @@ void ExternalFileLevelStorage::saveEntities(Level* a2, LevelChunk* a3) {
 	RakDataOutput a1(&v23);
 	Tag::writeNamedTag(&v22, &a1);
 	int n = v23.GetNumberOfBytesUsed();
-	FILE* v15 = fopen((this->anotherDataFolder + "/entities.dat").c_str(), "wb");
+	FILE* v15 = fopen((this->dataFolder + "/entities.dat").c_str(), "wb");
 	if(v15) {
 		int sz = 1;
-		fwrite("ENT", 1, 4, v15);
+		fwrite(HEADER_ENT, 1, sizeof(HEADER_ENT), v15);
 		fwrite(&sz, 4, 1, v15);
 		fwrite(&n, 4, 1, v15);
 		fwrite(v23.GetData(), 1, n, v15);
@@ -473,7 +479,7 @@ void ExternalFileLevelStorage::saveAll(Level* a2, std::vector<LevelChunk*>& a3) 
 }
 void ExternalFileLevelStorage::tick() {
 	if(this->level) {
-		this->field_24 = this->field_24 + 1;
+		this->field_24 += 1;
 		if((this->field_24 % 50) == 0) {
 			for(int32_t z = 0; z != 16; ++z) {
 				for(int32_t x = 0; x != 16; ++x) {
