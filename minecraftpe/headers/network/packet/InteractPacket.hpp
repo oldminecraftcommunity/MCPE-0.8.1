@@ -4,7 +4,6 @@
 
 struct InteractPacket : Packet{
 	uint8_t action;
-	char align1, align2, align3;
 	int32_t eid, type;
 	InteractPacket(int32_t eid, int32_t type, uint8_t action) {
 		this->eid = eid;

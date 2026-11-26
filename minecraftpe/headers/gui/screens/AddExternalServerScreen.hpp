@@ -8,16 +8,16 @@ struct NinePatchLayer;
 struct AddExternalServerScreen: Screen
 {
 	std::shared_ptr<Button> closeScreenButton;
-	std::shared_ptr<Button> field_5C;
+	std::shared_ptr<Button> header;
 	std::shared_ptr<Button> addServerButton;
 	std::shared_ptr<Label> serverNameLabel;
 	std::shared_ptr<TextBox> serverNameTextBox;
 	std::shared_ptr<Label> addressLabel;
 	std::shared_ptr<TextBox> serverAddressTextBox;
 	std::shared_ptr<Label> portLabel;
-	std::shared_ptr<TextBox> field_94;
-	std::shared_ptr<Label> field_9C;
-	std::shared_ptr<NinePatchLayer> field_A4;
+	std::shared_ptr<TextBox> portTextBox;
+	std::shared_ptr<Label> infoLabel;
+	std::shared_ptr<NinePatchLayer> bgFrame;
 
 	void closeScreen();
 

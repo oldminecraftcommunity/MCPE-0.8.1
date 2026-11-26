@@ -28,13 +28,14 @@ struct AddPaintingPacket : Packet{
 	}
 
 	virtual void write(RakNet::BitStream* stream){
+		stream->Write<uint8_t>(PID_ADD_PAINTING_PACKET);
 		stream->Write<int32_t>(this->eid);
 		stream->Write<int32_t>(this->x);
 		stream->Write<int32_t>(this->y);
 		stream->Write<int32_t>(this->z);
 		stream->Write<int32_t>(this->direction);
 		RakNet::RakString v7 = RakNet::RakString::NonVariadic(this->title.c_str());
-		v7.Serialize(stream);
+		stream->Write<RakNet::RakString>(v7);
 	}
 	virtual void read(RakNet::BitStream* stream){
 		stream->Read<int32_t>(this->eid);
@@ -44,7 +45,7 @@ struct AddPaintingPacket : Packet{
 		stream->Read<int32_t>(this->direction);
 		RakNet::RakString v4;
 		stream->Read<RakNet::RakString>(v4);
-		this->title = v4.C_String();
+		this->title = std::string(v4.C_String());
 	}
 	virtual void handle(const RakNet::RakNetGUID& a2, NetEventCallback* a3){
 		a3->handle(a2, this);

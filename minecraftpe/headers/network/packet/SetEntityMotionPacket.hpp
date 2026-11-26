@@ -18,25 +18,25 @@ struct SetEntityMotionPacket : Packet{
 
 	virtual void write(RakNet::BitStream* stream) {
 		float motX = this->speedX;
-		float motY = this->speedY;
-		float motZ = this->speedZ;
 		if (motX > 3.9f) motX = 3.9f;
 		else if (motX <= -3.9f) motX = -3.9f;
+		short mX = (short) (motX * 8000);
 
-		int16_t mX = (int16_t) ((motX * 8000));
+		float motY = this->speedY;
 		if (motY > 3.9f) motY = 3.9f;
-		else if (motY <= -3.9) motY = -3.9f;
+		else if (motY <= -3.9f) motY = -3.9f;
+		short mY = (short) (motY * 8000);
 
-		int16_t mY = (int16_t) ((motY * 8000));
-		if (motZ > 3.9) motZ = 3.9;
-		else if (motZ <= -3.9) motZ = -3.9;
+		float motZ = this->speedZ;
+		if (motZ > 3.9f) motZ = 3.9f;
+		else if (motZ <= -3.9f) motZ = -3.9f;
+		short mZ = (short) (motZ * 8000);
 
-		int16_t mZ = (int16_t) ((motZ * 8000));
 		stream->Write<uint8_t>(PID_SET_ENTITY_MOTION_PACKET);
 		stream->Write<int32_t>(this->eid);
-		stream->Write<int16_t>(motX);
-		stream->Write<int16_t>(motY);
-		stream->Write<int16_t>(motZ);
+		stream->Write<short>(mX);
+		stream->Write<short>(mY);
+		stream->Write<short>(mZ);
 	}
 	virtual void read(RakNet::BitStream* stream) {
 		int16_t speedX, speedY, speedZ;

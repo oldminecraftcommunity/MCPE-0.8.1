@@ -37,23 +37,23 @@ struct AddEntityPacket : Packet{
 		stream->Write<int32_t>(this->did);
 		if(this->did > 0){
 			float motX = this->motionX;
-			float motY = this->motionY;
-			float motZ = this->motionZ;
 			if(motX > 3.9f) motX = 3.9f;
 			else if(motX <= -3.9f) motX = -3.9f;
-			int16_t mX = (int16_t)(motX*8000);
+			short mX = (short)(motX*8000.0f);
 
+			float motY = this->motionY;
 			if(motY > 3.9f) motY = 3.9f;
 			else if(motY <= -3.9) motY = -3.9f;
-			int16_t mY = (int16_t)(motY*8000);
+			short mY = (short)(motY*8000.0f);
 
+			float motZ = this->motionZ;
 			if(motZ > 3.9f) motZ = 3.9f;
 			else if(motZ <= -3.9f) motZ = -3.9f;
-			int16_t mZ = (int16_t)(motZ*8000);
+			short mZ = (short)(motZ*8000.0f);
 
-			stream->Write<int16_t>(mX);
-			stream->Write<int16_t>(mY);
-			stream->Write<int16_t>(mZ);
+			stream->Write<short>(mX);
+			stream->Write<short>(mY);
+			stream->Write<short>(mZ);
 		}
 	}
 	virtual void read(RakNet::BitStream* stream){
