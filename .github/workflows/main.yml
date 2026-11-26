@@ -4,7 +4,7 @@ name: CMake on multiple platforms
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master"]
   pull_request:
     branches: [ "master" ]
 
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         submodules: recursive
         
@@ -28,17 +28,17 @@ jobs:
         cmake .. -DDYNAMICSOUNDS=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         make -j8
     - name: upload stuff
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: build-linux
         path: 
           build/minecraftpe/build/minecraftpe08decomp
 
   build-windows:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         submodules: recursive
     - name: install pkgs
@@ -64,28 +64,28 @@ jobs:
         
         echo "- Building curl -"
         cd curl-8.20.0/
-        ./configure --host=x86_64-w64-mingw32 --prefix=$PWD/build-win64 --enable-static --enable-shared --without-libpsl --with-schannel --disable-docs
+        cmake -DBUILD_STATIC_LIBS=ON -DBUILD_STATIC_CURL=ON -DCURL_USE_LIBPSL=OFF -DCURL_DEFAULT_SSL_BACKEND=schannel -DCURL_USE_SCHANNEL=ON -DBUILD_LIBCURL_DOCS=OFF -DBUILD_MISC_DOCS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_CURL_EXE=OFF -DBUILD_TESTING=OFF  -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++ .
         make -j8
-        make install
+        sudo make install
         cd ..
         
         echo "start building"
         export CURDIR=$DIRSTACK
-        cmake .. -DDYNAMICSOUNDS=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++ -DCMAKE_EXE_LINKER_FLAGS="${CMAKE_EXE_LINKER_FLAGS} -static" -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY -DCURL_INCLUDE_DIR="$CURDIR/curl-8.20.0/build-win64/include/" -DCURL_LIBRARY="$CURDIR/curl-8.20.0/build-win64/bin/libcurl-4.dll" -DSDL_LIBRARY="$CURDIR/SDL.dll" -DSDL_INCLUDE_DIR="$CURDIR/SDL-1.2.15/include/" -DCMAKE_FIND_ROOT_PATH=/usr/x86_64-w64-mingw32/
+        cmake .. -DDYNAMICSOUNDS=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++ -DCMAKE_EXE_LINKER_FLAGS="${CMAKE_EXE_LINKER_FLAGS} -static" -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY -DSDL_LIBRARY="$CURDIR/SDL.dll" -DSDL_INCLUDE_DIR="$CURDIR/SDL-1.2.15/include/" -DCMAKE_FIND_ROOT_PATH=/usr/x86_64-w64-mingw32/
         make -j8
 
         cp minecraftpe/build/minecraftpe08decomp.exe .
-        cp curl-8.20.0/build-win64/bin/libcurl-4.dll .
+        cp curl-8.20.0/lib/libcurl.dll .
         cp /usr/x86_64-w64-mingw32/lib/zlib1.dll .
         
         
     - name: upload stuff
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: build-windows
         path: |
           build/minecraftpe08decomp.exe
           build/SDL.dll
-          build/libcurl-4.dll
+          build/libcurl.dll
           build/zlib1.dll
           
